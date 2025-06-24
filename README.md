@@ -1,2 +1,2 @@
-# myAccountant
+# MyAccountant
 Wow addon to track gold income/outcome
