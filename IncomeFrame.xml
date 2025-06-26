@@ -1,0 +1,88 @@
+<Ui>
+    <Frame name="IncomeFrame" parent="UIParent" inherits="PortraitFrameTemplate">
+        <Size x="500" y="350"/>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Frames>
+            <Frame name="playerCharacter">
+                <Size x="55" y="55"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="IncomeFrame">
+                        <Offset>
+                            <AbsDimension x="-3" y="5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="headerFrame" parent="IncomeFrame" inherits="InsetFrameTemplate">
+                <Layers>
+                    <Layer>
+                        <FontString name="totalIncomeText" text="Total income" inherits="GameTooltipText">
+                            <Color a="1" r="0.75" g="0.75" b="0.75" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="playerCharacter" relativePoint="RIGHT">
+                                    <Offset>
+                                        <AbsDimension x="14" y="-10"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="totalOutcomeText" text="Total outcome" inherits="GameTooltipText">
+                            <Color a="1" r="0.75" g="0.75" b="0.75" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="totalIncomeText">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-16"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="totalProfitText" text="Net profit / loss" inherits="GameTooltipText">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="totalOutcomeText">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-21"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="totalProfit" text="" inherits="GameTooltipText" />
+                        <FontString name="totalOutcome" inherits="GameTooltipText">
+
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="totalProfit">
+                                    <Offset>
+                                        <AbsDimension x="0" y="21"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="totalIncome" inherits="GameTooltipText">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="totalOutcome">
+                                    <Offset>
+                                        <AbsDimension x="0" y="16"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Size y="88"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="IncomeFrame" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeTo="IncomeFrame" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
+            <!-- <Frame name="legendFrame" parent="IncomeFrame" inherits="EtherealFrameTemplate">
+            <Size y="10"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="headerFrame" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeTo="headerFrame" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame> -->
+        </Frames>
+
+    </Frame>
+</Ui>

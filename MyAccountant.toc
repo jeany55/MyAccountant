@@ -1,7 +1,7 @@
 ## Interface: 40402
 ## Title: MyAccountant
 ## Notes: Track your gold income/outcome
-## Author: Jeabt
+## Author: Jeany
 ## Version: 1.0.0
 ## RequiredDeps:
 ## X-Curse-Project-ID: 999999
@@ -9,8 +9,10 @@
 ## SavedVariablesPerCharacter:
 
 embeds.xml
+IncomeFrame.xml
 
+Constants.lua
 Locales\Locales.xml
-
 Core.lua
 Config.lua
+GUI.lua
