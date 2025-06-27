@@ -1,0 +1,359 @@
+<Ui>
+  <Frame name="IncomeFrame" parent="UIParent" inherits="PortraitFrameTemplate">
+    <Size x="500" y="347"/>
+    <Anchors>
+      <Anchor point="CENTER"/>
+    </Anchors>
+    <Frames>
+      <Frame name="playerCharacter">
+        <Size x="55" y="55"/>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="IncomeFrame">
+            <Offset>
+              <AbsDimension x="-3" y="5"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+      </Frame>
+      <Frame name="legendFrame" parent="IncomeFrame" inherits="BackdropTemplate">
+        <Size y="25"/>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="playerCharacter" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-30"/>
+            </Offset>
+          </Anchor>
+          <Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" />
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="outcomeHeader" text="Outgoing" inherits="GameTooltipText">
+              <Color a="1" r="1" g="1" b="0" />
+              <Anchors>
+                <Anchor point="RIGHT" relativeTo="legendFrame" relativePoint="RIGHT">
+                  <Offset>
+                    <AbsDimension x="-13" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+            <FontString name="sourceHeader" text="Source" inherits="GameTooltipText">
+              <Color a="1" r="1" g="1" b="0" />
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="legendFrame" relativePoint="LEFT">
+                  <Offset>
+                    <AbsDimension x="13" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+            <FontString name="incomeHeader" text="Incoming" inherits="GameTooltipText">
+              <Color a="1" r="1" g="1" b="0" />
+              <Anchors>
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="LEFT">
+                  <Offset>
+                    <AbsDimension x="-90" y="0"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Frame name="infoFrame" parent="IncomeFrame" inherits="InsetFrameTemplate">
+        <Layers>
+          <Layer>
+            <FontString name="totalIncomeText" text="Total income" inherits="GameTooltipText">
+              <Color a="1" r="0.75" g="0.75" b="0.75" />
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="playerCharacter" relativePoint="RIGHT">
+                  <Offset>
+                    <AbsDimension x="14" y="-10"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+            <FontString name="totalOutcomeText" text="Total outcome" inherits="GameTooltipText">
+              <Color a="1" r="0.75" g="0.75" b="0.75" />
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="totalIncomeText">
+                  <Offset>
+                    <AbsDimension x="0" y="-16"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+            <FontString name="totalProfitText" text="Net profit / loss" inherits="GameTooltipText">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="totalOutcomeText" y="-21" />
+              </Anchors>
+            </FontString>
+            <FontString name="totalProfit" text="" inherits="GameTooltipText" />
+            <FontString name="totalOutcome" inherits="GameTooltipText">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="totalProfit">
+                  <Offset>
+                    <AbsDimension x="0" y="21"/>
+                  </Offset>
+                </Anchor>
+              </Anchors>
+            </FontString>
+            <FontString name="totalIncome" inherits="GameTooltipText">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="totalOutcome" />
+                <Anchor point="TOP" relativeTo="totalIncomeText" relativePoint="TOP" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent1Title" text="Title 1" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-19" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent1Incoming" text="Incoming 1" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent1Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent1Outgoing" text="Outgoing 1" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent1Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent2Title" text="Title 2" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent1Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent2Incoming" text="Incoming 2" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent2Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent2Outgoing" text="Outgoing 2" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent2Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent3Title" text="Title 3" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent2Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent3Incoming" text="Incoming 3" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent3Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent3Outgoing" text="Outgoing 3" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent3Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent4Title" text="Title 4" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent3Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent4Incoming" text="Incoming 4" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent4Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent4Outgoing" text="Outgoing 4" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent4Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent5Title" text="Title 5" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent4Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent5Incoming" text="Incoming 5" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent5Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent5Outgoing" text="Outgoing 5" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent5Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent6Title" text="Title 6" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent5Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent6Incoming" text="Incoming 6" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent6Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent6Outgoing" text="Outgoing 6" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent6Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent7Title" text="Title 7" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent6Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent7Incoming" text="Incoming 7" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent7Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent7Outgoing" text="Outgoing 7" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent7Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent8Title" text="Title 8" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent7Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent8Incoming" text="Incoming 8" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent8Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent8Outgoing" text="Outgoing 8" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent8Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent9Title" text="Title 9" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent8Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent9Incoming" text="Incoming 9" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent9Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent9Outgoing" text="Outgoing 6" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent9Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent10Title" text="Title 10" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent9Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent10Incoming" text="Incoming 10" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent10Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent10Outgoing" text="Outgoing 10" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent10Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent11Title" text="Title 11" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent10Title" relativePoint="BOTTOM" y="-9" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent11Incoming" text="Incoming 11" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent11Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent11Outgoing" text="Outgoing 11" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent11Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent12Title" text="Title 12" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="LEFT" y="-20" />
+                <Anchor point="TOP" relativeTo="$parent11Title" relativePoint="BOTTOM" y="-10" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent12Incoming" text="Incoming 12" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent12Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="incomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+            <FontString name="$parent12Outgoing" text="Outgoing 12" inherits="GameTooltipTextSmall">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="$parent12Title" relativePoint="TOP" />
+                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="RIGHT" />
+              </Anchors>
+            </FontString>
+          </Layer>
+        </Layers>
+        <Size y="88"/>
+        <Anchors>
+          <Anchor point="TOP" relativeTo="legendFrame" relativePoint="TOP" />
+          <Anchor point="BOTTOMLEFT" relativeTo="IncomeFrame" relativePoint="BOTTOMLEFT" />
+          <Anchor point="BOTTOMRIGHT" relativeTo="IncomeFrame" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+      </Frame>
+      <Frame name="scrollBar" parent="IncomeFrame" inherits="BackdropTemplate">
+        <Size x="20" />
+        <Anchors>
+          <Anchor point="TOP" relativeTo="legendFrame" relativePoint="BOTTOM" y="3" />
+          <Anchor point="BOTTOM" relativeTo="IncomeFrame" relativePoint="BOTTOM" y="5" />
+          <Anchor point="RIGHT" relativeTo="legendFrame" relativePoint="RIGHT" x="-5" />
+        </Anchors>
+        <Frames>
+          <ScrollFrame name="scrollFrame" parent="scrollBar" inherits="FauxScrollFrameTemplate">
+            <Anchors>
+              <Anchor point="TOP" relativeTo="legendFrame" relativePoint="BOTTOM" />
+              <Anchor point="BOTTOM" relativeTo="IncomeFrame" relativePoint="BOTTOM" y="3" />
+              <Anchor point="LEFT" relativeTo="scrollBar" relativePoint="LEFT" x="-2" />
+            </Anchors>
+
+            <Scripts>
+              <OnVerticalScroll>
+                FauxScrollFrame_OnVerticalScroll(self, offset, 19, AccountantScrollBar_Update); 
+              </OnVerticalScroll>
+              <OnShow>
+                AccountantScrollBar_Update()
+              </OnShow>
+            </Scripts>
+          </ScrollFrame>
+        </Frames>
+      </Frame>
+    </Frames>
+  </Frame>
+</Ui>

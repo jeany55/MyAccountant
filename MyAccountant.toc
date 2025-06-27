@@ -9,10 +9,10 @@
 ## SavedVariablesPerCharacter:
 
 embeds.xml
-IncomeFrame.xml
 
-Constants.lua
 Locales\Locales.xml
+Constants.lua
 Core.lua
 Config.lua
-GUI.lua
+GUI\IncomeFrame.lua
+GUI\IncomeFrame.xml

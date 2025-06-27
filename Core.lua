@@ -10,7 +10,6 @@ MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
   MyAccountant:SetupOptions()
-  print("wtfff")
   MyAccountant:InitializeUI()
 end
 
@@ -44,6 +43,14 @@ end
 
 function ShowIncomeScreen()
   MyAccountant:Print("Show some income ok")
+end
+
+function AccountantScrollBar_Update()
+  if (# private.available_sources > 12) then
+    FauxScrollFrame_Update(scrollFrame, # private.available_sources, 12, 20);
+  end
+  
+  MyAccountant:DrawRows()
 end
 
 -- function MyAccountant:ShowPanel()

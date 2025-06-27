@@ -1,6 +1,6 @@
 -- Addon namespace
 local _, private = ...
-local L = LibStub("AceLocale-3.0"):NewLocale(private.ADDON_NAME, "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true)
 
 -- Localization definitions
 L["help1"] = "Valid options include"
@@ -24,3 +24,15 @@ L["option_slash_behav_report"] = "Print report in chat"
 
 L["option_debug_messages"] = "Show debug messages"
 L["option_debug_messages_desc"] = "Show messages in chat intended for debugging purposes"
+
+-- Available sources
+L["TRAINING_COSTS"] = "Training Costs"
+L["TAXI_FARES"] = "Taxi Fares"
+L["LOOT"] = "Loot"
+L["GUILD"] = "Guild"
+L["TRADE"] = "Trade Window"
+L["MERCHANTS"] = "Merchants"
+L["MAIL"] = "Mail"
+L["REPAIR"] = "Repair Costs"
+L["AUCTIONS"] = "Auctions"
+L["QUESTS"] = "Quests"
