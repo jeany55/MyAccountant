@@ -342,15 +342,6 @@
               <Anchor point="BOTTOM" relativeTo="IncomeFrame" relativePoint="BOTTOM" y="3" />
               <Anchor point="LEFT" relativeTo="scrollBar" relativePoint="LEFT" x="-2" />
             </Anchors>
-
-            <Scripts>
-              <OnVerticalScroll>
-                FauxScrollFrame_OnVerticalScroll(self, offset, 19, AccountantScrollBar_Update); 
-              </OnVerticalScroll>
-              <OnShow>
-                AccountantScrollBar_Update()
-              </OnShow>
-            </Scripts>
           </ScrollFrame>
         </Frames>
       </Frame>

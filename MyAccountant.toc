@@ -16,3 +16,4 @@ Core.lua
 Config.lua
 GUI\IncomeFrame.lua
 GUI\IncomeFrame.xml
+Income.lua

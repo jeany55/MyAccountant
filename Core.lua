@@ -6,11 +6,11 @@ MyAccountant = LibStub("AceAddon-3.0"):NewAddon(private.ADDON_NAME, "AceConsole-
 -- Slash commands
 MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 
-
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
   MyAccountant:SetupOptions()
   MyAccountant:InitializeUI()
+  MyAccountant:checkDatabaseDayConfigured()
 end
 
 function MyAccountant:OnEnable()
@@ -41,65 +41,6 @@ function MyAccountant:PrintDebugMessage(message, ...)
   end
 end
 
-function ShowIncomeScreen()
-  MyAccountant:Print("Show some income ok")
-end
+function ShowIncomeScreen() MyAccountant:Print("Show some income ok") end
 
-function AccountantScrollBar_Update()
-  if (# private.available_sources > 12) then
-    FauxScrollFrame_Update(scrollFrame, # private.available_sources, 12, 20);
-  end
-  
-  MyAccountant:DrawRows()
-end
-
--- function MyAccountant:ShowPanel()
---   local AceGUI = LibStub("AceGUI-3.0")
-
---   if private.incomePanel then
---     AceGUI:Release(private.incomePanel)
---   else
---     local panel = AceGUI:Create("Window")
---     panel:SetCallback("OnClose",
---       function(widget)
---         AceGUI:Release(widget)
---         private.incomePanel = nil
---       end
---     )
---     panel:SetTitle("MyAccountant")
---     panel:EnableResize(false)
-
---     local test = AceGUI:Create("TabGroup")
---     -- test:SetTitle("test")
---     test:SetFullWidth(true)
---     test:SetFullHeight(true)
---     test:SetTabs({
---       {value = "this_session", text = "This session" },
---       {value = "today", text = "Today" },
---       {value = "yesterday", text = "Yesterday" },
---       {value = "this_week", text = "This week" },
---     })
-
---     local topLabel = AceGUI:Create("Label")
-
---     GetItemInfoInstan
-
---     topLabel:SetImageSize(50, 50)
---     topLabel:SetText("OOH ITS ME")
---     topLabel:SetImage(
-
---     )
-
---     -- local Player3D = CreateFrame("PlayerModel", "FizzlePlayer3D", UIParent)
-
---     panel:AddChild(topLabel)
---     panel:AddChild(test)
-
-
---     private.incomePanel = panel
---   end
--- end
-
-function ShowOptionsScreen()
-  MyAccountant:Print("Show some options ok")
-end
+function ShowOptionsScreen() MyAccountant:Print("Show some options ok") end

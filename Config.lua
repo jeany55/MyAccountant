@@ -13,13 +13,13 @@ local function registerMinimap()
     OnClick = function(self, btn)
       if btn == "LeftButton" then
         MyAccountant:ShowPanel()
-      -- MyAddon:ToggleMainFrame()
-      -- elseif btn == "RightButton" then
-      --     if settingsFrame:IsShown() then
-      --         settingsFrame:Hide()
-      --     else
-      --         settingsFrame:Show()
-      --     end
+        -- MyAddon:ToggleMainFrame()
+        -- elseif btn == "RightButton" then
+        --     if settingsFrame:IsShown() then
+        --         settingsFrame:Hide()
+        --     else
+        --         settingsFrame:Show()
+        --     end
       end
     end,
 
@@ -28,9 +28,9 @@ local function registerMinimap()
         return
       end
 
-      tooltip:AddLine("MyAccountant\n\nLeft-click: Open MyAccountant\nRight-click: Open MyAddon Settings", nil, nil, nil,
-        nil)
-    end,
+      tooltip:AddLine("MyAccountant\n\nLeft-click: Open MyAccountant\nRight-click: Open MyAddon Settings", nil, nil,
+                      nil, nil)
+    end
   })
 
   libIcon:Register(private.ADDON_NAME, miniButton)
@@ -50,6 +50,17 @@ local function hideMinimap()
   libIcon:Hide(private.ADDON_NAME)
 end
 
+local function supportsVersions(versions)
+  local currentVersion = private.wowVersion
+
+  for _, v in ipairs(versions) do
+    if v == currentVersion then
+      return true
+    end
+  end
+
+  return false
+end
 
 function MyAccountant:SetupOptions()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
@@ -63,8 +74,62 @@ function MyAccountant:SetupOptions()
       count = count + 1
     end
 
-    MyAccountant:PrintDebugMessage("Initialized default settings, set %d options", count)
+    MyAccountant:PrintDebugMessage("First time setup: Initialized default settings, set %d options", count)
     self.db.char.initialized = true
+  end
+
+  -- Generate income sources options
+  local sources_options = {}
+
+  local setSources = self.db.char.sources
+
+  local function handleSetSourceCheck(checked, item)
+    -- If setting, just append onto the array
+    if checked == true then
+      table.insert(self.db.char.sources, item)
+    else
+      local newSources = {}
+      for _, v in ipairs(self.db.char.sources) do
+        if v ~= item then
+          table.insert(newSources, v)
+        end
+      end
+      self.db.char.sources = newSources
+    end
+  end
+
+  local function handleGetSourceCheck(item)
+    for _, v in ipairs(self.db.char.sources) do
+      if v == item then
+        return true
+      end
+    end
+    return false
+  end
+
+  for k, v in pairs(private.sources) do
+    local versions = v.versions
+    local disabled = false
+    local tooltip = L["option_income_desc"]
+    local name = v.title
+
+    if not supportsVersions(versions) then
+      -- This source isn't supported in current version. Mark just for clarity.
+      disabled = true
+    elseif v.required then
+      name = name .. " " .. L["option_income_required"]
+      disabled = true
+      tooltip = ""
+    end
+
+    sources_options[k] = {
+      type = "toggle",
+      name = name,
+      desc = tooltip,
+      disabled = disabled,
+      get = function(_) return handleGetSourceCheck(k) end,
+      set = function(_, val) handleSetSourceCheck(val, k) end
+    }
   end
 
   -- Ace3 Options table
@@ -110,13 +175,52 @@ function MyAccountant:SetupOptions()
             },
             set = function(info, val) self.db.char.slashBehaviour = val end,
             get = function(info) return self.db.char.slashBehaviour end
-          },
+          }
+        }
+      },
+      minimap_tooltip = {
+        type = "group",
+        inline = true,
+        name = "Minimap tooltip",
+        order = 1,
+        args = {
+          show_gold_per_hour = {
+            name = L["option_gold_per_hour"],
+            desc = L["option_gold_per_hour_desc"],
+            type = "toggle",
+            set = function(info, val) self.db.char.goldPerHour = val end,
+            get = function(info) return self.db.char.goldPerHour end
+          }
+        }
+      },
+      active_sources = {
+        order = 2,
+        name = L["option_income_sources"],
+        desc = L["option_income_sources_desc"],
+        type = "group",
+        inline = true,
+        args = sources_options
+      },
+      incomePanel = {
+        type = "group",
+        inline = true,
+        name = "Income panel",
+        order = 3,
+        args = {
+          show_empty_rows = {
+            name = L["option_show_all_sources"],
+            desc = L["option_show_all_sources_desc"],
+            type = "toggle",
+            set = function(info, val) self.db.char.hideInactiveSources = val end,
+            get = function(info) return self.db.char.hideInactiveSources end
+          }
         }
       },
       developer_options = {
         type = "group",
         inline = true,
         name = "Developer options",
+        order = 4,
         args = {
           show_debug_messages = {
             name = L["option_debug_messages"],
@@ -124,7 +228,7 @@ function MyAccountant:SetupOptions()
             type = "toggle",
             set = function(info, val) self.db.char.showDebugMessages = val end,
             get = function(info) return self.db.char.showDebugMessages end
-          },
+          }
         }
       }
     }

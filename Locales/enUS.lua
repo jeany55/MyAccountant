@@ -25,6 +25,18 @@ L["option_slash_behav_report"] = "Print report in chat"
 L["option_debug_messages"] = "Show debug messages"
 L["option_debug_messages_desc"] = "Show messages in chat intended for debugging purposes"
 
+L["option_gold_per_hour"] = "Show gold per hour"
+L["option_gold_per_hour_desc"] = "Show gold per hour in the minimap icon tooltip"
+
+L["option_show_all_sources"] = "Hide inactive sources"
+L["option_show_all_sources_desc"] = "Only show sources in the income window if they have income or outcome"
+
+L["option_income_sources"] = "Active income sources"
+L["option_income_sources_desc"] = "Which income sources to track. If not tracked it will be grouped under the 'Other' category"
+
+L["option_income_desc"] = "Toggle this income on/off"
+L["option_income_required"] = "|cffff0000(Required)|r"
+
 -- Available sources
 L["TRAINING_COSTS"] = "Training Costs"
 L["TAXI_FARES"] = "Taxi Fares"
@@ -36,3 +48,6 @@ L["MAIL"] = "Mail"
 L["REPAIR"] = "Repair Costs"
 L["AUCTIONS"] = "Auctions"
 L["QUESTS"] = "Quests"
+L["TRANSMOGRIFY"] = "Transmogrify"
+L["GARRISONS"] = "Garrisons"
+L["OTHER"] = "Other"
