@@ -8,10 +8,9 @@ function MyAccountant:IncomePanelScrollBarUpdate() end
 
 function MyAccountant:InitializeUI()
   -- Setup Title
-  -- IncomeFrame.TitleBg:SetHeight(30)
-  -- IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  -- IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
-  -- IncomeFrame.title:SetText("MyAccountant")
+  IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
+  IncomeFrame.title:SetText("MyAccountant")
 
   -- Setup player icon
   playerCharacter.Portrait = playerCharacter:CreateTexture()
