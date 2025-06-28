@@ -25,8 +25,13 @@ L["option_slash_behav_report"] = "Print report in chat"
 L["option_debug_messages"] = "Show debug messages"
 L["option_debug_messages_desc"] = "Show messages in chat intended for debugging purposes"
 
-L["option_gold_per_hour"] = "Show gold per hour"
-L["option_gold_per_hour_desc"] = "Show gold per hour in the minimap icon tooltip"
+L["option_gold_per_hour"] = "Show gold made per hour"
+L["option_gold_per_hour_desc"] = "Show gold made per hour in the minimap icon tooltip"
+
+L["option_minimap_style"] = "Display income info as"
+L["option_minimap_style_desc"] = "How income and outcome information should appear on the minimap tooltip"
+L["option_minimap_style_income_outcome"] = "Income and outcome"
+L["option_minimap_style_net"] = "Net gain/loss"
 
 L["option_show_all_sources"] = "Hide inactive sources"
 L["option_show_all_sources_desc"] = "Only show sources in the income window if they have income or outcome"

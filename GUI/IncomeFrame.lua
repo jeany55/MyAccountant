@@ -2,6 +2,8 @@ local _, private = ...
 
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
+ActiveTab = 1
+
 function MyAccountant:IncomePanelScrollBarUpdate() end
 
 function MyAccountant:InitializeUI()
@@ -100,6 +102,12 @@ function MyAccountant:InitializeUI()
   PanelTemplates_SetTab(IncomeFrame, 1)
 end
 
+function MyAccountant:TabClick(id)
+  PanelTemplates_SetTab(IncomeFrame, id);
+  ActiveTab = id
+  updateFrame(self.db.char.sources)
+end
+
 local function updateFrame(sources)
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
@@ -194,7 +202,7 @@ function MyAccountant:ShowPanel()
     MyAccountant:PrintDebugMessage("Hiding income panel")
     IncomeFrame:Hide()
   else
-    MyAccountant:AddIncome("OTHER", 75)
+    -- MyAccountant:AddIncome("OTHER", 75)
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
     updateFrame(self.db.char.sources)

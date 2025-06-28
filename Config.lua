@@ -28,8 +28,7 @@ local function registerMinimap()
         return
       end
 
-      tooltip:AddLine("MyAccountant\n\nLeft-click: Open MyAccountant\nRight-click: Open MyAddon Settings", nil, nil,
-                      nil, nil)
+      MyAccountant:GetMinimapTooltip(tooltip)
     end
   })
 
@@ -78,10 +77,13 @@ function MyAccountant:SetupOptions()
     self.db.char.initialized = true
   end
 
-  -- Generate income sources options
   local sources_options = {}
-
-  local setSources = self.db.char.sources
+  sources_options.label = { type = "description", order = 0, name = "Inactive sources will be tallied in 'Other'" }
+  sources_options.label2 = {
+    type = "description",
+    order = 1,
+    name = "Some sources may be unavailable in your WoW version"
+  }
 
   local function handleSetSourceCheck(checked, item)
     -- If setting, just append onto the array
@@ -124,6 +126,7 @@ function MyAccountant:SetupOptions()
 
     sources_options[k] = {
       type = "toggle",
+      order = 2,
       name = name,
       desc = tooltip,
       disabled = disabled,
@@ -184,6 +187,14 @@ function MyAccountant:SetupOptions()
         name = "Minimap tooltip",
         order = 1,
         args = {
+          minimap_style = {
+            name = L["option_minimap_style"],
+            desc = L["option_minimap_style_desc"],
+            type = "select",
+            values = { INCOME_OUTCOME = L["option_minimap_style_income_outcome"], NET = L["option_minimap_style_net"] },
+            set = function(info, val) self.db.char.tooltipStyle = val end,
+            get = function(info) return self.db.char.tooltipStyle end
+          },
           show_gold_per_hour = {
             name = L["option_gold_per_hour"],
             desc = L["option_gold_per_hour_desc"],

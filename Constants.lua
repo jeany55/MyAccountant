@@ -106,5 +106,6 @@ private.default_settings = {
   slashBehaviour = "SHOW_OPTIONS",
   showDebugMessages = false,
   goldPerHour = false,
-  hideInactiveSources = false
+  hideInactiveSources = false,
+  tooltipStyle = "INCOME_OUTCOME"
 }

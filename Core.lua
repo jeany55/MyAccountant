@@ -1,6 +1,8 @@
 -- Addon namespace
 local _, private = ...
 
+local ADDON_START_TIME = time()
+
 MyAccountant = LibStub("AceAddon-3.0"):NewAddon(private.ADDON_NAME, "AceConsole-3.0", "AceEvent-3.0")
 
 -- Slash commands
@@ -32,6 +34,32 @@ function MyAccountant:HandleSlashCommand(input)
     MyAccountant:Print("----------------------")
     MyAccountant:Print(L["help2"])
     MyAccountant:Print(L["help3"])
+  end
+end
+
+function MyAccountant:GetMinimapTooltip(tooltip)
+  local money = GetMoneyString(GetMoney(), true)
+  tooltip:AddLine("MyAccountant - " .. money, 1, 1, 1)
+
+  if self.db.char.tooltipStyle == "INCOME_OUTCOME" then
+    tooltip:AddLine("Total incoming: |cff00ff00" .. GetMoneyString(234234, true))
+    tooltip:AddLine("Total outgoing: |cffff0000" .. GetMoneyString(234234, true))
+  elseif self.db.char.tooltipStyle == "NET" then
+    tooltip:AddLine("Net gain: |cff00ff00" .. GetMoneyString(23247, true))
+    -- tooltip:AddLine("Total outgoing: |cffff0000" .. GetMoneyString(234234, true))
+  end
+
+  if self.db.char.goldPerHour then
+    local totalIncome = MyAccountant:GetSessionIncome()
+    if totalIncome == 0 then
+      tooltip:AddLine("Gold made per hour: " .. GetMoneyString(0, true))
+      return
+    end
+
+    local totalRunTime = time() - ADDON_START_TIME
+    -- Use proportion to calculate gold per hour
+    local goldPerHour = math.floor((3600 * totalIncome) / totalRunTime)
+    tooltip:AddLine("Gold made per hour: " .. GetMoneyString(goldPerHour, true))
   end
 end
 
