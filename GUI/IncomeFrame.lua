@@ -71,6 +71,7 @@ function MyAccountant:InitializeUI()
     tileSize = 200
   })
   scrollBar:SetFrameLevel(3)
+  IncomeFrame:SetFrameLevel(2)
 
   local ScrollBarUpdateFunction = function()
     local sources = self.db.char.sources
@@ -93,6 +94,10 @@ function MyAccountant:InitializeUI()
 
   IncomeFrame:SetScript("OnHide", function() private.panelOpen = false end)
   IncomeFrame:Hide()
+
+  -- Tab configuration
+  PanelTemplates_SetNumTabs(IncomeFrame, 6)
+  PanelTemplates_SetTab(IncomeFrame, 1)
 end
 
 local function updateFrame(sources)

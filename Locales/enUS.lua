@@ -4,7 +4,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true)
 
 -- Localization definitions
 L["help1"] = "Valid options include"
-L["help2"] = "- /mya show - Show income window"
+L["help2"] = "- /mya open - Show/hide income window"
 L["help3"] = "- /mya options - Open options window"
 
 L["option_general"] = "General"
@@ -36,6 +36,13 @@ L["option_income_sources_desc"] = "Which income sources to track. If not tracked
 
 L["option_income_desc"] = "Toggle this income on/off"
 L["option_income_required"] = "|cffff0000(Required)|r"
+
+L["session"] = "Session"
+L["today"] = "Today"
+L["this_week"] = "This Week"
+L["this_month"] = "This Month"
+L["this_month"] = "This Year"
+L["all_time"] = "All Time"
 
 -- Available sources
 L["TRAINING_COSTS"] = "Training Costs"

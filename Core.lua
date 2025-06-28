@@ -25,7 +25,7 @@ function MyAccountant:HandleSlashCommand(input)
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
   if input == "options" then
     ShowOptionsScreen()
-  elseif input == "show" then
+  elseif input == "open" then
     MyAccountant:ShowPanel()
   else
     MyAccountant:Print(L["help1"])
@@ -40,7 +40,5 @@ function MyAccountant:PrintDebugMessage(message, ...)
     MyAccountant:Printf("|cffff0000[Debug]|r " .. message, ...)
   end
 end
-
-function ShowIncomeScreen() MyAccountant:Print("Show some income ok") end
 
 function ShowOptionsScreen() MyAccountant:Print("Show some options ok") end
