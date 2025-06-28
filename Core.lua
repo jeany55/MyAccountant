@@ -1,7 +1,7 @@
 -- Addon namespace
 local _, private = ...
 
-MyAccountant = LibStub("AceAddon-3.0"):NewAddon(private.ADDON_NAME, "AceConsole-3.0")
+MyAccountant = LibStub("AceAddon-3.0"):NewAddon(private.ADDON_NAME, "AceConsole-3.0", "AceEvent-3.0")
 
 -- Slash commands
 MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
