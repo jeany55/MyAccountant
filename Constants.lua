@@ -8,7 +8,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
 private.GameTypes = { CLASSIC_ERA = "CLASSIC_ERA", MISTS_CLASSIC = "MISTS_CLASSIC", RETAIL = "RETAIL" }
 
-private.constants = { 
+private.constants = {
   MINIMAP_ICON = "Interface\\AddOns\\MyAccountant\\Images\\minimap.tga",
   UP_ARROW = "Interface\\Addons\\MyAccountant\\Images\\upArrow.tga",
   DOWN_ARROW = "Interface\\Addons\\MyAccountant\\Images\\downArrow.tga"
@@ -56,6 +56,15 @@ private.sources = {
     title = L["QUESTS"],
     versions = { private.GameTypes.CLASSIC_ERA, private.GameTypes.MISTS_CLASSIC, private.GameTypes.RETAIL }
   },
+  TALENTS = {
+    title = L["TALENTS"],
+    versions = { private.GameTypes.CLASSIC_ERA, private.GameTypes.MISTS_CLASSIC, private.GameTypes.RETAIL }
+  },
+  LFG = {
+    title = L["LFG"],
+    versions = { private.GameTypes.MISTS_CLASSIC, private.GameTypes.RETAIL }
+  },
+  BARBER = { title = L["BARBER"], versions = { private.GameTypes.MISTS_CLASSIC, private.GameTypes.RETAIL } },
   TRANSMOGRIFY = { title = L["TRANSMOGRIFY"], versions = { private.GameTypes.MISTS_CLASSIC, private.GameTypes.RETAIL } },
   GARRISONS = { title = L["GARRISONS"], versions = { private.GameTypes.RETAIL } },
   OTHER = {
@@ -63,6 +72,67 @@ private.sources = {
     versions = { private.GameTypes.CLASSIC_ERA, private.GameTypes.MISTS_CLASSIC, private.GameTypes.RETAIL },
     required = true
   }
+}
+
+private.events = {
+  -- Trade
+  { EVENT = "TRADE_SHOW", SOURCE = "TRADE" },
+  { EVENT = "TRADE_CLOSED", SOURCE = "TRADE", RESET = true },
+  -- Training costs
+  { EVENT = "TRAINER_CLOSED", SOURCE = "TRAINING_COSTS", RESET = true },
+  { EVENT = "TRAINER_SHOW", SOURCE = "TRAINING_COSTS" },
+  -- Mail
+  { EVENT = "MAIL_INBOX_UPDATE", SOURCE = "MAIL" },
+  { EVENT = "MAIL_SHOW", SOURCE = "MAIL" },
+  { EVENT = "MAIL_CLOSED", SOURCE = "MAIL", RESET = true },
+  -- Merchants
+  { EVENT = "MERCHANT_SHOW", SOURCE = "MERCHANTS" },
+	{ EVENT =	"MERCHANT_CLOSED", SOURCE = "MERCHANTS", RESET = true },
+	{ EVENT = "MERCHANT_UPDATE", SOURCE = "MERCHANTS"},
+  -- Quests
+  { EVENT = "QUEST_COMPLETE", SOURCE = "QUESTS" },
+	{ EVENT =	"QUEST_FINISHED", SOURCE = "QUESTS" },
+	{ EVENT = "QUEST_TURNED_IN", SOURCE = "QUESTS"},
+  -- AH
+  { EVENT = "AUCTION_HOUSE_SHOW", SOURCE = "AUCTIONS" },
+	{ EVENT = "AUCTION_HOUSE_CLOSED", SOURCE = "AUCTIONS", RESET = true },
+  -- Loot
+  { EVENT = "LOOT_OPENED", SOURCE = "LOOT" },
+	{ EVENT =	"LOOT_CLOSED", SOURCE = "LOOT", RESET = true },
+  -- Taxi Fares
+  { EVENT = "TAXIMAP_OPENED", SOURCE = "TAXI_FARES" },
+	{ EVENT =	"TAXIMAP_CLOSED", SOURCE = "TAXI_FARES", RESET = true },
+  -- Talents
+  { EVENT = "CONFIRM_TALENT_WIPE", SOURCE = "TALENTS" },
+  -- Lfg
+  { EVENT = "LFG_COMPLETION_REWARD", SOURCE = "LFG" },
+  -- Guild
+	{ EVENT =	"GUILDBANKFRAME_OPENED", SOURCE = "GUILD" },
+	{ EVENT =	"GUILDBANKFRAME_CLOSED", SOURCE = "GUILD", RESET = true },
+	{ EVENT =	"GUILDBANK_UPDATE_MONEY", SOURCE = "GUILD" },
+	{ EVENT = "GUILDBANK_UPDATE_WITHDRAWMONEY", SOURCE = "GUILD" },
+  -- Barber
+	{ EVENT = "BARBER_SHOP_APPEARANCE_APPLIED", SOURCE = "BARBER" },
+	{ EVENT = "BARBER_SHOP_OPEN", SOURCE = "BARBER" },
+	{ EVENT = "BARBER_SHOP_CLOSE", SOURCE = "BARBER", RESET = true },
+	{ EVENT =	"BARBER_SHOP_RESULT", SOURCE = "BARBER" },
+	{ EVENT =	"BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE", SOURCE = "BARBER" },
+	{ EVENT =	"BARBER_SHOP_COST_UPDATE", SOURCE = "BARBER" },
+  -- Transmog
+  { EVENT = "TRANSMOGRIFY_OPEN", SOURCE = "TRANSMOGRIFY" },
+  { EVENT = "TRANSMOGRIFY_CLOSE", SOURCE = "TRANSMOGRIFY", RESET = true },
+  -- Garrison, TO DO: Test this on retail
+  { EVENT = "GARRISON_MISSION_FINISHED", SOURCE = "GARRISONS", RESET = true },
+  { EVENT = "GARRISON_ARCHITECT_OPENED", SOURCE = "GARRISONS" },
+  { EVENT = "GARRISON_ARCHITECT_CLOSED", SOURCE = "GARRISONS", RESET = true },
+  { EVENT = "GARRISON_MISSION_NPC_OPENED", SOURCE = "GARRISONS" },
+  { EVENT = "GARRISON_MISSION_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
+  { EVENT = "GARRISON_SHIPYARD_NPC_OPENED", SOURCE = "GARRISONS" },
+  { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
+  { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
+  -- Main
+  { EVENT = "PLAYER_MONEY" },
+  { EVENT = "CHAT_MSG_MONEY" },
 }
 
 local DEFAULT_SOURCES_MISTS_CLASSIC = {
@@ -115,5 +185,5 @@ private.default_settings = {
   leftClickMinimap = "NOTHING",
   rightClickMinimap = "RESET_GOLD_PER_HOUR",
   defaultIncomePanelSort = "NOTHING",
-  showLines = true,
+  showLines = true
 }

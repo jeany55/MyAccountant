@@ -13,6 +13,32 @@ function MyAccountant:OnInitialize()
   MyAccountant:SetupOptions()
   MyAccountant:InitializeUI()
   MyAccountant:checkDatabaseDayConfigured()
+  local amount = 0
+
+  -- Register events
+  for _, v in ipairs(private.events) do
+    local source = v.SOURCE
+    local event = v.EVENT
+    local registerEvent = false
+
+    if source then
+      local versions = private.sources[source].versions
+      registerEvent = private.supportsWoWVersions(versions)
+    else
+      registerEvent = true
+    end
+
+    if registerEvent then
+      amount = amount + 1
+      MyAccountant:RegisterEvent(event, "HandleGameEvent")
+    end
+  end
+
+  MyAccountant:PrintDebugMessage("Registered %d events", amount)
+end
+
+function MyAccountant:HandleGameEvent(event, ...)
+  print ("on game event " .. event)
 end
 
 function MyAccountant:OnEnable()

@@ -49,7 +49,7 @@ local function hideMinimap()
   libIcon:Hide(private.ADDON_NAME)
 end
 
-local function supportsVersions(versions)
+private.supportsWoWVersions = function (versions)
   local currentVersion = private.wowVersion
 
   for _, v in ipairs(versions) do
@@ -115,7 +115,7 @@ function MyAccountant:SetupOptions()
     local tooltip = L["option_income_desc"]
     local name = v.title
 
-    if not supportsVersions(versions) then
+    if not private.supportsWoWVersions(versions) then
       -- This source isn't supported in current version. Mark just for clarity.
       disabled = true
     elseif v.required then

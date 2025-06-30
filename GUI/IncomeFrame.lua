@@ -280,10 +280,10 @@ end
 function MyAccountant:DrawRows()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-  MyAccountant:PrintDebugMessage("Redrawing rows on income panel..")
+  -- MyAccountant:PrintDebugMessage("Redrawing rows on income panel..")
 
   -- If no scrollbar is shown, starting index comes back as zero
-  local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame) + 1
+  local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
   local incomeTable = MyAccountant:GetSortedTable("SESSION")
 
   updateSortingIcons()
@@ -294,7 +294,7 @@ function MyAccountant:DrawRows()
     local outgoing = "infoFrame" .. i .. "Outgoing"
 
     -- local key = self.db.char.sources[i]
-    local currentRow = incomeTable[i]
+    local currentRow = incomeTable[i + scrollIndex]
 
     if currentRow then
       _G[title]:SetText(currentRow.title)
@@ -322,8 +322,6 @@ function MyAccountant:DrawRows()
       _G[incoming]:SetText("")
       _G[outgoing]:SetText("")
     end
-
-    scrollIndex = scrollIndex + 1
   end
 end
 
