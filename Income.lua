@@ -44,11 +44,15 @@ function MyAccountant:AddIncome(category, amount)
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0 }
+    totalGoldSession[category] = { income = 0, outcome = 0, key = category }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = {
+      income = 0,
+      outcome = 0,
+      key = category
+    }
   end
 
   total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].income
@@ -71,11 +75,15 @@ function MyAccountant:AddOutcome(category, amount)
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0 }
+    totalGoldSession[category] = { income = 0, outcome = 0, key = category }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = {
+      income = 0,
+      outcome = 0,
+      key = category
+    }
   end
 
   total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].outcome
@@ -128,4 +136,27 @@ function MyAccountant:GetSessionOutcome(category)
   else
     return 0
   end
+end
+
+function MyAccountant:GetIncomeOutcomeTable(type)
+  local table = {}
+
+  if type == "SESSION" then
+    table = totalGoldSession
+  end
+
+  -- Recreate table to keep original order intact
+  local reorderedTable = {}
+  for _, v in ipairs(self.db.char.sources) do
+    if (not table[v]) then
+      reorderedTable[v] = { income = 0, outcome = 0 }
+    else
+      reorderedTable[v] = table[v]
+    end
+
+    reorderedTable[v].title = private.sources[v].title
+    reorderedTable[v].key = v
+    -- reorderedTable[k] = table[k]
+  end
+  return reorderedTable
 end

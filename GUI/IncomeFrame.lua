@@ -4,9 +4,47 @@ MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 ActiveTab = 1
 
+Tabs = { "SESSION", "blah blah" }
+
+-- Hold grid lines to show/hide if user doesn't want to see them
+RenderedLines = {}
+
+-- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
+UserSetSort = nil
+
 function MyAccountant:IncomePanelScrollBarUpdate() end
 
+-- Returns a List
+function MyAccountant:GetSortedTable(type)
+  local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
+  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type)
+
+  local function sortingFunction(source1, source2)
+    if sortType == "SOURCE_ASC" then
+      return source1.title < source2.title
+    elseif sortType == "SOURCE_DESC" then
+      return source1.title > source2.title
+    end
+  end
+
+  local preppedSortList = {}
+  -- Prep table for sort
+  for k, _ in pairs(incomeTable) do
+    table.insert(preppedSortList, incomeTable[k])
+  end
+
+  if sortType == "NOTHING" then
+    return preppedSortList
+  end
+
+  table.sort(preppedSortList, sortingFunction)
+
+  return preppedSortList
+end
+
 function MyAccountant:InitializeUI()
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
   -- Setup Title
   IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
@@ -41,16 +79,18 @@ function MyAccountant:InitializeUI()
   -- Setup columns
   local column1 = legendFrame:CreateLine()
   column1:SetThickness(1)
-  column1:SetStartPoint("BOTTOMRIGHT", "sourceHeader", 135, 15)
-  column1:SetEndPoint("BOTTOMRIGHT", "sourceHeader", 135, -(infoFrame:GetHeight() - legendFrame:GetHeight() + 5))
+  column1:SetStartPoint("BOTTOMRIGHT", "sourceHeader", 70, 15)
+  column1:SetEndPoint("BOTTOMRIGHT", "sourceHeader", 70, -(infoFrame:GetHeight() - legendFrame:GetHeight() + 5))
   column1:SetColorTexture(1, 1, 1, 0.1)
+  table.insert(RenderedLines, column1)
 
   -- Setup columns
   local column2 = legendFrame:CreateLine()
   column2:SetThickness(1)
-  column2:SetStartPoint("BOTTOMRIGHT", "incomeHeader", 8, 15)
-  column2:SetEndPoint("BOTTOMRIGHT", "incomeHeader", 8, -(infoFrame:GetHeight() - legendFrame:GetHeight() + 5))
+  column2:SetStartPoint("TOPRIGHT", "incomeHeader", 5, 1)
+  column2:SetEndPoint("BOTTOMRIGHT", "incomeHeader", 5, -(infoFrame:GetHeight() - legendFrame:GetHeight() + 3))
   column2:SetColorTexture(1, 1, 1, 0.1)
+  table.insert(RenderedLines, column2)
 
   local startingRowHeight = -17
   -- Make rows
@@ -60,6 +100,7 @@ function MyAccountant:InitializeUI()
     row:SetColorTexture(1, 1, 1, 0.1)
     row:SetStartPoint("BOTTOMLEFT", "legendFrame", 7, startingRowHeight)
     row:SetEndPoint("BOTTOMLEFT", "legendFrame", legendFrame:GetWidth() - 4, startingRowHeight)
+    table.insert(RenderedLines, row)
     startingRowHeight = startingRowHeight - 20
   end
 
@@ -96,6 +137,38 @@ function MyAccountant:InitializeUI()
   IncomeFrame:SetScript("OnHide", function() private.panelOpen = false end)
   IncomeFrame:Hide()
 
+  -- Header click handlers for sorting
+  sourceHeader:SetScript("OnClick", function()
+    if UserSetSort == "SOURCE_ASC" then
+      UserSetSort = "SOURCE_DESC"
+    else
+      UserSetSort = "SOURCE_ASC"
+    end
+
+    MyAccountant:DrawRows()
+  end)
+  incomeHeader:SetScript("OnClick", function()
+    if UserSetSort == "INCOME_DESC" then
+      UserSetSort = "INCOME_ASC"
+    else
+      UserSetSort = "INCOME_DESC"
+    end
+
+    MyAccountant:DrawRows()
+  end)
+  outcomeHeader:SetScript("OnClick", function()
+    if UserSetSort == "OUTCOME_DESC" then
+      UserSetSort = "OUTCOME_ASC"
+    else
+      UserSetSort = "OUTCOME_DESC"
+    end
+
+    MyAccountant:DrawRows()
+  end)
+
+  -- Localization
+  sourceHeaderText:SetText(L["source_header"])
+
   -- Tab configuration
   PanelTemplates_SetNumTabs(IncomeFrame, 6)
   PanelTemplates_SetTab(IncomeFrame, 1)
@@ -107,7 +180,52 @@ function MyAccountant:TabClick(id)
   updateFrame(self.db.char.sources)
 end
 
-local function updateFrame(sources)
+local function updateSortingIcons()
+
+  if UserSetSort == "SOURCE_ASC" then
+    sourceHeaderIcon:Show()
+    incomeHeaderIcon:Hide()
+    outcomeHeaderIcon:Hide()
+
+    sourceHeaderIcon:SetTexture(private.constants.UP_ARROW)
+  elseif UserSetSort == "SOURCE_DESC" then
+    sourceHeaderIcon:Show()
+    incomeHeaderIcon:Hide()
+    outcomeHeaderIcon:Hide()
+
+    sourceHeaderIcon:SetTexture(private.constants.DOWN_ARROW)
+  elseif UserSetSort == "INCOME_ASC" then
+    sourceHeaderIcon:Hide()
+    incomeHeaderIcon:Show()
+    outcomeHeaderIcon:Hide()
+
+    incomeHeaderIcon:SetTexture(private.constants.UP_ARROW)
+  elseif UserSetSort == "INCOME_DESC" then
+    sourceHeaderIcon:Hide()
+    incomeHeaderIcon:Show()
+    outcomeHeaderIcon:Hide()
+
+    incomeHeaderIcon:SetTexture(private.constants.DOWN_ARROW)
+  elseif UserSetSort == "OUTCOME_ASC" then
+    sourceHeaderIcon:Hide()
+    incomeHeaderIcon:Hide()
+    outcomeHeaderIcon:Show()
+
+    outcomeHeaderIcon:SetTexture(private.constants.UP_ARROW)
+  elseif UserSetSort == "OUTCOME_DESC" then
+    sourceHeaderIcon:Hide()
+    incomeHeaderIcon:Hide()
+    outcomeHeaderIcon:Show()
+
+    outcomeHeaderIcon:SetTexture(private.constants.DOWN_ARROW)
+  else
+    sourceHeaderIcon:Hide()
+    incomeHeaderIcon:Hide()
+    outcomeHeaderIcon:Hide()
+  end
+end
+
+local function updateFrame(sources, showLines)
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
 
@@ -147,39 +265,52 @@ local function updateFrame(sources)
   totalOutcome:SetText(GetMoneyString(income, true))
   totalIncome:SetText(GetMoneyString(outcome, true))
 
+  -- Hide/show grid lines depending on user preference
+  for _, v in ipairs(RenderedLines) do
+    if showLines then
+      v:Show()
+    else
+      v:Hide()
+    end
+  end
+
   MyAccountant:DrawRows()
 end
 
 function MyAccountant:DrawRows()
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
   MyAccountant:PrintDebugMessage("Redrawing rows on income panel..")
 
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame) + 1
+  local incomeTable = MyAccountant:GetSortedTable("SESSION")
+
+  updateSortingIcons()
 
   for i = 1, 12 do
     local title = "infoFrame" .. i .. "Title"
     local incoming = "infoFrame" .. i .. "Incoming"
     local outgoing = "infoFrame" .. i .. "Outgoing"
 
-    local currentRow = self.db.char.sources[scrollIndex]
+    -- local key = self.db.char.sources[i]
+    local currentRow = incomeTable[i]
 
     if currentRow then
-      local sourceTitle = private.sources[currentRow].title
+      _G[title]:SetText(currentRow.title)
 
-      _G[title]:SetText(sourceTitle)
-
-      local sessionIncome = MyAccountant:GetSessionIncome(currentRow)
-      local sessionOutcome = MyAccountant:GetSessionOutcome(currentRow)
+      local income = currentRow.income
+      local outcome = currentRow.outcome
 
       local incomeText = ""
       local outcomeText = ""
 
-      if sessionIncome > 0 then
-        incomeText = GetMoneyString(sessionIncome, true)
+      if income > 0 then
+        incomeText = GetMoneyString(income, true)
       end
 
-      if sessionOutcome > 0 then
-        outcomeText = GetMoneyString(sessionOutcome, true)
+      if outcome > 0 then
+        outcomeText = GetMoneyString(outcome, true)
       end
 
       _G[incoming]:SetText(incomeText)
@@ -204,7 +335,8 @@ function MyAccountant:ShowPanel()
     -- MyAccountant:AddIncome("OTHER", 75)
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
-    updateFrame(self.db.char.sources)
+    UserSetSort = self.db.char.defaultIncomePanelSort
+    updateFrame(self.db.char.sources, self.db.char.showLines)
     IncomeFrame:Show()
   end
 end

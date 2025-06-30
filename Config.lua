@@ -198,14 +198,43 @@ function MyAccountant:SetupOptions()
           show_gold_per_hour = {
             name = L["option_gold_per_hour"],
             desc = L["option_gold_per_hour_desc"],
+            width = "double",
             type = "toggle",
             set = function(info, val) self.db.char.goldPerHour = val end,
             get = function(info) return self.db.char.goldPerHour end
+          },
+          left_click = {
+            name = L["option_minimap_left_click"],
+            desc = L["option_minimap_left_click_desc"],
+            type = "select",
+            width = 1.3,
+            values = {
+              NOTHING = L["option_minimap_click_nothing"],
+              OPEN_OPTIONS = L["option_minimap_click_options"],
+              RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
+              RESET_SESSION = L["option_minimap_click_reset_session"]
+            },
+            set = function(info, val) self.db.char.leftClickMinimap = val end,
+            get = function(info) return self.db.char.leftClickMinimap end
+          },
+          right_click = {
+            name = L["option_minimap_right_click"],
+            desc = L["option_minimap_right_click_desc"],
+            type = "select",
+            width = 1.3,
+            values = {
+              NOTHING = L["option_minimap_click_nothing"],
+              OPEN_OPTIONS = L["option_minimap_click_options"],
+              RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
+              RESET_SESSION = L["option_minimap_click_reset_session"]
+            },
+            set = function(info, val) self.db.char.rightClickMinimap = val end,
+            get = function(info) return self.db.char.rightClickMinimap end
           }
         }
       },
       active_sources = {
-        order = 2,
+        order = 3,
         name = L["option_income_sources"],
         desc = L["option_income_sources_desc"],
         type = "group",
@@ -216,14 +245,69 @@ function MyAccountant:SetupOptions()
         type = "group",
         inline = true,
         name = "Income panel",
-        order = 3,
+        order = 2,
         args = {
+          show_grid = {
+            name = L["option_income_panel_grid"],
+            desc = L["option_income_panel_grid_desc"],
+            type = "toggle",
+            set = function(info, val) self.db.char.showLines = val end,
+            get = function(info) return self.db.char.showLines end
+          },
           show_empty_rows = {
             name = L["option_show_all_sources"],
             desc = L["option_show_all_sources_desc"],
             type = "toggle",
             set = function(info, val) self.db.char.hideInactiveSources = val end,
             get = function(info) return self.db.char.hideInactiveSources end
+          },
+          default_sort = {
+            name = L["option_income_panel_default_sort"],
+            desc = L["option_income_panel_default_sort_desc"],
+            type = "select",
+            values = {
+              NOTHING = L["option_income_panel_default_sort_none"],
+              SOURCE_ASC = L["option_income_panel_default_sort_source"],
+              INCOME_DESC = L["option_income_panel_default_sort_income"],
+              OUTCOME_DESC = L["option_income_panel_default_sort_outcome"],
+              NET = L["option_income_panel_default_sort_net"]
+            },
+            set = function(info, val) self.db.char.defaultIncomePanelSort = val end,
+            get = function(info) return self.db.char.defaultIncomePanelSort end
+          }
+        }
+      },
+      clear_data = {
+        type = "group",
+        inline = true,
+        name = "Addon data",
+        order = 4,
+        args = {
+          clear_session_data = {
+            name = L["option_clear_session_data"],
+            desc = L["option_clear_session_data_desc"],
+            type = "execute",
+            width = 1.5,
+            confirm = true,
+            confirmText = L["option_clear_session_data_confirm"],
+            func = function() end
+          },
+          clear_character_data = {
+            name = L["option_clear_character_data"],
+            desc = L["option_clear_character_data_desc"],
+            type = "execute",
+            width = 1.3,
+            confirm = true,
+            confirmText = L["option_clear_character_data_confirm"],
+            func = function() end
+          },
+          clear_all_data = {
+            name = L["option_clear_all_data"],
+            desc = L["option_clear_all_data_desc"],
+            type = "execute",
+            confirm = true,
+            confirmText = L["option_clear_all_data_confirm"],
+            func = function() end
           }
         }
       },
@@ -231,7 +315,7 @@ function MyAccountant:SetupOptions()
         type = "group",
         inline = true,
         name = "Developer options",
-        order = 4,
+        order = 5,
         args = {
           show_debug_messages = {
             name = L["option_debug_messages"],

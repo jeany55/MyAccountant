@@ -25,40 +25,83 @@
           </Anchor>
           <Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" />
         </Anchors>
-        <Layers>
-          <Layer>
-            <FontString name="outcomeHeader" text="Outgoing" inherits="GameTooltipText">
-              <Color a="1" r="1" g="1" b="0" />
-              <Anchors>
-                <Anchor point="RIGHT" relativeTo="legendFrame" relativePoint="RIGHT">
-                  <Offset>
-                    <AbsDimension x="-13" y="0"/>
-                  </Offset>
-                </Anchor>
-              </Anchors>
-            </FontString>
-            <FontString name="sourceHeader" text="Source" inherits="GameTooltipText">
-              <Color a="1" r="1" g="1" b="0" />
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="legendFrame" relativePoint="LEFT">
-                  <Offset>
-                    <AbsDimension x="13" y="0"/>
-                  </Offset>
-                </Anchor>
-              </Anchors>
-            </FontString>
-            <FontString name="incomeHeader" text="Incoming" inherits="GameTooltipText">
-              <Color a="1" r="1" g="1" b="0" />
-              <Anchors>
-                <Anchor point="RIGHT" relativeTo="outcomeHeader" relativePoint="LEFT">
-                  <Offset>
-                    <AbsDimension x="-90" y="0"/>
-                  </Offset>
-                </Anchor>
-              </Anchors>
-            </FontString>
-          </Layer>
-        </Layers>
+        <Frames>
+          <Button name="sourceHeader">
+            <Size x="100" y="15" />
+            <Layers>
+              <Layer>
+                <FontString name="sourceHeaderText" text="Source" inherits="GameTooltipText">
+                  <Color a="1" r="1" g="1" b="0" />
+                </FontString>
+                <Texture name="sourceHeaderIcon" file="Interface\Addons\MyAccountant\Images\upArrow" hidden="true">
+                  <Size>
+                    <AbsDimension x="8" y="8"/>
+                  </Size>
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="sourceHeaderText" relativePoint="RIGHT" x="3" />
+                  </Anchors>
+                </Texture>
+              </Layer>
+            </Layers>
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="legendFrame" relativePoint="LEFT">
+                <Offset>
+                  <AbsDimension x="13" />
+                </Offset>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="incomeHeader">
+            <Size x="65" y="15" />
+            <Layers>
+              <Layer>
+                <FontString name="incomeHeaderText" text="Incoming" inherits="GameTooltipText">
+                  <Color a="1" r="1" g="1" b="0" />
+                </FontString>
+                <Texture name="incomeHeaderIcon" file="Interface\Addons\MyAccountant\Images\upArrow" hidden="true">
+                  <Size>
+                    <AbsDimension x="8" y="8"/>
+                  </Size>
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="incomeHeaderText" relativePoint="RIGHT" x="3" />
+                  </Anchors>
+                </Texture>
+              </Layer>
+            </Layers>
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="sourceHeader" relativePoint="RIGHT">
+                <Offset>
+                  <AbsDimension x="175" y="0"/>
+                </Offset>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="outcomeHeader">
+            <Size x="55" y="15" />
+            <Layers>
+              <Layer>
+                <FontString name="outcomeHeaderText" text="Outgoing" inherits="GameTooltipText">
+                  <Color a="1" r="1" g="1" b="0" />
+                </FontString>
+                <Texture name="outcomeHeaderIcon" file="Interface\Addons\MyAccountant\Images\upArrow" hidden="true">
+                  <Size>
+                    <AbsDimension x="8" y="8"/>
+                  </Size>
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="outcomeHeaderText" relativePoint="RIGHT" x="3" />
+                  </Anchors>
+                </Texture>
+              </Layer>
+            </Layers>
+            <Anchors>
+              <Anchor point="RIGHT" relativeTo="legendFrame" relativePoint="RIGHT">
+                <Offset>
+                  <AbsDimension x="-18" y="0"/>
+                </Offset>
+              </Anchor>
+            </Anchors>
+          </Button>
+        </Frames>
       </Frame>
       <Frame name="infoFrame" parent="IncomeFrame" inherits="InsetFrameTemplate">
         <Layers>

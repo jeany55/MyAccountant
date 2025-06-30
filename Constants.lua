@@ -8,7 +8,11 @@ local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
 private.GameTypes = { CLASSIC_ERA = "CLASSIC_ERA", MISTS_CLASSIC = "MISTS_CLASSIC", RETAIL = "RETAIL" }
 
-private.constants = { MINIMAP_ICON = "Interface\\AddOns\\MyAccountant\\Images\\minimap.tga" }
+private.constants = { 
+  MINIMAP_ICON = "Interface\\AddOns\\MyAccountant\\Images\\minimap.tga",
+  UP_ARROW = "Interface\\Addons\\MyAccountant\\Images\\upArrow.tga",
+  DOWN_ARROW = "Interface\\Addons\\MyAccountant\\Images\\downArrow.tga"
+}
 
 -- All gold source definitions
 private.sources = {
@@ -105,7 +109,11 @@ private.default_settings = {
   showMinimap = true,
   slashBehaviour = "SHOW_OPTIONS",
   showDebugMessages = false,
-  goldPerHour = false,
+  goldPerHour = true,
   hideInactiveSources = false,
-  tooltipStyle = "INCOME_OUTCOME"
+  tooltipStyle = "INCOME_OUTCOME",
+  leftClickMinimap = "NOTHING",
+  rightClickMinimap = "RESET_GOLD_PER_HOUR",
+  defaultIncomePanelSort = "NOTHING",
+  showLines = true,
 }
