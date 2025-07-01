@@ -18,3 +18,4 @@ GUI\Templates.xml
 GUI\IncomeFrame.lua
 GUI\IncomeFrame.xml
 Income.lua
+Events.lua

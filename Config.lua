@@ -195,10 +195,21 @@ function MyAccountant:SetupOptions()
             set = function(info, val) self.db.char.tooltipStyle = val end,
             get = function(info) return self.db.char.tooltipStyle end
           },
+          data_type = {
+            name = L["option_minimap_data_type"],
+            desc = L["option_minimap_data_type_desc"],
+            type = "select",
+            values = {
+              SESSION = L["option_minimap_data_type_session"],
+              TODAY = L["option_minimap_data_type_today"]
+            },
+            set = function (_, val) self.db.char.minimapData = val end,
+            get = function (_) return self.db.char.minimapData end
+          },
           show_gold_per_hour = {
             name = L["option_gold_per_hour"],
             desc = L["option_gold_per_hour_desc"],
-            width = "double",
+            width = "full",
             type = "toggle",
             set = function(info, val) self.db.char.goldPerHour = val end,
             get = function(info) return self.db.char.goldPerHour end
@@ -283,19 +294,36 @@ function MyAccountant:SetupOptions()
         name = "Addon data",
         order = 4,
         args = {
+          clear_gph = {
+            name = L["option_clear_gph"],
+            desc = L["option_clear_gph_desc"],
+            type = "execute",
+            width = 1.5,
+            order = 1,
+            confirm = true,
+            confirmText = L["option_clear_gph_confirm"],
+            func = function()
+              MyAccountant:ResetGoldPerHour()
+            end
+          },
           clear_session_data = {
             name = L["option_clear_session_data"],
             desc = L["option_clear_session_data_desc"],
             type = "execute",
+            order = 2,
             width = 1.5,
             confirm = true,
             confirmText = L["option_clear_session_data_confirm"],
-            func = function() end
+            func = function()
+              MyAccountant:ResetSession()
+              MyAccountant:ResetGoldPerHour()
+            end
           },
           clear_character_data = {
             name = L["option_clear_character_data"],
             desc = L["option_clear_character_data_desc"],
             type = "execute",
+            order = 3,
             width = 1.3,
             confirm = true,
             confirmText = L["option_clear_character_data_confirm"],
@@ -304,6 +332,7 @@ function MyAccountant:SetupOptions()
           clear_all_data = {
             name = L["option_clear_all_data"],
             desc = L["option_clear_all_data_desc"],
+            order = 4,
             type = "execute",
             confirm = true,
             confirmText = L["option_clear_all_data_confirm"],

@@ -24,6 +24,16 @@ function MyAccountant:GetSortedTable(type)
       return source1.title < source2.title
     elseif sortType == "SOURCE_DESC" then
       return source1.title > source2.title
+    elseif sortType == "INCOME_ASC" then
+      return source1.income < source2.income
+    elseif sortType == "INCOME_DESC" then
+      return source1.income > source2.income
+    elseif sortType == "OUTCOME_ASC" then
+      return source1.outcome < source2.outcome
+    elseif sortType == "OUTCOME_DESC" then
+      return source1.outcome > source2.outcome
+    elseif sortType == "NET" then
+      return (source1.income - source1.outcome) > (source2.income - source2.outcome)
     end
   end
 
@@ -293,7 +303,6 @@ function MyAccountant:DrawRows()
     local incoming = "infoFrame" .. i .. "Incoming"
     local outgoing = "infoFrame" .. i .. "Outgoing"
 
-    -- local key = self.db.char.sources[i]
     local currentRow = incomeTable[i + scrollIndex]
 
     if currentRow then

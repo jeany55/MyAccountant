@@ -44,6 +44,16 @@ L["option_minimap_click_options"] = "Open addon options"
 L["option_minimap_click_reset_session"] = "Reset session income/outcome"
 L["option_minimap_click_reset_gold_per_hour"] = "Reset gold per hour"
 
+L["option_minimap_data_type"] = "Show data from"
+L["option_minimap_data_type_desc"] = "What data set to show income information from on the minimap icon"
+
+L["option_minimap_data_type_session"] = "This session"
+L["option_minimap_data_type_today"] = "Today"
+
+L["option_clear_gph"] = "Clear gold per hour information"
+L["option_clear_gph_desc"] = "Clear all gold per hour information, starting over"
+L["option_clear_gph_confirm"] = "This will reset your gold per hour. Are sure you want to do this?"
+
 L["option_clear_session_data"] = "Clear session data for this character"
 L["option_clear_session_data_desc"] = "Delete all income/outcome data for this session. Daily income will remain intact."
 L["option_clear_session_data_confirm"] = "This will clear all data for your session. Are sure you want to do this?"

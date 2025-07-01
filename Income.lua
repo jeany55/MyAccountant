@@ -6,6 +6,10 @@ MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 -- Used for session data and calculating gold per hour
 local totalGoldSession = {}
 
+function MyAccountant:ResetSession()
+  totalGoldSession = {}
+end
+
 -- Called to ensure the year and day exists in DB
 function MyAccountant:checkDatabaseDayConfigured()
   local date = date("*t")
@@ -44,15 +48,11 @@ function MyAccountant:AddIncome(category, amount)
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0, key = category }
+    totalGoldSession[category] = { income = 0, outcome = 0 }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = {
-      income = 0,
-      outcome = 0,
-      key = category
-    }
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
   end
 
   total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].income
@@ -75,7 +75,7 @@ function MyAccountant:AddOutcome(category, amount)
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0, key = category }
+    totalGoldSession[category] = { income = 0, outcome = 0 }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
@@ -155,8 +155,6 @@ function MyAccountant:GetIncomeOutcomeTable(type)
     end
 
     reorderedTable[v].title = private.sources[v].title
-    reorderedTable[v].key = v
-    -- reorderedTable[k] = table[k]
   end
   return reorderedTable
 end

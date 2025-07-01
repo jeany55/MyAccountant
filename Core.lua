@@ -13,32 +13,7 @@ function MyAccountant:OnInitialize()
   MyAccountant:SetupOptions()
   MyAccountant:InitializeUI()
   MyAccountant:checkDatabaseDayConfigured()
-  local amount = 0
-
-  -- Register events
-  for _, v in ipairs(private.events) do
-    local source = v.SOURCE
-    local event = v.EVENT
-    local registerEvent = false
-
-    if source then
-      local versions = private.sources[source].versions
-      registerEvent = private.supportsWoWVersions(versions)
-    else
-      registerEvent = true
-    end
-
-    if registerEvent then
-      amount = amount + 1
-      MyAccountant:RegisterEvent(event, "HandleGameEvent")
-    end
-  end
-
-  MyAccountant:PrintDebugMessage("Registered %d events", amount)
-end
-
-function MyAccountant:HandleGameEvent(event, ...)
-  print ("on game event " .. event)
+  MyAccountant:RegisterAllEvents()
 end
 
 function MyAccountant:OnEnable()
@@ -61,6 +36,10 @@ function MyAccountant:HandleSlashCommand(input)
     MyAccountant:Print(L["help2"])
     MyAccountant:Print(L["help3"])
   end
+end
+
+function MyAccountant:ResetGoldPerHour()
+  ADDON_START_TIME = time()
 end
 
 function MyAccountant:GetMinimapTooltip(tooltip)
