@@ -67,11 +67,11 @@ function MyAccountant:SetupOptions()
   end
 
   local sources_options = {}
-  sources_options.label = { type = "description", order = 0, name = "Inactive sources will be tallied in 'Other'" }
+  sources_options.label = { type = "description", order = 0, name = L["option_income_sources_additional_1"] }
   sources_options.label2 = {
     type = "description",
     order = 1,
-    name = "Some sources may be unavailable in your WoW version"
+    name = L["option_income_sources_additional_2"]
   }
 
   local function handleSetSourceCheck(checked, item)
@@ -135,17 +135,12 @@ function MyAccountant:SetupOptions()
         name = "General",
         order = 0,
         args = {
-          enable = {
-            name = L["option_enable"],
-            desc = L["option_enable_desc"],
-            type = "toggle",
-            set = function(info, val) self.db.char.addonEnabled = val end,
-            get = function(info) return self.db.char.addonEnabled end
-          },
           show_minimap = {
+            order = 1,
             name = L["option_minimap"],
             desc = L["option_minimap_desc"],
             type = "toggle",
+            width = "full",
             set = function(info, val)
               self.db.char.showMinimap = val
               if val == true then
@@ -156,15 +151,21 @@ function MyAccountant:SetupOptions()
             end,
             get = function(info) return self.db.char.showMinimap end
           },
+          hide_zero = {
+            order = 2,
+            name = L["option_hide_zero"],
+            desc = L["option_hide_zero_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.hideZero = val end,
+            get = function(info) return self.db.char.hideZero end
+          },
           slash_behav = {
+            order = 3,
             name = L["option_slash_behav"],
             desc = L["option_slash_behav_desc"],
             type = "select",
-            values = {
-              SHOW_OPTIONS = L["option_slash_behav_chat"],
-              OPEN_WINDOW = L["option_slash_behav_open"],
-              PRINT_REPORT = L["option_slash_behav_report"]
-            },
+            values = { SHOW_OPTIONS = L["option_slash_behav_chat"], OPEN_WINDOW = L["option_slash_behav_open"] },
             set = function(info, val) self.db.char.slashBehaviour = val end,
             get = function(info) return self.db.char.slashBehaviour end
           }
@@ -300,9 +301,7 @@ function MyAccountant:SetupOptions()
             width = 1.5,
             confirm = true,
             confirmText = L["option_clear_session_data_confirm"],
-            func = function()
-              MyAccountant:ResetSession()
-            end
+            func = function() MyAccountant:ResetSession() end
           },
           clear_character_data = {
             name = L["option_clear_character_data"],
@@ -312,9 +311,7 @@ function MyAccountant:SetupOptions()
             width = 1.3,
             confirm = true,
             confirmText = L["option_clear_character_data_confirm"],
-            func = function()
-              self.db.factionrealm[playerName] = {}
-             end
+            func = function() self.db.factionrealm[playerName] = {} end
           },
           clear_all_data = {
             name = L["option_clear_all_data"],
@@ -323,9 +320,7 @@ function MyAccountant:SetupOptions()
             type = "execute",
             confirm = true,
             confirmText = L["option_clear_all_data_confirm"],
-            func = function()
-              self.db.factionrealm = {}
-            end
+            func = function() self.db.factionrealm = {} end
           }
         }
       },

@@ -39,7 +39,11 @@ function MyAccountant:GetSortedTable(type)
   local preppedSortList = {}
   -- Prep table for sort
   for k, _ in pairs(incomeTable) do
-    table.insert(preppedSortList, incomeTable[k])
+    if not self.db.char.hideInactiveSources then
+      table.insert(preppedSortList, incomeTable[k])
+    elseif incomeTable[k].outcome > 0 and incomeTable[k].income > 0 then
+      table.insert(preppedSortList, incomeTable[k])
+    end
   end
 
   if sortType == "NOTHING" then
@@ -113,11 +117,7 @@ function MyAccountant:InitializeUI()
     startingRowHeight = startingRowHeight - 20
   end
 
-  scrollBar:SetBackdrop({
-    bgFile = "Interface/FrameGeneral/UI-Background-Marble",
-    tile = true,
-    tileSize = 200
-  })
+  scrollBar:SetBackdrop({ bgFile = "Interface/FrameGeneral/UI-Background-Marble", tile = true, tileSize = 200 })
   scrollBar:SetFrameLevel(3)
   IncomeFrame:SetFrameLevel(2)
 
@@ -174,14 +174,18 @@ function MyAccountant:InitializeUI()
 
   -- Localization
   sourceHeaderText:SetText(L["source_header"])
+  incomeHeaderText:SetText(L["incoming_header"])
+  outcomeHeaderText:SetText(L["outcoming_header"])
 
+  totalIncomeText:SetText(L["header_total_income"])
+  totalOutcomeText:SetText(L["header_total_outcome"])
+  totalProfitText:SetText(L["header_total_net"])
   -- Tab configuration
   PanelTemplates_SetNumTabs(IncomeFrame, 6)
   PanelTemplates_SetTab(IncomeFrame, 1)
 end
 
 local function updateSortingIcons()
-
   if UserSetSort == "SOURCE_ASC" then
     sourceHeaderIcon:Show()
     incomeHeaderIcon:Hide()
@@ -225,11 +229,11 @@ local function updateSortingIcons()
   end
 end
 
-local function updateFrame(sources, showLines)
+function MyAccountant:updateFrame()
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
 
-  local showScrollbar = #(sources) > 12
+  local showScrollbar = #(self.db.char.sources) > 12
   if showScrollbar then
     scrollBar:Show()
   else
@@ -276,15 +280,32 @@ local function updateFrame(sources, showLines)
   elseif profit < 0 then
     totalProfit:SetTextColor(255, 0, 0)
   else
+    if self.db.char.hideZero then
+      totalProfit:SetText("")
+    end
     totalProfit:SetTextColor(255, 255, 0)
   end
 
-  totalOutcome:SetText(GetMoneyString(outcome, true))
-  totalIncome:SetText(GetMoneyString(income, true))
+  local outcomeText
+  if self.db.char.hideZero and outcome == 0 then
+    outcomeText = ""
+  else
+    outcomeText = GetMoneyString(outcome, true)
+  end
+
+  local incomeText
+  if self.db.char.hideZero and income == 0 then
+    incomeText = ""
+  else
+    incomeText = GetMoneyString(income, true)
+  end
+
+  totalOutcome:SetText(outcomeText)
+  totalIncome:SetText(incomeText)
 
   -- Hide/show grid lines depending on user preference
   for _, v in ipairs(RenderedLines) do
-    if showLines then
+    if self.db.char.showLines then
       v:Show()
     else
       v:Hide()
@@ -343,9 +364,8 @@ end
 function MyAccountant:TabClick(id)
   PanelTemplates_SetTab(IncomeFrame, id);
   ActiveTab = id
-  updateFrame(self.db.char.sources, self.db.char.showLines)
+  MyAccountant:updateFrame()
 end
-
 
 function MyAccountant:ShowPanel()
   if private.panelOpen then
@@ -355,7 +375,7 @@ function MyAccountant:ShowPanel()
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
     UserSetSort = self.db.char.defaultIncomePanelSort
-    updateFrame(self.db.char.sources, self.db.char.showLines)
+    MyAccountant:updateFrame()
     IncomeFrame:Show()
   end
 end

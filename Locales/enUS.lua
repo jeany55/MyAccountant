@@ -9,8 +9,8 @@ L["help3"] = "- /mya options - Open options window"
 
 L["option_general"] = "General"
 
-L["option_enable"] = "Enabled"
-L["option_enable_desc"] = "Enables/disables the addon"
+L["option_hide_zero"] = "Hide header currency if zero"
+L["option_hide_zero_desc"] = "If income/outcome/net currency is zero, hide the money string so it doesn't say 0 copper."
 
 L["option_minimap"] = "Show minimap button"
 L["option_minimap_desc"] = "Shows/hides the minimap button"
@@ -81,14 +81,20 @@ L["option_income_panel_default_sort_net"] = "Net Income"
 L["option_income_sources"] = "Active income sources"
 L["option_income_sources_desc"] = "Which income sources to track. If not tracked it will be grouped under the 'Other' category"
 
+L["option_income_sources_additional_1"] = "Inactive sources will be tallied in 'Other'"
+L["option_income_sources_additional_2"] = "Some sources may be unavailable in your WoW version"
+
 L["option_income_panel_grid"] = "Show grid lines"
 L["option_income_panel_grid_desc"] = "Whether or not to show the grid lines mimicking a spreadsheet"
 
 L["option_income_desc"] = "Toggle this income on/off"
 L["option_income_required"] = "|cffff0000(Required)|r"
 
+L["minimap_gph"] = "Gold made per hour:"
+
 L["minimap_left_click"] = "<Left click to %s>"
 L["minimap_right_click"] = "<Right click to %s>"
+
 L["option_minimap_income_panel"] = "open/close income panel"
 L["option_minimap_options"] = "open options"
 L["option_minimap_reset_gph"] = "reset gold per hour"
@@ -98,6 +104,10 @@ L["reset_gph_confirm"] = "Are you sure you want to reset your gold per hour?"
 L["reset_gph_confirm_yes"] = "Yes"
 L["reset_gph_confirm_no"] = "No"
 
+L["header_total_income"] = "Total income"
+L["header_total_outcome"] = "Total outcome"
+L["header_total_net"] = "Net profit / loss"
+
 L["session"] = "Session"
 L["today"] = "Today"
 L["this_week"] = "This Week"
@@ -106,6 +116,13 @@ L["this_month"] = "This Year"
 L["all_time"] = "All Time"
 
 L["source_header"] = "Source"
+L["incoming_header"] = "Incoming"
+L["outcoming_header"] = "Outgoing"
+
+L["total_incoming"] = "Total incoming:"
+L["total_outgoing"] = "Total outgoing:"
+L["net_gain"] = "Net gain:"
+L["net_loss"] = "Net loss:"
 
 -- Available sources
 L["TRAINING_COSTS"] = "Training Costs"

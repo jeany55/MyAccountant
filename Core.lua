@@ -87,20 +87,46 @@ function MyAccountant:GetMinimapTooltip(tooltip)
   local money = GetMoneyString(GetMoney(), true)
   tooltip:AddLine("MyAccountant - " .. money, 1, 1, 1)
 
+  local data
+  if self.db.char.minimapData == "SESSION" then
+    data = MyAccountant:GetIncomeOutcomeTable("SESSION")
+  elseif self.db.char.minimapData == "TODAY" then
+    data = MyAccountant:GetIncomeOutcomeTable("TODAY")
+  end
+
+  local summary = MyAccountant:SummarizeData(data)
+
   if self.db.char.tooltipStyle == "INCOME_OUTCOME" then
-    tooltip:AddLine("Total incoming: |cff00ff00" .. GetMoneyString(234234, true))
-    tooltip:AddLine("Total outgoing: |cffff0000" .. GetMoneyString(234234, true))
+
+    local incomeString = GetMoneyString(summary.income, true)
+    local outcomeString = GetMoneyString(summary.outcome, true)
+    if self.db.char.hideZero and summary.income == 0 then incomeString = "" end
+    if self.db.char.hideZero and summary.outcome == 0 then outcomeString = "" end
+
+    tooltip:AddLine(L["total_incoming"] .. " |cff00ff00" .. incomeString .. "|r")
+    tooltip:AddLine(L["total_outgoing"] .. " |cffff0000" .. outcomeString .. "|r")
   elseif self.db.char.tooltipStyle == "NET" then
-    tooltip:AddLine("Net gain: |cff00ff00" .. GetMoneyString(23247, true))
+    local net = summary.income - summary.outcome
+    if net > 0 then
+      tooltip:AddLine(L["net_gain"] .. " |cff00ff00" .. GetMoneyString(net, true) .. "|r")
+    elseif net < 0 then
+      tooltip:AddLine(L["net_loss"] .. " |cffff0000" .. GetMoneyString(abs(net), true) .. "|r")
+    else
+      local moneyString = GetMoneyString(net, true)
+      if self.db.char.hideZero then moneyString = "" end
+      tooltip:AddLine(L["net_gain"] .. " |cffffff00" .. moneyString .. "|r")
+    end
   end
 
   if self.db.char.goldPerHour then
     local totalIncome = MyAccountant:GetSessionIncome()
     if totalIncome == 0 then
-      tooltip:AddLine("Gold made per hour: " .. GetMoneyString(0, true))
+      local moneyString = GetMoneyString(0, true)
+      if self.db.char.hideZero then moneyString = "" end
+      tooltip:AddLine(L["minimap_gph"] .. " |cffffffff" .. moneyString .. "|r")
     else
       local goldPerHour = MyAccountant:GetGoldPerHour()
-      tooltip:AddLine("Gold made per hour: " .. GetMoneyString(goldPerHour, true))
+      tooltip:AddLine(L["minimap_gph"] .. " |cffffffff" ..  GetMoneyString(goldPerHour, true) .. "|r")
     end
   end
 

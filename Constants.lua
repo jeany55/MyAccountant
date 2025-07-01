@@ -142,11 +142,11 @@ end
 
 private.default_settings = {
   sources = defaultSources,
-  addonEnabled = true,
   showMinimap = true,
   slashBehaviour = "SHOW_OPTIONS",
   showDebugMessages = false,
   goldPerHour = true,
+  hideZero = true,
   hideInactiveSources = false,
   tooltipStyle = "INCOME_OUTCOME",
   leftClickMinimap = "OPEN_INCOME_PANEL",

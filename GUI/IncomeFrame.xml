@@ -30,7 +30,7 @@
             <Size x="100" y="15" />
             <Layers>
               <Layer>
-                <FontString name="sourceHeaderText" text="Source" inherits="GameTooltipText">
+                <FontString name="sourceHeaderText" inherits="GameTooltipText">
                   <Color a="1" r="1" g="1" b="0" />
                 </FontString>
                 <Texture name="sourceHeaderIcon" file="Interface\Addons\MyAccountant\Images\upArrow" hidden="true">
@@ -55,7 +55,7 @@
             <Size x="65" y="15" />
             <Layers>
               <Layer>
-                <FontString name="incomeHeaderText" text="Incoming" inherits="GameTooltipText">
+                <FontString name="incomeHeaderText" inherits="GameTooltipText">
                   <Color a="1" r="1" g="1" b="0" />
                 </FontString>
                 <Texture name="incomeHeaderIcon" file="Interface\Addons\MyAccountant\Images\upArrow" hidden="true">
@@ -80,7 +80,7 @@
             <Size x="55" y="15" />
             <Layers>
               <Layer>
-                <FontString name="outcomeHeaderText" text="Outgoing" inherits="GameTooltipText">
+                <FontString name="outcomeHeaderText" inherits="GameTooltipText">
                   <Color a="1" r="1" g="1" b="0" />
                 </FontString>
                 <Texture name="outcomeHeaderIcon" file="Interface\Addons\MyAccountant\Images\upArrow" hidden="true">

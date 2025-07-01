@@ -45,6 +45,7 @@ end
 
 function MyAccountant:GetGoldPerHour()
   local totalRunTime = time() - AddonStartTime
+  if totalRunTime == 0 then return 0 end
   -- Use proportion to calculate gold per hour
   local goldMadePerHour = math.floor((3600 * GoldMade) / totalRunTime)
   return goldMadePerHour
@@ -249,6 +250,13 @@ function MyAccountant:GetSessionIncome(category) return sumDay(totalGoldSession,
 -- Gets total session outcome, if no category is passed a total sum will be returned
 function MyAccountant:GetSessionOutcome(category) return sumDay(totalGoldSession, category, "outcome") end
 
+function MyAccountant:IsSourceActive(source)
+  for _, v in ipairs(self.db.char.sources) do
+    if v == source then return true end
+  end
+  return false
+end
+
 function MyAccountant:GetIncomeOutcomeTable(type)
   local table = {}
   local date = date("*t")
@@ -264,16 +272,35 @@ function MyAccountant:GetIncomeOutcomeTable(type)
     table = MyAccountant:GetHistoricalData(type)
   end
 
+  local talliedTable = {}
+  -- Find any data from an inactive source and tally it in Other
+  for k, v in pairs(table) do
+    if not MyAccountant:IsSourceActive(k) then
+      if not talliedTable.OTHER then
+        talliedTable.OTHER = {
+          income = 0,
+          outcome = 0
+        }
+      end
+
+      talliedTable.OTHER.income = talliedTable.OTHER.income + v.income
+      talliedTable.OTHER.outcome = talliedTable.OTHER.outcome + v.outcome
+    else
+      talliedTable[k] = v
+    end
+  end
+
   -- Recreate table to keep original order intact
   local reorderedTable = {}
   for _, v in ipairs(self.db.char.sources) do
-    if (not table[v]) then
+    if (not talliedTable[v]) then
       reorderedTable[v] = { income = 0, outcome = 0 }
     else
-      reorderedTable[v] = table[v]
+      reorderedTable[v] = talliedTable[v]
     end
 
     reorderedTable[v].title = private.sources[v].title
   end
   return reorderedTable
 end
+
