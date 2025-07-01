@@ -10,18 +10,7 @@ local function registerMinimap()
     type = "data source",
     text = private.ADDON_NAME,
     icon = private.constants.MINIMAP_ICON,
-    OnClick = function(self, btn)
-      if btn == "LeftButton" then
-        MyAccountant:ShowPanel()
-        -- MyAddon:ToggleMainFrame()
-        -- elseif btn == "RightButton" then
-        --     if settingsFrame:IsShown() then
-        --         settingsFrame:Hide()
-        --     else
-        --         settingsFrame:Show()
-        --     end
-      end
-    end,
+    OnClick = function(self, btn) MyAccountant:HandleMinimapClick(btn) end,
 
     OnTooltipShow = function(tooltip)
       if not tooltip or not tooltip.AddLine then
@@ -49,7 +38,7 @@ local function hideMinimap()
   libIcon:Hide(private.ADDON_NAME)
 end
 
-private.supportsWoWVersions = function (versions)
+private.supportsWoWVersions = function(versions)
   local currentVersion = private.wowVersion
 
   for _, v in ipairs(versions) do
@@ -199,12 +188,9 @@ function MyAccountant:SetupOptions()
             name = L["option_minimap_data_type"],
             desc = L["option_minimap_data_type_desc"],
             type = "select",
-            values = {
-              SESSION = L["option_minimap_data_type_session"],
-              TODAY = L["option_minimap_data_type_today"]
-            },
-            set = function (_, val) self.db.char.minimapData = val end,
-            get = function (_) return self.db.char.minimapData end
+            values = { SESSION = L["option_minimap_data_type_session"], TODAY = L["option_minimap_data_type_today"] },
+            set = function(_, val) self.db.char.minimapData = val end,
+            get = function(_) return self.db.char.minimapData end
           },
           show_gold_per_hour = {
             name = L["option_gold_per_hour"],
@@ -221,6 +207,7 @@ function MyAccountant:SetupOptions()
             width = 1.3,
             values = {
               NOTHING = L["option_minimap_click_nothing"],
+              OPEN_INCOME_PANEL = L["option_minimap_click_income_panel"],
               OPEN_OPTIONS = L["option_minimap_click_options"],
               RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
               RESET_SESSION = L["option_minimap_click_reset_session"]
@@ -235,6 +222,7 @@ function MyAccountant:SetupOptions()
             width = 1.3,
             values = {
               NOTHING = L["option_minimap_click_nothing"],
+              OPEN_INCOME_PANEL = L["option_minimap_click_income_panel"],
               OPEN_OPTIONS = L["option_minimap_click_options"],
               RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
               RESET_SESSION = L["option_minimap_click_reset_session"]
@@ -301,10 +289,8 @@ function MyAccountant:SetupOptions()
             width = 1.5,
             order = 1,
             confirm = true,
-            confirmText = L["option_clear_gph_confirm"],
-            func = function()
-              MyAccountant:ResetGoldPerHour()
-            end
+            confirmText = L["reset_gph_confirm"],
+            func = function() MyAccountant:ResetGoldPerHour() end
           },
           clear_session_data = {
             name = L["option_clear_session_data"],
@@ -316,7 +302,6 @@ function MyAccountant:SetupOptions()
             confirmText = L["option_clear_session_data_confirm"],
             func = function()
               MyAccountant:ResetSession()
-              MyAccountant:ResetGoldPerHour()
             end
           },
           clear_character_data = {
@@ -327,7 +312,9 @@ function MyAccountant:SetupOptions()
             width = 1.3,
             confirm = true,
             confirmText = L["option_clear_character_data_confirm"],
-            func = function() end
+            func = function()
+              self.db.factionrealm[playerName] = {}
+             end
           },
           clear_all_data = {
             name = L["option_clear_all_data"],
@@ -336,7 +323,9 @@ function MyAccountant:SetupOptions()
             type = "execute",
             confirm = true,
             confirmText = L["option_clear_all_data_confirm"],
-            func = function() end
+            func = function()
+              self.db.factionrealm = {}
+            end
           }
         }
       },

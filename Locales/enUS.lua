@@ -40,6 +40,7 @@ L["option_minimap_right_click"] = "When right clicking"
 L["option_minimap_right_click_desc"] = "What the behaviour should be when right clicking on the minimap icon"
 
 L["option_minimap_click_nothing"] = "Do nothing"
+L["option_minimap_click_income_panel"] = "Open/close income panel"
 L["option_minimap_click_options"] = "Open addon options"
 L["option_minimap_click_reset_session"] = "Reset session income/outcome"
 L["option_minimap_click_reset_gold_per_hour"] = "Reset gold per hour"
@@ -52,7 +53,6 @@ L["option_minimap_data_type_today"] = "Today"
 
 L["option_clear_gph"] = "Clear gold per hour information"
 L["option_clear_gph_desc"] = "Clear all gold per hour information, starting over"
-L["option_clear_gph_confirm"] = "This will reset your gold per hour. Are sure you want to do this?"
 
 L["option_clear_session_data"] = "Clear session data for this character"
 L["option_clear_session_data_desc"] = "Delete all income/outcome data for this session. Daily income will remain intact."
@@ -86,6 +86,17 @@ L["option_income_panel_grid_desc"] = "Whether or not to show the grid lines mimi
 
 L["option_income_desc"] = "Toggle this income on/off"
 L["option_income_required"] = "|cffff0000(Required)|r"
+
+L["minimap_left_click"] = "<Left click to %s>"
+L["minimap_right_click"] = "<Right click to %s>"
+L["option_minimap_income_panel"] = "open/close income panel"
+L["option_minimap_options"] = "open options"
+L["option_minimap_reset_gph"] = "reset gold per hour"
+L["option_minimap_session"] = "reset session"
+
+L["reset_gph_confirm"] = "Are you sure you want to reset your gold per hour?"
+L["reset_gph_confirm_yes"] = "Yes"
+L["reset_gph_confirm_no"] = "No"
 
 L["session"] = "Session"
 L["today"] = "Today"

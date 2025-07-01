@@ -1,12 +1,19 @@
 -- Addon namespace
 local _, private = ...
+local AddonStartTime = time()
+local GoldMade = 0
 
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 -- Used for session data and calculating gold per hour
 local totalGoldSession = {}
 
-function MyAccountant:ResetSession() totalGoldSession = {} end
+function MyAccountant:ResetSession()
+  totalGoldSession = {}
+  GoldMade = 0
+  AddonStartTime = time()
+  MyAccountant:PrintDebugMessage("Reset session")
+end
 
 -- Called to ensure the year and day exists in DB
 function MyAccountant:checkDatabaseDayConfigured()
@@ -36,10 +43,24 @@ function MyAccountant:checkDatabaseDayConfigured()
   end
 end
 
+function MyAccountant:GetGoldPerHour()
+  local totalRunTime = time() - AddonStartTime
+  -- Use proportion to calculate gold per hour
+  local goldMadePerHour = math.floor((3600 * GoldMade) / totalRunTime)
+  return goldMadePerHour
+end
+
+function MyAccountant:ResetGoldPerHour()
+  AddonStartTime = time()
+  GoldMadePerHour = 0
+  MyAccountant:PrintDebugMessage("Reset gold per hour")
+end
+
 -- Main function to add income - added to correct day automatically
 function MyAccountant:AddIncome(category, amount)
   MyAccountant:checkDatabaseDayConfigured()
 
+  GoldMade = GoldMade + amount
   local date = date("*t")
   local playerName = UnitName("player")
 
@@ -133,7 +154,7 @@ end
 function MyAccountant:FetchDataRow(playerName, year, month, day)
   if not self.db.factionrealm[playerName] or not self.db.factionrealm[playerName][year] or
       not self.db.factionrealm[playerName][year][month] or not self.db.factionrealm[playerName][year][month][day] then
-    return { }
+    return {}
   end
 
   return self.db.factionrealm[playerName][year][month][day]
@@ -158,7 +179,7 @@ function MyAccountant:GetHistoricalData(type)
   -- Calculate how many days we're from the start of the week
   local now = date("*t")
   local data = {}
-  
+
   local unixTime = time()
   local offset
   if type == "WEEK" then
@@ -175,10 +196,7 @@ function MyAccountant:GetHistoricalData(type)
 
     for k, v in pairs(currentData) do
       if not data[k] then
-        data[k] = {
-          income = 0,
-          outcome = 0
-        }
+        data[k] = { income = 0, outcome = 0 }
       end
 
       data[k].income = data[k].income + v.income
@@ -201,10 +219,7 @@ function MyAccountant:GetAllTime()
       for _, dayData in pairs(monthData) do
         for category, categoryData in pairs(dayData) do
           if not data[category] then
-            data[category] = {
-              income = 0,
-              outcome = 0
-            }
+            data[category] = { income = 0, outcome = 0 }
           end
 
           data[category].income = data[category].income + categoryData.income
@@ -217,12 +232,8 @@ function MyAccountant:GetAllTime()
   return data
 end
 
-
 function MyAccountant:SummarizeData(data)
-  local summary = {
-    income = 0,
-    outcome = 0
-  }
+  local summary = { income = 0, outcome = 0 }
 
   for k, v in pairs(data) do
     summary.income = summary.income + v.income
@@ -231,8 +242,6 @@ function MyAccountant:SummarizeData(data)
 
   return summary
 end
-
-
 
 -- Gets total session income, if no category is passed a total sum will be returned
 function MyAccountant:GetSessionIncome(category) return sumDay(totalGoldSession, category, "income") end
