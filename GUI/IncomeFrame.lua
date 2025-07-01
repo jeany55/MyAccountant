@@ -3,8 +3,7 @@ local _, private = ...
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 ActiveTab = 1
-
-Tabs = { "SESSION", "blah blah" }
+Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME" }
 
 -- Hold grid lines to show/hide if user doesn't want to see them
 RenderedLines = {}
@@ -116,9 +115,6 @@ function MyAccountant:InitializeUI()
 
   scrollBar:SetBackdrop({
     bgFile = "Interface/FrameGeneral/UI-Background-Marble",
-    -- edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-    -- edgeSize = 16,
-    -- insets = { left = 0, right = 0, top = 4, bottom = 2 },
     tile = true,
     tileSize = 200
   })
@@ -182,12 +178,6 @@ function MyAccountant:InitializeUI()
   -- Tab configuration
   PanelTemplates_SetNumTabs(IncomeFrame, 6)
   PanelTemplates_SetTab(IncomeFrame, 1)
-end
-
-function MyAccountant:TabClick(id)
-  PanelTemplates_SetTab(IncomeFrame, id);
-  ActiveTab = id
-  updateFrame(self.db.char.sources)
 end
 
 local function updateSortingIcons()
@@ -256,8 +246,25 @@ local function updateFrame(sources, showLines)
   end
 
   -- Update header labels
-  local income = MyAccountant:GetSessionIncome()
-  local outcome = MyAccountant:GetSessionOutcome()
+  local view = Tabs[ActiveTab]
+  local income = 0
+  local outcome = 0
+
+  if view == "SESSION" then
+    income = MyAccountant:GetSessionIncome()
+    outcome = MyAccountant:GetSessionOutcome()
+  elseif view == "TODAY" then
+    income = MyAccountant:GetTodaysIncome()
+    outcome = MyAccountant:GetTodaysOutcome()
+  elseif view == "ALL_TIME" then
+    local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime())
+    income = summary.income
+    outcome = summary.outcome
+  else
+    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(view))
+    income = summary.income
+    outcome = summary.outcome
+  end
 
   local profit = income - outcome
 
@@ -272,8 +279,8 @@ local function updateFrame(sources, showLines)
     totalProfit:SetTextColor(255, 255, 0)
   end
 
-  totalOutcome:SetText(GetMoneyString(income, true))
-  totalIncome:SetText(GetMoneyString(outcome, true))
+  totalOutcome:SetText(GetMoneyString(outcome, true))
+  totalIncome:SetText(GetMoneyString(income, true))
 
   -- Hide/show grid lines depending on user preference
   for _, v in ipairs(RenderedLines) do
@@ -290,11 +297,10 @@ end
 function MyAccountant:DrawRows()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-  -- MyAccountant:PrintDebugMessage("Redrawing rows on income panel..")
-
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
-  local incomeTable = MyAccountant:GetSortedTable("SESSION")
+  local tableType = Tabs[ActiveTab]
+  local incomeTable = MyAccountant:GetSortedTable(tableType)
 
   updateSortingIcons()
 
@@ -334,12 +340,18 @@ function MyAccountant:DrawRows()
   end
 end
 
+function MyAccountant:TabClick(id)
+  PanelTemplates_SetTab(IncomeFrame, id);
+  ActiveTab = id
+  updateFrame(self.db.char.sources, self.db.char.showLines)
+end
+
+
 function MyAccountant:ShowPanel()
   if private.panelOpen then
     MyAccountant:PrintDebugMessage("Hiding income panel")
     IncomeFrame:Hide()
   else
-    -- MyAccountant:AddIncome("OTHER", 75)
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
     UserSetSort = self.db.char.defaultIncomePanelSort
