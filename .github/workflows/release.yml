@@ -26,7 +26,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-        with: ${{ secrets.ACCESS_TOKEN_GIT }}
+        with:
+          token: ${{ secrets.ACCESS_TOKEN_GIT }}
 
       # Runs a single command using the runners shell
       - name: Update version
