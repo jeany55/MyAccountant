@@ -37,13 +37,15 @@ jobs:
           MAJOR_VERSION=${arrIN[0]}
           MINOR_VERSION=${arrIN[1]}
           PATCH_VERSION=${arrIN[2]}
+          VERSION_TYPE="${{ inputs.versionType }}"
           
-          if [[ ${{ inputs.tags }} -eq "patch" ]]; then
+          if [[ $VERSION_TYPE == "patch" ]]; then
             PATCH_VERSION=$PATCH_VERSION+1
-          elif [[ ${{ inputs.tags }} -eq "minor" ]]; then
+          elif [[ $VERSION_TYPE == "minor" ]]; then
             MINOR_VERSION=$MINOR_VERSION+1
-          elif [[ ${{ inputs.tags }} -eq "major" ]]; then
+          elif [[ $VERSION_TYPE == "major" ]]; then
             MAJOR_VERSION=$MAJOR_VERSION+1
           fi
           
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
+          echo $newVersion
