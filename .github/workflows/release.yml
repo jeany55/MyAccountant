@@ -87,6 +87,6 @@ jobs:
       - name: Make release
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: "MyAccountant-$VERSION.zip"
+          artifacts: MyAccountant-${{VERSION}}.zip
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v$VERSION"
