@@ -70,17 +70,16 @@ jobs:
           git push
 
       - name: Generate zip
-        with:
-          run : |
-            echo "Making zip for version $VERSION"
-            rm -rf ./.git
-            rm -rf ./.github
-            rm .gitignore
-            rm .lua-style
-            rm LICENSE.md
-            rm README.md
+        run : |
+          echo "Making zip for version $VERSION"
+          rm -rf ./.git
+          rm -rf ./.github
+          rm .gitignore
+          rm .lua-style
+          rm LICENSE.md
+          rm README.md
 
-            zip -r "MyAccountant-$Version.zip" ./ 
+          zip -r "MyAccountant-$Version.zip" ./ 
 
 
 
