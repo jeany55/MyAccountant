@@ -15,6 +15,9 @@ L["option_hide_zero_desc"] = "If income/outcome/net currency is zero, hide the m
 L["option_minimap"] = "Show minimap button"
 L["option_minimap_desc"] = "Shows/hides the minimap button"
 
+L["option_color_income"] = "Colour code income/outcome on income panel"
+L["option_color_income_desc"] = "Whether to color code the income and outcome in the income panel (for each source)"
+
 L["option_slash_behav"] = "When entering /mya"
 L["option_slash_behav_desc"] = "Specify the behaviour when entering /mya in chat"
 

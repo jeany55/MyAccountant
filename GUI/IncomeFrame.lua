@@ -332,10 +332,17 @@ function MyAccountant:DrawRows()
         outcomeText = GetMoneyString(outcome, true)
       end
 
+      if self.db.char.colorGoldInIncomePanel then
+        _G[incoming]:SetTextColor(0, 1, 0, 1)
+        _G[outgoing]:SetTextColor(1, 0, 0, 1)
+      else
+        _G[incoming]:SetTextColor(0.8, 0.8, 0.8, 1)
+        _G[outgoing]:SetTextColor(0.8, 0.8, 0.8, 1)
+      end
+
       _G[incoming]:SetText(incomeText)
-      _G[incoming]:SetTextColor(0.8, 0.8, 0.8, 1)
       _G[outgoing]:SetText(outcomeText)
-      _G[outgoing]:SetTextColor(0.8, 0.8, 0.8, 1)
+
     else
       _G[title]:SetText("")
       _G[incoming]:SetText("")

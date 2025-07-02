@@ -153,5 +153,6 @@ private.default_settings = {
   rightClickMinimap = "RESET_GOLD_PER_HOUR",
   minimapData = "SESSION",
   defaultIncomePanelSort = "NOTHING",
+  colorGoldInIncomePanel = false,
   showLines = true
 }

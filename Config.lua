@@ -68,11 +68,7 @@ function MyAccountant:SetupOptions()
 
   local sources_options = {}
   sources_options.label = { type = "description", order = 0, name = L["option_income_sources_additional_1"] }
-  sources_options.label2 = {
-    type = "description",
-    order = 1,
-    name = L["option_income_sources_additional_2"]
-  }
+  sources_options.label2 = { type = "description", order = 1, name = L["option_income_sources_additional_2"] }
 
   local function handleSetSourceCheck(checked, item)
     -- If setting, just append onto the array
@@ -160,8 +156,17 @@ function MyAccountant:SetupOptions()
             set = function(info, val) self.db.char.hideZero = val end,
             get = function(info) return self.db.char.hideZero end
           },
-          slash_behav = {
+          show_income_colors = {
             order = 3,
+            name = L["option_color_income"],
+            desc = L["option_color_income_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.colorGoldInIncomePanel = val end,
+            get = function(info) return self.db.char.colorGoldInIncomePanel end
+          },
+          slash_behav = {
+            order = 4,
             name = L["option_slash_behav"],
             desc = L["option_slash_behav_desc"],
             type = "select",
