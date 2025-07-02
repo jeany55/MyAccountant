@@ -52,3 +52,12 @@ jobs:
           
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
           echo $newVersion
+
+      - name: Commit new version
+        run: |
+          VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
+
+          git add MyAccountant.toc
+          git commit -m "Update to version $VERSION"
+          git push
+
