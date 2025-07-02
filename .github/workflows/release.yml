@@ -55,7 +55,7 @@ jobs:
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
 
-      - name: Release new version
+      - name: Commit and tag version
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN_GIT }}
         run: |
@@ -66,5 +66,10 @@ jobs:
 
           git add MyAccountant.toc
           git commit -m "Update to version $VERSION"
+          git tag -a "v$VERSION" -m "Release version v$VERSION"
           git push
+
+
+
+      
 
