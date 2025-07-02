@@ -1,4 +1,4 @@
-## Interface: 40402
+## Interface: 50500
 ## Title: MyAccountant
 ## Notes: Track your gold income/outcome
 ## Author: Jeany
