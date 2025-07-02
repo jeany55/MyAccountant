@@ -55,33 +55,32 @@ jobs:
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
 
-      - name: Commit and tag version
+      - name: Commit
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN_GIT }}
         run: |
           VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
           git config user.email "bex5959@gmail.com"
           git config user.name "Service account"
 
           git add MyAccountant.toc
           git commit -m "Update to version $VERSION"
-          git tag -a "v$VERSION" -m "Release version v$VERSION"
           git push
-          git push origin tag "v$VERSION"
 
-      - name: Build release
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN_GIT }}
-        run: |
-          VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
-          rm .gitignore
-          rm .lua-style
-          rm README.md
-          rm LICENSE.md
-          rm -rf ./github/
+      - name: Generate zip
+        with:
+          run : |
+            echo "Making zip for version $VERSION"
+            rm -rf ./.git
+            rm -rf ./.github
+            rm .gitignore
+            rm .lua-style
+            rm LICENSE.md
+            rm README.md
 
-          zip -r "MyAccountant-$VERSION.zip" .
+            zip -r "MyAccountant-$Version.zip" ./ 
 
 
 
