@@ -19,26 +19,22 @@ function MyAccountant:OnInitialize()
     text = L["reset_gph_confirm"],
     button1 = L["reset_gph_confirm_yes"],
     button2 = L["reset_gph_confirm_no"],
-    OnAccept = function()
-        MyAccountant:ResetGoldPerHour()
-    end,
+    OnAccept = function() MyAccountant:ResetGoldPerHour() end,
     timeout = 0,
     whileDead = true,
     hideOnEscape = true,
-    preferredIndex = 3,
-}
+    preferredIndex = 3
+  }
   StaticPopupDialogs["MYACCOUNTANT_RESET_SESSION"] = {
     text = L["option_clear_session_data_confirm"],
     button1 = L["reset_gph_confirm_yes"],
     button2 = L["reset_gph_confirm_no"],
-    OnAccept = function()
-        MyAccountant:ResetSession()
-    end,
+    OnAccept = function() MyAccountant:ResetSession() end,
     timeout = 0,
     whileDead = true,
     hideOnEscape = true,
-    preferredIndex = 3,
-}
+    preferredIndex = 3
+  }
 end
 
 function MyAccountant:OnEnable()
@@ -83,6 +79,15 @@ function MyAccountant:HandleMinimapClick(button)
   end
 end
 
+-- Takes into account if the user doesn't want to see zeros - if so return empty string
+function MyAccountant:GetHeaderMoneyString(money)
+  if (self.db.char.hideZero and money == 0) then
+    return ""
+  else
+    return GetMoneyString(money, true)
+  end
+end
+
 function MyAccountant:GetMinimapTooltip(tooltip)
   local money = GetMoneyString(GetMoney(), true)
   tooltip:AddLine("MyAccountant - " .. money, 1, 1, 1)
@@ -97,11 +102,8 @@ function MyAccountant:GetMinimapTooltip(tooltip)
   local summary = MyAccountant:SummarizeData(data)
 
   if self.db.char.tooltipStyle == "INCOME_OUTCOME" then
-
-    local incomeString = GetMoneyString(summary.income, true)
-    local outcomeString = GetMoneyString(summary.outcome, true)
-    if self.db.char.hideZero and summary.income == 0 then incomeString = "" end
-    if self.db.char.hideZero and summary.outcome == 0 then outcomeString = "" end
+    local incomeString = MyAccountant:GetHeaderMoneyString(summary.income)
+    local outcomeString = MyAccountant:GetHeaderMoneyString(summary.outcome)
 
     tooltip:AddLine(L["total_incoming"] .. " |cff00ff00" .. incomeString .. "|r")
     tooltip:AddLine(L["total_outgoing"] .. " |cffff0000" .. outcomeString .. "|r")
@@ -112,22 +114,21 @@ function MyAccountant:GetMinimapTooltip(tooltip)
     elseif net < 0 then
       tooltip:AddLine(L["net_loss"] .. " |cffff0000" .. GetMoneyString(abs(net), true) .. "|r")
     else
-      local moneyString = GetMoneyString(net, true)
-      if self.db.char.hideZero then moneyString = "" end
+      local moneyString = MyAccountant:GetHeaderMoneyString(net)
       tooltip:AddLine(L["net_gain"] .. " |cffffff00" .. moneyString .. "|r")
     end
   end
 
   if self.db.char.goldPerHour then
     local totalIncome = MyAccountant:GetSessionIncome()
+    local goldPerHour
     if totalIncome == 0 then
-      local moneyString = GetMoneyString(0, true)
-      if self.db.char.hideZero then moneyString = "" end
-      tooltip:AddLine(L["minimap_gph"] .. " |cffffffff" .. moneyString .. "|r")
+      goldPerHour = 0
     else
-      local goldPerHour = MyAccountant:GetGoldPerHour()
-      tooltip:AddLine(L["minimap_gph"] .. " |cffffffff" ..  GetMoneyString(goldPerHour, true) .. "|r")
+      goldPerHour = MyAccountant:GetGoldPerHour()
     end
+
+    tooltip:AddLine(L["minimap_gph"] .. " |cffffffff" .. MyAccountant:GetHeaderMoneyString(goldPerHour) .. "|r")
   end
 
   local detailString

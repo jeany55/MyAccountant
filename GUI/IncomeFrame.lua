@@ -273,35 +273,18 @@ function MyAccountant:updateFrame()
   local profit = income - outcome
 
   local displayProfit = abs(profit)
-  totalProfit:SetText(GetMoneyString(displayProfit, true))
+  totalProfit:SetText(MyAccountant:GetHeaderMoneyString(displayProfit))
 
   if (profit > 0) then
     totalProfit:SetTextColor(0, 255, 0)
   elseif profit < 0 then
     totalProfit:SetTextColor(255, 0, 0)
   else
-    if self.db.char.hideZero then
-      totalProfit:SetText("")
-    end
     totalProfit:SetTextColor(255, 255, 0)
   end
 
-  local outcomeText
-  if self.db.char.hideZero and outcome == 0 then
-    outcomeText = ""
-  else
-    outcomeText = GetMoneyString(outcome, true)
-  end
-
-  local incomeText
-  if self.db.char.hideZero and income == 0 then
-    incomeText = ""
-  else
-    incomeText = GetMoneyString(income, true)
-  end
-
-  totalOutcome:SetText(outcomeText)
-  totalIncome:SetText(incomeText)
+  totalOutcome:SetText(MyAccountant:GetHeaderMoneyString(outcome))
+  totalIncome:SetText(MyAccountant:GetHeaderMoneyString(income))
 
   -- Hide/show grid lines depending on user preference
   for _, v in ipairs(RenderedLines) do
