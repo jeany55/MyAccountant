@@ -70,6 +70,7 @@ function MyAccountant:SetupOptions()
   sources_options.label = { type = "description", order = 0, name = L["option_income_sources_additional_1"] }
   sources_options.label2 = { type = "description", order = 1, name = L["option_income_sources_additional_2"] }
 
+  -- Handler for checking/getting check box status for active sources
   local function handleSetSourceCheck(checked, item)
     -- If setting, just append onto the array
     if checked == true then
@@ -94,6 +95,7 @@ function MyAccountant:SetupOptions()
     return false
   end
 
+  -- Generate all source checkboxes
   for k, v in pairs(private.sources) do
     local versions = v.versions
     local disabled = false
@@ -120,7 +122,7 @@ function MyAccountant:SetupOptions()
     }
   end
 
-  -- Ace3 Options table
+  -- Ace3 Options table for showing up in WoW addon options
   local options = {
     type = "group",
     name = "MyAccountant",

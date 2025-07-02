@@ -88,7 +88,7 @@ local events = {
   { EVENT = "TAXIMAP_CLOSED", SOURCE = "TAXI_FARES" }, -- Do not reset
   -- Talents
   { EVENT = "CONFIRM_TALENT_WIPE", SOURCE = "TALENTS" },
-  -- Lfg
+  -- LFG
   { EVENT = "LFG_COMPLETION_REWARD", SOURCE = "LFG" },
   -- Guild
   { EVENT = "GUILDBANKFRAME_OPENED", SOURCE = "GUILD" },
@@ -130,7 +130,6 @@ end
 
 -- Event handler for WoW events.
 function MyAccountant:HandleGameEvent(event, ...)
-
   -- Pulls event info from the events object defined above
   local eventInfo = findEvent(event)
   -- Definition not found in constants, should be impossible

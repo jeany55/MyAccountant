@@ -117,28 +117,31 @@ local DEFAULT_SOURCES_CLASSIC_ERA = {
 }
 
 -- Determine WoW version to set default and available sources
-local wowVersion = select(4, GetBuildInfo())
+local buildVersion = select(4, GetBuildInfo())
 local defaultSources
+local wowVersion
 
-if wowVersion < 20000 then
+if buildVersion < 20000 then
   defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
-  private.wowVersion = private.GameTypes.CLASSIC_ERA
-elseif wowVersion < 30000 then
+  wowVersion = private.GameTypes.CLASSIC_ERA
+elseif buildVersion < 30000 then
   defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
-  private.wowVersion = private.GameTypes.CLASSIC_ERA
-elseif wowVersion < 40000 then
+  wowVersion = private.GameTypes.CLASSIC_ERA
+elseif buildVersion < 40000 then
   defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
-  private.wowVersion = private.GameTypes.CLASSIC_ERA
-elseif wowVersion < 50000 then
+  wowVersion = private.GameTypes.CLASSIC_ERA
+elseif buildVersion < 50000 then
   defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
-  private.wowVersion = private.GameTypes.MISTS_CLASSIC
-elseif wowVersion < 60000 then
+  wowVersion = private.GameTypes.MISTS_CLASSIC
+elseif buildVersion < 60000 then
   defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
-  private.wowVersion = private.GameTypes.MISTS_CLASSIC
-elseif wowVersion > 90000 then
+  wowVersion = private.GameTypes.MISTS_CLASSIC
+elseif buildVersion > 90000 then
   defaultSources = DEFAULT_SOURCES_RETAIL
-  private.wowVersion = private.GameTypes.RETAIL
+  wowVersion = private.GameTypes.RETAIL
 end
+
+private.wowVersion = wowVersion
 
 private.default_settings = {
   sources = defaultSources,

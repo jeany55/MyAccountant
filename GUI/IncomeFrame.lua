@@ -2,6 +2,7 @@ local _, private = ...
 
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
+-- Tab data for bottom of panel
 ActiveTab = 1
 Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME" }
 
@@ -11,9 +12,7 @@ RenderedLines = {}
 -- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
 UserSetSort = nil
 
-function MyAccountant:IncomePanelScrollBarUpdate() end
-
--- Returns a List
+-- Returns a sorted List
 function MyAccountant:GetSortedTable(type)
   local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
   local incomeTable = MyAccountant:GetIncomeOutcomeTable(type)
@@ -89,7 +88,7 @@ function MyAccountant:InitializeUI()
   })
   legendFrame:SetBackdropColor(0.8, 1, 1, 1)
 
-  -- Setup columns
+  -- Setup column 1
   local column1 = legendFrame:CreateLine()
   column1:SetThickness(1)
   column1:SetStartPoint("BOTTOMRIGHT", "sourceHeader", 70, 15)
@@ -97,7 +96,7 @@ function MyAccountant:InitializeUI()
   column1:SetColorTexture(1, 1, 1, 0.1)
   table.insert(RenderedLines, column1)
 
-  -- Setup columns
+  -- Setup column 2
   local column2 = legendFrame:CreateLine()
   column2:SetThickness(1)
   column2:SetStartPoint("TOPRIGHT", "incomeHeader", 5, 1)
@@ -121,7 +120,7 @@ function MyAccountant:InitializeUI()
   scrollBar:SetFrameLevel(3)
   IncomeFrame:SetFrameLevel(2)
 
-  local ScrollBarUpdateFunction = function()
+  local scrollBarUpdateFunction = function()
     local sources = self.db.char.sources
 
     if (#sources > 12) then
@@ -133,9 +132,9 @@ function MyAccountant:InitializeUI()
 
   -- Setup scrollbar
   scrollFrame:SetScript("OnVerticalScroll", function(self, offset)
-    FauxScrollFrame_OnVerticalScroll(self, offset, 20, ScrollBarUpdateFunction)
+    FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction)
   end)
-  scrollFrame:SetScript("OnShow", function(_) ScrollBarUpdateFunction() end)
+  scrollFrame:SetScript("OnShow", function(_) scrollBarUpdateFunction() end)
 
   -- Close on ESC
   table.insert(UISpecialFrames, IncomeFrame:GetName())
@@ -180,6 +179,7 @@ function MyAccountant:InitializeUI()
   totalIncomeText:SetText(L["header_total_income"])
   totalOutcomeText:SetText(L["header_total_outcome"])
   totalProfitText:SetText(L["header_total_net"])
+
   -- Tab configuration
   PanelTemplates_SetNumTabs(IncomeFrame, 6)
   PanelTemplates_SetTab(IncomeFrame, 1)
@@ -241,7 +241,7 @@ function MyAccountant:updateFrame()
     scrollBar:Hide()
   end
 
-  -- Update right hand spacing to adjust for scrollbar
+  -- Update right hand spacing to adjust for scrollbar if needed
   for i = 1, 12 do
     local item = _G["infoFrame" .. i .. "Outgoing"]
     local offset = showScrollbar and -15 or 0
@@ -272,8 +272,7 @@ function MyAccountant:updateFrame()
 
   local profit = income - outcome
 
-  local displayProfit = abs(profit)
-  totalProfit:SetText(MyAccountant:GetHeaderMoneyString(displayProfit))
+  totalProfit:SetText(MyAccountant:GetHeaderMoneyString(abs(profit)))
 
   if (profit > 0) then
     totalProfit:SetTextColor(0, 255, 0)
@@ -299,8 +298,6 @@ function MyAccountant:updateFrame()
 end
 
 function MyAccountant:DrawRows()
-  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
-
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
   local tableType = Tabs[ActiveTab]
