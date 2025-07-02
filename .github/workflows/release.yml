@@ -40,14 +40,14 @@ jobs:
           VERSION_TYPE="${{ inputs.versionType }}"
           
           if [[ $VERSION_TYPE == "patch" ]]; then
-            PATCH_VERSION=${{ PATCH_VERSION + 1 }}
+            PATCH_VERSION=$(( PATCH_VERSION + 1 ))
           elif [[ $VERSION_TYPE == "minor" ]]; then
             PATCH_VERSION=0
-            MINOR_VERSION=${{ MINOR_VERSION + 1 }}
+            MINOR_VERSION=$(( MINOR_VERSION + 1 ))
           elif [[ $VERSION_TYPE == "major" ]]; then
             PATCH_VERSION=0
             MINOR_VERSION=0
-            MAJOR_VERSION=${{ MAJOR_VERSION + 1 }}
+            MAJOR_VERSION=$(( MAJOR_VERSION + 1 ))
           fi
           
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
