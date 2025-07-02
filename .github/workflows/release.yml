@@ -57,6 +57,9 @@ jobs:
         run: |
           VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
 
+          git config user.email "bex5959@gmail.com"
+          git config user.name "Service account"
+
           git add MyAccountant.toc
           git commit -m "Update to version $VERSION"
           git push
