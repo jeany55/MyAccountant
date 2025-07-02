@@ -51,7 +51,7 @@ jobs:
           fi
           
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
-          echo $newVersion
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
 
       - name: Commit new version
         run: |
