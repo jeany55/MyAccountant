@@ -1,0 +1,8 @@
+ignore:
+  - .git
+  - .github
+  - LICENSE
+  - README.md
+  - .gitignore
+  - .lua-style
+
