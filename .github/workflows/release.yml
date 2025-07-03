@@ -54,6 +54,10 @@ jobs:
           
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Mists.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Vanilla.toc
+
+          
 
       - name: Commit and tag
         env:
@@ -66,6 +70,8 @@ jobs:
           git config user.name "Service account"
 
           git add MyAccountant.toc
+          git add MyAccountant-Mists.toc
+          git add MyAccountant-Vanilla.toc
           git commit -m "Update to version $VERSION"
           git push
 
@@ -79,7 +85,7 @@ jobs:
           rm -rf ./.github
           rm .gitignore
           rm .lua-style
-          rm LICENSE.md
+          rm LICENSE
           rm README.md
 
           zip -r "MyAccountant-$VERSION.zip" ./ 
@@ -90,3 +96,11 @@ jobs:
           artifacts: MyAccountant-${{ env.VERSION }}.zip
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
+
+      # - name: Upload to CurseForge
+      #   uses: itsmeow/curseforge-upload@v3
+      #   with:
+      #     token: ${{ secrets.CURSE_TOKEN }}
+      #     game_endpoint: "wow"
+      #     file_path: "MyAccountant-${{ env.VERSION }}.zip"
+

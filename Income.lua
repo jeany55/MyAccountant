@@ -101,8 +101,7 @@ function MyAccountant:AddOutcome(category, amount)
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
     self.db.factionrealm[playerName][date.year][date.month][date.day][category] = {
       income = 0,
-      outcome = 0,
-      key = category
+      outcome = 0
     }
   end
 

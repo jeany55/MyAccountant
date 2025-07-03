@@ -1,0 +1,21 @@
+## Interface: 50500
+## Title: MyAccountant
+## Notes: Track your gold income/outcome
+## Author: Jeany
+## Version: 0.0.0
+## RequiredDeps:
+## X-Curse-Project-ID: 999999
+## SavedVariables: MyAccountantDB
+## SavedVariablesPerCharacter:
+
+embeds.xml
+
+Locales\Locales.xml
+Constants.lua
+Core.lua
+Config.lua
+GUI\Templates.xml
+GUI\IncomeFrame.lua
+GUI\IncomeFrame.xml
+Income.lua
+Events.lua
