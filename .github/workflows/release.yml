@@ -14,6 +14,10 @@ on:
           - patch
           - minor
           - major
+      deployToCurse:
+        description: "Whether or not to automatically deploy to Curse"
+        default: true
+        type: boolean
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -103,6 +107,7 @@ jobs:
           tag: "v${{ env.VERSION }}"
       
       - name: Upload to CurseForge
+        if: {{ inputs.deployToCurse == true }
         uses: itsmeow/curseforge-upload@v3
         with:
           file_path: MyAccountant-${{ env.VERSION }}.zip
