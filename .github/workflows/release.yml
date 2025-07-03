@@ -71,7 +71,7 @@ jobs:
 
           git add MyAccountant.toc
           git add MyAccountant-Mists.toc
-          git add MyAccountant-Vanilla.toc
+          git add MyAccountant-Vanilla.tocz
           git commit -m "Update to version $VERSION"
           git push
 
@@ -97,10 +97,11 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
 
-      # - name: Upload to CurseForge
-      #   uses: itsmeow/curseforge-upload@v3
-      #   with:
-      #     token: ${{ secrets.CURSE_TOKEN }}
-      #     game_endpoint: "wow"
-      #     file_path: "MyAccountant-${{ env.VERSION }}.zip"
+      - name: Upload to CurseForge
+        uses: itsmeow/curseforge-upload@v3
+        with:
+          token: ${{ secrets.CURSE_TOKEN }}
+          game_endpoint: "wow"
+          project_id: "1299016"
+          file_path: "MyAccountant-${{ env.VERSION }}.zip"
 
