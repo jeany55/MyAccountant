@@ -96,12 +96,3 @@ jobs:
           artifacts: MyAccountant-${{ env.VERSION }}.zip
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
-
-      - name: Upload to CurseForge
-        uses: itsmeow/curseforge-upload@v3
-        with:
-          token: ${{ secrets.CURSE_TOKEN }}
-          game_endpoint: "wow"
-          project_id: "1299016"
-          file_path: "MyAccountant-${{ env.VERSION }}.zip"
-
