@@ -1,8 +1,8 @@
-## Interface: 1.0.17
+## Interface: 110107
 ## Title: MyAccountant
 ## Notes: Track your gold income/outcome
 ## Author: Jeany
-## Version: 1.0.1
+## Version: 1.0.0
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1299016
 ## SavedVariables: MyAccountantDB

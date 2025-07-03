@@ -51,8 +51,9 @@ jobs:
             MINOR_VERSION=0
             MAJOR_VERSION=$(( MAJOR_VERSION + 1 ))
           fi
-          
+
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
+          
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-BCC.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Cata.toc
@@ -60,13 +61,12 @@ jobs:
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Mists.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-WOTLK.toc
 
+          echo "VERSION=$newVersion" >> $GITHUB_ENV
+
       - name: Commit and tag
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN_GIT }}
         run: |
-          VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
           git config user.email "bex5959@gmail.com"
           git config user.name "Service account"
 
