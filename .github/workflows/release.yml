@@ -71,7 +71,7 @@ jobs:
 
           git add MyAccountant.toc
           git add MyAccountant-Mists.toc
-          git add MyAccountant-Vanilla.tocz
+          git add MyAccountant-Vanilla.toc
           git commit -m "Update to version $VERSION"
           git push
 
