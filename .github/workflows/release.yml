@@ -107,7 +107,7 @@ jobs:
           tag: "v${{ env.VERSION }}"
       
       - name: Upload to CurseForge
-        if: {{ inputs.deployToCurse == true }
+        if: ${{ inputs.deployToCurse == true }}
         uses: itsmeow/curseforge-upload@v3
         with:
           file_path: MyAccountant-${{ env.VERSION }}.zip
