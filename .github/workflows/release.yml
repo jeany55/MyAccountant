@@ -15,7 +15,7 @@ on:
           - minor
           - major
       deployToCurse:
-        description: "Whether or not to automatically deploy to Curse"
+        description: "Deploy to Curse"
         default: true
         type: boolean
 
