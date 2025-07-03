@@ -84,7 +84,7 @@ jobs:
 
           zip -r "MyAccountant-$VERSION.zip" ./ 
       
-      - name: Make release
+      - name: Create release
         uses: ncipollo/release-action@v1.12.0
         with:
           artifacts: MyAccountant-${{ env.VERSION }}.zip
