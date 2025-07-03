@@ -14,6 +14,9 @@ on:
           - patch
           - minor
           - major
+      changeNotes:
+        description: Change notes to attach to curse release
+        default: ""
       deployToCurse:
         description: "Deploy to Curse"
         default: true
@@ -90,6 +93,7 @@ jobs:
       - name: Generate zip
         run : |
           echo "Making zip for version $VERSION"
+
           rm -rf ./.git
           rm -rf ./.github
           rm .gitignore
@@ -97,12 +101,15 @@ jobs:
           rm LICENSE
           rm README.md
 
-          zip -r "MyAccountant.zip" ./ 
+          mkdir MyAccountant
+          mv * MyAccountant 
+
+          zip -r "MyAccountant-${VERSION}.zip" ./ 
       
       - name: Create release
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: MyAccountant.zip
+          artifacts: MyAccountant-${{ env.VERSION }}.zip
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
       
@@ -110,8 +117,9 @@ jobs:
         if: ${{ inputs.deployToCurse == true }}
         uses: itsmeow/curseforge-upload@v3
         with:
-          file_path: MyAccountant.zip
+          file_path: MyAccountant-${{ env.VERSION }}.zip
           game_endpoint: "wow"
+          changelog: ${{ inputs.deployToCurse }}
           project_id: "1299016"
           display_name: ${{ env.VERSION }}
           token: ${{ secrets.CURSE_TOKEN }}
