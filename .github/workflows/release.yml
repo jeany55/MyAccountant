@@ -1,9 +1,10 @@
 name: Release
 
-# Controls when the workflow will run
 on:
-  # Allows you to run this workflow manually from the Actions tab
+  # Run manually only
   workflow_dispatch:
+    branches:
+      - main
     inputs:
       versionType:
         description: 'Type of change'
@@ -22,21 +23,17 @@ on:
         default: true
         type: boolean
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   release:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks-out repository
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
 
-      # Runs a single command using the runners shell
+      # Increment version and replace in the toc files
       - name: Update version
         run: |
           VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
@@ -70,6 +67,7 @@ jobs:
 
           echo "VERSION=$newVersion" >> $GITHUB_ENV
 
+      # Commit the change made in the previous step (and tag the version)
       - name: Commit and tag
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN_GIT }}
@@ -90,6 +88,8 @@ jobs:
           git tag -a "v$VERSION" -m "Release version ${VERSION}"
           git push origin tag "v$VERSION"
 
+      # Remove anything unneeded for the build artifact
+      # Then put it into all into a nested folder and zip it
       - name: Generate zip
         run : |
           echo "Making zip for version $VERSION"
@@ -107,6 +107,7 @@ jobs:
 
           zip -r "MyAccountant-${VERSION}.zip" ./ 
       
+      # Upload zip made in previous step as a github release and attach to version tag
       - name: Create release
         uses: ncipollo/release-action@v1.12.0
         with:
@@ -114,6 +115,7 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
       
+      # Upload built zip to Curse
       - name: Upload to CurseForge
         if: ${{ inputs.deployToCurse }}
         uses: itsmeow/curseforge-upload@v3
