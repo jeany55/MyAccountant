@@ -100,6 +100,7 @@ jobs:
           rm .lua-style
           rm LICENSE
           rm README.md
+          rm -rf Docs
 
           mkdir MyAccountant
           mv * MyAccountant || true

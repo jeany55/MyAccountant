@@ -1,10 +1,18 @@
 --------------------------------
 --   MyAccountant Locale File
---   ENGLISH
 --------------------------------
-local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true)
+--- If you want to generate your own, copy this file and make the necessary changes
+--- Then submit as a PR (or create an issue with to get someone else to handle the merging)
+--------------------------------
+
+-- Language, replace with your language
+local LANG = "enUS"
+
+local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", LANG)
 
 -- Localization definitions
+-- Replace the values (not the keys) with the correct trnaslation
+-- eg. L["option_general"] = "Général"
 
 -- /mya
 L["help1"] = "Valid options include"
