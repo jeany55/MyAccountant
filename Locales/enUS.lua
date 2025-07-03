@@ -14,6 +14,9 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true)
 L["help1"] = "Valid options include"
 L["help2"] = "- /mya open - Show/hide income window"
 L["help3"] = "- /mya options - Open options window"
+L["help4"] = "- /mya gph - Reset gold per hour"
+L["help5"] = "- /mya reset_session - Reset session info"
+
 
 -- Options, general header
 L["option_general"] = "General"

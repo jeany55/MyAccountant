@@ -97,12 +97,12 @@ jobs:
           rm LICENSE
           rm README.md
 
-          zip -r "MyAccountant-$VERSION.zip" ./ 
+          zip -r "MyAccountant.zip" ./ 
       
       - name: Create release
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: MyAccountant-${{ env.VERSION }}.zip
+          artifacts: MyAccountant.zip
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
       
@@ -110,7 +110,7 @@ jobs:
         if: ${{ inputs.deployToCurse == true }}
         uses: itsmeow/curseforge-upload@v3
         with:
-          file_path: MyAccountant-${{ env.VERSION }}.zip
+          file_path: MyAccountant.zip
           game_endpoint: "wow"
           project_id: "1299016"
           display_name: ${{ env.VERSION }}

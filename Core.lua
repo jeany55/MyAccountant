@@ -50,11 +50,28 @@ function MyAccountant:HandleSlashCommand(input)
     Settings.OpenToCategory(private.ADDON_NAME)
   elseif input == "open" then
     MyAccountant:ShowPanel()
+  elseif input == "gph" then
+    StaticPopup_Show("MYACCOUNTANT_RESET_GPH")
+  elseif input == "reset_session" then
+    StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
+  elseif input == "" then
+    if self.db.char.slashBehaviour == "OPEN_WINDOW" then
+      MyAccountant:ShowPanel()
+    elseif self.db.char.slashBehaviour == "SHOW_OPTIONS" then
+      MyAccountant:Print(L["help1"])
+      MyAccountant:Print("----------------------")
+      MyAccountant:Print(L["help2"])
+      MyAccountant:Print(L["help3"])
+      MyAccountant:Print(L["help4"])
+      MyAccountant:Print(L["help5"])
+    end
   else
     MyAccountant:Print(L["help1"])
     MyAccountant:Print("----------------------")
     MyAccountant:Print(L["help2"])
     MyAccountant:Print(L["help3"])
+    MyAccountant:Print(L["help4"])
+    MyAccountant:Print(L["help5"])
   end
 end
 
