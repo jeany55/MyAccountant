@@ -354,6 +354,13 @@ function MyAccountant:TabClick(id)
   MyAccountant:updateFrame()
 end
 
+function MyAccountant:HidePanel()
+  if private.panelOpen then
+    MyAccountant:PrintDebugMessage("Hiding income panel")
+    IncomeFrame:Hide()
+  end
+end
+
 function MyAccountant:ShowPanel()
   if private.panelOpen then
     MyAccountant:PrintDebugMessage("Hiding income panel")

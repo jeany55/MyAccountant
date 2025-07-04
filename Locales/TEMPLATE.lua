@@ -70,6 +70,9 @@ L["option_minimap_data_type_session"] = "This session"
 L["option_minimap_data_type_today"] = "Today"
 
 -- Options, income panel
+L["option_close_entering_combat"] = "Close panel when entering combat"
+L["option_close_entering_combat_desc"] = "If true, the income panel will be closed (if open), when entering combat"
+
 L["option_show_all_sources"] = "Hide inactive sources"
 L["option_show_all_sources_desc"] = "Only show sources in the income window if they have income or outcome"
 

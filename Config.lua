@@ -254,10 +254,19 @@ function MyAccountant:SetupOptions()
         name = "Income panel",
         order = 2,
         args = {
+          hide_combat = {
+            name = L["option_close_entering_combat"],
+            desc = L["option_close_entering_combat_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.closeWhenEnteringCombat = val end,
+            get = function(info) return self.db.char.closeWhenEnteringCombat end
+          },
           show_grid = {
             name = L["option_income_panel_grid"],
             desc = L["option_income_panel_grid_desc"],
             type = "toggle",
+            width = "full",
             set = function(info, val) self.db.char.showLines = val end,
             get = function(info) return self.db.char.showLines end
           },
@@ -265,6 +274,7 @@ function MyAccountant:SetupOptions()
             name = L["option_show_all_sources"],
             desc = L["option_show_all_sources_desc"],
             type = "toggle",
+            width = "full",
             set = function(info, val) self.db.char.hideInactiveSources = val end,
             get = function(info) return self.db.char.hideInactiveSources end
           },

@@ -283,5 +283,6 @@ private.default_settings = {
   minimapData = "SESSION",
   defaultIncomePanelSort = "NOTHING",
   colorGoldInIncomePanel = false,
-  showLines = true
+  showLines = true,
+  closeWhenEnteringCombat = false
 }

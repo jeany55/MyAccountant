@@ -13,6 +13,7 @@ function MyAccountant:OnInitialize()
   MyAccountant:InitializeUI()
   MyAccountant:checkDatabaseDayConfigured()
   MyAccountant:RegisterAllEvents()
+  private.currentMoney = GetMoney()
 
   -- Register global confirmations
   StaticPopupDialogs["MYACCOUNTANT_RESET_GPH"] = {

@@ -4,13 +4,10 @@ MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local activeSource = nil
 
--- Holds amount of money since last money update.
--- Needed to calculate the difference.
-local money = GetMoney()
-
 -- Main money handler
 local handlePlayerMoneyChange = function()
-  local moneyChange = GetMoney() - money
+  local newMoney = GetMoney()
+  local moneyChange = newMoney - private.currentMoney
 
   local source = activeSource and activeSource or "OTHER"
 
@@ -20,8 +17,10 @@ local handlePlayerMoneyChange = function()
   elseif moneyChange < 0 then
     MyAccountant:AddOutcome(source, abs(moneyChange))
     MyAccountant:PrintDebugMessage("Added outcome of |cffff0000%s|r to %s", GetMoneyString(abs(moneyChange), true),
-    source)
+                                   source)
   end
+
+  private.currentMoney = newMoney
 end
 
 -- Tracking if mail is from the AH is difficult - not a great event to track it.
@@ -115,7 +114,13 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
   -- Main
-  { EVENT = "PLAYER_MONEY", EXEC = handlePlayerMoneyChange }
+  { EVENT = "PLAYER_MONEY", EXEC = handlePlayerMoneyChange },
+  { EVENT = "PLAYER_ENTERING_WORLD", EXEC = function() private.currentMoney = GetMoney() end },
+  { EVENT = "PLAYER_REGEN_DISABLED", EXEC = function (config)
+    if config.closeWhenEnteringCombat then
+      MyAccountant:HidePanel()
+    end
+  end}
 }
 
 local function findEvent(event)
@@ -142,12 +147,11 @@ function MyAccountant:HandleGameEvent(event, ...)
   end
 
   if eventInfo.EXEC then
-    eventInfo.EXEC(...)
+    eventInfo.EXEC(self.db.char, ...)
   end
   if (eventInfo.RESET == true) then
     activeSource = nil
   end
-  money = GetMoney()
 end
 
 function MyAccountant:RegisterAllEvents()
