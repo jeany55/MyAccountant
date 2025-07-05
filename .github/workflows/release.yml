@@ -16,7 +16,7 @@ on:
           - minor
           - major
       changeNotes:
-        description: Change notes to attach to curse release
+        description: Change notes to attach to release
         default: ""
       deployToCurse:
         description: "Deploy to Curse"
