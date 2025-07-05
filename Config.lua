@@ -3,8 +3,13 @@ local _, private = ...
 
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
-local function registerMinimap()
+function MyAccountant:RegisterMinimap()
   local libIcon = LibStub("LibDBIcon-1.0", true)
+
+  -- Setup minimap options if not yet
+  if not self.db.char.minimapIconOptions then
+    self.db.char.minimapIconOptions = {}
+  end
 
   local miniButton = LibStub("LibDataBroker-1.1"):NewDataObject(private.ADDON_NAME, {
     type = "data source",
@@ -21,13 +26,13 @@ local function registerMinimap()
     end
   })
 
-  libIcon:Register(private.ADDON_NAME, miniButton)
+  libIcon:Register(private.ADDON_NAME, miniButton, self.db.char.minimapIconOptions)
 end
 
 local function showMinimap()
   local libIcon = LibStub("LibDBIcon-1.0", true)
   if libIcon:IsRegistered(private.ADDON_NAME) == false then
-    registerMinimap()
+    MyAccountant:RegisterMinimap()
   end
 
   libIcon:Show(private.ADDON_NAME)
