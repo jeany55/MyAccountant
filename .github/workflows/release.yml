@@ -114,6 +114,7 @@ jobs:
           artifacts: MyAccountant-${{ env.VERSION }}.zip
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
+          body: ${{ inputs.changeNotes }}
       
       # Upload built zip to Curse
       - name: Upload to CurseForge
