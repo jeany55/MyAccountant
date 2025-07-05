@@ -10,6 +10,8 @@ local LANG = "enUS"
 
 local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", LANG)
 
+if not L then return end
+
 -- Localization definitions
 -- Replace the values (not the keys) with the correct trnaslation
 -- eg. L["option_general"] = "Général"
