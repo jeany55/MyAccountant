@@ -3,6 +3,7 @@
 ## Notes: Track your gold income/outcome
 ## Author: Jeany
 ## Version: 1.1.1
+## IconTexture: Interface\Addons\MyAccountant\Images\addonIcon
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1299016
 ## SavedVariables: MyAccountantDB
