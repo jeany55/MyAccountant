@@ -1,10 +1,10 @@
 # MyAccountant
 
-**MyAccountant** is a World of Warcraft addon that helps track where your money is going.
+**MyAccountant** is a World of Warcraft Addon that helps track where your money is going.
 
 ![My Accountant](Docs/header1.png)
 
-Heavily inspired by AccountantClassic, see a breakdown of income/outcome by source either by session, day, week, month, year, or all time. It currently supports all versions of WoW.
+Heavily inspired by AccountantClassic, see a breakdown by source - either by session, day, week, month, year, or all time. MyAccountant currently supports all versions of WoW.
 
 ## How to contribute
 
