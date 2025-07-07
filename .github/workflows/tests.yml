@@ -17,7 +17,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get source
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Install Lua
         run: sudo apt install lua5.1
