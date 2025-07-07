@@ -1,6 +1,7 @@
 -- Addon namespace
 local _, private = ...
 local AddonStartTime = time()
+
 local GoldMade = 0
 
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
@@ -15,9 +16,20 @@ function MyAccountant:ResetSession()
   MyAccountant:PrintDebugMessage("Reset session")
 end
 
+function MyAccountant:ResetAllData()
+  self.db.factionrealm = {}
+  MyAccountant:checkDatabaseDayConfigured()
+end
+
+function MyAccountant:ResetCharacterData()
+  local playerName = UnitName("player")
+  self.db.factionrealm[playerName] = {}
+  MyAccountant:checkDatabaseDayConfigured()
+end
+
 -- Called to ensure the year and day exists in DB
-function MyAccountant:checkDatabaseDayConfigured()
-  local date = date("*t")
+function MyAccountant:checkDatabaseDayConfigured(dateOverride)
+  local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
 
   -- Check to see all necessary info is in DB
@@ -45,7 +57,9 @@ end
 
 function MyAccountant:GetGoldPerHour()
   local totalRunTime = time() - AddonStartTime
-  if totalRunTime == 0 then return 0 end
+  if totalRunTime == 0 then
+    return 0
+  end
   -- Use proportion to calculate gold per hour
   local goldMadePerHour = math.floor((3600 * GoldMade) / totalRunTime)
   return goldMadePerHour
@@ -57,12 +71,12 @@ function MyAccountant:ResetGoldPerHour()
   MyAccountant:PrintDebugMessage("Reset gold per hour")
 end
 
--- Main function to add income - added to correct day automatically
-function MyAccountant:AddIncome(category, amount)
-  MyAccountant:checkDatabaseDayConfigured()
+-- Main function to add income - added to correct day automatically unless third optional param used
+function MyAccountant:AddIncome(category, amount, dateOverride)
+  MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
   GoldMade = GoldMade + amount
-  local date = date("*t")
+  local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
 
   local total
@@ -85,11 +99,11 @@ function MyAccountant:AddIncome(category, amount)
   totalGoldSession[category].income = totalGoldSession[category].income + amount
 end
 
--- Main function to add outcome - added to correct day automatically
-function MyAccountant:AddOutcome(category, amount)
-  MyAccountant:checkDatabaseDayConfigured()
+-- Main function to add outcome - added to correct day automatically unless third optional param used
+function MyAccountant:AddOutcome(category, amount, dateOverride)
+  MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
-  local date = date("*t")
+  local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
 
   local total
@@ -99,10 +113,7 @@ function MyAccountant:AddOutcome(category, amount)
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = {
-      income = 0,
-      outcome = 0
-    }
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
   end
 
   total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].outcome
@@ -174,13 +185,13 @@ function MyAccountant:GetTodaysOutcome(category)
   return sumDay(self.db.factionrealm[playerName][date.year][date.month][date.day], category, "outcome")
 end
 
-function MyAccountant:GetHistoricalData(type)
+function MyAccountant:GetHistoricalData(type, dateOverride)
   local playerName = UnitName("player")
   -- Calculate how many days we're from the start of the week
-  local now = date("*t")
+  local now = dateOverride and dateOverride or date("*t")
   local data = {}
 
-  local unixTime = time()
+  local unixTime = dateOverride and time(dateOverride) or time()
   local offset
   if type == "WEEK" then
     offset = now.wday
@@ -193,6 +204,7 @@ function MyAccountant:GetHistoricalData(type)
   for _ = 1, offset do
     local currentDay = date("*t", unixTime)
     local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
+
 
     for k, v in pairs(currentData) do
       if not data[k] then
@@ -251,14 +263,16 @@ function MyAccountant:GetSessionOutcome(category) return sumDay(totalGoldSession
 
 function MyAccountant:IsSourceActive(source)
   for _, v in ipairs(self.db.char.sources) do
-    if v == source then return true end
+    if v == source then
+      return true
+    end
   end
   return false
 end
 
-function MyAccountant:GetIncomeOutcomeTable(type)
+function MyAccountant:GetIncomeOutcomeTable(type, dateOverride)
   local table = {}
-  local date = date("*t")
+  local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
 
   if type == "SESSION" then
@@ -268,7 +282,7 @@ function MyAccountant:GetIncomeOutcomeTable(type)
   elseif type == "ALL_TIME" then
     table = MyAccountant:GetAllTime()
   else
-    table = MyAccountant:GetHistoricalData(type)
+    table = MyAccountant:GetHistoricalData(type, dateOverride)
   end
 
   local talliedTable = {}
@@ -276,10 +290,7 @@ function MyAccountant:GetIncomeOutcomeTable(type)
   for k, v in pairs(table) do
     if not MyAccountant:IsSourceActive(k) then
       if not talliedTable.OTHER then
-        talliedTable.OTHER = {
-          income = 0,
-          outcome = 0
-        }
+        talliedTable.OTHER = { income = 0, outcome = 0 }
       end
 
       talliedTable.OTHER.income = talliedTable.OTHER.income + v.income

@@ -9,9 +9,9 @@ MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
+  MyAccountant:checkDatabaseDayConfigured()
   MyAccountant:SetupOptions()
   MyAccountant:InitializeUI()
-  MyAccountant:checkDatabaseDayConfigured()
   MyAccountant:RegisterAllEvents()
   private.currentMoney = GetMoney()
 

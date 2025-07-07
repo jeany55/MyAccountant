@@ -102,6 +102,10 @@ jobs:
           rm README.md
           rm -rf Docs
 
+          rm Test.lua
+          rm -rf Libs/WoWUnit
+          rm -rf Tests
+
           mkdir MyAccountant
           mv * MyAccountant || true
 

@@ -333,7 +333,9 @@ function MyAccountant:SetupOptions()
             width = 1.3,
             confirm = true,
             confirmText = L["option_clear_character_data_confirm"],
-            func = function() self.db.factionrealm[playerName] = {} end
+            func = function()
+              MyAccountant:ResetCharacterData()
+            end
           },
           clear_all_data = {
             name = L["option_clear_all_data"],
@@ -342,7 +344,7 @@ function MyAccountant:SetupOptions()
             type = "execute",
             confirm = true,
             confirmText = L["option_clear_all_data_confirm"],
-            func = function() self.db.factionrealm = {} end
+            func = function() MyAccountant:ResetAllData() end
           }
         }
       },
