@@ -5,7 +5,7 @@ date = os.date
 time = os.time
 
 local Name = ...
-local Tests = WoWUnit(Name .. ".Income")
+local Tests = WoWUnit(Name .. ".IncomeTests")
 local AssertEqual, Replace = WoWUnit.AreEqual, WoWUnit.Replace
 
 function Tests.TestSessionIncome_1()
