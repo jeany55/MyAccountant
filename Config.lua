@@ -67,6 +67,11 @@ function MyAccountant:SetupOptions()
     end
   end
 
+  -- Set first version for later upgrades
+  if not self.db.char.lastVersion then
+    self.db.char.lastVersion = private.ADDON_VERSION
+  end
+
   if count > 0 then
     MyAccountant:PrintDebugMessage("Initialized %d new setting(s) - set to default", count)
   end
