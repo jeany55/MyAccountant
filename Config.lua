@@ -58,17 +58,17 @@ end
 function MyAccountant:SetupOptions()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-  -- Initialize default settings if this is first run
-  if self.db.char.initialized ~= true then
-    local count = 0
-    -- Loop through all default settings and set them all
-    for k, v in pairs(private.default_settings) do
+  local count = 0
+  -- Set any options to default if they are missing
+  for k, v in pairs(private.default_settings) do
+    if self.db.char[k] == nil then
       self.db.char[k] = v
       count = count + 1
     end
+  end
 
-    MyAccountant:PrintDebugMessage("First time setup: Initialized default settings, set %d options", count)
-    self.db.char.initialized = true
+  if count > 0 then
+    MyAccountant:PrintDebugMessage("Initialized %d new setting(s) - set to default", count)
   end
 
   local sources_options = {}
@@ -333,9 +333,7 @@ function MyAccountant:SetupOptions()
             width = 1.3,
             confirm = true,
             confirmText = L["option_clear_character_data_confirm"],
-            func = function()
-              MyAccountant:ResetCharacterData()
-            end
+            func = function() MyAccountant:ResetCharacterData() end
           },
           clear_all_data = {
             name = L["option_clear_all_data"],
