@@ -34,10 +34,6 @@ function MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
   -- Check to see all necessary info is in DB
   -- Create if needed.
-  if not self.db.factionrealm.income then
-    self.db.factionrealm.income = {}
-  end
-
   if not self.db.factionrealm[playerName] then
     self.db.factionrealm[playerName] = {}
   end
