@@ -102,7 +102,7 @@ jobs:
           rm README.md
           rm -rf Docs
 
-          rm Test.lua
+          rm RunTests.lua
           rm -rf Libs/WoWUnit
           rm -rf Tests
 
