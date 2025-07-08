@@ -78,6 +78,7 @@ function MyAccountant:InitializeUI()
   IncomeFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 
   -- Backdrop
+  legendFrame:SetFrameLevel(2)
   legendFrame:SetBackdrop({
     bgFile = "Interface/FrameGeneral/UI-Background-Rock",
     -- edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
@@ -117,8 +118,12 @@ function MyAccountant:InitializeUI()
   end
 
   scrollBar:SetBackdrop({ bgFile = "Interface/FrameGeneral/UI-Background-Marble", tile = true, tileSize = 200 })
-  scrollBar:SetFrameLevel(3)
+  scrollBar:SetFrameLevel(4)
   IncomeFrame:SetFrameLevel(2)
+
+  bottomButton1:SetFrameLevel(5)
+  bottomButton2:SetFrameLevel(5)
+  bottomButton3:SetFrameLevel(5)
 
   local scrollBarUpdateFunction = function()
     local sources = self.db.char.sources
@@ -229,9 +234,101 @@ local function updateSortingIcons()
   end
 end
 
+local function bottomButtonClickHandler(action)
+  if action == "OPTIONS" then
+    Settings.OpenToCategory(private.ADDON_NAME)
+  elseif action == "CLEAR_SESSION" then
+    StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
+  elseif action == "RESET_GPH" then
+    StaticPopup_Show("MYACCOUNTANT_RESET_GPH")
+  end
+end
+
 function MyAccountant:updateFrame()
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
+
+  local frameX = 500
+  local frameY = 347
+
+  -- Set height
+  if self.db.char.showIncomePanelBottom then
+    bottomInfoPanel:Show()
+    frameY = frameY + 23
+
+    -- Bottom frame buttons
+    -- Function will go through settings and assign to an unused button first (starting at 1)
+    local button1 = nil
+    local button2 = nil
+    local button3 = nil
+
+    local function setToButtonVar(item)
+      if not item or item == "NOTHING" then
+        return
+      end
+
+      if button1 == nil then
+        button1 = item
+        return
+      elseif button2 == nil then
+        button2 = item
+      else
+        button3 = item
+      end
+    end
+
+    setToButtonVar(self.db.char.incomePanelButton1)
+    setToButtonVar(self.db.char.incomePanelButton2)
+    setToButtonVar(self.db.char.incomePanelButton3)
+
+    if button1 == nil then
+      -- All buttons are hidden
+      bottomButton1:Hide()
+      bottomButton2:Hide()
+      bottomButton3:Hide()
+    elseif button2 == nil then
+      bottomButton1:Hide()
+      bottomButton2:Hide()
+      bottomButton3:Show()
+      bottomButton3:SetText(L["income_panel_button_" .. button1])
+      bottomButton3:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
+
+      bottomButton2:SetSize(60, 0)
+    elseif button3 == nil then
+      bottomButton1:Hide()
+      bottomButton2:Show()
+      bottomButton3:Show()
+
+      bottomButton2:SetText(L["income_panel_button_" .. button1])
+      bottomButton3:SetText(L["income_panel_button_" .. button2])
+
+      bottomButton2:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
+      bottomButton3:SetScript("OnClick", function() bottomButtonClickHandler(button2) end)
+
+      bottomButton1:SetSize(60, 0)
+      bottomButton2:SetSize(120, 0)
+    else
+      bottomButton1:Show()
+      bottomButton2:Show()
+      bottomButton3:Show()
+      bottomButton1:SetSize(100, 0)
+      bottomButton2:SetSize(100, 0)
+
+      bottomButton2:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
+      bottomButton2:SetScript("OnClick", function() bottomButtonClickHandler(button2) end)
+      bottomButton3:SetScript("OnClick", function() bottomButtonClickHandler(button3) end)
+
+      bottomButton1:SetText(L["income_panel_button_" .. button1])
+      bottomButton2:SetText(L["income_panel_button_" .. button2])
+      bottomButton3:SetText(L["income_panel_button_" .. button3])
+    end
+  else
+    bottomInfoPanel:Hide()
+  end
+
+  IncomeFrame:SetSize(frameX, frameY)
 
   local showScrollbar = #(self.db.char.sources) > 12
   if showScrollbar then

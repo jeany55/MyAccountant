@@ -284,5 +284,9 @@ private.default_settings = {
   defaultIncomePanelSort = "NOTHING",
   colorGoldInIncomePanel = false,
   showLines = true,
-  closeWhenEnteringCombat = false
+  closeWhenEnteringCombat = false,
+  showIncomePanelBottom = true,
+  incomePanelButton1 = "NOTHING",
+  incomePanelButton2 = "OPTIONS",
+  incomePanelButton3 = "CLEAR_SESSION"
 }

@@ -6,13 +6,38 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true)
 
 -- Localization definitions
 
+-----------------------------------------
+--- VERSION 1.2
+-----------------------------------------
+
+-- 1.2
+L["option_income_panel_bottom"] = "Show gold and buttons on bottom"
+L["option_income_panel_bottom_desc"] = "Shows your current gold and addon buttons at the bottom of the income panel"
+
+L["option_income_panel_button_1"] = "Button 1 action"
+L["option_income_panel_button_1_desc"] = "What do to when clicking the first button in the income panel"
+L["option_income_panel_button_2"] = "Button 2 action"
+L["option_income_panel_button_2_desc"] = "What do to when clicking the second button in the income panel"
+L["option_income_panel_button_3"] = "Button 3 action"
+L["option_income_panel_button_3_desc"] = "What do to when clicking the third button in the income panel"
+
+L["income_panel_action_nothing"] = "Do nothing (hide button)"
+L["income_panel_action_graph"] = "View graphs"
+L["income_panel_action_options"] = "Open addon options"
+L["income_panel_action_session"] = "Clear session data"
+L["income_panel_action_gph"] = "Reset gold per hour"
+
+L["income_panel_button_GRAPH"] = "View graphs"
+L["income_panel_button_OPTIONS"] = "Options"
+L["income_panel_button_CLEAR_SESSION"] = "Clear session"
+L["income_panel_button_RESET_GPH"] = "Reset GPH"
+
 -- /mya
 L["help1"] = "Valid options include"
 L["help2"] = "- /mya open - Show/hide income window"
 L["help3"] = "- /mya options - Open options window"
 L["help4"] = "- /mya gph - Reset gold per hour"
 L["help5"] = "- /mya reset_session - Reset session info"
-
 
 -- Options, general header
 L["option_general"] = "General"
@@ -82,30 +107,33 @@ L["option_income_panel_grid_desc"] = "Whether or not to show the grid lines mimi
 
 -- Options, sources
 L["option_income_sources"] = "Active income sources"
-L["option_income_sources_desc"] = "Which income sources to track. If not tracked it will be grouped under the 'Other' category"
+L["option_income_sources_desc"] =
+    "Which income sources to track. If not tracked it will be grouped under the 'Other' category"
 L["option_income_sources_additional_1"] = "Inactive sources will be tallied in 'Other'"
 L["option_income_sources_additional_2"] = "Some sources may be unavailable in your WoW version"
 
 L["option_income_desc"] = "Toggle this income on/off"
 L["option_income_required"] = "|cffff0000(Required)|r"
 
-
-
 -- Options, clear data
 L["option_clear_gph"] = "Clear gold per hour information"
 L["option_clear_gph_desc"] = "Clear all gold per hour information, starting over"
 
 L["option_clear_session_data"] = "Clear session data for this character"
-L["option_clear_session_data_desc"] = "Delete all income/outcome data for this session. Daily income will remain intact."
+L["option_clear_session_data_desc"] =
+    "Delete all income/outcome data for this session. Daily income will remain intact."
 L["option_clear_session_data_confirm"] = "This will clear all data for your session. Are sure you want to do this?"
 
 L["option_clear_character_data"] = "Clear all data for this character"
-L["option_clear_character_data_desc"] = "Delete all income/outcome data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
-L["option_clear_character_data_confirm"] = "This will |cffff0000permanently clear all data for your character|r. This can't be undone. Are sure you want to do this?"
+L["option_clear_character_data_desc"] =
+    "Delete all income/outcome data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
+L["option_clear_character_data_confirm"] =
+    "This will |cffff0000permanently clear all data for your character|r. This can't be undone. Are sure you want to do this?"
 
 L["option_clear_all_data"] = "Clear all data"
 L["option_clear_all_data_desc"] = "Delete all income/outcome data for this addon. |cffff0000This is irreversible!|r"
-L["option_clear_all_data_confirm"] = "This will |cffff0000permanently clear all data for all your characters, starting over from scratch|r. This can't be undone. Are sure you want to do this?"
+L["option_clear_all_data_confirm"] =
+    "This will |cffff0000permanently clear all data for all your characters, starting over from scratch|r. This can't be undone. Are sure you want to do this?"
 
 -- Options, developer options
 L["option_debug_messages"] = "Show debug messages"

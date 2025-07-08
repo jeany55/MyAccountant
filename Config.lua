@@ -265,6 +265,7 @@ function MyAccountant:SetupOptions()
         order = 2,
         args = {
           hide_combat = {
+            order = 3,
             name = L["option_close_entering_combat"],
             desc = L["option_close_entering_combat_desc"],
             type = "toggle",
@@ -272,7 +273,65 @@ function MyAccountant:SetupOptions()
             set = function(info, val) self.db.char.closeWhenEnteringCombat = val end,
             get = function(info) return self.db.char.closeWhenEnteringCombat end
           },
+          show_bottom = {
+            order = 1,
+            name = L["option_income_panel_bottom"],
+            desc = L["option_income_panel_bottom_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showIncomePanelBottom = val end,
+            get = function(info) return self.db.char.showIncomePanelBottom end
+          },
+          button_action_1 = {
+            name = L["option_income_panel_button_1"],
+            desc = L["option_income_panel_button_1_desc"],
+            order = 2,
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            type = "select",
+            values = {
+              NOTHING = L["income_panel_action_nothing"],
+              -- GRAPH = L["income_panel_action_graph"],
+              OPTIONS = L["income_panel_action_options"],
+              CLEAR_SESSION = L["income_panel_action_session"],
+              RESET_GPH = L["income_panel_action_gph"]
+            },
+            set = function(info, val) self.db.char.incomePanelButton1 = val end,
+            get = function(info) return self.db.char.incomePanelButton1 end
+          },
+          button_action_2 = {
+            name = L["option_income_panel_button_2"],
+            desc = L["option_income_panel_button_2_desc"],
+            order = 2,
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            type = "select",
+            values = {
+              NOTHING = L["income_panel_action_nothing"],
+              -- GRAPH = L["income_panel_action_graph"],
+              OPTIONS = L["income_panel_action_options"],
+              CLEAR_SESSION = L["income_panel_action_session"],
+              RESET_GPH = L["income_panel_action_gph"]
+            },
+            set = function(info, val) self.db.char.incomePanelButton2 = val end,
+            get = function(info) return self.db.char.incomePanelButton2 end
+          },
+          button_action_3 = {
+            name = L["option_income_panel_button_3"],
+            desc = L["option_income_panel_button_3_desc"],
+            order = 2,
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            type = "select",
+            values = {
+              NOTHING = L["income_panel_action_nothing"],
+              -- GRAPH = L["income_panel_action_graph"],
+              OPTIONS = L["income_panel_action_options"],
+              CLEAR_SESSION = L["income_panel_action_session"],
+              RESET_GPH = L["income_panel_action_gph"]
+            },
+            set = function(info, val) self.db.char.incomePanelButton3 = val end,
+            get = function(info) return self.db.char.incomePanelButton3 end
+          },
           show_grid = {
+            order = 4,
             name = L["option_income_panel_grid"],
             desc = L["option_income_panel_grid_desc"],
             type = "toggle",
@@ -281,6 +340,7 @@ function MyAccountant:SetupOptions()
             get = function(info) return self.db.char.showLines end
           },
           show_empty_rows = {
+            order = 5,
             name = L["option_show_all_sources"],
             desc = L["option_show_all_sources_desc"],
             type = "toggle",
@@ -289,6 +349,7 @@ function MyAccountant:SetupOptions()
             get = function(info) return self.db.char.hideInactiveSources end
           },
           default_sort = {
+            order = 6,
             name = L["option_income_panel_default_sort"],
             desc = L["option_income_panel_default_sort_desc"],
             type = "select",

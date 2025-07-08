@@ -104,6 +104,7 @@
         </Frames>
       </Frame>
       <Frame name="infoFrame" parent="IncomeFrame" inherits="InsetFrameTemplate">
+        <Size y="265" />
         <Layers>
           <Layer>
             <FontString name="totalIncomeText" text="Total income" inherits="GameTooltipText">
@@ -364,29 +365,83 @@
             </FontString>
           </Layer>
         </Layers>
-        <Size y="88"/>
         <Anchors>
-          <Anchor point="TOP" relativeTo="legendFrame" relativePoint="TOP" />
-          <Anchor point="BOTTOMLEFT" relativeTo="IncomeFrame" relativePoint="BOTTOMLEFT" />
-          <Anchor point="BOTTOMRIGHT" relativeTo="IncomeFrame" relativePoint="BOTTOMRIGHT" />
+          <Anchor point="TOPLEFT" relativeTo="legendFrame" relativePoint="TOPLEFT" />
+          <Anchor point="TOPRIGHT" relativeTo="legendFrame" relativePoint="TOPRIGHT" />
         </Anchors>
       </Frame>
       <Frame name="scrollBar" parent="IncomeFrame" inherits="BackdropTemplate">
         <Size x="20" />
         <Anchors>
           <Anchor point="TOP" relativeTo="legendFrame" relativePoint="BOTTOM" y="3" />
-          <Anchor point="BOTTOM" relativeTo="IncomeFrame" relativePoint="BOTTOM" y="5" />
+          <Anchor point="BOTTOM" relativeTo="infoFrame" relativePoint="BOTTOM" y="5" />
           <Anchor point="RIGHT" relativeTo="legendFrame" relativePoint="RIGHT" x="-5" />
         </Anchors>
         <Frames>
           <ScrollFrame name="scrollFrame" parent="scrollBar" inherits="FauxScrollFrameTemplate">
             <Anchors>
               <Anchor point="TOP" relativeTo="legendFrame" relativePoint="BOTTOM" />
-              <Anchor point="BOTTOM" relativeTo="IncomeFrame" relativePoint="BOTTOM" y="3" />
+              <Anchor point="BOTTOM" relativeTo="infoFrame" relativePoint="BOTTOM" y="3" />
               <Anchor point="LEFT" relativeTo="scrollBar" relativePoint="LEFT" x="-2" />
             </Anchors>
           </ScrollFrame>
         </Frames>
+      </Frame>
+      <Frame name="bottomInfoPanel" parent="IncomeFrame">
+        <Frames>
+          <Frame name="bottomMoneyInfo" parent="bottomInfoPanel" inherits="SmallMoneyFrameTemplate">
+            <Layers>
+              <Layer level="BACKGROUND">
+                <Texture file="Interface/FrameGeneral/UI-Background-Marble" horizTile="true" vertTile="true">
+                  <Color r="0.7" g="0.7" b="0.7" a="1" />
+                  <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="bottomMoneyInfo" relativePoint="TOPLEFT" x="0" y="0" />
+                    <Anchor point="BOTTOMRIGHT" relativeTo="bottomInfoPanel" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                  </Anchors>
+                </Texture>
+              </Layer>
+            </Layers>
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="bottomInfoPanel" relativePoint="TOPLEFT" />
+              <Anchor point="BOTTOMLEFT" relativeTo="bottomInfoPanel" relativePoint="BOTTOMLEFT" />
+              <Anchor point="RIGHT" relativeTo="bottomInfoPanel" relativePoint="LEFT" x="200" />
+            </Anchors>
+          </Frame>
+          <Button name="bottomButton1" inherits="UIPanelButtonTemplate" text="View graphs">
+            <NormalFont style="GameFontNormalSmall"/>
+            <HighlightFont style="GameFontWhiteSmall"/>
+            <Size x="100" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="bottomInfoPanel" relativePoint="TOP" />
+              <Anchor point="BOTTOM" relativeTo="bottomInfoPanel" relativePoint="BOTTOM" />
+              <Anchor point="LEFT" relativeTo="bottomMoneyInfo" relativePoint="RIGHT" />
+            </Anchors>
+          </Button>
+          <Button name="bottomButton2" inherits="UIPanelButtonTemplate" text="Open options">
+            <NormalFont style="GameFontNormalSmall"/>
+            <HighlightFont style="GameFontWhiteSmall"/>
+            <Size x="100" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="bottomInfoPanel" relativePoint="TOP" />
+              <Anchor point="BOTTOM" relativeTo="bottomInfoPanel" relativePoint="BOTTOM" />
+              <Anchor point="LEFT" relativeTo="bottomButton1" relativePoint="RIGHT" />
+            </Anchors>
+          </Button>
+          <Button name="bottomButton3" inherits="UIPanelButtonTemplate" text="Reset gph">
+            <NormalFont style="GameFontNormalSmall"/>
+            <HighlightFont style="GameFontWhiteSmall"/>
+            <Anchors>
+              <Anchor point="TOP" relativeTo="bottomInfoPanel" relativePoint="TOP" />
+              <Anchor point="BOTTOM" relativeTo="bottomInfoPanel" relativePoint="BOTTOM" />
+              <Anchor point="LEFT" relativeTo="bottomButton2" relativePoint="RIGHT" />
+              <Anchor point="RIGHT" relativeTo="bottomInfoPanel" relativePoint="RIGHT" />
+            </Anchors>
+          </Button>
+        </Frames>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="infoFrame" relativePoint="BOTTOMLEFT" y="-1" x="5"/>
+          <Anchor point="BOTTOMRIGHT" relativeTo="IncomeFrame" relativePoint="BOTTOMRIGHT" y="3" x="-5" />
+        </Anchors>
       </Frame>
       <Button name="$parentTab1" parent="IncomeFrame" inherits="MyAccountantTabTemplate" id="1" text="Session" virtual="true">
         <Anchors>
