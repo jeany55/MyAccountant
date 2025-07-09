@@ -316,19 +316,29 @@ function MyAccountant:updateFrame()
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
 
+  viewingType:Show()
+
   -- Character selection / frame info
   if Tabs[ActiveTab] == "SESSION" then
     characterDropdown:Hide()
-    viewingType:Hide()
+
   else
     characterDropdown:Show()
-    viewingType:Show()
   end
 
   if Tabs[ActiveTab] == "TODAY" then
     viewingType:SetText(date("%x"))
   elseif Tabs[ActiveTab] == "WEEK" then
-    -- TODO: Finish labels
+    local today = date("*t")
+    local firstDayOfWeek = time() - ((today.wday - 1) * 86400)
+    local lastDayOfWeek = firstDayOfWeek + (6 * 86400)
+    viewingType:SetText(date("%x", firstDayOfWeek) .. " - " .. date("%x", lastDayOfWeek))
+  elseif Tabs[ActiveTab] == "MONTH" then
+    viewingType:SetText(date("%B"))
+  elseif Tabs[ActiveTab] == "YEAR" then
+    viewingType:SetText(date("%Y"))
+  else
+    viewingType:Hide()
   end
 
   local frameX = 500
