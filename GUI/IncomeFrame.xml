@@ -387,7 +387,7 @@
           </ScrollFrame>
         </Frames>
       </Frame>
-      <Frame name="bottomInfoPanel" parent="IncomeFrame" frameLevel="5">
+      <Frame name="bottomInfoPanel" parent="IncomeFrame">
         <Frames>
           <Frame name="bottomMoneyInfo" parent="bottomInfoPanel" inherits="SmallMoneyFrameTemplate">
             <Layers>
