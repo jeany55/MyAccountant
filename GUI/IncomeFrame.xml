@@ -454,27 +454,27 @@
       </Button>
       <Button name="$parentTab2" parent="IncomeFrame" inherits="MyAccountantTabTemplate" id="2" text="Today" virtual="true">
         <Anchors>
-          <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" x="-15" />
+          <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" x="-20" />
         </Anchors>
       </Button>
       <Button name="$parentTab3" parent="IncomeFrame" inherits="MyAccountantTabTemplate" id="3" text="This Week" virtual="true">
         <Anchors>
-          <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT" x="-15" />
+          <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT" x="-20" />
         </Anchors>
       </Button>
       <Button name="$parentTab4" parent="IncomeFrame" inherits="MyAccountantTabTemplate" id="4" text="This Month" virtual="true">
         <Anchors>
-          <Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT" x="-15" />
+          <Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT" x="-20" />
         </Anchors>
       </Button>
       <Button name="$parentTab5" parent="IncomeFrame" inherits="MyAccountantTabTemplate" id="5" text="This Year" virtual="true">
         <Anchors>
-          <Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" x="-15" />
+          <Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" x="-20" />
         </Anchors>
       </Button>
       <Button name="$parentTab6" parent="IncomeFrame" inherits="MyAccountantTabTemplate" id="6" text="All Time" virtual="true">
         <Anchors>
-          <Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" x="-15" />
+          <Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" x="-20" />
         </Anchors>
       </Button>
     </Frames>

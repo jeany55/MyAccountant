@@ -2,7 +2,7 @@
 --   MyAccountant Locale File
 --   ENGLISH
 --------------------------------
-local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 
@@ -22,15 +22,15 @@ L["option_income_panel_button_3"] = "Button 3 action"
 L["option_income_panel_button_3_desc"] = "What do to when clicking the third button in the income panel"
 
 L["income_panel_action_nothing"] = "Do nothing (hide button)"
-L["income_panel_action_graph"] = "View graphs"
 L["income_panel_action_options"] = "Open addon options"
 L["income_panel_action_session"] = "Clear session data"
 L["income_panel_action_gph"] = "Reset gold per hour"
 
-L["income_panel_button_GRAPH"] = "View graphs"
 L["income_panel_button_OPTIONS"] = "Options"
 L["income_panel_button_CLEAR_SESSION"] = "Clear session"
 L["income_panel_button_RESET_GPH"] = "Reset GPH"
+
+L["character_selection_all"] = "All characters"
 
 -- /mya
 L["help1"] = "Valid options include"
@@ -163,7 +163,7 @@ L["session"] = "Session"
 L["today"] = "Today"
 L["this_week"] = "This Week"
 L["this_month"] = "This Month"
-L["this_month"] = "This Year"
+L["this_year"] = "This Year"
 L["all_time"] = "All Time"
 
 -- Income panel

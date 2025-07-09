@@ -167,40 +167,35 @@ function MyAccountant:FetchDataRow(playerName, year, month, day)
   return self.db.factionrealm[playerName][year][month][day]
 end
 
--- If category is null, a total sum will be returned
-function MyAccountant:GetTodaysIncome(category)
-  local date = date("*t")
-  local playerName = UnitName("player")
-  return sumDay(self.db.factionrealm[playerName][date.year][date.month][date.day], category, "income")
-end
-
--- If category is null, a total sum will be returned
-function MyAccountant:GetTodaysOutcome(category)
-  local date = date("*t")
-  local playerName = UnitName("player")
-  return sumDay(self.db.factionrealm[playerName][date.year][date.month][date.day], category, "outcome")
-end
-
-function MyAccountant:GetHistoricalData(type, dateOverride)
-  local playerName = UnitName("player")
+function MyAccountant:GetHistoricalData(type, dateOverride, characterOverride, dataRefOverride)
+  if characterOverride == "ALL_CHARACTERS" then
+    local allCharacterData = {}
+    for k, _ in pairs(self.db.factionrealm) do
+      MyAccountant:GetHistoricalData(type, dateOverride, k, allCharacterData)
+    end
+    return allCharacterData
+  end
+  local playerName = characterOverride and characterOverride or UnitName("player")
   -- Calculate how many days we're from the start of the week
   local now = dateOverride and dateOverride or date("*t")
-  local data = {}
+  local data = dataRefOverride and dataRefOverride or {}
 
   local unixTime = dateOverride and time(dateOverride) or time()
   local offset
+
   if type == "WEEK" then
     offset = now.wday
   elseif type == "MONTH" then
     offset = now.day
   elseif type == "YEAR" then
     offset = now.yday
+  elseif type == "TODAY" then
+    offset = 1
   end
 
   for _ = 1, offset do
     local currentDay = date("*t", unixTime)
     local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
-
 
     for k, v in pairs(currentData) do
       if not data[k] then
@@ -218,20 +213,30 @@ function MyAccountant:GetHistoricalData(type, dateOverride)
   return data
 end
 
-function MyAccountant:GetAllTime()
-  local data = {}
-  local playerName = UnitName("player")
+function MyAccountant:GetAllTime(characterOverride, refDataOverride)
+  local data = refDataOverride and refDataOverride or {}
+  local playerName = characterOverride and characterOverride or UnitName("player")
 
-  for _, yearData in pairs(self.db.factionrealm[playerName]) do
-    for _, monthData in pairs(yearData) do
-      for _, dayData in pairs(monthData) do
-        for category, categoryData in pairs(dayData) do
-          if not data[category] then
-            data[category] = { income = 0, outcome = 0 }
+  if characterOverride == "ALL_CHARACTERS" then
+    local totalledData = {}
+    for k, _ in pairs(self.db.factionrealm) do
+      MyAccountant:GetAllTime(k, totalledData)
+    end
+    return totalledData
+  end
+
+  for keyName, yearData in pairs(self.db.factionrealm[playerName]) do
+    if keyName ~= "config" then
+      for _, monthData in pairs(yearData) do
+        for _, dayData in pairs(monthData) do
+          for category, categoryData in pairs(dayData) do
+            if not data[category] then
+              data[category] = { income = 0, outcome = 0 }
+            end
+
+            data[category].income = data[category].income + categoryData.income
+            data[category].outcome = data[category].outcome + categoryData.outcome
           end
-
-          data[category].income = data[category].income + categoryData.income
-          data[category].outcome = data[category].outcome + categoryData.outcome
         end
       end
     end
@@ -266,29 +271,23 @@ function MyAccountant:IsSourceActive(source)
   return false
 end
 
-function MyAccountant:GetIncomeOutcomeTable(type, dateOverride)
+function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverride)
   local table = {}
   local date = dateOverride and dateOverride or date("*t")
-  local playerName = UnitName("player")
+  local playerName = characterOverride and characterOverride or UnitName("player")
 
   if type == "SESSION" then
     table = totalGoldSession
-  elseif type == "TODAY" then
-    table = self.db.factionrealm[playerName][date.year][date.month][date.day]
   elseif type == "ALL_TIME" then
-    table = MyAccountant:GetAllTime()
+    table = MyAccountant:GetAllTime(playerName)
   else
-    table = MyAccountant:GetHistoricalData(type, dateOverride)
+    table = MyAccountant:GetHistoricalData(type, date, playerName)
   end
 
-  local talliedTable = {}
+  local talliedTable = { OTHER = table.OTHER }
   -- Find any data from an inactive source and tally it in Other
   for k, v in pairs(table) do
     if not MyAccountant:IsSourceActive(k) then
-      if not talliedTable.OTHER then
-        talliedTable.OTHER = { income = 0, outcome = 0 }
-      end
-
       talliedTable.OTHER.income = talliedTable.OTHER.income + v.income
       talliedTable.OTHER.outcome = talliedTable.OTHER.outcome + v.outcome
     else

@@ -2,9 +2,15 @@ local _, private = ...
 
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
+local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
+local characterDropdown
+local viewingType
+
+local selectedCharacter = UnitName("player")
+
 -- Tab data for bottom of panel
-ActiveTab = 1
-Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME" }
+local ActiveTab = 1
+local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME" }
 
 -- Hold grid lines to show/hide if user doesn't want to see them
 RenderedLines = {}
@@ -15,7 +21,7 @@ UserSetSort = nil
 -- Returns a sorted List
 function MyAccountant:GetSortedTable(type)
   local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
-  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type)
+  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter)
 
   local function sortingFunction(source1, source2)
     if sortType == "SOURCE_ASC" then
@@ -62,10 +68,63 @@ function MyAccountant:InitializeUI()
   IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
   IncomeFrame.title:SetText("MyAccountant")
 
+  characterDropdown = LibDD:Create_UIDropDownMenu("CharacterDropDownMenu", IncomeFrame)
+  LibDD:UIDropDownMenu_SetWidth(characterDropdown, 107)
+
+  characterDropdown:SetPoint("RIGHT", IncomeFrame, "RIGHT", 0, 0)
+  characterDropdown:SetPoint("TOP", totalIncomeText, "TOP", 0, 0)
+
+  viewingType = IncomeFrame:CreateFontString(ni, "OVERLAY", "GameFontNormalSmall")
+  viewingType:SetPoint("RIGHT", characterDropdown, "BOTTOMRIGHT", -20, -3)
+
   -- Setup player icon
   playerCharacter.Portrait = playerCharacter:CreateTexture()
   playerCharacter.Portrait:SetAllPoints()
   SetPortraitTexture(playerCharacter.Portrait, "player")
+
+  -- Setup character dropdown
+  LibDD:UIDropDownMenu_Initialize(characterDropdown, function()
+    local icon
+    if UnitFactionGroup("player") == "Horde" then
+      icon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+    else
+      icon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+    end
+
+    for k, v in pairs(self.db.factionrealm) do
+      if k ~= "income" then
+        local row = LibDD:UIDropDownMenu_CreateInfo()
+        row.icon = icon
+        row.padding = 0
+        row.text = k
+        row.value = k
+        if v.config then
+          row.colorCode = "|c" .. v.config.classColor
+        end
+        row.func = function()
+          LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, k)
+          selectedCharacter = k
+          MyAccountant:updateFrame()
+        end
+        LibDD:UIDropDownMenu_AddButton(row)
+      end
+    end
+
+    LibDD:UIDropDownMenu_AddSeparator()
+    local all = LibDD:UIDropDownMenu_CreateInfo()
+    all.icon = icon
+    all.text = L["character_selection_all"]
+    all.value = "ALL_CHARACTERS"
+    all.minWidth = 150
+    all.func = function()
+      LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, "ALL_CHARACTERS")
+      selectedCharacter = "ALL_CHARACTERS"
+      MyAccountant:updateFrame()
+    end
+    LibDD:UIDropDownMenu_AddButton(all)
+
+    LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, selectedCharacter)
+  end)
 
   -- Set width on income label
   totalProfit:SetPoint("LEFT", totalProfitText, totalProfitText:GetSize() + 20, 0);
@@ -185,6 +244,13 @@ function MyAccountant:InitializeUI()
   totalOutcomeText:SetText(L["header_total_outcome"])
   totalProfitText:SetText(L["header_total_net"])
 
+  IncomeFrameTab1:SetText(L["session"])
+  IncomeFrameTab2:SetText(L["today"])
+  IncomeFrameTab3:SetText(L["this_week"])
+  IncomeFrameTab4:SetText(L["this_month"])
+  IncomeFrameTab5:SetText(L["this_year"])
+  IncomeFrameTab6:SetText(L["all_time"])
+
   -- Tab configuration
   PanelTemplates_SetNumTabs(IncomeFrame, 6)
   PanelTemplates_SetTab(IncomeFrame, 1)
@@ -249,6 +315,21 @@ function MyAccountant:updateFrame()
 
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
+
+  -- Character selection / frame info
+  if Tabs[ActiveTab] == "SESSION" then
+    characterDropdown:Hide()
+    viewingType:Hide()
+  else
+    characterDropdown:Show()
+    viewingType:Show()
+  end
+
+  if Tabs[ActiveTab] == "TODAY" then
+    viewingType:SetText(date("%x"))
+  elseif Tabs[ActiveTab] == "WEEK" then
+    -- TODO: Finish labels
+  end
 
   local frameX = 500
   local frameY = 347
@@ -316,7 +397,7 @@ function MyAccountant:updateFrame()
       bottomButton1:SetSize(100, 0)
       bottomButton2:SetSize(100, 0)
 
-      bottomButton2:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
+      bottomButton1:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
       bottomButton2:SetScript("OnClick", function() bottomButtonClickHandler(button2) end)
       bottomButton3:SetScript("OnClick", function() bottomButtonClickHandler(button3) end)
 
@@ -354,15 +435,12 @@ function MyAccountant:updateFrame()
   if view == "SESSION" then
     income = MyAccountant:GetSessionIncome()
     outcome = MyAccountant:GetSessionOutcome()
-  elseif view == "TODAY" then
-    income = MyAccountant:GetTodaysIncome()
-    outcome = MyAccountant:GetTodaysOutcome()
   elseif view == "ALL_TIME" then
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime())
+    local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime(selectedCharacter))
     income = summary.income
     outcome = summary.outcome
   else
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(view))
+    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(view, nil, selectedCharacter))
     income = summary.income
     outcome = summary.outcome
   end

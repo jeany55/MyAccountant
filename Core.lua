@@ -14,6 +14,9 @@ function MyAccountant:OnInitialize()
   MyAccountant:InitializeUI()
   MyAccountant:RegisterAllEvents()
   private.currentMoney = GetMoney()
+  local _, className = UnitClass("player")
+  local _, _, _, colorCode = GetClassColor(className)
+  self.db.factionrealm[UnitName("player")].config = { classColor = colorCode, faction = UnitFactionGroup("player") }
 
   -- Register global confirmations
   StaticPopupDialogs["MYACCOUNTANT_RESET_GPH"] = {

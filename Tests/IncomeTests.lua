@@ -105,11 +105,14 @@ function Tests.TestDailyIncome_1()
   MyAccountant:AddIncome("LOOT", 4324)
   MyAccountant:AddIncome("MERCHANTS", 11)
 
-  AssertEqual(123, MyAccountant:GetTodaysIncome("OTHER"))
-  AssertEqual(4324, MyAccountant:GetTodaysIncome("LOOT"))
-  AssertEqual(11, MyAccountant:GetTodaysIncome("MERCHANTS"))
-  -- Check sum
-  AssertEqual(4458, MyAccountant:GetTodaysIncome())
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+
+  AssertEqual(123, table.OTHER.income)
+  AssertEqual(4324, table.LOOT.income)
+  AssertEqual(11, table.MERCHANTS.income)
+
+  local summary = MyAccountant:SummarizeData(table)
+  AssertEqual(4458, summary.income)
 end
 
 function Tests.TestDailyIncome_2()
@@ -124,23 +127,27 @@ function Tests.TestDailyIncome_2()
   MyAccountant:AddIncome("MERCHANTS", 152)
 
   MyAccountant:AddIncome("QUESTS", 1323)
-  MyAccountant:AddIncome("LFG", 4324)
-  MyAccountant:AddIncome("LFG", 1)
+  -- Default settings has LFG disabled, talled in OTHER
+  MyAccountant:AddIncome("OTHER", 4324)
+  MyAccountant:AddIncome("LFG", 12344)
   MyAccountant:AddIncome("LOOT", 11)
 
   MyAccountant:AddIncome("LOOT", 1333)
   MyAccountant:AddIncome("LOOT", 12)
   MyAccountant:AddIncome("MERCHANTS", 141)
 
-  AssertEqual(123, MyAccountant:GetTodaysIncome("OTHER"))
-  AssertEqual(5680, MyAccountant:GetTodaysIncome("LOOT"))
-  AssertEqual(304, MyAccountant:GetTodaysIncome("MERCHANTS"))
-  AssertEqual(123, MyAccountant:GetTodaysIncome("MAIL"))
-  AssertEqual(232, MyAccountant:GetTodaysIncome("AUCTIONS"))
-  AssertEqual(1323, MyAccountant:GetTodaysIncome("QUESTS"))
-  AssertEqual(4325, MyAccountant:GetTodaysIncome("LFG"))
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+
+  AssertEqual(16791, table.OTHER.income)
+  AssertEqual(5680, table.LOOT.income)
+  AssertEqual(304, table.MERCHANTS.income)
+  AssertEqual(123, table.MAIL.income)
+  AssertEqual(232, table.AUCTIONS.income)
+  AssertEqual(1323, table.QUESTS.income)
+
   -- Check sum
-  AssertEqual(12110, MyAccountant:GetTodaysIncome())
+  local summary = MyAccountant:SummarizeData(table)
+  AssertEqual(24453, summary.income)
 end
 
 function Tests.TestDailyOutcome_1()
@@ -150,11 +157,15 @@ function Tests.TestDailyOutcome_1()
   MyAccountant:AddOutcome("LOOT", 4324)
   MyAccountant:AddOutcome("MERCHANTS", 11)
 
-  AssertEqual(123, MyAccountant:GetTodaysOutcome("OTHER"))
-  AssertEqual(4324, MyAccountant:GetTodaysOutcome("LOOT"))
-  AssertEqual(11, MyAccountant:GetTodaysOutcome("MERCHANTS"))
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+
+  AssertEqual(123, table.OTHER.outcome)
+  AssertEqual(4324, table.LOOT.outcome)
+  AssertEqual(11, table.MERCHANTS.outcome)
+
   -- Check sum
-  AssertEqual(4458, MyAccountant:GetTodaysOutcome())
+  local summary = MyAccountant:SummarizeData(table)
+  AssertEqual(4458, summary.outcome)
 end
 
 function Tests.TestDailyOutcome_2()
@@ -177,15 +188,18 @@ function Tests.TestDailyOutcome_2()
   MyAccountant:AddOutcome("LOOT", 12)
   MyAccountant:AddOutcome("MERCHANTS", 141)
 
-  AssertEqual(123, MyAccountant:GetTodaysOutcome("OTHER"))
-  AssertEqual(5680, MyAccountant:GetTodaysOutcome("LOOT"))
-  AssertEqual(304, MyAccountant:GetTodaysOutcome("MERCHANTS"))
-  AssertEqual(123, MyAccountant:GetTodaysOutcome("MAIL"))
-  AssertEqual(232, MyAccountant:GetTodaysOutcome("AUCTIONS"))
-  AssertEqual(1323, MyAccountant:GetTodaysOutcome("QUESTS"))
-  AssertEqual(4325, MyAccountant:GetTodaysOutcome("LFG"))
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+
+  AssertEqual(4448, table.OTHER.outcome)
+  AssertEqual(5680, table.LOOT.outcome)
+  AssertEqual(304, table.MERCHANTS.outcome)
+  AssertEqual(123, table.MAIL.outcome)
+  AssertEqual(232, table.AUCTIONS.outcome)
+  AssertEqual(1323, table.QUESTS.outcome)
+
   -- Check sum
-  AssertEqual(12110, MyAccountant:GetTodaysOutcome())
+  local summary = MyAccountant:SummarizeData(table)
+  AssertEqual(12110, summary.outcome)
 end
 
 function Tests.TestWeeklyIncome_1()

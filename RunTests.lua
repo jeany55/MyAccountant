@@ -208,6 +208,7 @@ CreateFrame = function(frameType, name, parent, template, id)
         GetNormalTexture = GetTexture("Normal"),
         GetPushedTexture = GetTexture("Pushed"),
         GetHighlightTexture = GetTexture("Highlight"),
+        GetFrameLevel = function() return 0 end,
         FireEvent = function(_, e, ...) if scripts.OnEvent and events[e] then scripts.OnEvent(f, e, ...) end end,
         FireUpdate = function() if scripts.OnUpdate then scripts.OnUpdate(f, os.clock() - lastUpdate) lastUpdate = os.clock() end end
     }, Meta)
@@ -307,6 +308,11 @@ ChatFrame_AddMessageEventFilter = Fn --[[@as fun(event: string, filterFunc: func
 GetGuildInfo = Fn --[[@as fun(unit: string): table]]
 IsShiftKeyDown = Const(false)
 EJ_GetInstanceForMap = Val(INSTANCE)
+GetAppropriateTooltip = Fn
+TOOLTIP_DEFAULT_COLOR = "|cFFFFFFFF"
+TOOLTIP_DEFAULT_BACKGROUND_COLOR = "|cFFFFFFFF"
+L_DropDownList1Button1NormalText = CreateFrame()
+CreateFromMixins = function() return CreateFrame() end
 
 -- Constants
 TRADE = "Trade"

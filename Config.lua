@@ -290,7 +290,6 @@ function MyAccountant:SetupOptions()
             type = "select",
             values = {
               NOTHING = L["income_panel_action_nothing"],
-              -- GRAPH = L["income_panel_action_graph"],
               OPTIONS = L["income_panel_action_options"],
               CLEAR_SESSION = L["income_panel_action_session"],
               RESET_GPH = L["income_panel_action_gph"]
@@ -306,7 +305,6 @@ function MyAccountant:SetupOptions()
             type = "select",
             values = {
               NOTHING = L["income_panel_action_nothing"],
-              -- GRAPH = L["income_panel_action_graph"],
               OPTIONS = L["income_panel_action_options"],
               CLEAR_SESSION = L["income_panel_action_session"],
               RESET_GPH = L["income_panel_action_gph"]
@@ -322,7 +320,6 @@ function MyAccountant:SetupOptions()
             type = "select",
             values = {
               NOTHING = L["income_panel_action_nothing"],
-              -- GRAPH = L["income_panel_action_graph"],
               OPTIONS = L["income_panel_action_options"],
               CLEAR_SESSION = L["income_panel_action_session"],
               RESET_GPH = L["income_panel_action_gph"]
