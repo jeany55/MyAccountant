@@ -1,5 +1,5 @@
-name: Tests
-
+name: 🛠️ Tests
+run-name: Unit tests
 # Controls when the workflow will run
 on:
   # Run tests daily
