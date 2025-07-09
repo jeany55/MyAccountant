@@ -1,5 +1,5 @@
 name: 🚀 Release
-
+run-name: New ${{ inputs.versionType }} version
 on:
   # Run manually only
   workflow_dispatch:
