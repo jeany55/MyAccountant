@@ -62,7 +62,7 @@ function MyAccountant:HandleSlashCommand(input)
     if self.db.char.slashBehaviour == "OPEN_WINDOW" then
       MyAccountant:ShowPanel()
     elseif self.db.char.slashBehaviour == "SHOW_OPTIONS" then
-      MyAccountant:Print("|cFF00BF14" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
+      MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
       MyAccountant:Print(L["help1"])
       MyAccountant:Print("----------------------")
       MyAccountant:Print(L["help2"])
@@ -71,7 +71,7 @@ function MyAccountant:HandleSlashCommand(input)
       MyAccountant:Print(L["help5"])
     end
   else
-    MyAccountant:Print("|cFF00BF14" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
+    MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
     MyAccountant:Print(L["help1"])
     MyAccountant:Print("----------------------")
     MyAccountant:Print(L["help2"])
