@@ -14,7 +14,7 @@ Locales\Locales.xml
 Constants.lua
 Core.lua
 Config.lua
-GUI\Templates-Classic.xml
+GUI\Templates-Vanilla.xml
 GUI\IncomeFrame.lua
 GUI\IncomeFrame.xml
 Income.lua

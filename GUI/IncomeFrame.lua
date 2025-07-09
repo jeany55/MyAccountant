@@ -536,6 +536,7 @@ end
 function MyAccountant:TabClick(id)
   PanelTemplates_SetTab(IncomeFrame, id);
   ActiveTab = id
+  PlaySound(841)
   MyAccountant:updateFrame()
 end
 

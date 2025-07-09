@@ -1,0 +1,19 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <!-- Tab template -->
+  <Button name="MyAccountantTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">
+    <Scripts>
+      <OnLoad>
+        self:SetFrameLevel(1)
+      </OnLoad>
+      <OnClick>
+        print("OK")
+        self:SetFrameLevel(4)
+        local fontString = self:GetFontString()
+        fontString:SetPoint("TOP", self, "TOP", 3, -10)
+        MyAccountant:TabClick(self:GetID())                                                                                                                                                                                                                                                        <!-- self:SetPushedTextOffset(0, 50) -->
+      </OnClick>
+    </Scripts>
+  </Button>
+</Ui>
