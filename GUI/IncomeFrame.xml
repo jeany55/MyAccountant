@@ -103,7 +103,7 @@
           </Button>
         </Frames>
       </Frame>
-      <Frame name="infoFrame" parent="IncomeFrame" inherits="InsetFrameTemplate">
+      <Frame name="infoFrame" parent="IncomeFrame" inherits="InsetFrameTemplate" frameLevel="6">
         <Size y="265" />
         <Layers>
           <Layer>
@@ -387,7 +387,7 @@
           </ScrollFrame>
         </Frames>
       </Frame>
-      <Frame name="bottomInfoPanel" parent="IncomeFrame">
+      <Frame name="bottomInfoPanel" parent="IncomeFrame" frameLevel="5">
         <Frames>
           <Frame name="bottomMoneyInfo" parent="bottomInfoPanel" inherits="SmallMoneyFrameTemplate">
             <Layers>
