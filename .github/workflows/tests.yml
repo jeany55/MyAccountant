@@ -1,5 +1,5 @@
 name: 🛠️ Tests
-run-name: Unit tests ${{ inputs.testy }}
+run-name: Unit tests ${{ inputs.testy^^ }}
 # Controls when the workflow will run
 on:
   # Run tests daily
