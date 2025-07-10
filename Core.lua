@@ -52,11 +52,11 @@ end
 function MyAccountant:HandleSlashCommand(input)
   if input == "options" then
     Settings.OpenToCategory(private.ADDON_NAME)
-  elseif input == "open" then
+  elseif input == "open" or input == "o" or input == "show" then
     MyAccountant:ShowPanel()
   elseif input == "gph" then
     StaticPopup_Show("MYACCOUNTANT_RESET_GPH")
-  elseif input == "reset_session" then
+  elseif input == "reset_session" or input == "reset" then
     StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
   elseif input == "" then
     if self.db.char.slashBehaviour == "OPEN_WINDOW" then
