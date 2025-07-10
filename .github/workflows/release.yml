@@ -102,8 +102,6 @@ jobs:
           rm README.md
           rm -rf Docs
 
-          rm RunTests.lua
-          rm -rf Libs/WoWUnit
           rm -rf Tests
 
           mkdir MyAccountant

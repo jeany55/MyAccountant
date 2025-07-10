@@ -4,8 +4,7 @@
 -- Usage: lua Test.lua
 
 local Addon = {}
-local Name = (debug.getinfo(1).source or ""):match("([^/\\]+)/[^/\\]+$")
-    or (os.getenv("PWD") or os.getenv("CD") or io.popen("cd"):read() or ""):match("[^/\\]+$")
+local Name = "MyAccountant"
 
 -- Static info
 local BUILD = { "10.0.0", "46366", "Oct 27 2022", 100000 }
@@ -441,14 +440,14 @@ PLR_AwardLootButtonNormalText = CreateFrame()
 
 -- Import WoWUnit
 CreateFrame(nil, "WoWUnit")
-import("Libs.WoWUnit.Classes.Group")
-import("Libs.WoWUnit.Classes.Test")
-import("Libs.WoWUnit.WoWUnit.lua")
+import("Tests.WoWUnit.Classes.Group")
+import("Tests.WoWUnit.Classes.Test")
+import("Tests.WoWUnit.WoWUnit.lua")
 fire("ADDON_LOADED", "WoWUnit")
 
 -- Import addon
 import(importPath .. "/" .. Name .. ".toc")
-import("Tests.tests")
+import("Tests.Tests.tests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)
