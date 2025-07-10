@@ -21,6 +21,7 @@ local handlePlayerMoneyChange = function()
   end
 
   private.currentMoney = newMoney
+  MyAccountant:updateFrameIfOpen()
 end
 
 -- Tracking if mail is from the AH is difficult - not a great event to track it.
@@ -116,11 +117,14 @@ local events = {
   -- Main
   { EVENT = "PLAYER_MONEY", EXEC = handlePlayerMoneyChange },
   { EVENT = "PLAYER_ENTERING_WORLD", EXEC = function() private.currentMoney = GetMoney() end },
-  { EVENT = "PLAYER_REGEN_DISABLED", EXEC = function (config)
-    if config.closeWhenEnteringCombat then
-      MyAccountant:HidePanel()
+  {
+    EVENT = "PLAYER_REGEN_DISABLED",
+    EXEC = function(config)
+      if config.closeWhenEnteringCombat then
+        MyAccountant:HidePanel()
+      end
     end
-  end}
+  }
 }
 
 local function findEvent(event)

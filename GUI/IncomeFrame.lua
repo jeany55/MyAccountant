@@ -310,6 +310,12 @@ local function bottomButtonClickHandler(action)
   end
 end
 
+function MyAccountant:updateFrameIfOpen()
+  if private.panelOpen then
+    MyAccountant:updateFrame()
+  end
+end
+
 function MyAccountant:updateFrame()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
