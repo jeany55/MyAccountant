@@ -1,6 +1,6 @@
 ## Interface: 110107
 ## Title: MyAccountant
-## Notes: Track your gold income/outcome
+## Notes: Track where your gold is going or coming from!
 ## Author: Jeany
 ## Version: 1.2.0
 ## IconTexture: Interface\Addons\MyAccountant\Images\addonIcon
