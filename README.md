@@ -43,6 +43,12 @@ A configurable income panel allows you to see where your money is coming and goi
 
 ![](Docs/header1.png)
 
+### **See all your characters**
+
+Track your income as a whole or by each of your characters.
+
+![](Docs/incomeFrameAllCharacters.png)
+
 ### **Sort by what you want**
 
 Configure the income panel to either sort when opening, or click on a table header to sort either by descending or ascending.
