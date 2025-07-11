@@ -9,26 +9,26 @@ if not L then return end
 -- Localization definitions
 
 -- 1.2
-L["option_income_panel_bottom"] = "Show gold and buttons on bottom"
-L["option_income_panel_bottom_desc"] = "Shows your current gold and addon buttons at the bottom of the income panel"
+L["option_income_panel_bottom"] = "Показать золото и кнопки внизу"
+L["option_income_panel_bottom_desc"] = "Отображает текущее количество золота и кнопки аддона в нижней части панели доходов"
 
-L["option_income_panel_button_1"] = "Button 1 action"
-L["option_income_panel_button_1_desc"] = "What do to when clicking the first button in the income panel"
-L["option_income_panel_button_2"] = "Button 2 action"
-L["option_income_panel_button_2_desc"] = "What do to when clicking the second button in the income panel"
-L["option_income_panel_button_3"] = "Button 3 action"
-L["option_income_panel_button_3_desc"] = "What do to when clicking the third button in the income panel"
+L["option_income_panel_button_1"] = "Действие кнопки 1"
+L["option_income_panel_button_1_desc"] = "Что делать при нажатии на первую кнопку в панели доходов"
+L["option_income_panel_button_2"] = "Действие кнопки 2"
+L["option_income_panel_button_2_desc"] = "Что делать при нажатии на вторую кнопку в панели доходов"
+L["option_income_panel_button_3"] = "Действие кнопки 3"
+L["option_income_panel_button_3_desc"] = "Что делать при нажатии на третью кнопку в панели доходов"
 
-L["income_panel_action_nothing"] = "Do nothing (hide button)"
-L["income_panel_action_options"] = "Open addon options"
-L["income_panel_action_session"] = "Clear session data"
-L["income_panel_action_gph"] = "Reset gold per hour"
+L["income_panel_action_nothing"] = "Ничего не делать (скрыть кнопку)"
+L["income_panel_action_options"] = "Открыть настройки аддона"
+L["income_panel_action_session"] = "Очистить данные сессии"
+L["income_panel_action_gph"] = "Сбросить золото в час"
 
-L["income_panel_button_OPTIONS"] = "Options"
-L["income_panel_button_CLEAR_SESSION"] = "Clear session"
-L["income_panel_button_RESET_GPH"] = "Reset GPH"
+L["income_panel_button_OPTIONS"] = "Настройки"
+L["income_panel_button_CLEAR_SESSION"] = "Очистить сессию"
+L["income_panel_button_RESET_GPH"] = "Сбросить золото/ч"
 
-L["character_selection_all"] = "All characters"
+L["character_selection_all"] = "Все персонажи"
 
 -- /mya
 L["help1"] = "Доступные команды:"
