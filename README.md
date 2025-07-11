@@ -9,24 +9,6 @@
 
 Heavily inspired by AccountantClassic, see a breakdown by source - either by session, day, week, month, year, or all time. MyAccountant currently supports all versions of WoW.
 
-## How to contribute
-
-### Want to add a translation?
-
-Make a copy of [Locales/TEMPLATE.lua](Locales/TEMPLATE.lua) and make the necessary changes for your translation.
-
-Then either open up a PR with your change, or create an issue if you're unsure how to complete a merge (and we can do it for you!)
-
-### Want a new feature?
-
-Create an issue describing what you would like to see.
-
-Or, if you're feeling brave you can make the change yourself and submit a pull request! Increasing versions in the toc is not necessary, it's done automatically as part of the release Github Action.
-
-### Find a bug?
-
-Please open a issue on the issues page!
-
 ## Features
 
 ### **See your gold per hour**
@@ -64,6 +46,32 @@ MyAccountant knows which sources are unavailable in each version of WoW. This le
 Decide which income sources you want to track by disabling ones you aren't interested in
 
 ![](Docs/incomesources.png)
+
+## Supported languages
+<div style="display: flex; align-items: center; padding-bottom: 3px;">
+<img src="Docs/flagEnglish.png" />&nbsp;&nbsp;<B>English</B>
+</div>
+<div style="display: flex; align-items: center;">
+<img src="Docs/flagRussian.png" />&nbsp;&nbsp;<B>Russian</B>&nbsp;(by ZamestoTV)
+</div>
+
+## How to contribute
+
+### Want to add a translation?
+
+Make a copy of [Locales/TEMPLATE.lua](Locales/TEMPLATE.lua) and make the necessary changes for your translation.
+
+Then either open up a PR with your change, or create an issue if you're unsure how to complete a merge (and we can do it for you!)
+
+### Want a new feature?
+
+Create an issue describing what you would like to see.
+
+Or, if you're feeling brave you can make the change yourself and submit a pull request! Increasing versions in the toc is not necessary, it's done automatically as part of the release Github Action.
+
+### Find a bug?
+
+Please open a issue on the issues page!
 
 ## License
 MIT, see the [License](LICENSE) file.
