@@ -129,4 +129,4 @@ jobs:
           project_id: "1299016"
           display_name: ${{ env.VERSION }}
           token: ${{ secrets.CURSE_TOKEN }}
-          game_versions: "1.15.7,11.2.0,5.5.0,4.4.2,3.4.4,2.5.4"
+          game_versions: "1.15.7,11.2.0,5.5.0,4.4.2,3.4.5,2.5.4"
