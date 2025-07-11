@@ -16,8 +16,7 @@ local handlePlayerMoneyChange = function()
     MyAccountant:PrintDebugMessage("Added income of |cff00ff00%s|r to %s", GetMoneyString(moneyChange, true), source)
   elseif moneyChange < 0 then
     MyAccountant:AddOutcome(source, abs(moneyChange))
-    MyAccountant:PrintDebugMessage("Added outcome of |cffff0000%s|r to %s", GetMoneyString(abs(moneyChange), true),
-                                   source)
+    MyAccountant:PrintDebugMessage("Added outcome of |cffff0000%s|r to %s", GetMoneyString(abs(moneyChange), true), source)
   end
 
   private.currentMoney = newMoney
@@ -39,6 +38,8 @@ end
 
 -- All event definitions
 -- SOURCE must match one of the source definitions in Constants.lua
+-- RESET = true will reset the category
+-- EXEC is a function to execute when the event happens
 local events = {
   -- Trade
   { EVENT = "TRADE_SHOW", SOURCE = "TRADE" },

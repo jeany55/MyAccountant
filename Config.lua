@@ -55,6 +55,7 @@ private.supportsWoWVersions = function(versions)
   return false
 end
 
+-- Initializes Ace3 Addon options table
 function MyAccountant:SetupOptions()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 

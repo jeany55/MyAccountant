@@ -49,7 +49,18 @@ function MyAccountant:OnDisable()
   -- Called when the addon is disabled
 end
 
+local function printHelpMessage()
+  MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
+  MyAccountant:Print(L["help1"])
+  MyAccountant:Print("----------------------")
+  MyAccountant:Print(L["help2"])
+  MyAccountant:Print(L["help3"])
+  MyAccountant:Print(L["help4"])
+  MyAccountant:Print(L["help5"])
+end
+
 function MyAccountant:HandleSlashCommand(input)
+
   if input == "options" then
     Settings.OpenToCategory(private.ADDON_NAME)
   elseif input == "open" or input == "o" or input == "show" then
@@ -62,22 +73,10 @@ function MyAccountant:HandleSlashCommand(input)
     if self.db.char.slashBehaviour == "OPEN_WINDOW" then
       MyAccountant:ShowPanel()
     elseif self.db.char.slashBehaviour == "SHOW_OPTIONS" then
-      MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
-      MyAccountant:Print(L["help1"])
-      MyAccountant:Print("----------------------")
-      MyAccountant:Print(L["help2"])
-      MyAccountant:Print(L["help3"])
-      MyAccountant:Print(L["help4"])
-      MyAccountant:Print(L["help5"])
+      printHelpMessage()
     end
   else
-    MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
-    MyAccountant:Print(L["help1"])
-    MyAccountant:Print("----------------------")
-    MyAccountant:Print(L["help2"])
-    MyAccountant:Print(L["help3"])
-    MyAccountant:Print(L["help4"])
-    MyAccountant:Print(L["help5"])
+    printHelpMessage()
   end
 end
 
