@@ -14,6 +14,7 @@ function MyAccountant:OnInitialize()
   MyAccountant:InitializeUI()
   MyAccountant:RegisterAllEvents()
   private.currentMoney = GetMoney()
+  -- Save faction and class color to db for character dropdown
   local _, className = UnitClass("player")
   local _, _, _, colorCode = GetClassColor(className)
   self.db.factionrealm[UnitName("player")].config = { classColor = colorCode, faction = UnitFactionGroup("player") }
@@ -60,7 +61,6 @@ local function printHelpMessage()
 end
 
 function MyAccountant:HandleSlashCommand(input)
-
   if input == "options" then
     Settings.OpenToCategory(private.ADDON_NAME)
   elseif input == "open" or input == "o" or input == "show" then
