@@ -285,6 +285,11 @@ function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverrid
   end
 
   local talliedTable = { OTHER = table.OTHER }
+
+  if not talliedTable.OTHER or not talliedTable.OTHER.income then
+    talliedTable.OTHER = { income = 0, outcome = 0 }
+  end
+
   -- Find any data from an inactive source and tally it in Other
   for k, v in pairs(table) do
     if not MyAccountant:IsSourceActive(k) then
