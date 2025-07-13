@@ -48,12 +48,8 @@ Decide which income sources you want to track by disabling ones you aren't inter
 ![](Docs/incomesources.png)
 
 ## Supported languages
-<div style="display: flex; align-items: center; padding-bottom: 3px;">
-<img src="Docs/flagEnglish.png" />&nbsp;&nbsp;<B>English</B>
-</div>
-<div style="display: flex; align-items: center;">
-<img src="Docs/flagRussian.png" />&nbsp;&nbsp;<B>Russian</B>&nbsp;(by ZamestoTV)
-</div>
+* <B>English</B>
+* <B>Russian</B>&nbsp;(by ZamestoTV)
 
 ## How to contribute
 
