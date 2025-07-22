@@ -46,7 +46,7 @@ function MyAccountant:GetSortedTable(type)
   for k, _ in pairs(incomeTable) do
     if not self.db.char.hideInactiveSources then
       table.insert(preppedSortList, incomeTable[k])
-    elseif incomeTable[k].outcome > 0 and incomeTable[k].income > 0 then
+    elseif incomeTable[k].outcome > 0 or incomeTable[k].income > 0 then
       table.insert(preppedSortList, incomeTable[k])
     end
   end
@@ -195,9 +195,8 @@ function MyAccountant:InitializeUI()
   end
 
   -- Setup scrollbar
-  scrollFrame:SetScript("OnVerticalScroll", function(self, offset)
-    FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction)
-  end)
+  scrollFrame:SetScript("OnVerticalScroll",
+                        function(self, offset) FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction) end)
   scrollFrame:SetScript("OnShow", function(_) scrollBarUpdateFunction() end)
 
   -- Close on ESC
@@ -427,22 +426,6 @@ function MyAccountant:updateFrame()
 
   IncomeFrame:SetSize(frameX, frameY)
 
-  local showScrollbar = #(self.db.char.sources) > 12
-  if showScrollbar then
-    scrollBar:Show()
-  else
-    -- Scrollbar not needed - not enough items
-    scrollBar:Hide()
-  end
-
-  -- Update right hand spacing to adjust for scrollbar if needed
-  for i = 1, 12 do
-    local item = _G["infoFrame" .. i .. "Outgoing"]
-    local offset = showScrollbar and -15 or 0
-
-    item:SetPoint("RIGHT", outcomeHeader, "RIGHT", offset, 0)
-  end
-
   -- Update header labels
   local view = Tabs[ActiveTab]
   local income = 0
@@ -494,12 +477,24 @@ function MyAccountant:DrawRows()
   local tableType = Tabs[ActiveTab]
   local incomeTable = MyAccountant:GetSortedTable(tableType)
 
+  local showScrollbar = #(incomeTable) > 12
+  if showScrollbar then
+    scrollBar:Show()
+  else
+    -- Scrollbar not needed - not enough items
+    scrollBar:Hide()
+  end
+
   updateSortingIcons()
 
   for i = 1, 12 do
     local title = "infoFrame" .. i .. "Title"
     local incoming = "infoFrame" .. i .. "Incoming"
     local outgoing = "infoFrame" .. i .. "Outgoing"
+
+    -- Update right hand spacing to adjust for scrollbar if needed
+    local offset = showScrollbar and -15 or 0
+    _G[outgoing]:SetPoint("RIGHT", outcomeHeader, "RIGHT", offset, 0)
 
     local currentRow = incomeTable[i + scrollIndex]
 
