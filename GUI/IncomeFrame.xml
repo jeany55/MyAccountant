@@ -366,8 +366,9 @@
           </Layer>
         </Layers>
         <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="legendFrame" relativePoint="TOPLEFT" />
-          <Anchor point="TOPRIGHT" relativeTo="legendFrame" relativePoint="TOPRIGHT" />
+          <Anchor point="LEFT" relativeTo="IncomeFrame" relativePoint="LEFT" />
+          <Anchor point="TOP" relativeTo="legendFrame" relativePoint="TOP" />
+          <Anchor point="RIGHT" relativeTo="IncomeFrame" relativePoint="RIGHT" x="-1" />
         </Anchors>
       </Frame>
       <Frame name="scrollBar" parent="IncomeFrame" inherits="BackdropTemplate">
@@ -395,7 +396,8 @@
                 <Texture file="Interface/FrameGeneral/UI-Background-Marble" horizTile="true" vertTile="true">
                   <Color r="0.7" g="0.7" b="0.7" a="1" />
                   <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="bottomMoneyInfo" relativePoint="TOPLEFT" x="0" y="0" />
+                    <Anchor point="LEFT" relativeTo="IncomeFrame" relativePoint="LEFT" x="3" y="0" />
+                    <Anchor point="TOP" relativeTo="bottomInfoPanel" relativePoint="TOP" x="0" y="0" />
                     <Anchor point="BOTTOMRIGHT" relativeTo="bottomInfoPanel" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                   </Anchors>
                 </Texture>
