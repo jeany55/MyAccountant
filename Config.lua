@@ -363,6 +363,7 @@ function MyAccountant:SetupOptions()
             name = L["option_income_panel_default_sort"],
             desc = L["option_income_panel_default_sort_desc"],
             type = "select",
+            width = 1.3,
             values = {
               NOTHING = L["option_income_panel_default_sort_none"],
               SOURCE_ASC = L["option_income_panel_default_sort_source"],
