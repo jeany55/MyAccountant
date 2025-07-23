@@ -9,6 +9,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 -----------------------------------------
 --- VERSION 1.3
 -----------------------------------------
+L["income_panel_zones"] = "Zones"
 L["option_income_panel_hover_max"] = "Max number of zones to show on hover tooltip"
 L["option_income_panel_hover_max_desc"] =
     "How many zones to show when hovering over the income or outcome of sources. The rest will be summed. Set to zero to disable hover tooltips"

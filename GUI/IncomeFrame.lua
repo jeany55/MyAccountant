@@ -512,6 +512,7 @@ local function addHoverTooltip(owner, type, zoneList, maxLines, colorIncome)
 
   if #zoneList > 0 then
     GameTooltip:SetOwner(owner, "ANCHOR_CURSOR")
+    GameTooltip:AddLine(L["income_panel_zones"])
 
     for _, zone in ipairs(zoneList) do
       local amount
