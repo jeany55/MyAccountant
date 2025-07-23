@@ -25,6 +25,10 @@ A configurable income panel allows you to see where your money is coming and goi
 
 ![](Docs/header1.png)
 
+Mouse over a source income or outcome to see a breakdown by zone! Configurable in options.
+
+![](Docs/zoneBreakdown.png)
+
 ### **See all your characters**
 
 Track your income as a whole or by each of your characters.
