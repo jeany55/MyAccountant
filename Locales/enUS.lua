@@ -11,6 +11,10 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 -----------------------------------------
 L["income_panel_zones"] = "Zones"
 L["option_income_panel_hover_max"] = "Max number of zones to show on hover tooltip"
+L["option_reset_zone_data"] = "Clear zone data for all characters"
+L["option_reset_zone_data_desc"] = "Clears zone data for all characters, keeping source data intact"
+L["option_reset_zone_data_confirm"] =
+    "This will |cffff0000permanently clear all zone info for all your characters|r. This can't be undone. Are sure you want to do this?"
 L["option_income_panel_hover_max_desc"] =
     "How many zones to show when hovering over the income or outcome of sources. The rest will be summed. Set to zero to disable hover tooltips"
 L["income_panel_other_zones"] = "Other zones"

@@ -412,10 +412,20 @@ function MyAccountant:SetupOptions()
             confirmText = L["option_clear_character_data_confirm"],
             func = function() MyAccountant:ResetCharacterData() end
           },
+          clear_zone_data = {
+            name = L["option_reset_zone_data"],
+            desc = L["option_reset_zone_data_desc"],
+            order = 5,
+            width = 1.5,
+            type = "execute",
+            confirm = true,
+            confirmText = L["option_reset_zone_data_confirm"],
+            func = function() MyAccountant:ResetZoneData() end
+          },
           clear_all_data = {
             name = L["option_clear_all_data"],
             desc = L["option_clear_all_data_desc"],
-            order = 4,
+            order = 6,
             type = "execute",
             confirm = true,
             confirmText = L["option_clear_all_data_confirm"],

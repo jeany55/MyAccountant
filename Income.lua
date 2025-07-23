@@ -196,7 +196,7 @@ function MyAccountant:FetchDataRow(playerName, year, month, day)
     return {}
   end
 
-  return self.db.factionrealm[playerName][year][month][day]
+  return private.copy(self.db.factionrealm[playerName][year][month][day])
 end
 
 function MyAccountant:GetHistoricalData(type, dateOverride, characterOverride, dataRefOverride)
@@ -272,7 +272,7 @@ function MyAccountant:GetAllTime(characterOverride, refDataOverride)
     return totalledData
   end
 
-  for keyName, yearData in pairs(self.db.factionrealm[playerName]) do
+  for keyName, yearData in pairs(private.copy(self.db.factionrealm[playerName])) do
     if keyName ~= "config" then
       for _, monthData in pairs(yearData) do
         for _, dayData in pairs(monthData) do
@@ -389,3 +389,26 @@ function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverrid
   return reorderedTable
 end
 
+function MyAccountant:ResetZoneData()
+  for k, v in pairs(totalGoldSession) do
+    if v.zones then
+      totalGoldSession[k].zones = {}
+    end
+  end
+
+  for player, playerData in pairs(self.db.factionrealm) do
+    for yearKey, yearData in pairs(playerData) do
+      if yearKey ~= "config" then
+        for monthKey, monthData in pairs(yearData) do
+          for dayKey, dayData in pairs(monthData) do
+            for category, categoryData in pairs(dayData) do
+              if categoryData.zones then
+                self.db.factionrealm[player][yearKey][monthKey][dayKey][category].zones = {}
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
