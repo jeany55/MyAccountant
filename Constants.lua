@@ -146,21 +146,11 @@ private.sources = {
   },
   LFG = {
     title = L["LFG"],
-    versions = {
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.RETAIL
-    }
+    versions = { private.GameTypes.MISTS_CLASSIC, private.GameTypes.WOTLK, private.GameTypes.CATA, private.GameTypes.RETAIL }
   },
   BARBER = {
     title = L["BARBER"],
-    versions = {
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.RETAIL
-    }
+    versions = { private.GameTypes.MISTS_CLASSIC, private.GameTypes.WOTLK, private.GameTypes.CATA, private.GameTypes.RETAIL }
   },
   TRANSMOGRIFY = {
     title = L["TRANSMOGRIFY"],
@@ -288,5 +278,6 @@ private.default_settings = {
   showIncomePanelBottom = true,
   incomePanelButton1 = "NOTHING",
   incomePanelButton2 = "OPTIONS",
-  incomePanelButton3 = "CLEAR_SESSION"
+  incomePanelButton3 = "CLEAR_SESSION",
+  maxZonesIncomePanel = 5
 }

@@ -74,25 +74,41 @@ function MyAccountant:AddIncome(category, amount, dateOverride)
   GoldMade = GoldMade + amount
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
-
+  local zone = GetZoneText()
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0 }
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {} }
+  end
+  if not totalGoldSession[category].zones[zone] then
+    totalGoldSession[category].zones[zone] = { income = 0, outcome = 0 }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
     self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
   end
 
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] = { income = 0, outcome = 0 }
+  end
+
   total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].income
   total = total + amount
 
+  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].income
+  totalCategory = totalCategory + amount
+
   -- Save to DB
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].income = total
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].income = totalCategory
 
   -- Save to current session info
   totalGoldSession[category].income = totalGoldSession[category].income + amount
+  totalGoldSession[category].zones[zone].income = totalGoldSession[category].zones[zone].income + amount
 end
 
 -- Main function to add outcome - added to correct day automatically unless third optional param used
@@ -101,25 +117,41 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
 
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
-
+  local zone = GetZoneText()
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0 }
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {} }
+  end
+  if not totalGoldSession[category].zones[zone] then
+    totalGoldSession[category].zones[zone] = { income = 0, outcome = 0 }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
     self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
   end
 
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] = { income = 0, outcome = 0 }
+  end
+
   total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].outcome
   total = total + amount
 
+  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].outcome
+  totalCategory = totalCategory + amount
+
   -- Save to DB
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].outcome = total
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].outcome = totalCategory
 
   -- Save to current session info
   totalGoldSession[category].outcome = totalGoldSession[category].outcome + amount
+  totalGoldSession[category].zones[zone].outcome = totalGoldSession[category].zones[zone].outcome + amount
 end
 
 -- dayData - Day data object
@@ -202,6 +234,21 @@ function MyAccountant:GetHistoricalData(type, dateOverride, characterOverride, d
         data[k] = { income = 0, outcome = 0 }
       end
 
+      if not data[k].zones then
+        data[k].zones = v.zones and v.zones or {}
+      else
+        if v.zones then
+          for zoneName, zoneData in pairs(v.zones) do
+            if not data[k].zones[zoneName] then
+              data[k].zones[zoneName] = zoneData
+            else
+              data[k].zones[zoneName].income = data[k].zones[zoneName].income + zoneData.income
+              data[k].zones[zoneName].outcome = data[k].zones[zoneName].outcome + zoneData.outcome
+            end
+          end
+        end
+      end
+
       data[k].income = data[k].income + v.income
       data[k].outcome = data[k].outcome + v.outcome
     end
@@ -232,6 +279,20 @@ function MyAccountant:GetAllTime(characterOverride, refDataOverride)
           for category, categoryData in pairs(dayData) do
             if not data[category] then
               data[category] = { income = 0, outcome = 0 }
+            end
+            if not data[category].zones then
+              data[category].zones = categoryData.zones and categoryData.zones or {}
+            else
+              if categoryData.zones then
+                for key, value in pairs(categoryData.zones) do
+                  if not data[category].zones[key] then
+                    data[category].zones[key] = value
+                  else
+                    data[category].zones[key].income = data[category].zones[key].income + value.income
+                    data[category].zones[key].outcome = data[category].zones[key].outcome + value.outcome
+                  end
+                end
+              end
             end
 
             data[category].income = data[category].income + categoryData.income
@@ -277,7 +338,7 @@ function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverrid
   local playerName = characterOverride and characterOverride or UnitName("player")
 
   if type == "SESSION" then
-    table = totalGoldSession
+    table = private.copy(totalGoldSession)
   elseif type == "ALL_TIME" then
     table = MyAccountant:GetAllTime(playerName)
   else
@@ -295,6 +356,20 @@ function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverrid
     if not MyAccountant:IsSourceActive(k) then
       talliedTable.OTHER.income = talliedTable.OTHER.income + v.income
       talliedTable.OTHER.outcome = talliedTable.OTHER.outcome + v.outcome
+      if not talliedTable.OTHER.zones then
+        talliedTable.OTHER.zones = v.zones and v.zones or {}
+      else
+        if v.zones then
+          for zoneName, zoneData in pairs(v.zones) do
+            if not talliedTable.OTHER.zones[zoneName] then
+              talliedTable.OTHER.zones[zoneName] = zoneData
+            else
+              talliedTable.OTHER.zones[zoneName].income = zoneData.income
+              talliedTable.OTHER.zones[zoneName].outcome = zoneData.outcome
+            end
+          end
+        end
+      end
     else
       talliedTable[k] = v
     end
@@ -304,7 +379,7 @@ function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverrid
   local reorderedTable = {}
   for _, v in ipairs(self.db.char.sources) do
     if (not talliedTable[v]) then
-      reorderedTable[v] = { income = 0, outcome = 0 }
+      reorderedTable[v] = { income = 0, outcome = 0, zones = {} }
     else
       reorderedTable[v] = talliedTable[v]
     end

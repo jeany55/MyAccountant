@@ -194,3 +194,19 @@ function MyAccountant:PrintDebugMessage(message, ...)
     MyAccountant:Printf("|cffff0000[Debug]|r " .. message, ...)
   end
 end
+
+private.copy = function(obj, seen)
+  if type(obj) ~= 'table' then
+    return obj
+  end
+  if seen and seen[obj] then
+    return seen[obj]
+  end
+  local s = seen or {}
+  local res = setmetatable({}, getmetatable(obj))
+  s[obj] = res
+  for k, v in pairs(obj) do
+    res[private.copy(k, s)] = private.copy(v, s)
+  end
+  return res
+end

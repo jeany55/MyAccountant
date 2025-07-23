@@ -346,8 +346,20 @@ function MyAccountant:SetupOptions()
             set = function(info, val) self.db.char.hideInactiveSources = val end,
             get = function(info) return self.db.char.hideInactiveSources end
           },
-          default_sort = {
+          max_zones = {
             order = 6,
+            name = L["option_income_panel_hover_max"],
+            desc = L["option_income_panel_hover_max_desc"],
+            type = "range",
+            width = "full",
+            min = 0,
+            max = 10,
+            step = 1,
+            set = function(info, val) self.db.char.maxZonesIncomePanel = val end,
+            get = function(info) return self.db.char.maxZonesIncomePanel end
+          },
+          default_sort = {
+            order = 7,
             name = L["option_income_panel_default_sort"],
             desc = L["option_income_panel_default_sort_desc"],
             type = "select",

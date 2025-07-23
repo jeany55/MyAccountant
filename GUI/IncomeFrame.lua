@@ -43,7 +43,17 @@ function MyAccountant:GetSortedTable(type)
 
   local preppedSortList = {}
   -- Prep table for sort
-  for k, _ in pairs(incomeTable) do
+  for k, v in pairs(incomeTable) do
+    local zoneList = {}
+    if v.zones then
+      for zoneKey, zoneValue in pairs(v.zones) do
+        local payload = zoneValue
+        payload.zoneName = zoneKey
+        table.insert(zoneList, payload)
+      end
+    end
+    incomeTable[k].zones = zoneList
+
     if not self.db.char.hideInactiveSources then
       table.insert(preppedSortList, incomeTable[k])
     elseif incomeTable[k].outcome > 0 or incomeTable[k].income > 0 then
@@ -471,11 +481,75 @@ function MyAccountant:updateFrame()
   MyAccountant:DrawRows()
 end
 
+local sortZoneIncome = function(source1, source2) return source1.income > source2.income end
+local sortZoneOutcome = function(source1, source2) return source1.outcome > source2.outcome end
+
+local function addHoverTooltip(owner, type, zoneList, maxLines, colorIncome)
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
+  if maxLines == 0 then
+    return
+  end
+
+  local showTooltip = false
+  local linesShown = 0
+  local restZonesSum = 0
+  local goldColor
+
+  if colorIncome and type == "INCOME" then
+    goldColor = "|cff00ff00"
+  elseif colorIncome and type == "OUTCOME" then
+    goldColor = "|cffff0000"
+  else
+    goldColor = "|cffffffff"
+  end
+
+  if type == "INCOME" then
+    table.sort(zoneList, sortZoneIncome)
+  else
+    table.sort(zoneList, sortZoneOutcome)
+  end
+
+  if #zoneList > 0 then
+    GameTooltip:SetOwner(owner, "ANCHOR_CURSOR")
+
+    for _, zone in ipairs(zoneList) do
+      local amount
+      if type == "INCOME" then
+        amount = zone.income
+      else
+        amount = zone.outcome
+      end
+
+      if amount > 0 then
+        showTooltip = true
+        if linesShown > maxLines then
+          restZonesSum = restZonesSum + amount
+        else
+          GameTooltip:AddLine(zone.zoneName .. ": " .. goldColor .. GetMoneyString(amount) .. "|r")
+          linesShown = linesShown + 1
+        end
+      end
+    end
+
+    if restZonesSum > 0 then
+      GameTooltip:AddLine(L["income_panel_other_zones"] .. ": " .. goldColor .. GetMoneyString(restZonesSum) .. "|r")
+    end
+
+    if showTooltip then
+      GameTooltip:Show()
+    end
+  end
+
+end
+
 function MyAccountant:DrawRows()
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
   local tableType = Tabs[ActiveTab]
   local incomeTable = MyAccountant:GetSortedTable(tableType)
+  local maxHoverLines = self.db.char.maxZonesIncomePanel
+  local colorIncome = self.db.char.colorGoldInIncomePanel
 
   local showScrollbar = #(incomeTable) > 12
   if showScrollbar then
@@ -526,6 +600,12 @@ function MyAccountant:DrawRows()
       _G[incoming]:SetText(incomeText)
       _G[outgoing]:SetText(outcomeText)
 
+      _G[outgoing]:SetScript("OnEnter",
+                             function(self) addHoverTooltip(self, "OUTCOME", currentRow.zones, maxHoverLines, colorIncome) end)
+      _G[outgoing]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      _G[incoming]:SetScript("OnEnter",
+                             function(self) addHoverTooltip(self, "INCOME", currentRow.zones, maxHoverLines, colorIncome) end)
+      _G[incoming]:SetScript("OnLeave", function() GameTooltip:Hide() end)
     else
       _G[title]:SetText("")
       _G[incoming]:SetText("")

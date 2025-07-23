@@ -14,6 +14,7 @@ local REALM = "Mal'Ganis"
 local REALM_CONNECTED = { "Blackhand", "Mal'Ganis", "Taerar", "Echsenkessel" }
 local VERSION = "0-dev0"
 local FACTION = "Horde"
+local ZONE = "Orgrimmar"
 local RACE = 8
 local CLASS = 8
 local GUID = "Player-1612-054E4E80"
@@ -312,6 +313,7 @@ TOOLTIP_DEFAULT_COLOR = "|cFFFFFFFF"
 TOOLTIP_DEFAULT_BACKGROUND_COLOR = "|cFFFFFFFF"
 L_DropDownList1Button1NormalText = CreateFrame()
 CreateFromMixins = function() return CreateFrame() end
+GetZoneText = Const(ZONE)
 
 -- Constants
 TRADE = "Trade"

@@ -7,6 +7,14 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 -- Localization definitions
 
 -----------------------------------------
+--- VERSION 1.3
+-----------------------------------------
+L["option_income_panel_hover_max"] = "Max number of zones to show on hover tooltip"
+L["option_income_panel_hover_max_desc"] =
+    "How many zones to show when hovering over the income or outcome of sources. The rest will be summed. Set to zero to disable hover tooltips"
+L["income_panel_other_zones"] = "Other zones"
+
+-----------------------------------------
 --- VERSION 1.2
 -----------------------------------------
 
@@ -107,8 +115,7 @@ L["option_income_panel_grid_desc"] = "Whether or not to show the grid lines mimi
 
 -- Options, sources
 L["option_income_sources"] = "Active income sources"
-L["option_income_sources_desc"] =
-    "Which income sources to track. If not tracked it will be grouped under the 'Other' category"
+L["option_income_sources_desc"] = "Which income sources to track. If not tracked it will be grouped under the 'Other' category"
 L["option_income_sources_additional_1"] = "Inactive sources will be tallied in 'Other'"
 L["option_income_sources_additional_2"] = "Some sources may be unavailable in your WoW version"
 
@@ -120,8 +127,7 @@ L["option_clear_gph"] = "Clear gold per hour information"
 L["option_clear_gph_desc"] = "Clear all gold per hour information, starting over"
 
 L["option_clear_session_data"] = "Clear session data for this character"
-L["option_clear_session_data_desc"] =
-    "Delete all income/outcome data for this session. Daily income will remain intact."
+L["option_clear_session_data_desc"] = "Delete all income/outcome data for this session. Daily income will remain intact."
 L["option_clear_session_data_confirm"] = "This will clear all data for your session. Are sure you want to do this?"
 
 L["option_clear_character_data"] = "Clear all data for this character"
