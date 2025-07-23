@@ -4,17 +4,27 @@
 --- If you want to generate your own, copy this file and make the necessary changes
 --- Then submit as a PR (or create an issue with to get someone else to handle the merging)
 --------------------------------
-
 -- Language, replace with your language
 local LANG = "enUS"
 
 local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", LANG)
 
-if not L then return end
+if not L then
+  return
+end
 
 -- Localization definitions
 -- Replace the values (not the keys) with the correct trnaslation
 -- eg. L["option_general"] = "Général"
+
+-----------------------------------------
+--- VERSION 1.3
+-----------------------------------------
+L["income_panel_zones"] = "Zones"
+L["option_income_panel_hover_max"] = "Max number of zones to show on hover tooltip"
+L["option_income_panel_hover_max_desc"] =
+    "How many zones to show when hovering over the income or outcome of sources. The rest will be summed. Set to zero to disable hover tooltips"
+L["income_panel_other_zones"] = "Other zones"
 
 -----------------------------------------
 --- VERSION 1.2
@@ -50,7 +60,6 @@ L["help2"] = "- /mya open - Show/hide income window"
 L["help3"] = "- /mya options - Open options window"
 L["help4"] = "- /mya gph - Reset gold per hour"
 L["help5"] = "- /mya reset_session - Reset session info"
-
 
 -- Options, general header
 L["option_general"] = "General"
@@ -127,8 +136,6 @@ L["option_income_sources_additional_2"] = "Some sources may be unavailable in yo
 L["option_income_desc"] = "Toggle this income on/off"
 L["option_income_required"] = "|cffff0000(Required)|r"
 
-
-
 -- Options, clear data
 L["option_clear_gph"] = "Clear gold per hour information"
 L["option_clear_gph_desc"] = "Clear all gold per hour information, starting over"
@@ -138,12 +145,15 @@ L["option_clear_session_data_desc"] = "Delete all income/outcome data for this s
 L["option_clear_session_data_confirm"] = "This will clear all data for your session. Are sure you want to do this?"
 
 L["option_clear_character_data"] = "Clear all data for this character"
-L["option_clear_character_data_desc"] = "Delete all income/outcome data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
-L["option_clear_character_data_confirm"] = "This will |cffff0000permanently clear all data for your character|r. This can't be undone. Are sure you want to do this?"
+L["option_clear_character_data_desc"] =
+    "Delete all income/outcome data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
+L["option_clear_character_data_confirm"] =
+    "This will |cffff0000permanently clear all data for your character|r. This can't be undone. Are sure you want to do this?"
 
 L["option_clear_all_data"] = "Clear all data"
 L["option_clear_all_data_desc"] = "Delete all income/outcome data for this addon. |cffff0000This is irreversible!|r"
-L["option_clear_all_data_confirm"] = "This will |cffff0000permanently clear all data for all your characters, starting over from scratch|r. This can't be undone. Are sure you want to do this?"
+L["option_clear_all_data_confirm"] =
+    "This will |cffff0000permanently clear all data for all your characters, starting over from scratch|r. This can't be undone. Are sure you want to do this?"
 
 -- Options, developer options
 L["option_debug_messages"] = "Show debug messages"
