@@ -105,7 +105,7 @@ function Tests.TestDailyIncome_1()
   MyAccountant:AddIncome("LOOT", 4324)
   MyAccountant:AddIncome("MERCHANTS", 11)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
 
   AssertEqual(123, table.OTHER.income)
   AssertEqual(4324, table.LOOT.income)
@@ -136,7 +136,7 @@ function Tests.TestDailyIncome_2()
   MyAccountant:AddIncome("LOOT", 12)
   MyAccountant:AddIncome("MERCHANTS", 141)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
 
   AssertEqual(16791, table.OTHER.income)
   AssertEqual(5680, table.LOOT.income)
@@ -157,7 +157,7 @@ function Tests.TestDailyOutcome_1()
   MyAccountant:AddOutcome("LOOT", 4324)
   MyAccountant:AddOutcome("MERCHANTS", 11)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
 
   AssertEqual(123, table.OTHER.outcome)
   AssertEqual(4324, table.LOOT.outcome)
@@ -188,7 +188,7 @@ function Tests.TestDailyOutcome_2()
   MyAccountant:AddOutcome("LOOT", 12)
   MyAccountant:AddOutcome("MERCHANTS", 141)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY")
+  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
 
   AssertEqual(4448, table.OTHER.outcome)
   AssertEqual(5680, table.LOOT.outcome)
@@ -219,7 +219,7 @@ function Tests.TestWeeklyIncome_1()
   MyAccountant:AddIncome("OTHER", 100, july9)
   MyAccountant:AddIncome("OTHER", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10)
+  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
 
   AssertEqual(300, table.OTHER.income)
 end
@@ -252,7 +252,7 @@ function Tests.TestWeeklyIncome_2()
   -- Default settings has LFG disabled, this will be talled in OTHER
   MyAccountant:AddIncome("LFG", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10)
+  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
 
   AssertEqual(400, table.OTHER.income)
   AssertEqual(200, table.TRADE.income)
@@ -283,7 +283,7 @@ function Tests.TestWeeklyOutcome_1()
   MyAccountant:AddOutcome("OTHER", 100, july9)
   MyAccountant:AddOutcome("OTHER", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10)
+  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
 
   AssertEqual(300, table.OTHER.outcome)
 end
@@ -316,7 +316,7 @@ function Tests.TestWeeklyOutcome_2()
   -- Default settings has LFG disabled, this will be talled in OTHER
   MyAccountant:AddOutcome("LFG", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10)
+  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
 
   AssertEqual(400, table.OTHER.outcome)
   AssertEqual(200, table.TRADE.outcome)
@@ -367,7 +367,7 @@ function Tests.TestWeekly_IncomeOutcome()
   -- Default settings has LFG disabled, this will be talled in OTHER
   MyAccountant:AddIncome("LFG", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10)
+  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
 
   AssertEqual(600, table.OTHER.income)
   AssertEqual(200, table.TRADE.income)
