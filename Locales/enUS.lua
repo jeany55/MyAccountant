@@ -126,7 +126,7 @@ L["option_income_panel_default_sort"] = "When opening the panel, sort by"
 L["option_income_panel_default_sort_desc"] = "How to automatically sort income/outcome when opening the income panel"
 
 L["option_income_panel_default_sort_none"] = "Nothing (default order)"
-L["option_income_panel_default_sort_source"] = "Source"
+L["option_income_panel_default_sort_source"] = "Source / Zone"
 L["option_income_panel_default_sort_income"] = "Income"
 L["option_income_panel_default_sort_outcome"] = "Outcome"
 L["option_income_panel_default_sort_net"] = "Net Income"

@@ -7,7 +7,7 @@
 
 ![My Accountant](Docs/header1.png)
 
-Heavily inspired by AccountantClassic, see a breakdown by source - either by session, day, week, month, year, or all time. MyAccountant currently supports all versions of WoW.
+Heavily inspired by AccountantClassic, see a breakdown by source or zone - either by session, day, week, month, year, or all time. MyAccountant currently supports all versions of WoW.
 
 ## Features
 
@@ -23,9 +23,15 @@ Track your gold per hour on the configurable minimap icon
 
 A configurable income panel allows you to see where your money is coming and going from, showing you a session or historic breakdown.
 
-![](Docs/header1.png)
+**See it by source**
 
-Mouse over a source income or outcome to see a breakdown by zone! Configurable in options.
+![](Docs/incomeWindow1.png)
+
+**Or by zone**
+
+![](Docs/incomeWindow2.png)
+
+Mouse over an income or outcome to see a breakdown! Configurable in options.
 
 ![](Docs/zoneBreakdown.png)
 
