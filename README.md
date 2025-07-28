@@ -31,7 +31,7 @@ A configurable income panel allows you to see where your money is coming and goi
 
 ![](Docs/incomeWindow2.png)
 
-Mouse over an income or outcome to see a breakdown! Configurable in options.
+Mouse over an income or outcome to see a breakdown. Configurable in options.
 
 ![](Docs/zoneBreakdown.png)
 
