@@ -12,6 +12,9 @@ local selectedCharacter = UnitName("player")
 local ActiveTab = 1
 local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME" }
 
+-- Holds whether viewing by source or by zone 
+local ViewType
+
 -- Hold grid lines to show/hide if user doesn't want to see them
 RenderedLines = {}
 
@@ -19,9 +22,9 @@ RenderedLines = {}
 UserSetSort = nil
 
 -- Returns a sorted List
-function MyAccountant:GetSortedTable(type)
+function MyAccountant:GetSortedTable(type, viewType)
   local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
-  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter)
+  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter, ViewType)
 
   local function sortingFunction(source1, source2)
     if sortType == "SOURCE_ASC" then
@@ -82,10 +85,13 @@ function MyAccountant:InitializeUI()
   LibDD:UIDropDownMenu_SetWidth(characterDropdown, 107)
 
   characterDropdown:SetPoint("RIGHT", IncomeFrame, "RIGHT", 0, 0)
-  characterDropdown:SetPoint("TOP", totalIncomeText, "TOP", 0, 0)
+  characterDropdown:SetPoint("TOP", totalIncomeText, "TOP", 0, 5)
 
   viewingType = IncomeFrame:CreateFontString(ni, "OVERLAY", "GameFontNormalSmall")
-  viewingType:SetPoint("RIGHT", characterDropdown, "BOTTOMRIGHT", -20, -3)
+  viewingType:SetPoint("RIGHT", characterDropdown, "BOTTOMRIGHT", -20, -2)
+
+  swapViewButton:SetPoint("BOTTOM", outcomeHeader, "TOP", 0, 6)
+  swapViewButton:SetPoint("RIGHT", viewingType, "RIGHT", 0, 0)
 
   -- Setup player icon
   playerCharacter.Portrait = playerCharacter:CreateTexture()
@@ -194,21 +200,6 @@ function MyAccountant:InitializeUI()
   bottomButton2:SetFrameLevel(5)
   bottomButton3:SetFrameLevel(5)
 
-  local scrollBarUpdateFunction = function()
-    local sources = self.db.char.sources
-
-    if (#sources > 12) then
-      FauxScrollFrame_Update(scrollFrame, #self.db.char.sources, 12, 20);
-    end
-
-    MyAccountant:DrawRows()
-  end
-
-  -- Setup scrollbar
-  scrollFrame:SetScript("OnVerticalScroll",
-                        function(self, offset) FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction) end)
-  scrollFrame:SetScript("OnShow", function(_) scrollBarUpdateFunction() end)
-
   -- Close on ESC
   table.insert(UISpecialFrames, IncomeFrame:GetName())
 
@@ -244,8 +235,19 @@ function MyAccountant:InitializeUI()
     MyAccountant:DrawRows()
   end)
 
+  swapViewButton:SetScript("OnClick", function()
+    if ViewType == "SOURCE" then
+      ViewType = "ZONE"
+    else
+      ViewType = "SOURCE"
+    end
+    PlaySound(841)
+    MyAccountant:updateFrame()
+  end)
+
+  ViewType = self.db.char.defaultView
+
   -- Localization
-  sourceHeaderText:SetText(L["source_header"])
   incomeHeaderText:SetText(L["incoming_header"])
   outcomeHeaderText:SetText(L["outcoming_header"])
 
@@ -358,6 +360,20 @@ function MyAccountant:updateFrame()
 
   local frameX = 500
   local frameY = 347
+
+  if ViewType == "SOURCE" then
+    swapViewButton:SetText(L["income_panel_zones"])
+    sourceHeaderText:SetText(L["source_header"])
+  else
+    swapViewButton:SetText(L["income_panel_sources"])
+    sourceHeaderText:SetText(L["income_panel_zone"])
+  end
+
+  if self.db.char.showViewsButton then
+    swapViewButton:Show()
+  else
+    swapViewButton:Hide()
+  end
 
   -- Set height
   if self.db.char.showIncomePanelBottom then
@@ -484,7 +500,7 @@ end
 local sortZoneIncome = function(source1, source2) return source1.income > source2.income end
 local sortZoneOutcome = function(source1, source2) return source1.outcome > source2.outcome end
 
-local function addHoverTooltip(owner, type, zoneList, maxLines, colorIncome)
+local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   if maxLines == 0 then
@@ -493,7 +509,7 @@ local function addHoverTooltip(owner, type, zoneList, maxLines, colorIncome)
 
   local showTooltip = false
   local linesShown = 0
-  local restZonesSum = 0
+  local restSum = 0
   local goldColor
 
   if colorIncome and type == "INCOME" then
@@ -505,16 +521,20 @@ local function addHoverTooltip(owner, type, zoneList, maxLines, colorIncome)
   end
 
   if type == "INCOME" then
-    table.sort(zoneList, sortZoneIncome)
+    table.sort(itemList, sortZoneIncome)
   else
-    table.sort(zoneList, sortZoneOutcome)
+    table.sort(itemList, sortZoneOutcome)
   end
 
-  if #zoneList > 0 then
+  if #itemList > 0 then
     GameTooltip:SetOwner(owner, "ANCHOR_CURSOR")
-    GameTooltip:AddLine(L["income_panel_zones"])
+    if ViewType == "SOURCE" then
+      GameTooltip:AddLine(L["income_panel_zones"])
+    else
+      GameTooltip:AddLine(L["income_panel_sources"])
+    end
 
-    for _, zone in ipairs(zoneList) do
+    for _, zone in ipairs(itemList) do
       local amount
       if type == "INCOME" then
         amount = zone.income
@@ -524,8 +544,8 @@ local function addHoverTooltip(owner, type, zoneList, maxLines, colorIncome)
 
       if amount > 0 then
         showTooltip = true
-        if linesShown > maxLines then
-          restZonesSum = restZonesSum + amount
+        if linesShown >= maxLines then
+          restSum = restSum + amount
         else
           GameTooltip:AddLine(zone.zoneName .. ": " .. goldColor .. GetMoneyString(amount) .. "|r")
           linesShown = linesShown + 1
@@ -533,8 +553,12 @@ local function addHoverTooltip(owner, type, zoneList, maxLines, colorIncome)
       end
     end
 
-    if restZonesSum > 0 then
-      GameTooltip:AddLine(L["income_panel_other_zones"] .. ": " .. goldColor .. GetMoneyString(restZonesSum) .. "|r")
+    if restSum > 0 then
+      if ViewType == "SOURCE" then
+        GameTooltip:AddLine(L["income_panel_other_zones"] .. ": " .. goldColor .. GetMoneyString(restSum) .. "|r")
+      else
+        GameTooltip:AddLine(L["income_panel_other_sources"] .. ": " .. goldColor .. GetMoneyString(restSum) .. "|r")
+      end
     end
 
     if showTooltip then
@@ -548,7 +572,7 @@ function MyAccountant:DrawRows()
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
   local tableType = Tabs[ActiveTab]
-  local incomeTable = MyAccountant:GetSortedTable(tableType)
+  local incomeTable = MyAccountant:GetSortedTable(tableType, ViewType)
   local maxHoverLines = self.db.char.maxZonesIncomePanel
   local colorIncome = self.db.char.colorGoldInIncomePanel
 
@@ -559,6 +583,19 @@ function MyAccountant:DrawRows()
     -- Scrollbar not needed - not enough items
     scrollBar:Hide()
   end
+
+  local scrollBarUpdateFunction = function()
+    if (#incomeTable > 12) then
+      FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20);
+    end
+
+    MyAccountant:DrawRows()
+  end
+
+  -- Setup scrollbar
+  scrollFrame:SetScript("OnVerticalScroll",
+                        function(self, offset) FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction) end)
+  FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20);
 
   updateSortingIcons()
 

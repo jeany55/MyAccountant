@@ -7,16 +7,32 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 -- Localization definitions
 
 -----------------------------------------
+--- VERSION 1.4
+-----------------------------------------
+L["income_panel_sources"] = "Sources"
+L["income_panel_zone"] = "Zone"
+L["income_panel_other_sources"] = "Other sources"
+
+L["option_income_panel_default_show"] = "Default view to show when opening"
+L["option_income_panel_default_show_desc"] =
+    "Whether to show your income broken down mainly by source or by zone when opening the panel"
+L["option_income_panel_default_show_source"] = "Source"
+L["option_income_panel_default_show_zone"] = "Zone"
+
+L["option_income_panel_show_view_button"] = "Show button to swap views"
+L["option_income_panel_show_view_button_desc"] = "Hide or show the button to swap views on the income panel"
+
+-----------------------------------------
 --- VERSION 1.3
 -----------------------------------------
 L["income_panel_zones"] = "Zones"
-L["option_income_panel_hover_max"] = "Max number of zones to show on hover tooltip"
+L["option_income_panel_hover_max"] = "Max number of items to show on hover tooltip"
 L["option_reset_zone_data"] = "Clear zone data for all characters"
 L["option_reset_zone_data_desc"] = "Clears zone data for all characters, keeping source data intact"
 L["option_reset_zone_data_confirm"] =
     "This will |cffff0000permanently clear all zone info for all your characters|r. This can't be undone. Are sure you want to do this?"
 L["option_income_panel_hover_max_desc"] =
-    "How many zones to show when hovering over the income or outcome of sources. The rest will be summed. Set to zero to disable hover tooltips"
+    "How many zones/sources to show when hovering over the income or outcome. The rest will be summed. Set to zero to disable hover tooltips"
 L["income_panel_other_zones"] = "Other zones"
 
 -----------------------------------------

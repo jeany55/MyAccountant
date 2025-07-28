@@ -371,6 +371,11 @@
           <Anchor point="RIGHT" relativeTo="IncomeFrame" relativePoint="RIGHT" x="-1" />
         </Anchors>
       </Frame>
+      <Button name="swapViewButton" inherits="UIPanelButtonTemplate" text="Zones">
+        <NormalFont style="GameFontNormalSmall"/>
+        <HighlightFont style="GameFontWhiteSmall"/>
+        <Size x="90" y="17" />
+      </Button>
       <Frame name="scrollBar" parent="IncomeFrame" inherits="BackdropTemplate">
         <Size x="20" />
         <Anchors>

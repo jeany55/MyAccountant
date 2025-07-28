@@ -279,5 +279,7 @@ private.default_settings = {
   incomePanelButton1 = "NOTHING",
   incomePanelButton2 = "OPTIONS",
   incomePanelButton3 = "CLEAR_SESSION",
-  maxZonesIncomePanel = 5
+  maxZonesIncomePanel = 5,
+  showViewsButton = true,
+  defaultView = "SOURCE"
 }

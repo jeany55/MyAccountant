@@ -332,10 +332,11 @@ function MyAccountant:IsSourceActive(source)
   return false
 end
 
-function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverride)
+function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverride, viewType)
   local table = {}
   local date = dateOverride and dateOverride or date("*t")
   local playerName = characterOverride and characterOverride or UnitName("player")
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   if type == "SESSION" then
     table = private.copy(totalGoldSession)
@@ -375,17 +376,45 @@ function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverrid
     end
   end
 
-  -- Recreate table to keep original order intact
   local reorderedTable = {}
-  for _, v in ipairs(self.db.char.sources) do
-    if (not talliedTable[v]) then
-      reorderedTable[v] = { income = 0, outcome = 0, zones = {} }
-    else
-      reorderedTable[v] = talliedTable[v]
-    end
 
-    reorderedTable[v].title = private.sources[v].title
+  if viewType == "SOURCE" then
+    -- Recreate table to keep original order intact
+    for _, v in ipairs(self.db.char.sources) do
+      if (not talliedTable[v]) then
+        reorderedTable[v] = { income = 0, outcome = 0, zones = {} }
+      else
+        reorderedTable[v] = talliedTable[v]
+      end
+
+      reorderedTable[v].title = private.sources[v].title
+    end
+  else
+    -- Invert table to get by zone
+    for sourceName, sourceData in pairs(talliedTable) do
+      if sourceData.zones then
+        for zoneName, zoneData in pairs(sourceData.zones) do
+          if not reorderedTable[zoneName] then
+            reorderedTable[zoneName] = { title = zoneName, income = zoneData.income, outcome = zoneData.outcome, zones = {} }
+          else
+            reorderedTable[zoneName].income = reorderedTable[zoneName].income + zoneData.income
+            reorderedTable[zoneName].outcome = reorderedTable[zoneName].outcome + zoneData.outcome
+          end
+
+          local localizedSource = L[sourceName]
+          if not reorderedTable[zoneName].zones[localizedSource] then
+            reorderedTable[zoneName].zones[localizedSource] = { income = zoneData.income, outcome = zoneData.outcome }
+          else
+            reorderedTable[zoneName].zones[localizedSource].income =
+                reorderedTable[zoneName].zones[localizedSource].income + zoneData.income
+            reorderedTable[zoneName].zones[localizedSource].outcome =
+                reorderedTable[zoneName].zones[localizedSource].outcome + zoneData.outcome
+          end
+        end
+      end
+    end
   end
+
   return reorderedTable
 end
 

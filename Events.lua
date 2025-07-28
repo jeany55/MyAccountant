@@ -94,8 +94,9 @@ local events = {
   -- Guild
   { EVENT = "GUILDBANKFRAME_OPENED", SOURCE = "GUILD" },
   { EVENT = "GUILDBANKFRAME_CLOSED", SOURCE = "GUILD", RESET = true },
-  { EVENT = "GUILDBANK_UPDATE_MONEY", SOURCE = "GUILD" },
-  { EVENT = "GUILDBANK_UPDATE_WITHDRAWMONEY", SOURCE = "GUILD" },
+  -- These guild events are causing problems and firing at weird times
+  -- { EVENT = "GUILDBANK_UPDATE_MONEY", SOURCE = "GUILD" },
+  -- { EVENT = "GUILDBANK_UPDATE_WITHDRAWMONEY", SOURCE = "GUILD" },
   -- Barber
   { EVENT = "BARBER_SHOP_APPEARANCE_APPLIED", SOURCE = "BARBER" },
   { EVENT = "BARBER_SHOP_OPEN", SOURCE = "BARBER" },

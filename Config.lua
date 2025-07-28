@@ -283,6 +283,26 @@ function MyAccountant:SetupOptions()
             set = function(info, val) self.db.char.showIncomePanelBottom = val end,
             get = function(info) return self.db.char.showIncomePanelBottom end
           },
+          show_views_button = {
+            order = 1.3,
+            name = L["option_income_panel_show_view_button"],
+            desc = L["option_income_panel_show_view_button_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showViewsButton = val end,
+            get = function(info) return self.db.char.showViewsButton end
+          },
+          show_default_view = {
+            name = L["option_income_panel_default_show"],
+            desc = L["option_income_panel_default_show_desc"],
+            width = 1.5,
+            order = 1.2,
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            type = "select",
+            values = { SOURCE = L["option_income_panel_default_show_source"], ZONE = L["option_income_panel_default_show_zone"] },
+            set = function(info, val) self.db.char.defaultView = val end,
+            get = function(info) return self.db.char.defaultView end
+          },
           button_action_1 = {
             name = L["option_income_panel_button_1"],
             desc = L["option_income_panel_button_1_desc"],

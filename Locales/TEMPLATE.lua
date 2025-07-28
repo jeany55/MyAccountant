@@ -18,6 +18,22 @@ end
 -- eg. L["option_general"] = "Général"
 
 -----------------------------------------
+--- VERSION 1.4
+-----------------------------------------
+L["income_panel_sources"] = "Sources"
+L["income_panel_zone"] = "Zone"
+L["income_panel_other_sources"] = "Other sources"
+
+L["option_income_panel_default_show"] = "Default view to show when opening"
+L["option_income_panel_default_show_desc"] =
+    "Whether to show your income broken down mainly by source or by zone when opening the panel"
+L["option_income_panel_default_show_source"] = "Source"
+L["option_income_panel_default_show_zone"] = "Zone"
+
+L["option_income_panel_show_view_button"] = "Show button to swap views"
+L["option_income_panel_show_view_button_desc"] = "Hide or show the button to swap views on the income panel"
+
+-----------------------------------------
 --- VERSION 1.3
 -----------------------------------------
 L["income_panel_zones"] = "Zones"
