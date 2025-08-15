@@ -7,6 +7,18 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 -- Localization definitions
 
 -----------------------------------------
+--- VERSION 2.0
+-----------------------------------------
+L["option_minimap_data_type_this_character"] = "This character"
+L["option_minimap_data_type_all_characters"] = "All characters"
+
+L["first_run_sources_set"] =
+    "Currency tracking has been turned on for all currencies you have seen before. Type |cffffa500/mya options|r and go to 'Currencies' to configure."
+
+L["first_run_no_sources_set"] =
+    "No currencies have been seen on this character and none are turned on for tracking. Type |cffffa500/mya options|r and go to 'Currencies' to configure."
+
+-----------------------------------------
 --- VERSION 1.4
 -----------------------------------------
 L["income_panel_sources"] = "Sources"
@@ -137,8 +149,9 @@ L["option_income_panel_grid_desc"] = "Whether or not to show the grid lines mimi
 -- Options, sources
 L["option_income_sources"] = "Active income sources"
 L["option_income_sources_desc"] = "Which income sources to track. If not tracked it will be grouped under the 'Other' category"
-L["option_income_sources_additional_1"] = "Inactive sources will be tallied in 'Other'"
-L["option_income_sources_additional_2"] = "Some sources may be unavailable in your WoW version"
+L["option_income_sources_additional_1"] = "Sources apply for both gold, currency, and any items tracked."
+L["option_income_sources_additional_2"] = "Inactive sources will be tallied in 'Other'"
+L["option_income_sources_additional_3"] = "Some sources may be unavailable in your WoW version"
 
 L["option_income_desc"] = "Toggle this income on/off"
 L["option_income_required"] = "|cffff0000(Required)|r"

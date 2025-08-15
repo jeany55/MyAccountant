@@ -281,5 +281,7 @@ private.default_settings = {
   incomePanelButton3 = "CLEAR_SESSION",
   maxZonesIncomePanel = 5,
   showViewsButton = true,
-  defaultView = "SOURCE"
+  defaultView = "SOURCE",
+  minimapCharacters = "THIS_CHARACTER",
+  trackedItems = {}
 }

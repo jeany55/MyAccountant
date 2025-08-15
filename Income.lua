@@ -8,6 +8,7 @@ MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 -- Used for session data and calculating gold per hour
 local totalGoldSession = {}
+local currencySession = {}
 
 function MyAccountant:ResetSession()
   totalGoldSession = {}
@@ -438,6 +439,36 @@ function MyAccountant:ResetZoneData()
           end
         end
       end
+    end
+  end
+end
+
+function MyAccountant:InitAllCurrencies()
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+  local currencies = {}
+  local discovered = 0
+
+  -- Find all currencies
+  for i = 0, 10000 do
+    local data = GetCurrencyInfo(i)
+    if data and data.name then
+      currencySession[data.name] = data.quantity
+      -- Prepare config (if first time)
+      table.insert(currencies, { id = i, name = data.name, enabled = data.discovered == true })
+      if data.discovered == true then
+        discovered = discovered + 1
+      end
+    end
+  end
+
+  local setCurrencies = self.db.char.currencies and self.db.char.currencies or {}
+
+  if #setCurrencies == 0 then
+    self.db.char.currencies = currencies
+    if discovered > 0 then
+      print("|cffffff00MyAccountant:|r " .. L["first_run_sources_set"])
+    else
+      print("|cffffff00MyAccountant:|r " .. L["first_run_no_sources_set"])
     end
   end
 end

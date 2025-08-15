@@ -43,11 +43,9 @@ end
 local events = {
   -- Trade
   { EVENT = "TRADE_SHOW", SOURCE = "TRADE" },
-  { EVENT = "TRADE_CLOSED", SOURCE = "TRADE", RESET = true },
-  -- Training costs
+  { EVENT = "TRADE_CLOSED", SOURCE = "TRADE", RESET = true }, -- Training costs
   { EVENT = "TRAINER_CLOSED", SOURCE = "TRAINING_COSTS", RESET = true },
-  { EVENT = "TRAINER_SHOW", SOURCE = "TRAINING_COSTS" },
-  -- Mail
+  { EVENT = "TRAINER_SHOW", SOURCE = "TRAINING_COSTS" }, -- Mail
   {
     EVENT = "MAIL_INBOX_UPDATE",
     SOURCE = "MAIL",
@@ -60,8 +58,7 @@ local events = {
     end
   },
   { EVENT = "MAIL_SHOW", SOURCE = "MAIL" },
-  { EVENT = "MAIL_CLOSED", SOURCE = "MAIL", RESET = true },
-  -- Merchants
+  { EVENT = "MAIL_CLOSED", SOURCE = "MAIL", RESET = true }, -- Merchants
   { EVENT = "MERCHANT_SHOW", SOURCE = "MERCHANTS" },
   { EVENT = "MERCHANT_CLOSED", SOURCE = "MERCHANTS", RESET = true },
   {
@@ -73,12 +70,10 @@ local events = {
         activeSource = "REPAIR"
       end
     end
-  },
-  -- Quests
+  }, -- Quests
   { EVENT = "QUEST_COMPLETE", SOURCE = "QUESTS" },
   { EVENT = "QUEST_FINISHED", SOURCE = "QUESTS" },
-  { EVENT = "QUEST_TURNED_IN", SOURCE = "QUESTS" },
-  -- AH
+  { EVENT = "QUEST_TURNED_IN", SOURCE = "QUESTS" }, -- AH
   { EVENT = "AUCTION_HOUSE_SHOW", SOURCE = "AUCTIONS" },
   { EVENT = "AUCTION_HOUSE_CLOSED", SOURCE = "AUCTIONS", RESET = true },
   -- Loot
@@ -88,10 +83,8 @@ local events = {
   { EVENT = "TAXIMAP_OPENED", SOURCE = "TAXI_FARES" },
   { EVENT = "TAXIMAP_CLOSED", SOURCE = "TAXI_FARES" }, -- Do not reset
   -- Talents
-  { EVENT = "CONFIRM_TALENT_WIPE", SOURCE = "TALENTS" },
-  -- LFG
-  { EVENT = "LFG_COMPLETION_REWARD", SOURCE = "LFG" },
-  -- Guild
+  { EVENT = "CONFIRM_TALENT_WIPE", SOURCE = "TALENTS" }, -- LFG
+  { EVENT = "LFG_COMPLETION_REWARD", SOURCE = "LFG" }, -- Guild
   { EVENT = "GUILDBANKFRAME_OPENED", SOURCE = "GUILD" },
   { EVENT = "GUILDBANKFRAME_CLOSED", SOURCE = "GUILD", RESET = true },
   -- These guild events are causing problems and firing at weird times
@@ -103,8 +96,7 @@ local events = {
   { EVENT = "BARBER_SHOP_CLOSE", SOURCE = "BARBER", RESET = true },
   { EVENT = "BARBER_SHOP_RESULT", SOURCE = "BARBER" },
   { EVENT = "BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE", SOURCE = "BARBER" },
-  { EVENT = "BARBER_SHOP_COST_UPDATE", SOURCE = "BARBER" },
-  -- Transmog
+  { EVENT = "BARBER_SHOP_COST_UPDATE", SOURCE = "BARBER" }, -- Transmog
   { EVENT = "TRANSMOGRIFY_OPEN", SOURCE = "TRANSMOGRIFY" },
   { EVENT = "TRANSMOGRIFY_CLOSE", SOURCE = "TRANSMOGRIFY", RESET = true },
   -- Garrison, TO DO: Test this on retail
@@ -115,16 +107,23 @@ local events = {
   { EVENT = "GARRISON_MISSION_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_SHIPYARD_NPC_OPENED", SOURCE = "GARRISONS" },
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
-  { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
-  -- Main
+  { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" }, -- Main
   { EVENT = "PLAYER_MONEY", EXEC = handlePlayerMoneyChange },
   { EVENT = "PLAYER_ENTERING_WORLD", EXEC = function() private.currentMoney = GetMoney() end },
   {
     EVENT = "PLAYER_REGEN_DISABLED",
     EXEC = function(config)
       if config.closeWhenEnteringCombat then
-        MyAccountant:HidePanel()
       end
+    end
+  },
+  {
+    EVENT = "CURRENCY_DISPLAY_UPDATE",
+    EXEC = function(config, currencyType)
+      if currencyType then
+        -- Todo: Write
+      end
+
     end
   }
 }
