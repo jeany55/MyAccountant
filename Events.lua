@@ -3,6 +3,7 @@ local _, private = ...
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local activeSource = nil
+local bankOpen = false
 
 -- Main money handler
 local handlePlayerMoneyChange = function()
@@ -114,6 +115,7 @@ local events = {
     EVENT = "PLAYER_REGEN_DISABLED",
     EXEC = function(config)
       if config.closeWhenEnteringCombat then
+        MyAccountant:HidePanel()
       end
     end
   },
@@ -121,9 +123,48 @@ local events = {
     EVENT = "CURRENCY_DISPLAY_UPDATE",
     EXEC = function(config, currencyType)
       if currencyType then
-        -- Todo: Write
-      end
+        local data = GetCurrencyInfo(currencyType)
+        local oldAmount = MyAccountant:GetCurrencySessionAmount(data.name)
+        local quantityChange = data.quantity - oldAmount
+        local source = activeSource and activeSource or "OTHER"
 
+        if quantityChange > 0 then
+          MyAccountant:AddCurrencyIncome(source, data.name, quantityChange)
+        else
+          MyAccountant:AddCurrencyOutcome(source, data.name, abs(quantityChange))
+        end
+      end
+    end
+  },
+  {
+    EVENT = "BANKFRAME_OPENED",
+    EXEC = function(config)
+      bankOpen = true
+      if not config.seenBank then
+        config.playerItems = MyAccountant:GetInventory(true)
+        config.seenBank = true
+      end
+    end
+  },
+  { EVENT = "BANKFRAME_CLOSED", EXEC = function() bankOpen = false end },
+  {
+    EVENT = "BAG_UPDATE_DELAYED",
+    EXEC = function(config)
+      if config.seenBank then
+        local itemChanges = MyAccountant:GetInventoryChanges(bankOpen)
+        local source = activeSource and activeSource or "OTHER"
+
+        for _, itemData in ipairs(config.trackedItems) do
+          local item = itemChanges[tostring(itemData.itemId)]
+          if itemData.enabled and item then
+            if item.amount > 0 then
+              MyAccountant:AddItemIncome(source, itemData.itemId, item.amount)
+            else
+              MyAccountant:AddItemOutcome(source, itemData.itemId, abs(item.amount))
+            end
+          end
+        end
+      end
     end
   }
 }

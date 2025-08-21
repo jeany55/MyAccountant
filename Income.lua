@@ -28,6 +28,54 @@ function MyAccountant:ResetCharacterData()
   MyAccountant:checkDatabaseDayConfigured()
 end
 
+function MyAccountant:ResetCurrenciesData()
+  for k, v in pairs(totalGoldSession) do
+    if v.zones then
+      totalGoldSession[k].zones = {}
+    end
+  end
+
+  for player, playerData in pairs(self.db.factionrealm) do
+    for yearKey, yearData in pairs(playerData) do
+      if yearKey ~= "config" then
+        for monthKey, monthData in pairs(yearData) do
+          for dayKey, dayData in pairs(monthData) do
+            for category, categoryData in pairs(dayData) do
+              if categoryData.currencies then
+                self.db.factionrealm[player][yearKey][monthKey][dayKey][category].currencies = {}
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+function MyAccountant:ResetItemsData()
+  for k, v in pairs(totalGoldSession) do
+    if v.zones then
+      totalGoldSession[k].zones = {}
+    end
+  end
+
+  for player, playerData in pairs(self.db.factionrealm) do
+    for yearKey, yearData in pairs(playerData) do
+      if yearKey ~= "config" then
+        for monthKey, monthData in pairs(yearData) do
+          for dayKey, dayData in pairs(monthData) do
+            for category, categoryData in pairs(dayData) do
+              if categoryData.currencies then
+                self.db.factionrealm[player][yearKey][monthKey][dayKey][category].items = {}
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 -- Called to ensure the year and day exists in DB
 function MyAccountant:checkDatabaseDayConfigured(dateOverride)
   local date = dateOverride and dateOverride or date("*t")
@@ -79,7 +127,7 @@ function MyAccountant:AddIncome(category, amount, dateOverride)
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0, zones = {} }
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
   end
   if not totalGoldSession[category].zones[zone] then
     totalGoldSession[category].zones[zone] = { income = 0, outcome = 0 }
@@ -112,6 +160,267 @@ function MyAccountant:AddIncome(category, amount, dateOverride)
   totalGoldSession[category].zones[zone].income = totalGoldSession[category].zones[zone].income + amount
 end
 
+function MyAccountant:AddCurrencyIncome(category, currencyType, amount, dateOverride)
+  MyAccountant:PrintDebugMessage("|cff00ff00Currency income: " .. currencyType .. " x" .. amount .. "|r")
+  MyAccountant:checkDatabaseDayConfigured(dateOverride)
+
+  currencySession[currencyType] = currencySession[currencyType] + amount
+
+  local date = dateOverride and dateOverride or date("*t")
+  local playerName = UnitName("player")
+  local zone = GetZoneText()
+  local total
+
+  if not totalGoldSession[category] then
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
+  end
+  if not totalGoldSession[category].currencies then
+    totalGoldSession[category].currencies = {}
+  end
+  if not totalGoldSession[category].currencies[currencyType] then
+    totalGoldSession[category].currencies[currencyType] = { income = 0, outcome = 0, zones = {} }
+  end
+  if not totalGoldSession[category].currencies[currencyType].zones[zone] then
+    totalGoldSession[category].currencies[currencyType].zones[zone] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType] = {
+      income = 0,
+      outcome = 0
+    }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] = {
+      income = 0,
+      outcome = 0
+    }
+  end
+
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].income
+  total = total + amount
+
+  local totalCategory =
+      self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].income
+  totalCategory = totalCategory + amount
+
+  -- Save to DB
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].income = total
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].income =
+      totalCategory
+
+  -- Save to current session info
+  totalGoldSession[category].currencies[currencyType].income = totalGoldSession[category].currencies[currencyType].income + amount
+  totalGoldSession[category].currencies[currencyType].zones[zone].income =
+      totalGoldSession[category].currencies[currencyType].zones[zone].income + amount
+end
+
+function MyAccountant:AddCurrencyOutcome(category, currencyType, amount, dateOverride)
+  MyAccountant:PrintDebugMessage("|cffff0000Currency outcome: " .. currencyType .. " x" .. amount .. "|r")
+  MyAccountant:checkDatabaseDayConfigured(dateOverride)
+
+  local date = dateOverride and dateOverride or date("*t")
+  local playerName = UnitName("player")
+  local zone = GetZoneText()
+  local total
+
+  currencySession[currencyType] = currencySession[currencyType] - amount
+
+  if not totalGoldSession[category] then
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
+  end
+  if not totalGoldSession[category].currencies then
+    totalGoldSession[category].currencies = {}
+  end
+  if not totalGoldSession[category].currencies[currencyType] then
+    totalGoldSession[category].currencies[currencyType] = { income = 0, outcome = 0, zones = {} }
+  end
+  if not totalGoldSession[category].currencies[currencyType].zones[zone] then
+    totalGoldSession[category].currencies[currencyType].zones[zone] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType] = {
+      income = 0,
+      outcome = 0
+    }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] = {
+      income = 0,
+      outcome = 0
+    }
+  end
+
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].outcome
+  total = total + amount
+
+  local totalCategory =
+      self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].outcome
+  totalCategory = totalCategory + amount
+
+  -- Save to DB
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].outcome = total
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].outcome =
+      totalCategory
+
+  -- Save to current session info
+  totalGoldSession[category].currencies[currencyType].outcome = totalGoldSession[category].currencies[currencyType].outcome +
+                                                                    amount
+  totalGoldSession[category].currencies[currencyType].zones[zone].outcome =
+      totalGoldSession[category].currencies[currencyType].zones[zone].outcome + amount
+end
+
+function MyAccountant:AddItemIncome(category, itemId, amount, dateOverride)
+  MyAccountant:PrintDebugMessage("|cff00ff00Item income: " .. itemId .. " x" .. amount .. "|r")
+  MyAccountant:checkDatabaseDayConfigured(dateOverride)
+
+  local date = dateOverride and dateOverride or date("*t")
+  local playerName = UnitName("player")
+  local zone = GetZoneText()
+  local total
+
+  if not totalGoldSession[category] then
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
+  end
+  if not totalGoldSession[category].items then
+    totalGoldSession[category].items = {}
+  end
+  if not totalGoldSession[category].items[itemId] then
+    totalGoldSession[category].items[itemId] = { income = 0, outcome = 0, zones = {} }
+  end
+  if not totalGoldSession[category].items[itemId].zones[zone] then
+    totalGoldSession[category].items[itemId].zones[zone] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone] = {
+      income = 0,
+      outcome = 0
+    }
+  end
+
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].income
+  total = total + amount
+
+  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone]
+                            .income
+  totalCategory = totalCategory + amount
+
+  -- Save to DB
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].income = total
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone].income = totalCategory
+
+  -- Save to current session info
+  totalGoldSession[category].items[itemId].income = totalGoldSession[category].items[itemId].income + amount
+  totalGoldSession[category].items[itemId].zones[zone].income = totalGoldSession[category].items[itemId].zones[zone].income +
+                                                                    amount
+end
+
+function MyAccountant:AddItemOutcome(category, itemId, amount, dateOverride)
+  MyAccountant:PrintDebugMessage("|cffff0000Item outcome: " .. itemId .. " x" .. amount .. "|r")
+  MyAccountant:checkDatabaseDayConfigured(dateOverride)
+
+  local date = dateOverride and dateOverride or date("*t")
+  local playerName = UnitName("player")
+  local zone = GetZoneText()
+  local total
+
+  if not totalGoldSession[category] then
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
+  end
+  if not totalGoldSession[category].items then
+    totalGoldSession[category].items = {}
+  end
+  if not totalGoldSession[category].items[itemId] then
+    totalGoldSession[category].items[itemId] = { income = 0, outcome = 0, zones = {} }
+  end
+  if not totalGoldSession[category].items[itemId].zones[zone] then
+    totalGoldSession[category].items[itemId].zones[zone] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId] = { income = 0, outcome = 0 }
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone] = {
+      income = 0,
+      outcome = 0
+    }
+  end
+
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].outcome
+  total = total + amount
+
+  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone]
+                            .outcome
+  totalCategory = totalCategory + amount
+
+  -- Save to DB
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].outcome = total
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone].outcome = totalCategory
+
+  -- Save to current session info
+  totalGoldSession[category].items[itemId].outcome = totalGoldSession[category].items[itemId].outcome + amount
+  totalGoldSession[category].items[itemId].zones[zone].outcome = totalGoldSession[category].items[itemId].zones[zone].outcome +
+                                                                     amount
+end
+
 -- Main function to add outcome - added to correct day automatically unless third optional param used
 function MyAccountant:AddOutcome(category, amount, dateOverride)
   MyAccountant:checkDatabaseDayConfigured(dateOverride)
@@ -122,7 +431,7 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
   local total
 
   if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0, zones = {} }
+    totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, items = {} }
   end
   if not totalGoldSession[category].zones[zone] then
     totalGoldSession[category].zones[zone] = { income = 0, outcome = 0 }
@@ -443,17 +752,26 @@ function MyAccountant:ResetZoneData()
   end
 end
 
+local function currenciesContains(id, currenciesList)
+  for _, v in ipairs(currenciesList) do
+    if v.id == id then
+      return true
+    end
+  end
+  return false
+end
+
 function MyAccountant:InitAllCurrencies()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
   local currencies = {}
   local discovered = 0
+  local setCurrencies = self.db.char.currencies and self.db.char.currencies or {}
+  local firstRun = #setCurrencies == 0
 
-  -- Find all currencies
   for i = 0, 10000 do
     local data = GetCurrencyInfo(i)
     if data and data.name then
       currencySession[data.name] = data.quantity
-      -- Prepare config (if first time)
       table.insert(currencies, { id = i, name = data.name, enabled = data.discovered == true })
       if data.discovered == true then
         discovered = discovered + 1
@@ -461,14 +779,28 @@ function MyAccountant:InitAllCurrencies()
     end
   end
 
-  local setCurrencies = self.db.char.currencies and self.db.char.currencies or {}
-
-  if #setCurrencies == 0 then
-    self.db.char.currencies = currencies
+  if firstRun then
     if discovered > 0 then
       print("|cffffff00MyAccountant:|r " .. L["first_run_sources_set"])
     else
       print("|cffffff00MyAccountant:|r " .. L["first_run_no_sources_set"])
     end
+    self.db.char.currencies = currencies
   end
+
+  -- Update (if any new sources have been added since last login)
+  if #self.db.char.currencies ~= #currencies then
+    for _, v in ipairs(currencies) do
+      if not currenciesContains(v.id, self.db.char.currencies) then
+        table.insert(self.db.char.currencies, { id = v.id, name = v.name, enabled = v.discovered == true })
+      end
+    end
+  end
+end
+
+function MyAccountant:GetCurrencySessionAmount(currencyName) return currencySession[currencyName] end
+
+function MyAccountant:UpdateCurrency(currencyId, change)
+  local data = GetCurrencyInfo(currencyId)
+  currencySession[data.name] = currencySession[data.name] + change
 end

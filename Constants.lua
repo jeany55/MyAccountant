@@ -283,5 +283,6 @@ private.default_settings = {
   showViewsButton = true,
   defaultView = "SOURCE",
   minimapCharacters = "THIS_CHARACTER",
+  seenBank = false,
   trackedItems = {}
 }

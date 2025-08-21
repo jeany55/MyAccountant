@@ -402,15 +402,29 @@ function MyAccountant:SetupOptions()
       type = "group",
       name = "Items",
       args = {
-        desc1 = {
+        bank = {
           order = 0,
           type = "description",
+          fontSize = "medium",
           width = "full",
-          name = "To track income/outcome of specific items, enter in the Item ID to add an item."
+          name = function()
+            if self.db.char.seenBank then
+              return ""
+            else
+              return
+                  "|cffff0000Item tracking will not function until you visit the bank once. You have not opened the bank yet!|r"
+            end
+          end
         },
-        desc2 = { order = 1, type = "description", width = "full", name = "Uncheck to deactivate." },
+        desc1 = {
+          order = 1,
+          type = "description",
+          width = "full",
+          name = "To track incoming and outgoing amounts of specific items, enter in the Item ID to add an item."
+        },
+        desc2 = { order = 2, type = "description", width = "full", name = "Uncheck to deactivate." },
         itemid = {
-          order = 2,
+          order = 3,
           type = "input",
           pattern = "%s*%d+%s*",
           usage = "Must be a number",
@@ -642,6 +656,26 @@ function MyAccountant:SetupOptions()
         confirm = true,
         confirmText = L["option_clear_character_data_confirm"],
         func = function() MyAccountant:ResetCharacterData() end
+      },
+      clear_character_currency_data = {
+        name = L["option_clear_character_currency_data"],
+        desc = L["option_clear_character_currency_data_desc"],
+        type = "execute",
+        order = 3.1,
+        width = 1.8,
+        confirm = true,
+        confirmText = L["option_clear_character_currency_data_confirm"],
+        func = function() MyAccountant:ResetCurrenciesData() end
+      },
+      clear_character_item_data = {
+        name = L["option_clear_character_item_data"],
+        desc = L["option_clear_character_item_data_desc"],
+        type = "execute",
+        order = 3.2,
+        width = 1.8,
+        confirm = true,
+        confirmText = L["option_clear_character_item_data_confirm"],
+        func = function() MyAccountant:ResetItemsData() end
       },
       clear_zone_data = {
         name = L["option_reset_zone_data"],

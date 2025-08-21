@@ -19,4 +19,5 @@ GUI\Templates.xml
 GUI\IncomeFrame.lua
 GUI\IncomeFrame.xml
 Income.lua
+Inventory.lua
 Events.lua

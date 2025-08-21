@@ -18,6 +18,18 @@ L["first_run_sources_set"] =
 L["first_run_no_sources_set"] =
     "No currencies have been seen on this character and none are turned on for tracking. Type |cffffa500/mya options|r and go to 'Currencies' to configure."
 
+L["option_clear_character_currency_data"] = "Clear all currency data for this character"
+L["option_clear_character_currency_data_desc"] =
+    "Delete all income/outcome currencies data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
+L["option_clear_character_currency_data_confirm"] =
+    "This will |cffff0000permanently clear all currency (not gold) data for your character|r. This can't be undone. Are sure you want to do this?"
+
+L["option_clear_character_item_data"] = "Clear all currency data for this character"
+L["option_clear_character_item_data_desc"] =
+    "Delete all income/outcome currencies data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
+L["option_clear_character_item_data_confirm"] =
+    "This will |cffff0000permanently clear all currency (not gold) data for your character|r. This can't be undone. Are sure you want to do this?"
+
 -----------------------------------------
 --- VERSION 1.4
 -----------------------------------------
