@@ -1,6 +1,6 @@
 <Ui>
   <Frame name="IncomeFrame" parent="UIParent" inherits="PortraitFrameTemplate">
-    <Size x="500" y="347"/>
+    <Size x="500" y="362"/>
     <Anchors>
       <Anchor point="CENTER"/>
     </Anchors>
@@ -20,7 +20,7 @@
         <Anchors>
           <Anchor point="TOPLEFT" relativeTo="playerCharacter" relativePoint="BOTTOMLEFT">
             <Offset>
-              <AbsDimension x="0" y="-30"/>
+              <AbsDimension x="0" y="-58"/>
             </Offset>
           </Anchor>
           <Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT" />
@@ -103,6 +103,9 @@
           </Button>
         </Frames>
       </Frame>
+      <Frame name="selectionFrame" parent="IncomeFrame" inherits="InsetFrameTemplate" frameLevel="5">
+        <Size y="50" />
+      </Frame>
       <Frame name="infoFrame" parent="IncomeFrame" inherits="InsetFrameTemplate" frameLevel="6">
         <Size y="265" />
         <Layers>
@@ -112,7 +115,7 @@
               <Anchors>
                 <Anchor point="LEFT" relativeTo="playerCharacter" relativePoint="RIGHT">
                   <Offset>
-                    <AbsDimension x="14" y="-10"/>
+                    <AbsDimension x="14" y="-39"/>
                   </Offset>
                 </Anchor>
               </Anchors>
@@ -374,7 +377,7 @@
       <Button name="swapViewButton" inherits="UIPanelButtonTemplate" text="Zones">
         <NormalFont style="GameFontNormalSmall"/>
         <HighlightFont style="GameFontWhiteSmall"/>
-        <Size x="90" y="17" />
+        <Size x="90" y="23" />
       </Button>
       <Frame name="scrollBar" parent="IncomeFrame" inherits="BackdropTemplate">
         <Size x="20" />

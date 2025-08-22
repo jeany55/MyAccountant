@@ -3,6 +3,7 @@ local _, private = ...
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
+local currencyDropdown
 local characterDropdown
 local viewingType
 
@@ -20,6 +21,8 @@ RenderedLines = {}
 
 -- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
 UserSetSort = nil
+
+function MyAccountant:SetCurrencyOptions() end
 
 -- Returns a sorted List
 function MyAccountant:GetSortedTable(type, viewType)
@@ -81,22 +84,43 @@ function MyAccountant:InitializeUI()
   IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
   IncomeFrame.title:SetText("MyAccountant")
 
+  currencyDropdown = LibDD:Create_UIDropDownMenu("CurrencyDropDownMenu", IncomeFrame)
+  LibDD:UIDropDownMenu_SetWidth(currencyDropdown, 195)
+  currencyDropdown:SetPoint("LEFT", IncomeFrame, "LEFT", 45, 0)
+  currencyDropdown:SetPoint("TOP", IncomeFrame, "TOP", 0, -21)
+
   characterDropdown = LibDD:Create_UIDropDownMenu("CharacterDropDownMenu", IncomeFrame)
   LibDD:UIDropDownMenu_SetWidth(characterDropdown, 107)
 
-  characterDropdown:SetPoint("RIGHT", IncomeFrame, "RIGHT", 0, 0)
-  characterDropdown:SetPoint("TOP", totalIncomeText, "TOP", 0, 5)
+  characterDropdown:SetPoint("LEFT", currencyDropdown, "RIGHT", -30, 0)
+  characterDropdown:SetPoint("TOP", currencyDropdown, "TOP", 0, 0)
 
   viewingType = IncomeFrame:CreateFontString(ni, "OVERLAY", "GameFontNormalSmall")
-  viewingType:SetPoint("RIGHT", characterDropdown, "BOTTOMRIGHT", -20, -2)
+  viewingType:SetPoint("LEFT", swapViewButton, "BOTTOMLEFT", 5, -13)
 
-  swapViewButton:SetPoint("BOTTOM", outcomeHeader, "TOP", 0, 6)
-  swapViewButton:SetPoint("RIGHT", viewingType, "RIGHT", 0, 0)
+  swapViewButton:SetPoint("TOP", characterDropdown, "TOP", 0, -2)
+  swapViewButton:SetPoint("LEFT", characterDropdown, "RIGHT", -14, 0)
 
   -- Setup player icon
   playerCharacter.Portrait = playerCharacter:CreateTexture()
   playerCharacter.Portrait:SetAllPoints()
   SetPortraitTexture(playerCharacter.Portrait, "player")
+
+  -- Setup positioning
+  selectionFrame:SetPoint("TOPLEFT", IncomeFrame, "TOPLEFT", 0, 0)
+  selectionFrame:SetPoint("TOPRIGHT", IncomeFrame, "TOPRIGHT", 0, 0)
+  -- legendFrame:SetPoint("TOP", characterDropdown, "BOTTOM", 0, 0)
+
+  -- selectionFrame:SetBackdrop({
+  --   bgFile = "Interface/FrameGeneral/UI-Background-Marble",
+  --   -- edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+  --   -- edgeSize = 16,
+  --   insets = { left = 7, right = 5, top = 4, bottom = 4 },
+  --   tile = true,
+  --   tileSize = 100
+  -- })
+  -- -- selectionFrame:SetBackdropColor(0.8, 1, 1, 1)
+  -- selectionFrame:SetFrameLevel(1)
 
   -- Setup character dropdown
   LibDD:UIDropDownMenu_Initialize(characterDropdown, function()
@@ -359,7 +383,7 @@ function MyAccountant:updateFrame()
   end
 
   local frameX = 500
-  local frameY = 347
+  local frameY = 375
 
   if ViewType == "SOURCE" then
     swapViewButton:SetText(L["income_panel_zones"])
