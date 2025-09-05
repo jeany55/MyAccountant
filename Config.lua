@@ -336,7 +336,14 @@ function MyAccountant:SetupOptions()
     local getItemInfo = function(itemId)
       local item = Item:CreateFromItemID(itemId)
       item:ContinueOnItemLoad(function()
-        table.insert(self.db.char.trackedItems, { itemId = itemId, enabled = true })
+        table.insert(self.db.char.trackedItems, {
+          itemId = itemId,
+          enabled = true,
+          name = item:GetItemName(),
+          color = item:GetItemQualityColor(),
+          icon = item:GetItemIcon(),
+          link = item:GetItemLink()
+        })
         RegisterItems()
         rerenderConfig()
       end)
@@ -500,8 +507,26 @@ function MyAccountant:SetupOptions()
         set = function(info, val) self.db.char.closeWhenEnteringCombat = val end,
         get = function(info) return self.db.char.closeWhenEnteringCombat end
       },
+      hide_inactive_currencies = {
+        order = 1.1,
+        name = L["option_income_panel_hide_inactive_currencies"],
+        desc = L["option_income_panel_hide_inactive_currencies_desc"],
+        type = "toggle",
+        width = "full",
+        set = function(info, val) self.db.char.hideInactiveCurrencies = val end,
+        get = function(info) return self.db.char.hideInactiveCurrencies end
+      },
+      hide_inactive_items = {
+        order = 1.12,
+        name = L["option_income_panel_hide_inactive_items"],
+        desc = L["option_income_panel_hide_inactive_items_desc"],
+        type = "toggle",
+        width = "full",
+        set = function(info, val) self.db.char.hideInactiveItems = val end,
+        get = function(info) return self.db.char.hideInactiveItems end
+      },
       show_bottom = {
-        order = 1,
+        order = 1.2,
         name = L["option_income_panel_bottom"],
         desc = L["option_income_panel_bottom_desc"],
         type = "toggle",

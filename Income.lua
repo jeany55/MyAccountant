@@ -467,18 +467,34 @@ end
 -- dayData - Day data object
 -- category - Source type, passing nil will sum the whole day
 -- type - "income"/"outcome" - passing nil will return net
-local function sumDay(dayData, category, type)
+local function sumDay(dayData, category, type, itemId)
 
   if (category == nil) then
     local total = 0
 
     for _, v in pairs(dayData) do
       if type == "income" then
-        total = total + v.income
+        if (itemId) then
+          local itemTotal = (itemId and v.items[itemId]) and v.items[itemId].income or 0
+          total = total + itemTotal
+        else
+          total = total + v.income
+        end
+
       elseif type == "outcome" then
-        total = total + v.outcome
+        if (itemId) then
+          local itemTotal = (itemId and v.items[itemId]) and v.items[itemId].outcome or 0
+          total = total + itemTotal
+        else
+          total = total + v.outcome
+        end
       else
-        total = total + (v.income - v.outcome)
+        if (itemId) then
+          local itemTotal = (itemId and v.items[itemId]) and v.items[itemId] or { income = 0, outcome = 0 }
+          total = total + (itemTotal.income - itemTotal.outcome)
+        else
+          total = total + (v.income - v.outcome)
+        end
       end
     end
 
@@ -627,6 +643,10 @@ function MyAccountant:SummarizeData(data)
   return summary
 end
 
+function MyAccountant:GetSessionItemIncome(category, item) return sumDay(totalGoldSession, category, "income", item) end
+
+function MyAccountant:GetSessionItemOutcome(category, item) return sumDay(totalGoldSession, category, "outcome", item) end
+
 -- Gets total session income, if no category is passed a total sum will be returned
 function MyAccountant:GetSessionIncome(category) return sumDay(totalGoldSession, category, "income") end
 
@@ -765,6 +785,7 @@ function MyAccountant:InitAllCurrencies()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
   local currencies = {}
   local discovered = 0
+  -- self.db.char.currencies = {}
   local setCurrencies = self.db.char.currencies and self.db.char.currencies or {}
   local firstRun = #setCurrencies == 0
 
@@ -772,7 +793,7 @@ function MyAccountant:InitAllCurrencies()
     local data = GetCurrencyInfo(i)
     if data and data.name then
       currencySession[data.name] = data.quantity
-      table.insert(currencies, { id = i, name = data.name, enabled = data.discovered == true })
+      table.insert(currencies, { id = i, name = data.name, enabled = data.discovered == true, icon = data.iconFileID })
       if data.discovered == true then
         discovered = discovered + 1
       end

@@ -284,5 +284,7 @@ private.default_settings = {
   defaultView = "SOURCE",
   minimapCharacters = "THIS_CHARACTER",
   seenBank = false,
-  trackedItems = {}
+  trackedItems = {},
+  hideInactiveCurrencies = false,
+  hideInactiveItems = false
 }

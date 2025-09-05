@@ -30,6 +30,12 @@ L["option_clear_character_item_data_desc"] =
 L["option_clear_character_item_data_confirm"] =
     "This will |cffff0000permanently clear all currency (not gold) data for your character|r. This can't be undone. Are sure you want to do this?"
 
+L["option_income_panel_hide_inactive_currencies"] = "Hide inactive currencies"
+L["option_income_panel_hide_inactive_currencies_desc"] = "Do not show currencies for which there is no activity"
+
+L["option_income_panel_hide_inactive_items"] = "Hide inactive items"
+L["option_income_panel_hide_inactive_items_desc"] = "Do not show items for which there is no activity"
+
 -----------------------------------------
 --- VERSION 1.4
 -----------------------------------------

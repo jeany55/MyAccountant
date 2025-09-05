@@ -16,11 +16,98 @@ local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME" }
 -- Holds whether viewing by source or by zone 
 local ViewType
 
+-- Current viewing currency
+local ViewingCurrency = nil
+
 -- Hold grid lines to show/hide if user doesn't want to see them
 RenderedLines = {}
 
 -- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
 UserSetSort = nil
+
+local function starts_with(str, start) return str:sub(1, #start) == start end
+
+function MyAccountant:SetCurrencyDropdownOptions()
+  local hideInactiveCurrencies = self.db.char.hideInactiveCurrencies
+  local parentList = _G["L_DropDownList" .. 1]
+  local list1 = _G["L_DropDownList" .. 2]
+  -- Currency Dropdown
+  LibDD:UIDropDownMenu_Initialize(currencyDropdown, function()
+    if (L_UIDROPDOWNMENU_MENU_LEVEL == 1) then
+      list1.width = 100
+      list1:Hide()
+      local row = LibDD:UIDropDownMenu_CreateInfo()
+      row.text = "Gold"
+      row.value = "Gold"
+      row.icon = "Interface\\MoneyFrame\\UI-GoldIcon"
+      row.func = function()
+        ViewingCurrency = "Gold"
+        LibDD:UIDropDownMenu_SetSelectedValue(currencyDropdown, "Gold")
+        MyAccountant:updateFrame()
+      end
+      LibDD:UIDropDownMenu_AddButton(row)
+      -- LibDD:UIDropDownMenu_SetSelectedValue(currencyDropdown, "Gold")
+      local rowCurrency = LibDD:UIDropDownMenu_CreateInfo()
+      rowCurrency.text = "Currencies"
+      rowCurrency.notCheckable = true
+
+      rowCurrency.value = "Currencies"
+      local rowItems = LibDD:UIDropDownMenu_CreateInfo()
+      rowItems.text = "Items"
+      rowItems.value = "Items"
+      rowItems.notCheckable = true
+
+      rowCurrency.hasArrow = true
+      rowItems.hasArrow = true
+      LibDD:UIDropDownMenu_AddButton(rowCurrency)
+      LibDD:UIDropDownMenu_AddButton(rowItems)
+    else
+      if (L_UIDROPDOWNMENU_MENU_VALUE == "Currencies") then
+        for _, currency in ipairs(self.db.char.currencies) do
+          if currency.enabled then
+            local row = LibDD:UIDropDownMenu_CreateInfo()
+            row.text = currency.name
+            row.value = "c-" .. currency.id
+            row.icon = currency.icon
+            row.func = function()
+              parentList:Hide()
+              ViewingCurrency = "c-" .. currency.id
+              LibDD:UIDropDownMenu_SetSelectedValue(currencyDropdown, ViewingCurrency)
+              MyAccountant:updateFrame()
+            end
+            -- table.insert(currencies, currencyItem)
+            LibDD:UIDropDownMenu_AddButton(row, 2)
+          end
+        end
+      else
+        for _, item in ipairs(self.db.char.trackedItems) do
+          if item.enabled then
+            local row = LibDD:UIDropDownMenu_CreateInfo()
+            row.text = item.name
+            row.value = "i-" .. item.itemId
+            row.icon = item.icon
+            row.func = function()
+              parentList:Hide()
+              ViewingCurrency = "i-" .. item.itemId
+              LibDD:UIDropDownMenu_SetSelectedValue(currencyDropdown, ViewingCurrency)
+              MyAccountant:updateFrame()
+            end
+            -- table.insert(currencies, currencyItem)
+            LibDD:UIDropDownMenu_AddButton(row, 2)
+          end
+        end
+
+      end
+
+      list1:Show()
+    end
+
+    if (not ViewingCurrency) then
+      ViewingCurrency = "Gold"
+      LibDD:UIDropDownMenu_SetSelectedValue(currencyDropdown, ViewingCurrency)
+    end
+  end)
+end
 
 function MyAccountant:SetCurrencyOptions() end
 
@@ -359,6 +446,9 @@ function MyAccountant:updateFrame()
 
   viewingType:Show()
 
+  -- Currency dropdown
+  MyAccountant:SetCurrencyDropdownOptions()
+
   -- Character selection / frame info
   if Tabs[ActiveTab] == "SESSION" then
     characterDropdown:Hide()
@@ -482,8 +572,13 @@ function MyAccountant:updateFrame()
   local outcome = 0
 
   if view == "SESSION" then
-    income = MyAccountant:GetSessionIncome()
-    outcome = MyAccountant:GetSessionOutcome()
+    if ViewingCurrency == "Gold" then
+      income = MyAccountant:GetSessionIncome()
+      outcome = MyAccountant:GetSessionOutcome()
+    elseif ViewingCurrency and starts_with(ViewingCurrency, "i") then
+      income = MyAccountant:GetSessionItemIncome(nil, string.sub(ViewingCurrency, 3))
+      outcome = MyAccountant:GetSessionOutcome()
+    end
   elseif view == "ALL_TIME" then
     local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime(selectedCharacter))
     income = summary.income
