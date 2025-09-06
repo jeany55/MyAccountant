@@ -116,8 +116,10 @@ function MyAccountant:GetCurrencyString(income, seperateThousands, currencyInfo,
     return GetMoneyString(income, seperateThousands)
   elseif string.sub(currencyType, 1, 1) == "i" then
     return income .. " |T" .. currencyInfo:GetItemIcon() .. ":0|t"
-  else
+  elseif currencyInfo then
     return income .. " |T" .. currencyInfo.iconFileID .. ":0|t"
+  else
+    return income
   end
 end
 

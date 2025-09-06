@@ -407,7 +407,7 @@ function MyAccountant:SetupOptions()
 
     local items = {
       type = "group",
-      name = "Items",
+      name = L["option_items"],
       args = {
         bank = {
           order = 0,
@@ -418,18 +418,12 @@ function MyAccountant:SetupOptions()
             if self.db.char.seenBank then
               return ""
             else
-              return
-                  "|cffff0000Item tracking will not function until you visit the bank once. You have not opened the bank yet!|r"
+              return L["options_items_warning"]
             end
           end
         },
-        desc1 = {
-          order = 1,
-          type = "description",
-          width = "full",
-          name = "To track incoming and outgoing amounts of specific items, enter in the Item ID to add an item."
-        },
-        desc2 = { order = 2, type = "description", width = "full", name = "Uncheck to deactivate." },
+        desc1 = { order = 1, type = "description", width = "full", name = L["options_items_to_track"] },
+        desc2 = { order = 2, type = "description", width = "full", name = L["options_items_untrack"] },
         itemid = {
           order = 3,
           type = "input",
@@ -440,14 +434,14 @@ function MyAccountant:SetupOptions()
           validate = function(info, val)
             for _, v in ipairs(self.db.char.trackedItems) do
               if tostring(v.itemId) == val then
-                return "You already have this Item ID in your list."
+                return L["options_add_item_error"]
               end
             end
 
             return true
           end
         },
-        activeItems = { type = "group", name = "Tracked items", inline = true, args = options }
+        activeItems = { type = "group", name = L["options_add_item_tracked_items"], inline = true, args = options }
       }
     }
 
@@ -482,21 +476,17 @@ function MyAccountant:SetupOptions()
 
   local currencyOption = {
     type = "group",
-    name = "Currencies",
+    name = L["options_currencies"],
     args = {
-      desc = {
-        order = 0,
-        name = "These currencies were identified in your WoW version. Some may not be relevant.",
-        type = "description"
-      },
-      desc1 = { order = 1, name = "Check or uncheck to enable or disable tracking of a currency", type = "description" },
-      currencies = { name = "Active currencies", order = 2, type = "group", inline = true, args = currencies }
+      desc = { order = 0, name = L["option_currency_detected"], type = "description" },
+      desc1 = { order = 1, name = L["option_check_to_enable_currency"], type = "description" },
+      currencies = { name = L["option_active_currencies"], order = 2, type = "group", inline = true, args = currencies }
     }
   }
 
   local incomePanel = {
     type = "group",
-    name = "Income Panel",
+    name = L["option_income_panel"],
     args = {
       hide_combat = {
         order = 3,
@@ -507,24 +497,24 @@ function MyAccountant:SetupOptions()
         set = function(info, val) self.db.char.closeWhenEnteringCombat = val end,
         get = function(info) return self.db.char.closeWhenEnteringCombat end
       },
-      hide_inactive_currencies = {
-        order = 1.1,
-        name = L["option_income_panel_hide_inactive_currencies"],
-        desc = L["option_income_panel_hide_inactive_currencies_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.hideInactiveCurrencies = val end,
-        get = function(info) return self.db.char.hideInactiveCurrencies end
-      },
-      hide_inactive_items = {
-        order = 1.12,
-        name = L["option_income_panel_hide_inactive_items"],
-        desc = L["option_income_panel_hide_inactive_items_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.hideInactiveItems = val end,
-        get = function(info) return self.db.char.hideInactiveItems end
-      },
+      -- hide_inactive_currencies = {
+      --   order = 1.1,
+      --   name = L["option_income_panel_hide_inactive_currencies"],
+      --   desc = L["option_income_panel_hide_inactive_currencies_desc"],
+      --   type = "toggle",
+      --   width = "full",
+      --   set = function(info, val) self.db.char.hideInactiveCurrencies = val end,
+      --   get = function(info) return self.db.char.hideInactiveCurrencies end
+      -- },
+      -- hide_inactive_items = {
+      --   order = 1.12,
+      --   name = L["option_income_panel_hide_inactive_items"],
+      --   desc = L["option_income_panel_hide_inactive_items_desc"],
+      --   type = "toggle",
+      --   width = "full",
+      --   set = function(info, val) self.db.char.hideInactiveItems = val end,
+      --   get = function(info) return self.db.char.hideInactiveItems end
+      -- },
       show_bottom = {
         order = 1.2,
         name = L["option_income_panel_bottom"],
@@ -650,7 +640,7 @@ function MyAccountant:SetupOptions()
 
   local clearData = {
     type = "group",
-    name = "Clear Data",
+    name = L["option_clear_data"],
     args = {
       clear_gph = {
         name = L["option_clear_gph"],

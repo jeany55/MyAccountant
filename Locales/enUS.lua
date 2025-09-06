@@ -9,6 +9,25 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 -----------------------------------------
 --- VERSION 2.0
 -----------------------------------------
+
+L["option_items"] = "Items"
+L["options_items_warning"] =
+    "|cffff0000Item tracking will not function until you visit the bank once. You have not opened the bank yet!|r"
+
+L["options_items_to_track"] = "To track incoming and outgoing amounts of specific items, enter in the Item ID to add an item."
+L["options_items_untrack"] = "Uncheck to deactivate."
+
+L["options_add_item_error"] = "You already have this Item ID in your list."
+L["options_add_item_tracked_items"] = "Tracked items"
+
+L["option_income_panel"] = "Income Panel"
+L["option_clear_data"] = "Clear Data"
+L["options_currencies"] = "Currencies"
+
+L["option_currency_detected"] = "These currencies were identified in your WoW version. Some may not be relevant."
+L["option_check_to_enable_currency"] = "Check or uncheck to enable or disable tracking of a currency"
+L["option_active_currencies"] = "Active currencies"
+
 L["option_minimap_data_type_this_character"] = "This character"
 L["option_minimap_data_type_all_characters"] = "All characters"
 

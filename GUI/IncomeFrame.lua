@@ -192,7 +192,8 @@ function MyAccountant:InitializeUI()
   characterDropdown:SetPoint("TOP", currencyDropdown, "TOP", 0, 0)
 
   viewingType = IncomeFrame:CreateFontString(ni, "OVERLAY", "GameFontNormalSmall")
-  viewingType:SetPoint("LEFT", swapViewButton, "BOTTOMLEFT", 5, -13)
+  viewingType:SetPoint("TOP", swapViewButton, "BOTTOM", 0, -13)
+  viewingType:SetPoint("RIGHT", IncomeFrame, "RIGHT", -13, 0)
 
   swapViewButton:SetPoint("TOP", characterDropdown, "TOP", 0, -2)
   swapViewButton:SetPoint("LEFT", characterDropdown, "RIGHT", -14, 0)
