@@ -3,8 +3,7 @@ run-name: 🚀 Release new ${{ inputs.versionType }} version
 on:
   # Run manually only
   workflow_dispatch:
-    branches:
-      - main
+
     inputs:
       versionType:
         description: 'Type of change'
