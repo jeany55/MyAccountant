@@ -59,7 +59,7 @@ jobs:
             MAJOR_VERSION=$(( MAJOR_VERSION + 1 ))
           fi
 
-          newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${$inputs.suffix}"
+          newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${inputs.suffix}"
           echo "VERSION=$newVersion" >> $GITHUB_ENV
 
           git tag -a "v$VERSION" -m "Release beta ${VERSION}"
