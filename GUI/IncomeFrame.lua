@@ -689,7 +689,7 @@ end
 local sortZoneIncome = function(source1, source2) return source1.income > source2.income end
 local sortZoneOutcome = function(source1, source2) return source1.outcome > source2.outcome end
 
-local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
+local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome, currencyInfo, currencyId)
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   if maxLines == 0 then
@@ -736,7 +736,10 @@ local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
         if linesShown >= maxLines then
           restSum = restSum + amount
         else
-          GameTooltip:AddLine(zone.zoneName .. ": " .. goldColor .. GetMoneyString(amount) .. "|r")
+
+          -- GameTooltip:AddLine(zone.zoneName .. ": " .. goldColor .. GetMoneyString(amount) .. "|r")
+          GameTooltip:AddLine(zone.zoneName .. ": " .. goldColor ..
+                                  MyAccountant:GetCurrencyString(amount, true, currencyInfo, currencyId) .. "|r")
           linesShown = linesShown + 1
         end
       end
@@ -829,19 +832,29 @@ function MyAccountant:DrawRows()
         end
       end
 
+      local item
+
       if outcome > 0 then
         if ViewingCurrency == "Gold" then
           outcomeText = MyAccountant:GetCurrencyString(outcome, true, nil, ViewingCurrency)
           _G[outgoing]:SetText(outcomeText)
         elseif ViewingCurrency and starts_with(ViewingCurrency, "i") then
           local currencyId = string.sub(ViewingCurrency, 3)
-          local item = Item:CreateFromItemID(tonumber(currencyId))
+          item = Item:CreateFromItemID(tonumber(currencyId))
           item:ContinueOnItemLoad(function()
             _G[outgoing]:SetText(MyAccountant:GetCurrencyString(outcome, true, item, ViewingCurrency))
+            _G[outgoing]:SetScript("OnEnter", function(self)
+              addHoverTooltip(self, "OUTCOME", currentRow.zones, maxHoverLines, colorIncome, item, ViewingCurrency)
+            end)
+            _G[outgoing]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+            _G[incoming]:SetScript("OnEnter", function(self)
+              addHoverTooltip(self, "INCOME", currentRow.zones, maxHoverLines, colorIncome, item, ViewingCurrency)
+            end)
+            _G[incoming]:SetScript("OnLeave", function() GameTooltip:Hide() end)
           end)
         else
           local currencyId = string.sub(ViewingCurrency, 3)
-          local item = GetCurrencyInfo(tonumber(currencyId))
+          item = GetCurrencyInfo(tonumber(currencyId))
           _G[outgoing]:SetText(MyAccountant:GetCurrencyString(outcome, true, item, ViewingCurrency))
         end
       end
@@ -854,12 +867,16 @@ function MyAccountant:DrawRows()
         _G[outgoing]:SetTextColor(0.8, 0.8, 0.8, 1)
       end
 
-      _G[outgoing]:SetScript("OnEnter",
-                             function(self) addHoverTooltip(self, "OUTCOME", currentRow.zones, maxHoverLines, colorIncome) end)
-      _G[outgoing]:SetScript("OnLeave", function() GameTooltip:Hide() end)
-      _G[incoming]:SetScript("OnEnter",
-                             function(self) addHoverTooltip(self, "INCOME", currentRow.zones, maxHoverLines, colorIncome) end)
-      _G[incoming]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      if not starts_with(ViewingCurrency, "i") then
+        _G[outgoing]:SetScript("OnEnter", function(self)
+          addHoverTooltip(self, "OUTCOME", currentRow.zones, maxHoverLines, colorIncome, item, ViewingCurrency)
+        end)
+        _G[outgoing]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        _G[incoming]:SetScript("OnEnter", function(self)
+          addHoverTooltip(self, "INCOME", currentRow.zones, maxHoverLines, colorIncome, item, ViewingCurrency)
+        end)
+        _G[incoming]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      end
     else
       _G[title]:SetText("")
       _G[incoming]:SetText("")
@@ -872,6 +889,10 @@ function MyAccountant:TabClick(id)
   PanelTemplates_SetTab(IncomeFrame, id);
   ActiveTab = id
   PlaySound(841)
+  local parentList = _G["L_DropDownList" .. 1]
+  local list1 = _G["L_DropDownList" .. 2]
+  parentList:Hide()
+  list1:Hide()
   MyAccountant:updateFrame()
 end
 

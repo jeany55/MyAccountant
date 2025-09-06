@@ -11,15 +11,9 @@ local handlePlayerMoneyChange = function()
   local moneyChange = newMoney - private.currentMoney
 
   local source = activeSource and activeSource or "OTHER"
+  local flow = moneyChange > 0 and "income" or "outcome"
 
-  if moneyChange > 0 then
-    MyAccountant:AddIncome(source, moneyChange)
-    MyAccountant:PrintDebugMessage("Added income of |cff00ff00%s|r to %s", GetMoneyString(moneyChange, true), source)
-  elseif moneyChange < 0 then
-    MyAccountant:AddOutcome(source, abs(moneyChange))
-    MyAccountant:PrintDebugMessage("Added outcome of |cffff0000%s|r to %s", GetMoneyString(abs(moneyChange), true), source)
-  end
-
+  MyAccountant:AddData(flow, source, "gold", "gold", abs(moneyChange))
   private.currentMoney = newMoney
   MyAccountant:updateFrameIfOpen()
 end
@@ -134,12 +128,9 @@ local events = {
         local quantityChange = oldAmount - data.quantity
 
         local source = activeSource and activeSource or "OTHER"
+        local flow = quantityChange < 0 and "income" or "outcome"
 
-        if quantityChange < 0 then
-          MyAccountant:AddCurrencyIncome(source, tostring(currencyType), abs(quantityChange))
-        else
-          MyAccountant:AddCurrencyOutcome(source, tostring(currencyType), abs(quantityChange))
-        end
+        MyAccountant:AddData(flow, source, "currencies", tostring(currencyType), abs(quantityChange))
       end
     end
   },
@@ -164,11 +155,8 @@ local events = {
         for _, itemData in ipairs(config.trackedItems) do
           local item = itemChanges[tostring(itemData.itemId)]
           if itemData.enabled and item then
-            if item.amount > 0 then
-              MyAccountant:AddItemIncome(source, itemData.itemId, item.amount)
-            else
-              MyAccountant:AddItemOutcome(source, itemData.itemId, abs(item.amount))
-            end
+            local flow = item.amount > 0 and "income" or "outcome"
+            MyAccountant:AddData(flow, source, "items", itemData.itemId, abs(item.amount))
           end
         end
       end
