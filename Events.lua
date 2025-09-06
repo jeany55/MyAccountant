@@ -123,7 +123,7 @@ local events = {
     EVENT = "CURRENCY_DISPLAY_UPDATE",
     EXEC = function(config, currencyType)
       if currencyType then
-        local data = GetCurrencyInfo(currencyType)
+        local data = C_CurrencyInfo.GetCurrencyInfo(currencyType)
         local oldAmount = MyAccountant:GetCurrencySessionAmount(tostring(currencyType))
         local quantityChange = oldAmount - data.quantity
 

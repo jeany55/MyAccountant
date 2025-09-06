@@ -454,7 +454,7 @@ function MyAccountant:SetupOptions()
     table.sort(self.db.char.currencies, function(a, b) return a.name < b.name end)
     local order = 0
     for index, v in ipairs(self.db.char.currencies) do
-      local data = GetCurrencyInfo(v.id)
+      local data = C_CurrencyInfo.GetCurrencyInfo(v.id)
       if v.name ~= "" and data.isTypeUnused == false and not string.find(string.lower(v.name), 'deprecate') then
         local icon = (data.iconFileID and "|T" .. data.iconFileID .. ":18|t " or "")
         local r, g, b, cString = C_Item.GetItemQualityColor(data.quality)

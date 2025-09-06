@@ -640,7 +640,7 @@ function MyAccountant:InitAllCurrencies()
   local firstRun = #setCurrencies == 0
 
   for i = 0, 10000 do
-    local data = GetCurrencyInfo(i)
+    local data = C_CurrencyInfo.GetCurrencyInfo(i)
     if data and data.name then
       currencySession[tostring(i)] = data.quantity
       table.insert(currencies, { id = i, name = data.name, enabled = data.discovered == true, icon = data.iconFileID })
@@ -672,6 +672,6 @@ end
 function MyAccountant:GetCurrencySessionAmount(currencyId) return currencySession[currencyId] end
 
 function MyAccountant:UpdateCurrency(currencyId, change)
-  local data = GetCurrencyInfo(currencyId)
+  local data = C_CurrencyInfo.GetCurrencyInfo(currencyId)
   currencySession[data.name] = currencySession[data.name] + change
 end

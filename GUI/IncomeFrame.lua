@@ -33,6 +33,7 @@ function MyAccountant:SetCurrencyDropdownOptions()
   local list1 = _G["L_DropDownList" .. 2]
   -- Currency Dropdown
   LibDD:UIDropDownMenu_Initialize(currencyDropdown, function()
+    local showList1 = false
     if (L_UIDROPDOWNMENU_MENU_LEVEL == 1) then
       list1.width = 100
       list1:Hide()
@@ -64,6 +65,7 @@ function MyAccountant:SetCurrencyDropdownOptions()
     else
       if (L_UIDROPDOWNMENU_MENU_VALUE == "Currencies") then
         for _, currency in ipairs(self.db.char.currencies) do
+          showList1 = true
           if currency.enabled then
             local row = LibDD:UIDropDownMenu_CreateInfo()
             row.text = currency.name
@@ -81,6 +83,7 @@ function MyAccountant:SetCurrencyDropdownOptions()
         end
       else
         for _, item in ipairs(self.db.char.trackedItems) do
+          showList1 = false
           if item.enabled then
             local row = LibDD:UIDropDownMenu_CreateInfo()
             row.text = item.color.hex .. item.name .. "|r"
@@ -97,10 +100,10 @@ function MyAccountant:SetCurrencyDropdownOptions()
             LibDD:UIDropDownMenu_AddButton(row, 2)
           end
         end
-
       end
-
-      list1:Show()
+      if (showList1) then
+        list1:Show()
+      end
     end
 
     if (not ViewingCurrency) then
@@ -669,8 +672,8 @@ function MyAccountant:updateFrame()
 
     item:ContinueOnItemLoad(function() setHeaderCurrencies(item, item:GetItemLink()) end)
   else
-    local currencyInfo = GetCurrencyInfo(tonumber(currencyId))
-    local currencyLink = GetCurrencyLink(tonumber(currencyId), 1)
+    local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(tonumber(currencyId))
+    local currencyLink = C_CurrencyInfo.GetCurrencyLink(tonumber(currencyId), 1)
 
     setHeaderCurrencies(currencyInfo, currencyLink)
   end
@@ -828,7 +831,7 @@ function MyAccountant:DrawRows()
           end)
         else
           local currencyId = string.sub(ViewingCurrency, 3)
-          local item = GetCurrencyInfo(tonumber(currencyId))
+          local item = C_CurrencyInfo.GetCurrencyInfo(tonumber(currencyId))
           _G[incoming]:SetText(MyAccountant:GetCurrencyString(income, true, item, ViewingCurrency))
         end
       end
@@ -855,7 +858,7 @@ function MyAccountant:DrawRows()
           end)
         else
           local currencyId = string.sub(ViewingCurrency, 3)
-          item = GetCurrencyInfo(tonumber(currencyId))
+          item = C_CurrencyInfo.GetCurrencyInfo(tonumber(currencyId))
           _G[outgoing]:SetText(MyAccountant:GetCurrencyString(outcome, true, item, ViewingCurrency))
         end
       end
