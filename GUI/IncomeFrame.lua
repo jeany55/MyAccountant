@@ -37,7 +37,7 @@ function MyAccountant:SetCurrencyDropdownOptions()
       list1.width = 100
       list1:Hide()
       local row = LibDD:UIDropDownMenu_CreateInfo()
-      row.text = "Gold"
+      row.text = "|cffffff00Gold|r"
       row.value = "Gold"
       row.icon = "Interface\\MoneyFrame\\UI-GoldIcon"
       row.func = function()
@@ -83,11 +83,12 @@ function MyAccountant:SetCurrencyDropdownOptions()
         for _, item in ipairs(self.db.char.trackedItems) do
           if item.enabled then
             local row = LibDD:UIDropDownMenu_CreateInfo()
-            row.text = item.name
+            row.text = item.color.hex .. item.name .. "|r"
             row.value = "i-" .. item.itemId
             row.icon = item.icon
             row.func = function()
               parentList:Hide()
+              -- print("i-" .. item.itemId)
               ViewingCurrency = "i-" .. item.itemId
               LibDD:UIDropDownMenu_SetSelectedValue(currencyDropdown, ViewingCurrency)
               MyAccountant:updateFrame()
@@ -109,12 +110,20 @@ function MyAccountant:SetCurrencyDropdownOptions()
   end)
 end
 
-function MyAccountant:SetCurrencyOptions() end
-
 -- Returns a sorted List
 function MyAccountant:GetSortedTable(type, viewType)
   local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
-  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter, ViewType)
+  local itemId = nil
+  local itemType = "Gold"
+  if ViewingCurrency ~= "Gold" then
+    itemId = string.sub(ViewingCurrency, 3)
+    if string.sub(ViewingCurrency, 1, 1) == "i" then
+      itemType = "item"
+    else
+      itemType = "currency"
+    end
+  end
+  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter, ViewType, itemId, itemType)
 
   local function sortingFunction(source1, source2)
     if sortType == "SOURCE_ASC" then
@@ -571,27 +580,42 @@ function MyAccountant:updateFrame()
   local income = 0
   local outcome = 0
 
+  local type = ""
+  local currencyId = ""
+  if ViewingCurrency and starts_with(ViewingCurrency, "i") then
+    type = "item"
+    currencyId = string.sub(ViewingCurrency, 3)
+  elseif ViewingCurrency and starts_with(ViewingCurrency, "c") then
+    type = "currency"
+    currencyId = string.sub(ViewingCurrency, 3)
+  else
+    type = "Gold"
+  end
+
   if view == "SESSION" then
-    if ViewingCurrency == "Gold" then
+    if type == "Gold" then
       income = MyAccountant:GetSessionIncome()
       outcome = MyAccountant:GetSessionOutcome()
-    elseif ViewingCurrency and starts_with(ViewingCurrency, "i") then
-      income = MyAccountant:GetSessionItemIncome(nil, string.sub(ViewingCurrency, 3))
-      outcome = MyAccountant:GetSessionOutcome()
+    else
+      income = MyAccountant:GetSessionCurrencyIncome(nil, type, currencyId)
+      outcome = MyAccountant:GetSessionCurrencyIncome(nil, type, currencyId)
     end
   elseif view == "ALL_TIME" then
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime(selectedCharacter))
+    local summary = MyAccountant:SummarizeData(
+                        private.normalizeTable(MyAccountant:GetAllTime(selectedCharacter), type, currencyId))
     income = summary.income
     outcome = summary.outcome
   else
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(view, nil, selectedCharacter))
+    local historicalData = MyAccountant:GetHistoricalData(view, nil, selectedCharacter)
+    if type ~= "Gold" then
+      historicalData = private.normalizeTable(private.copy(historicalData), type, currencyId)
+    end
+    local summary = MyAccountant:SummarizeData(historicalData)
     income = summary.income
     outcome = summary.outcome
   end
 
   local profit = income - outcome
-
-  totalProfit:SetText(MyAccountant:GetHeaderMoneyString(abs(profit)))
 
   if (profit > 0) then
     totalProfit:SetTextColor(0, 255, 0)
@@ -601,8 +625,54 @@ function MyAccountant:updateFrame()
     totalProfit:SetTextColor(255, 255, 0)
   end
 
-  totalOutcome:SetText(MyAccountant:GetHeaderMoneyString(outcome))
-  totalIncome:SetText(MyAccountant:GetHeaderMoneyString(income))
+  local setHeaderCurrencies = function(itemData, itemLink)
+    if type == "Gold" then
+      totalProfit:SetText(MyAccountant:GetHeaderMoneyString(abs(profit)))
+      totalOutcome:SetText(MyAccountant:GetHeaderMoneyString(outcome))
+      totalIncome:SetText(MyAccountant:GetHeaderMoneyString(income))
+      totalProfit:SetScript("OnEnter", function() end)
+      totalProfit:SetScript("OnLeave", function() end)
+      totalOutcome:SetScript("OnEnter", function() end)
+      totalOutcome:SetScript("OnLeave", function() end)
+      totalIncome:SetScript("OnEnter", function() end)
+      totalIncome:SetScript("OnLeave", function() end)
+    else
+      totalProfit:SetText(MyAccountant:GetHeaderMoneyString(abs(profit), itemData, ViewingCurrency))
+      totalOutcome:SetText(MyAccountant:GetHeaderMoneyString(outcome, itemData, ViewingCurrency))
+      totalIncome:SetText(MyAccountant:GetHeaderMoneyString(income, itemData, ViewingCurrency))
+      totalProfit:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(totalProfit, "ANCHOR_CURSOR")
+        GameTooltip:SetHyperlink(itemLink)
+        GameTooltip:Show()
+      end)
+      totalProfit:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      totalIncome:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(totalProfit, "ANCHOR_CURSOR")
+        GameTooltip:SetHyperlink(itemLink)
+        GameTooltip:Show()
+      end)
+      totalIncome:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      totalOutcome:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(totalProfit, "ANCHOR_CURSOR")
+        GameTooltip:SetHyperlink(itemLink)
+        GameTooltip:Show()
+      end)
+      totalOutcome:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    end
+  end
+
+  if (type == "Gold") then
+    setHeaderCurrencies()
+  elseif type == "item" then
+    local item = Item:CreateFromItemID(tonumber(currencyId))
+
+    item:ContinueOnItemLoad(function() setHeaderCurrencies(item, item:GetItemLink()) end)
+  else
+    local currencyInfo = GetCurrencyInfo(tonumber(currencyId))
+    local currencyLink = GetCurrencyLink(tonumber(currencyId), 1)
+
+    setHeaderCurrencies(currencyInfo, currencyLink)
+  end
 
   -- Hide/show grid lines depending on user preference
   for _, v in ipairs(RenderedLines) do
@@ -730,6 +800,7 @@ function MyAccountant:DrawRows()
     local currentRow = incomeTable[i + scrollIndex]
 
     if currentRow then
+
       _G[title]:SetText(currentRow.title)
 
       local income = currentRow.income
@@ -738,12 +809,41 @@ function MyAccountant:DrawRows()
       local incomeText = ""
       local outcomeText = ""
 
+      _G[incoming]:SetText(incomeText)
+      _G[outgoing]:SetText(outcomeText)
+
       if income > 0 then
-        incomeText = GetMoneyString(income, true)
+        if ViewingCurrency == "Gold" then
+          incomeText = MyAccountant:GetCurrencyString(income, true, nil, ViewingCurrency)
+          _G[incoming]:SetText(incomeText)
+        elseif ViewingCurrency and starts_with(ViewingCurrency, "i") then
+          local currencyId = string.sub(ViewingCurrency, 3)
+          local item = Item:CreateFromItemID(tonumber(currencyId))
+          item:ContinueOnItemLoad(function()
+            _G[incoming]:SetText(MyAccountant:GetCurrencyString(income, true, item, ViewingCurrency))
+          end)
+        else
+          local currencyId = string.sub(ViewingCurrency, 3)
+          local item = GetCurrencyInfo(tonumber(currencyId))
+          _G[incoming]:SetText(MyAccountant:GetCurrencyString(income, true, item, ViewingCurrency))
+        end
       end
 
       if outcome > 0 then
-        outcomeText = GetMoneyString(outcome, true)
+        if ViewingCurrency == "Gold" then
+          outcomeText = MyAccountant:GetCurrencyString(outcome, true, nil, ViewingCurrency)
+          _G[outgoing]:SetText(outcomeText)
+        elseif ViewingCurrency and starts_with(ViewingCurrency, "i") then
+          local currencyId = string.sub(ViewingCurrency, 3)
+          local item = Item:CreateFromItemID(tonumber(currencyId))
+          item:ContinueOnItemLoad(function()
+            _G[outgoing]:SetText(MyAccountant:GetCurrencyString(outcome, true, item, ViewingCurrency))
+          end)
+        else
+          local currencyId = string.sub(ViewingCurrency, 3)
+          local item = GetCurrencyInfo(tonumber(currencyId))
+          _G[outgoing]:SetText(MyAccountant:GetCurrencyString(outcome, true, item, ViewingCurrency))
+        end
       end
 
       if self.db.char.colorGoldInIncomePanel then
@@ -753,9 +853,6 @@ function MyAccountant:DrawRows()
         _G[incoming]:SetTextColor(0.8, 0.8, 0.8, 1)
         _G[outgoing]:SetTextColor(0.8, 0.8, 0.8, 1)
       end
-
-      _G[incoming]:SetText(incomeText)
-      _G[outgoing]:SetText(outcomeText)
 
       _G[outgoing]:SetScript("OnEnter",
                              function(self) addHoverTooltip(self, "OUTCOME", currentRow.zones, maxHoverLines, colorIncome) end)

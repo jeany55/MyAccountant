@@ -337,7 +337,7 @@ function MyAccountant:SetupOptions()
       local item = Item:CreateFromItemID(itemId)
       item:ContinueOnItemLoad(function()
         table.insert(self.db.char.trackedItems, {
-          itemId = itemId,
+          itemId = tostring(itemId),
           enabled = true,
           name = item:GetItemName(),
           color = item:GetItemQualityColor(),
@@ -382,7 +382,7 @@ function MyAccountant:SetupOptions()
           }
         }
       }
-      local item = Item:CreateFromItemID(v.itemId)
+      local item = Item:CreateFromItemID(tonumber(v.itemId))
       item:ContinueOnItemLoad(function()
         local name = item:GetItemName()
         local itemIcon = item:GetItemIcon()

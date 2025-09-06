@@ -103,11 +103,21 @@ function MyAccountant:HandleMinimapClick(button)
 end
 
 -- Takes into account if the user doesn't want to see zeros - if so return empty string
-function MyAccountant:GetHeaderMoneyString(money)
+function MyAccountant:GetHeaderMoneyString(money, itemInfo, currencyType)
   if (self.db.char.hideZero and money == 0) then
     return ""
   else
-    return GetMoneyString(money, true)
+    return MyAccountant:GetCurrencyString(money, true, itemInfo, currencyType)
+  end
+end
+
+function MyAccountant:GetCurrencyString(income, seperateThousands, currencyInfo, currencyType)
+  if not currencyType or currencyType == "Gold" then
+    return GetMoneyString(income, seperateThousands)
+  elseif string.sub(currencyType, 1, 1) == "i" then
+    return income .. " |T" .. currencyInfo:GetItemIcon() .. ":0|t"
+  else
+    return income .. " |T" .. currencyInfo.iconFileID .. ":0|t"
   end
 end
 
@@ -210,4 +220,20 @@ private.copy = function(obj, seen)
     res[private.copy(k, s)] = private.copy(v, s)
   end
   return res
+end
+
+private.normalizeTable = function(table, currencyType, currencyId)
+  local normalizedTable = {}
+  if currencyType == "item" then
+    for category, categoryData in pairs(table) do
+      normalizedTable[category] = categoryData.items[currencyId]
+    end
+    return normalizedTable
+  elseif currencyType == "currency" then
+    for category, categoryData in pairs(table) do
+      normalizedTable[category] = categoryData.currencies[currencyId]
+    end
+    return normalizedTable
+  end
+  return table
 end

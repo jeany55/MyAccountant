@@ -110,7 +110,13 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" }, -- Main
   { EVENT = "PLAYER_MONEY", EXEC = handlePlayerMoneyChange },
-  { EVENT = "PLAYER_ENTERING_WORLD", EXEC = function() private.currentMoney = GetMoney() end },
+  {
+    EVENT = "PLAYER_ENTERING_WORLD",
+    EXEC = function()
+      private.currentMoney = GetMoney()
+      MyAccountant:InitAllCurrencies()
+    end
+  },
   {
     EVENT = "PLAYER_REGEN_DISABLED",
     EXEC = function(config)
@@ -124,14 +130,15 @@ local events = {
     EXEC = function(config, currencyType)
       if currencyType then
         local data = GetCurrencyInfo(currencyType)
-        local oldAmount = MyAccountant:GetCurrencySessionAmount(data.name)
-        local quantityChange = data.quantity - oldAmount
+        local oldAmount = MyAccountant:GetCurrencySessionAmount(tostring(currencyType))
+        local quantityChange = oldAmount - data.quantity
+
         local source = activeSource and activeSource or "OTHER"
 
-        if quantityChange > 0 then
-          MyAccountant:AddCurrencyIncome(source, data.name, quantityChange)
+        if quantityChange < 0 then
+          MyAccountant:AddCurrencyIncome(source, tostring(currencyType), abs(quantityChange))
         else
-          MyAccountant:AddCurrencyOutcome(source, data.name, abs(quantityChange))
+          MyAccountant:AddCurrencyOutcome(source, tostring(currencyType), abs(quantityChange))
         end
       end
     end

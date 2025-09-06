@@ -18,23 +18,24 @@ L["first_run_sources_set"] =
 L["first_run_no_sources_set"] =
     "No currencies have been seen on this character and none are turned on for tracking. Type |cffffa500/mya options|r and go to 'Currencies' to configure."
 
-L["option_clear_character_currency_data"] = "Clear all currency data for this character"
+L["option_clear_character_currency_data"] = "Clear all currency data for all characters"
 L["option_clear_character_currency_data_desc"] =
-    "Delete all income/outcome currencies data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
+    "Delete all income/outcome currencies data for all characters. |cffff0000This is irreversible!|r"
 L["option_clear_character_currency_data_confirm"] =
-    "This will |cffff0000permanently clear all currency (not gold) data for your character|r. This can't be undone. Are sure you want to do this?"
+    "This will |cffff0000permanently clear all currency (not gold/item) data for all characters|r. This can't be undone. Are sure you want to do this?"
 
-L["option_clear_character_item_data"] = "Clear all currency data for this character"
-L["option_clear_character_item_data_desc"] =
-    "Delete all income/outcome currencies data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
+L["option_clear_character_item_data"] = "Clear all item data"
+L["option_clear_character_item_data_desc"] = "Delete all income/outcome item data. |cffff0000This is irreversible!|r"
 L["option_clear_character_item_data_confirm"] =
-    "This will |cffff0000permanently clear all currency (not gold) data for your character|r. This can't be undone. Are sure you want to do this?"
+    "This will |cffff0000permanently clear all items (not gold/currency) data for all characters|r. This can't be undone. Are sure you want to do this?"
 
 L["option_income_panel_hide_inactive_currencies"] = "Hide inactive currencies"
 L["option_income_panel_hide_inactive_currencies_desc"] = "Do not show currencies for which there is no activity"
 
 L["option_income_panel_hide_inactive_items"] = "Hide inactive items"
 L["option_income_panel_hide_inactive_items_desc"] = "Do not show items for which there is no activity"
+
+L["header_total_net"] = "Net gain / loss"
 
 -----------------------------------------
 --- VERSION 1.4
@@ -214,7 +215,6 @@ L["reset_gph_confirm_no"] = "No"
 
 L["header_total_income"] = "Total income"
 L["header_total_outcome"] = "Total outcome"
-L["header_total_net"] = "Net profit / loss"
 
 -- Income panel tabs
 L["session"] = "Session"

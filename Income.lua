@@ -30,8 +30,8 @@ end
 
 function MyAccountant:ResetCurrenciesData()
   for k, v in pairs(totalGoldSession) do
-    if v.zones then
-      totalGoldSession[k].zones = {}
+    if v.currencies then
+      totalGoldSession[k].currencies = {}
     end
   end
 
@@ -54,8 +54,8 @@ end
 
 function MyAccountant:ResetItemsData()
   for k, v in pairs(totalGoldSession) do
-    if v.zones then
-      totalGoldSession[k].zones = {}
+    if v.items then
+      totalGoldSession[k].items = {}
     end
   end
 
@@ -65,7 +65,7 @@ function MyAccountant:ResetItemsData()
         for monthKey, monthData in pairs(yearData) do
           for dayKey, dayData in pairs(monthData) do
             for category, categoryData in pairs(dayData) do
-              if categoryData.currencies then
+              if categoryData.items then
                 self.db.factionrealm[player][yearKey][monthKey][dayKey][category].items = {}
               end
             end
@@ -164,12 +164,13 @@ function MyAccountant:AddCurrencyIncome(category, currencyType, amount, dateOver
   MyAccountant:PrintDebugMessage("|cff00ff00Currency income: " .. currencyType .. " x" .. amount .. "|r")
   MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
-  currencySession[currencyType] = currencySession[currencyType] + amount
-
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
   local zone = GetZoneText()
   local total
+  local currencyInfo = GetCurrencyInfo(tonumber(currencyType))
+
+  currencySession[currencyType] = currencyInfo.quantity
 
   if not totalGoldSession[category] then
     totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
@@ -185,7 +186,13 @@ function MyAccountant:AddCurrencyIncome(category, currencyType, amount, dateOver
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = {
+      income = 0,
+      outcome = 0,
+      zones = {},
+      currencies = {},
+      items = {}
+    }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies then
@@ -195,7 +202,8 @@ function MyAccountant:AddCurrencyIncome(category, currencyType, amount, dateOver
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType] then
     self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType] = {
       income = 0,
-      outcome = 0
+      outcome = 0,
+      zones = {}
     }
   end
 
@@ -210,17 +218,27 @@ function MyAccountant:AddCurrencyIncome(category, currencyType, amount, dateOver
     }
   end
 
-  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].income
-  total = total + amount
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].income + amount
 
-  local totalCategory =
-      self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].income
-  totalCategory = totalCategory + amount
+  -- local totalCategory =
+  --     self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].income
+  -- totalCategory = totalCategory + amount
 
   -- Save to DB
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].income = total
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones = {}
+  end
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] = {
+      income = 0,
+      outcome = 0
+    }
+  end
+
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].income =
-      totalCategory
+      self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].income +
+          amount
 
   -- Save to current session info
   totalGoldSession[category].currencies[currencyType].income = totalGoldSession[category].currencies[currencyType].income + amount
@@ -236,8 +254,9 @@ function MyAccountant:AddCurrencyOutcome(category, currencyType, amount, dateOve
   local playerName = UnitName("player")
   local zone = GetZoneText()
   local total
+  local currencyInfo = GetCurrencyInfo(tonumber(currencyType))
 
-  currencySession[currencyType] = currencySession[currencyType] - amount
+  currencySession[currencyType] = currencyInfo.quantity
 
   if not totalGoldSession[category] then
     totalGoldSession[category] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
@@ -278,17 +297,27 @@ function MyAccountant:AddCurrencyOutcome(category, currencyType, amount, dateOve
     }
   end
 
-  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].outcome
-  total = total + amount
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].outcome + amount
 
-  local totalCategory =
-      self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].outcome
-  totalCategory = totalCategory + amount
+  -- local totalCategory =
+  --     self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].outcome
+  -- totalCategory = totalCategory + amount
+  self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].outcome =
+      self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].outcome +
+          amount
 
   -- Save to DB
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].outcome = total
-  self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone].outcome =
-      totalCategory
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones = {}
+  end
+
+  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] then
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].currencies[currencyType].zones[zone] = {
+      income = 0,
+      outcome = 0
+    }
+  end
 
   -- Save to current session info
   totalGoldSession[category].currencies[currencyType].outcome = totalGoldSession[category].currencies[currencyType].outcome +
@@ -320,7 +349,13 @@ function MyAccountant:AddItemIncome(category, itemId, amount, dateOverride)
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = {
+      income = 0,
+      outcome = 0,
+      zones = {},
+      currencies = {},
+      items = {}
+    }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items then
@@ -328,12 +363,18 @@ function MyAccountant:AddItemIncome(category, itemId, amount, dateOverride)
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId] = { income = 0, outcome = 0 }
+    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId] = {
+      income = 0,
+      outcome = 0,
+      zones = {}
+    }
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones = {}
-  end
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].income + amount
+
+  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone]
+                            .income
+  totalCategory = totalCategory + amount
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone] then
     self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone] = {
@@ -342,17 +383,9 @@ function MyAccountant:AddItemIncome(category, itemId, amount, dateOverride)
     }
   end
 
-  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].income
-  total = total + amount
-
-  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone]
-                            .income
-  totalCategory = totalCategory + amount
-
   -- Save to DB
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].income = total
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone].income = totalCategory
-
   -- Save to current session info
   totalGoldSession[category].items[itemId].income = totalGoldSession[category].items[itemId].income + amount
   totalGoldSession[category].items[itemId].zones[zone].income = totalGoldSession[category].items[itemId].zones[zone].income +
@@ -404,8 +437,7 @@ function MyAccountant:AddItemOutcome(category, itemId, amount, dateOverride)
     }
   end
 
-  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].outcome
-  total = total + amount
+  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].outcome + amount
 
   local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].items[itemId].zones[zone]
                             .outcome
@@ -467,31 +499,41 @@ end
 -- dayData - Day data object
 -- category - Source type, passing nil will sum the whole day
 -- type - "income"/"outcome" - passing nil will return net
-local function sumDay(dayData, category, type, itemId)
+local function sumDay(dayData, category, type, currencyType, currencyId)
 
   if (category == nil) then
     local total = 0
 
     for _, v in pairs(dayData) do
       if type == "income" then
-        if (itemId) then
-          local itemTotal = (itemId and v.items[itemId]) and v.items[itemId].income or 0
+        if (currencyType == "item") then
+          local itemTotal = (currencyId and v.items[currencyId]) and v.items[currencyId].income or 0
           total = total + itemTotal
+        elseif (currencyType == "currency") then
+          local currencyTotal = (currencyId and v.currencies[currencyId]) and v.currencies[currencyId].income or 0
+          total = total + currencyTotal
         else
           total = total + v.income
         end
 
       elseif type == "outcome" then
-        if (itemId) then
-          local itemTotal = (itemId and v.items[itemId]) and v.items[itemId].outcome or 0
+        if (currencyType == "item") then
+          local itemTotal = (currencyId and v.items[currencyId]) and v.items[currencyId].outcome or 0
           total = total + itemTotal
+        elseif (currencyType == "currency") then
+          local currencyTotal = (currencyId and v.currencies[currencyId]) and v.currencies[currencyId].outcome or 0
+          total = total + currencyTotal
         else
           total = total + v.outcome
         end
       else
-        if (itemId) then
-          local itemTotal = (itemId and v.items[itemId]) and v.items[itemId] or { income = 0, outcome = 0 }
+        if (currencyType == "item") then
+          local itemTotal = (currencyId and v.items[currencyId]) and v.items[currencyId] or { income = 0, outcome = 0 }
           total = total + (itemTotal.income - itemTotal.outcome)
+        elseif (currencyType == "currency") then
+          local currencyTotal = (currencyId and v.currencies[currencyId]) and v.currencies[currencyId] or
+                                    { income = 0, outcome = 0 }
+          total = total + (currencyTotal.income - currencyTotal.outcome)
         else
           total = total + (v.income - v.outcome)
         end
@@ -557,20 +599,74 @@ function MyAccountant:GetHistoricalData(type, dateOverride, characterOverride, d
 
     for k, v in pairs(currentData) do
       if not data[k] then
-        data[k] = { income = 0, outcome = 0 }
+        data[k] = { income = 0, outcome = 0, items = {}, currencies = {}, zones = {} }
       end
 
-      if not data[k].zones then
-        data[k].zones = v.zones and v.zones or {}
-      else
-        if v.zones then
-          for zoneName, zoneData in pairs(v.zones) do
-            if not data[k].zones[zoneName] then
-              data[k].zones[zoneName] = zoneData
-            else
-              data[k].zones[zoneName].income = data[k].zones[zoneName].income + zoneData.income
-              data[k].zones[zoneName].outcome = data[k].zones[zoneName].outcome + zoneData.outcome
+      if (v.items) then
+        if not data[k].items then
+          data[k].items = {}
+        end
+        for itemName, itemData in pairs(v.items) do
+          if not data[k].items[itemName] then
+            data[k].items[itemName] = { income = 0, outcome = 0, zones = {} }
+          end
+          data[k].items[itemName].income = data[k].items[itemName].income + itemData.income
+          data[k].items[itemName].outcome = data[k].items[itemName].outcome + itemData.outcome
+
+          if itemData.zones then
+            for zoneName, zoneData in pairs(itemData.zones) do
+              if not data[k].items[itemName].zones[zoneName] then
+                data[k].items[itemName].zones[zoneName] = { income = 0, outcome = 0 }
+              end
+
+              if zoneData then
+                print("add... wat")
+                for k1, k2 in pairs(zoneData) do
+                  print(k1)
+                end
+                data[k].items[itemName].zones[zoneName].income = data[k].items[itemName].zones[zoneName].income + zoneData.income
+                data[k].items[itemName].zones[zoneName].outcome =
+                    data[k].items[itemName].zones[zoneName].outcome + zoneData.outcome
+              end
             end
+          end
+        end
+      end
+
+      if (v.currencies) then
+        for currencyName, currencyData in pairs(v.currencies) do
+          if not data[k].currencies[currencyName] then
+            data[k].currencies[currencyName] = { income = 0, outcome = 0, zones = {} }
+          else
+            data[k].currencies[currencyName].income = data[k].currencies[currencyName].income +
+                                                          (currencyData.income and currencyData.income or 0)
+            data[k].currencies[currencyName].outcome = data[k].currencies[currencyName].outcome +
+                                                           (currencyData.outcome and currencyData.outcome or 0)
+          end
+
+          if currencyData.zones then
+            for zoneName, zoneData in pairs(currencyData.zones) do
+              if not data[k].currencies[currencyName].zones[zoneName] then
+                data[k].currencies[currencyName].zones[zoneName] = { income = 0, outcome = 0 }
+              end
+              if zoneData then
+                data[k].currencies[currencyName].zones[zoneName].income =
+                    data[k].currencies[currencyName].zones[zoneName].income + (zoneData.income and zoneData.income or 0)
+                data[k].currencies[currencyName].zones[zoneName].outcome =
+                    data[k].currencies[currencyName].zones[zoneName].outcome + (zoneData.outcome and zoneData.outcome or 0)
+              end
+            end
+          end
+        end
+      end
+
+      if v.zones then
+        for zoneName, zoneData in pairs(v.zones) do
+          if not data[k].zones[zoneName] then
+            data[k].zones[zoneName] = zoneData
+          else
+            data[k].zones[zoneName].income = data[k].zones[zoneName].income + zoneData.income
+            data[k].zones[zoneName].outcome = data[k].zones[zoneName].outcome + zoneData.outcome
           end
         end
       end
@@ -607,15 +703,83 @@ function MyAccountant:GetAllTime(characterOverride, refDataOverride)
               data[category] = { income = 0, outcome = 0 }
             end
             if not data[category].zones then
-              data[category].zones = categoryData.zones and categoryData.zones or {}
-            else
-              if categoryData.zones then
-                for key, value in pairs(categoryData.zones) do
-                  if not data[category].zones[key] then
-                    data[category].zones[key] = value
-                  else
-                    data[category].zones[key].income = data[category].zones[key].income + value.income
-                    data[category].zones[key].outcome = data[category].zones[key].outcome + value.outcome
+              data[category].zones = {}
+            end
+
+            if categoryData.zones then
+              for key, value in pairs(categoryData.zones) do
+                if not data[category].zones[key] then
+                  data[category].zones[key] = value
+                else
+                  data[category].zones[key].income = data[category].zones[key].income + value.income
+                  data[category].zones[key].outcome = data[category].zones[key].outcome + value.outcome
+                end
+              end
+            end
+
+            if not data[category].items then
+              data[category].items = {}
+            end
+
+            if (categoryData.items) then
+              for itemName, itemData in pairs(categoryData.items) do
+                if not data[category].items[itemName] then
+                  data[category].items[itemName] = itemData
+                else
+                  data[category].items[itemName].income = data[category].items[itemName].income + itemData.income
+                  data[category].items[itemName].outcome = data[category].items[itemName].outcome + itemData.outcome
+                end
+
+                if not data[category].items[itemName].zones then
+                  data[category].items[itemName].zones = {}
+                end
+
+                if itemData.zones then
+                  for zoneName, zoneData in pairs(itemData.zones) do
+                    if not data[category].items[itemName].zones[zoneName] then
+                      data[category].items[itemName].zones[zoneName] = { income = 0, outcome = 0 }
+                    end
+
+                    data[category].items[itemName].zones[zoneName].income =
+                        data[category].items[itemName].zones[zoneName].income + zoneData.income
+                    data[category].items[itemName].zones[zoneName].outcome =
+                        data[category].items[itemName].zones[zoneName].outcome + zoneData.outcome
+
+                  end
+                end
+              end
+            end
+
+            if not data[category].currencies then
+              data[category].currencies = {}
+            end
+
+            if (categoryData.currencies) then
+              for currencyName, currencyData in pairs(categoryData.currencies) do
+                if not data[category].currencies[currencyName] then
+                  data[category].currencies[currencyName] = currencyData
+                else
+                  data[category].currencies[currencyName].income =
+                      data[category].currencies[currencyName].income + currencyData.income
+                  data[category].currencies[currencyName].outcome =
+                      data[category].currencies[currencyName].outcome + currencyData.outcome
+                end
+
+                if not data[category].currencies[currencyName].zones then
+                  data[category].currencies[currencyName].zones = {}
+                end
+
+                if currencyData.zones then
+                  for zoneName, zoneData in pairs(currencyData.zones) do
+                    print(zoneName)
+                    if not data[category].currencies[currencyName].zones[zoneName] then
+                      data[category].currencies[currencyName].zones[zoneName] = { income = 0, outcome = 0 }
+                    end
+                    -- data[category].currencies[currencyName].zones[zoneName].income =
+                    --     data[category].currencies[currencyName].zones[zoneName].income + zoneData.income
+                    -- data[category].currencies[currencyName].zones[zoneName].outcome =
+                    --     data[category].currencies[currencyName].zones[zoneName].outcome + zoneData.outcome
+
                   end
                 end
               end
@@ -643,9 +807,13 @@ function MyAccountant:SummarizeData(data)
   return summary
 end
 
-function MyAccountant:GetSessionItemIncome(category, item) return sumDay(totalGoldSession, category, "income", item) end
+function MyAccountant:GetSessionCurrencyIncome(category, currencyType, currencyId)
+  return sumDay(totalGoldSession, category, "income", currencyType, currencyId)
+end
 
-function MyAccountant:GetSessionItemOutcome(category, item) return sumDay(totalGoldSession, category, "outcome", item) end
+function MyAccountant:GetSessionCurrencyIncome(category, currencyType, currencyId)
+  return sumDay(totalGoldSession, category, "outcome", currencyType, currencyId)
+end
 
 -- Gets total session income, if no category is passed a total sum will be returned
 function MyAccountant:GetSessionIncome(category) return sumDay(totalGoldSession, category, "income") end
@@ -662,19 +830,33 @@ function MyAccountant:IsSourceActive(source)
   return false
 end
 
-function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverride, viewType)
-  local table = {}
+function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverride, viewType, itemId, itemType)
+  local wTable = {}
   local date = dateOverride and dateOverride or date("*t")
   local playerName = characterOverride and characterOverride or UnitName("player")
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   if type == "SESSION" then
-    table = private.copy(totalGoldSession)
+    wTable = totalGoldSession
   elseif type == "ALL_TIME" then
-    table = MyAccountant:GetAllTime(playerName)
+    wTable = MyAccountant:GetAllTime(playerName)
   else
-    table = MyAccountant:GetHistoricalData(type, date, playerName)
+    wTable = MyAccountant:GetHistoricalData(type, date, playerName)
   end
+
+  for k, v in pairs(wTable) do
+    if v.currencies then
+      for currencyName, currencyData in pairs(v.currencies) do
+        for lastk, lastv in pairs(currencyData.zones) do
+          -- print(currencyName .. " - " .. lastk .. " (income): " .. lastv.income)
+          -- print(currencyName .. " - " .. lastk .. " (outcome): " .. lastv.outcome)
+
+        end
+      end
+    end
+  end
+
+  local table = private.normalizeTable(private.copy(wTable), itemType, itemId)
 
   local talliedTable = { OTHER = table.OTHER }
 
@@ -792,7 +974,8 @@ function MyAccountant:InitAllCurrencies()
   for i = 0, 10000 do
     local data = GetCurrencyInfo(i)
     if data and data.name then
-      currencySession[data.name] = data.quantity
+      print(data.name .. ": " .. i .. " - " .. data.quantity)
+      currencySession[tostring(i)] = data.quantity
       table.insert(currencies, { id = i, name = data.name, enabled = data.discovered == true, icon = data.iconFileID })
       if data.discovered == true then
         discovered = discovered + 1
@@ -819,7 +1002,7 @@ function MyAccountant:InitAllCurrencies()
   end
 end
 
-function MyAccountant:GetCurrencySessionAmount(currencyName) return currencySession[currencyName] end
+function MyAccountant:GetCurrencySessionAmount(currencyId) return currencySession[currencyId] end
 
 function MyAccountant:UpdateCurrency(currencyId, change)
   local data = GetCurrencyInfo(currencyId)
