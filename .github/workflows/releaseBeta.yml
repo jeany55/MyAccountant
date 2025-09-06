@@ -1,0 +1,109 @@
+name: 🚀 Release Beta
+run-name: 🚀 Release new ${{ inputs.versionType }} version
+on:
+  # Run manually only
+  workflow_dispatch:
+    branches:
+      - main
+    inputs:
+      versionType:
+        description: 'Type of change'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      branch:
+        description: Which branch to build from
+        default: "main"
+      suffix:
+        description: Suffix to end build with
+        default: ""
+      changeNotes:
+        description: Change notes to attach to release
+        default: ""
+      deployToCurse:
+        description: "Deploy to Curse"
+        default: true
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out repository
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ACCESS_TOKEN_GIT }}
+
+      # Increment version and replace in the toc files
+      - name: Tag and update version 
+        run: |
+          git checkout "${inputs.branch}"
+          VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
+          
+          arrIN=(${VERSION//./ })
+          
+          MAJOR_VERSION=${arrIN[0]}
+          MINOR_VERSION=${arrIN[1]}
+          PATCH_VERSION=${arrIN[2]}
+          VERSION_TYPE="${{ inputs.versionType }}"
+          
+          if [[ $VERSION_TYPE == "patch" ]]; then
+            PATCH_VERSION=$(( PATCH_VERSION + 1 ))
+          elif [[ $VERSION_TYPE == "minor" ]]; then
+            PATCH_VERSION=0
+            MINOR_VERSION=$(( MINOR_VERSION + 1 ))
+          elif [[ $VERSION_TYPE == "major" ]]; then
+            PATCH_VERSION=0
+            MINOR_VERSION=0
+            MAJOR_VERSION=$(( MAJOR_VERSION + 1 ))
+          fi
+
+          newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${$inputs.suffix}"
+          echo "VERSION=$newVersion" >> $GITHUB_ENV
+
+          git tag -a "v$VERSION" -m "Release beta ${VERSION}"
+          git push origin tag "v$VERSION"
+
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-BCC.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Cata.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Classic.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Mists.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-WOTLK.toc
+
+      # Remove anything unneeded for the build artifact
+      # Then put it into all into a nested folder and zip it
+      - name: Generate zip
+        run : |
+          echo "Making zip for version $VERSION"
+
+          rm -rf ./.git
+          rm -rf ./.github
+          rm .gitignore
+          rm .lua-style
+          rm LICENSE
+          rm README.md
+          rm -rf Docs
+
+          rm -rf Tests
+
+          mkdir MyAccountant
+          mv * MyAccountant || true
+
+          zip -r "MyAccountant-${VERSION}.zip" ./ 
+      
+      # Upload zip made in previous step as a github release and attach to version tag
+      - name: Create release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: MyAccountant-${{ env.VERSION }}.zip
+          allowUpdates: true
+          prerelease: true
+          token: ${{ secrets.ACCESS_TOKEN_GIT }}
+          tag: "v${{ env.VERSION }}"
+          body: ${{ inputs.changeNotes }}
