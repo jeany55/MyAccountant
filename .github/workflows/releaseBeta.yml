@@ -31,8 +31,9 @@ jobs:
 
     steps:
       # Checks-out repository
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
+          ref: ${{ inputs.branch }}
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
 
       # Increment version and replace in the toc files
