@@ -60,13 +60,12 @@ jobs:
           fi
 
           newVersion="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${{ inputs.suffix }}"
-          echo "VERSION=$newVersion" >> $GITHUB_ENV
 
           git config user.email "bex5959@gmail.com"
           git config user.name "Service account"
 
-          git tag -a "v$VERSION" -m "Release beta ${VERSION}"
-          git push origin tag "v$VERSION"
+          git tag -a "v$newVersion" -m "Release beta ${newVersion}"
+          git push origin tag "v$newVersion"
 
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-BCC.toc
@@ -74,6 +73,8 @@ jobs:
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Classic.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Mists.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-WOTLK.toc
+
+          echo "VERSION=$newVersion" >> $GITHUB_ENV
 
       # Remove anything unneeded for the build artifact
       # Then put it into all into a nested folder and zip it
