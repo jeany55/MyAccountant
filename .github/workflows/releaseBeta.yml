@@ -3,6 +3,8 @@ run-name: 🚀 Release new ${{ inputs.versionType }} version
 on:
   # Run manually only
   workflow_dispatch:
+    branches:
+      - main
     inputs:
       versionType:
         description: 'Type of change'
@@ -13,6 +15,9 @@ on:
           - patch
           - minor
           - major
+      branch:
+        description: Which branch to build from
+        default: "main"
       suffix:
         description: Suffix to end build with
         default: ""
@@ -37,6 +42,7 @@ jobs:
       # Increment version and replace in the toc files
       - name: Tag and update version 
         run: |
+          git checkout "${inputs.branch}"
           VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
           
           arrIN=(${VERSION//./ })
