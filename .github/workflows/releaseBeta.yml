@@ -1,5 +1,5 @@
-name: 🚀 Release Beta
-run-name: 🚀 Release new ${{ inputs.versionType }} version
+name: 🚧 Release Beta
+run-name: 🚧 Release new ${{ inputs.versionType }} beta version
 on:
   # Run manually only
   workflow_dispatch:
@@ -24,10 +24,6 @@ on:
       changeNotes:
         description: Change notes to attach to release
         default: ""
-      deployToCurse:
-        description: "Deploy to Curse"
-        default: true
-        type: boolean
 
 jobs:
   release:
