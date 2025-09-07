@@ -10,6 +10,8 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 --- VERSION 2.0
 -----------------------------------------
 
+L["unknown"] = "Unknown"
+
 L["option_items"] = "Items"
 L["options_items_warning"] =
     "|cffff0000Item tracking will not function until you visit the bank once. You have not opened the bank yet!|r"

@@ -161,7 +161,8 @@ local events = {
         end
       end
     end
-  }
+  },
+  { EVENT = "QUEST_COMPLETE", EXEC = function() MyAccountant:UpdateActiveQuest() end }
 }
 
 local function findEvent(event)
