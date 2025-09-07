@@ -130,7 +130,7 @@ function MyAccountant:AddData(flow, incomeCategory, currencyKey, currencyIdentif
 
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
-  local zone = GetZoneText()
+  local zone = GetZoneText() and GetZoneText() or "Unknown"
 
   if not totalGoldSession[incomeCategory] then
     totalGoldSession[incomeCategory] = { income = 0, outcome = 0, zones = {}, currencies = {}, items = {} }
