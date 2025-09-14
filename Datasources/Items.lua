@@ -3,11 +3,33 @@ local _, private = ...
 
 -- ## Items Datasource
 -- This holds a model of the player's inventory
-Items = DataInterface:initialize()
+Items = {}
+
+local function getDatabase() return end
+
+local function getBagContents(containerId)
+  local contents = {}
+  local containerSlots = C_Container.GetContainerNumSlots(containerId)
+
+  for slotIndex = 1, containerSlots do
+    local itemInfo = C_Container.GetContainerItemInfo(containerId, slotIndex)
+
+    if itemInfo then
+      local itemId = tostring(itemInfo.itemID)
+      if not contents[itemId] then
+        contents[itemId] = { amount = itemInfo.stackCount, link = itemInfo.hyperlink, icon = itemInfo.iconFileID }
+      else
+        contents[itemId].amount = contents[itemId].amount + itemInfo.stackCount
+      end
+    end
+  end
+
+  return contents
+end
 
 local function getInventory(getBank)
   local itemTable = {}
-  local reagentBag = private.wowVersion == private.GameTypes.RETAIL and 1 or 0
+  local reagentBag = private.wowVersion == private.gameTypes.RETAIL and 1 or 0
   local bankBags = getBank and NUM_BANKBAGSLOTS or 0
   local startIndex = getBank and -1 or 0
 
@@ -40,8 +62,11 @@ local function flattenTable(inventoryTable)
 end
 
 local function getKnownItems(checkBank, db)
+  if not db then
+    db = {}
+  end
   local itemTable = {}
-  local reagentBag = private.wowVersion == private.GameTypes.RETAIL and 1 or 0
+  local reagentBag = private.wowVersion == private.gameTypes.RETAIL and 1 or 0
   local bankBags = checkBank and NUM_BANKBAGSLOTS or 0
   local startIndex = checkBank and -1 or 0
 
@@ -53,11 +78,11 @@ local function getKnownItems(checkBank, db)
   return itemTable
 end
 
-function Items:updateKnownItems(checkBank)
+function Items:updateKnownItems(checkBank, db)
   local currentItems = getInventory(checkBank)
   local currentItemsFlat = flattenTable(currentItems)
 
-  local knownItems = flattenTable(getKnownItems(checkBank, self.db))
+  local knownItems = flattenTable(getKnownItems(checkBank, db))
   local changes = {}
 
   for itemId, itemData in pairs(currentItemsFlat) do
@@ -76,14 +101,17 @@ function Items:updateKnownItems(checkBank)
   end
 
   for bag, itemData in pairs(currentItems) do
-    self.db[bag] = itemData
+    db[bag] = itemData
   end
 
   return changes
 end
 
-function Items:update(source, checkBank)
-  local itemChanges = self.updateKnownItems(checkBank)
+function Items:update(source, checkBank, db)
+  if not db.items then
+    db.items = {}
+  end
+  local itemChanges = Items:updateKnownItems(checkBank, db.items)
 
   for k, v in pairs(itemChanges) do
     local addon = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
@@ -93,12 +121,17 @@ function Items:update(source, checkBank)
   end
 end
 
-function Items:initialize(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self -- Points to itself for inheritance
+function Items:initialize(db)
+  print("hi")
+  -- if not db then
+  --   db = {}
+  -- end
+  if not db then
+    db = {}
+  end
+  if not db.items then
+    db.items = {}
+  end
 
-  self:updateKnownItems(false)
-
-  return o
+  Items:updateKnownItems(false, db.items)
 end

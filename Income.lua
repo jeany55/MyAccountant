@@ -63,6 +63,7 @@ function MyAccountant:AddData(amount, source, dataType, dataId, dateOverride)
     dataId = dataId,
     quest = lastActiveQuest
   }
+  print("Add data amount:" .. amount .. " source:" .. source .. " dataType:" .. dataType .. " dataId:" .. dataId)
   table.insert(dayRef, payload)
 end
 

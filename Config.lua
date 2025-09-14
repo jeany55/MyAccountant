@@ -21,7 +21,7 @@ function MyAccountant:RegisterMinimap()
   local miniButton = LibStub("LibDataBroker-1.1"):NewDataObject(private.ADDON_NAME, {
     type = "data source",
     text = private.ADDON_NAME,
-    icon = private.constants.MINIMAP_ICON,
+    icon = private.images.MINIMAP_ICON,
     OnClick = function(self, btn) print("Testy") end,
 
     OnTooltipShow = function(tooltip)

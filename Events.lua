@@ -18,14 +18,18 @@ local isMailFromAuctionHouse = function()
   return false
 end
 
+-- ### Table of all data sources
+-- Must be an implementation of `Datasources/Interface.lua`
+private.dataSources = { Gold, Currency, Items }
+
 -- All event definitions
 local events = {
   {
     EVENT = "PLAYER_ENTERING_WORLD",
-    EXEC = function(config)
+    EXEC = function(db)
       for _, v in ipairs(private.dataSources) do
         if v and v.initialize then
-          v.initialize({ db = config })
+          v.initialize(db)
         end
       end
     end
@@ -116,7 +120,7 @@ local events = {
   -- }
   {
     EVENT = "CURRENCY_DISPLAY_UPDATE",
-    EXEC = function(config, currencyType)
+    EXEC = function(db, currencyType)
       if currencyType then
         local source = activeSource and activeSource or "OTHER"
         Currency:update(source, currencyType)
@@ -133,9 +137,9 @@ local events = {
   { EVENT = "BANKFRAME_CLOSED", EXEC = function() bankFrameOpen = false end },
   {
     EVENT = "BAG_UPDATE_DELAYED",
-    EXEC = function(config)
+    EXEC = function(db)
       local source = activeSource and activeSource or "OTHER"
-      Items:update(source, bankFrameOpen)
+      Items:update(source, bankFrameOpen, db)
     end
   }
 }
@@ -159,12 +163,16 @@ function MyAccountant:HandleGameEvent(event, ...)
     return
   end
 
+  if not self.db.char then
+    self.db.char = {}
+  end
+
   if eventInfo.SOURCE then
     activeSource = eventInfo.SOURCE
   end
 
   if eventInfo.EXEC then
-    eventInfo.EXEC(self.db.char.config, ...)
+    eventInfo.EXEC(self.db.char, ...)
   end
   if (eventInfo.RESET == true) then
     activeSource = nil

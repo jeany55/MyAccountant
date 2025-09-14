@@ -1,12 +1,9 @@
-Currency = DataInterface:initialize()
+Currency = {}
 
-function Currency:initialize(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self -- Points to itself for inheritance
+local currencies = {}
 
+function Currency:initialize()
   -- Find all currencies to be able to calculate differences
-  local currencies = {}
 
   for i = 0, 10000 do
     local data = C_CurrencyInfo.GetCurrencyInfo(i)
@@ -14,9 +11,6 @@ function Currency:initialize(o)
       currencies[tostring(i)] = data.quantity
     end
   end
-
-  self.currentValue = currencies
-  return o
 end
 
 function Currency:update(source, currencyId)
@@ -24,7 +18,7 @@ function Currency:update(source, currencyId)
   local data = C_CurrencyInfo.GetCurrencyInfo(currencyId)
   local currencyIdString = tostring(currencyId)
 
-  local oldAmount = self.currentValue[currencyIdString] and self.currentValue[currencyIdString].quantity or 0
+  local oldAmount = currencies[currencyIdString] and currencies[currencyIdString].quantity or 0
   local currencyChange = oldAmount - data.quantity
 
   addon:AddData(currencyChange, source, "Currency", currencyIdString)

@@ -10,13 +10,12 @@
 
 embeds.xml
 
-Datasources\Interface.lua
-Datasources\Gold.lua
-Datasources\Currency.lua
-Datasources\Items.lua
 Locales\Locales.xml
 Constants.lua
 Core.lua
 Config.lua
+Datasources\Gold.lua
+Datasources\Currency.lua
+Datasources\Items.lua
 Income.lua
 Events.lua

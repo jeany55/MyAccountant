@@ -9,6 +9,9 @@ MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
+  if not self.db.char.config then
+    self.db.char.config = {}
+  end
 
   MyAccountant:PrepDatabaseDay()
   MyAccountant:RegisterAllEvents()
