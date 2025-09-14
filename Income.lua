@@ -20,7 +20,6 @@ function MyAccountant:PrepDatabaseDay(dateOverride)
   local date = dateOverride and dateOverride or date("*t")
 
   local playerName = UnitName("player")
-  local server = GetRealmName()
 
   if not self.db.realm[playerName] then
     self.db.realm[playerName] = {}
@@ -55,7 +54,15 @@ function MyAccountant:AddData(amount, source, dataType, dataId, dateOverride)
   local zone = GetZoneText() and GetZoneText() or L["unknown"]
 
   local payload = {}
-  payload = { zone = zone, time = unixTime, source = source, amount = amount, dataType = dataType, dataId = dataId }
+  payload = {
+    zone = zone,
+    time = unixTime,
+    source = source,
+    amount = amount,
+    dataType = dataType,
+    dataId = dataId,
+    quest = lastActiveQuest
+  }
   table.insert(dayRef, payload)
 end
 

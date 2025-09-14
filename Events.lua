@@ -3,23 +3,10 @@ local _, private = ...
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local activeSource = nil
-local bankOpen = false
+local bankFrameOpen = false
 
--- Main money handler
-local handlePlayerMoneyChange = function()
-  local newMoney = GetMoney()
-  local moneyChange = newMoney - private.currentMoney
-
-  local source = activeSource and activeSource or "OTHER"
-  local flow = moneyChange > 0 and "income" or "outcome"
-
-  MyAccountant:AddData(flow, source, "gold", "gold", abs(moneyChange))
-  private.currentMoney = newMoney
-  MyAccountant:updateFrameIfOpen()
-end
-
--- Tracking if mail is from the AH is difficult - not a great event to track it.
--- Best we can do is check to see if any of the mail is from AH.
+-- Tracking if mail is from the AH is difficult - there is not a great event to track it.
+-- The best we can do is check to see if any of the mail is from AH.
 local isMailFromAuctionHouse = function()
   local _, totalItems = GetInboxNumItems()
   for i = 1, totalItems do
@@ -32,10 +19,17 @@ local isMailFromAuctionHouse = function()
 end
 
 -- All event definitions
--- SOURCE must match one of the source definitions in Constants.lua
--- RESET = true will reset the category
--- EXEC is a function to execute when the event happens
 local events = {
+  {
+    EVENT = "PLAYER_ENTERING_WORLD",
+    EXEC = function(config)
+      for _, v in ipairs(private.dataSources) do
+        if v and v.initialize then
+          v.initialize({ db = config })
+        end
+      end
+    end
+  },
   -- Trade
   { EVENT = "TRADE_SHOW", SOURCE = "TRADE" },
   { EVENT = "TRADE_CLOSED", SOURCE = "TRADE", RESET = true }, -- Training costs
@@ -66,9 +60,10 @@ local events = {
       end
     end
   }, -- Quests
-  { EVENT = "QUEST_COMPLETE", SOURCE = "QUESTS" },
+  { EVENT = "QUEST_COMPLETE", SOURCE = "QUESTS", EXEC = function() MyAccountant:UpdateActiveQuest() end },
   { EVENT = "QUEST_FINISHED", SOURCE = "QUESTS" },
-  { EVENT = "QUEST_TURNED_IN", SOURCE = "QUESTS" }, -- AH
+  { EVENT = "QUEST_TURNED_IN", SOURCE = "QUESTS" },
+  -- Auction House
   { EVENT = "AUCTION_HOUSE_SHOW", SOURCE = "AUCTIONS" },
   { EVENT = "AUCTION_HOUSE_CLOSED", SOURCE = "AUCTIONS", RESET = true },
   -- Loot
@@ -78,8 +73,10 @@ local events = {
   { EVENT = "TAXIMAP_OPENED", SOURCE = "TAXI_FARES" },
   { EVENT = "TAXIMAP_CLOSED", SOURCE = "TAXI_FARES" }, -- Do not reset
   -- Talents
-  { EVENT = "CONFIRM_TALENT_WIPE", SOURCE = "TALENTS" }, -- LFG
-  { EVENT = "LFG_COMPLETION_REWARD", SOURCE = "LFG" }, -- Guild
+  { EVENT = "CONFIRM_TALENT_WIPE", SOURCE = "TALENTS" },
+  -- LFG
+  { EVENT = "LFG_COMPLETION_REWARD", SOURCE = "LFG" },
+  -- Guild
   { EVENT = "GUILDBANKFRAME_OPENED", SOURCE = "GUILD" },
   { EVENT = "GUILDBANKFRAME_CLOSED", SOURCE = "GUILD", RESET = true },
   -- These guild events are causing problems and firing at weird times
@@ -89,8 +86,6 @@ local events = {
   { EVENT = "BARBER_SHOP_APPEARANCE_APPLIED", SOURCE = "BARBER" },
   { EVENT = "BARBER_SHOP_OPEN", SOURCE = "BARBER" },
   { EVENT = "BARBER_SHOP_CLOSE", SOURCE = "BARBER", RESET = true },
-  { EVENT = "BARBER_SHOP_RESULT", SOURCE = "BARBER" },
-  { EVENT = "BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE", SOURCE = "BARBER" },
   { EVENT = "BARBER_SHOP_COST_UPDATE", SOURCE = "BARBER" }, -- Transmog
   { EVENT = "TRANSMOGRIFY_OPEN", SOURCE = "TRANSMOGRIFY" },
   { EVENT = "TRANSMOGRIFY_CLOSE", SOURCE = "TRANSMOGRIFY", RESET = true },
@@ -103,66 +98,46 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_OPENED", SOURCE = "GARRISONS" },
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" }, -- Main
-  { EVENT = "PLAYER_MONEY", EXEC = handlePlayerMoneyChange },
   {
-    EVENT = "PLAYER_ENTERING_WORLD",
+    EVENT = "PLAYER_MONEY",
     EXEC = function()
-      private.currentMoney = GetMoney()
-      MyAccountant:InitAllCurrencies()
+      local source = activeSource and activeSource or "OTHER"
+      Gold:update(source)
     end
   },
-  {
-    EVENT = "PLAYER_REGEN_DISABLED",
-    EXEC = function(config)
-      if config.closeWhenEnteringCombat then
-        MyAccountant:HidePanel()
-      end
-    end
-  },
+  -- TODO: Re-implement
+  -- {
+  --   EVENT = "PLAYER_REGEN_DISABLED",
+  --   EXEC = function(config)
+  --     if config.closeWhenEnteringCombat then
+  --       MyAccountant:HidePanel()
+  --     end
+  --   end
+  -- }
   {
     EVENT = "CURRENCY_DISPLAY_UPDATE",
     EXEC = function(config, currencyType)
       if currencyType then
-        local data = C_CurrencyInfo.GetCurrencyInfo(currencyType)
-        local oldAmount = MyAccountant:GetCurrencySessionAmount(tostring(currencyType))
-        local quantityChange = oldAmount - data.quantity
-
         local source = activeSource and activeSource or "OTHER"
-        local flow = quantityChange < 0 and "income" or "outcome"
-
-        MyAccountant:AddData(flow, source, "currencies", tostring(currencyType), abs(quantityChange))
+        Currency:update(source, currencyType)
       end
     end
   },
   {
     EVENT = "BANKFRAME_OPENED",
-    EXEC = function(config)
-      bankOpen = true
-      if not config.seenBank then
-        config.playerItems = MyAccountant:GetInventory(true)
-        config.seenBank = true
-      end
+    EXEC = function()
+      bankFrameOpen = true
+      Items:updateKnownItems(true)
     end
   },
-  { EVENT = "BANKFRAME_CLOSED", EXEC = function() bankOpen = false end },
+  { EVENT = "BANKFRAME_CLOSED", EXEC = function() bankFrameOpen = false end },
   {
     EVENT = "BAG_UPDATE_DELAYED",
     EXEC = function(config)
-      if config.seenBank then
-        local itemChanges = MyAccountant:GetInventoryChanges(bankOpen)
-        local source = activeSource and activeSource or "OTHER"
-
-        for _, itemData in ipairs(config.trackedItems) do
-          local item = itemChanges[tostring(itemData.itemId)]
-          if itemData.enabled and item then
-            local flow = item.amount > 0 and "income" or "outcome"
-            MyAccountant:AddData(flow, source, "items", itemData.itemId, abs(item.amount))
-          end
-        end
-      end
+      local source = activeSource and activeSource or "OTHER"
+      Items:update(source, bankFrameOpen)
     end
-  },
-  { EVENT = "QUEST_COMPLETE", EXEC = function() MyAccountant:UpdateActiveQuest() end }
+  }
 }
 
 local function findEvent(event)
@@ -175,7 +150,7 @@ local function findEvent(event)
   return nil
 end
 
--- Event handler for WoW events.
+-- -- Event handler for WoW events.
 function MyAccountant:HandleGameEvent(event, ...)
   -- Pulls event info from the events object defined above
   local eventInfo = findEvent(event)
@@ -189,7 +164,7 @@ function MyAccountant:HandleGameEvent(event, ...)
   end
 
   if eventInfo.EXEC then
-    eventInfo.EXEC(self.db.char, ...)
+    eventInfo.EXEC(self.db.char.config, ...)
   end
   if (eventInfo.RESET == true) then
     activeSource = nil
@@ -217,5 +192,5 @@ function MyAccountant:RegisterAllEvents()
     end
   end
 
-  MyAccountant:PrintDebugMessage("Registered %d events", amount)
+  -- MyAccountant:PrintDebugMessage("Registered %d events", amount)
 end
