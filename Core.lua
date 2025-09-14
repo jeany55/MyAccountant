@@ -9,21 +9,19 @@ MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
-  if not self.db.char.config then
-    self.db.char.config = {}
-  end
+  -- self.db.realm = {}
 
-  MyAccountant:PrepDatabaseDay()
+  -- MyAccountant:PrepDatabaseDay()
   MyAccountant:RegisterAllEvents()
   MyAccountant:SetupOptions()
 
-  --   MyAccountant:InitializeUI()
+  MyAccountant:InitializeIncomeFrame()
 
   --   private.currentMoney = GetMoney()
   -- Save faction and class color to db for character dropdown
   local _, className = UnitClass("player")
   local _, _, _, colorCode = GetClassColor(className)
-  self.db.realm[UnitName("player")].config = { classColor = colorCode, faction = UnitFactionGroup("player") }
+  -- self.db.realm[UnitName("player")].config = { classColor = colorCode, faction = UnitFactionGroup("player") }
 
   -- Register global confirmations
   StaticPopupDialogs["MYACCOUNTANT_RESET_GPH"] = {
@@ -83,3 +81,13 @@ private.supportsWoWVersions = function(versions)
 
   return false
 end
+
+-- Takes into account if the user doesn't want to see zeros - if so return empty string
+function MyAccountant:GetHeaderMoneyString(money, itemInfo, currencyType)
+  if (self.db.char.hideZero and money == 0) then
+    return ""
+  else
+    return MyAccountant:GetCurrencyString(money, true, itemInfo, currencyType)
+  end
+end
+

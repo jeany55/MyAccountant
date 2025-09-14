@@ -14,6 +14,9 @@ Locales\Locales.xml
 Constants.lua
 Core.lua
 Config.lua
+GUI\Templates-Classic.xml
+GUI\IncomeFrame.xml
+GUI\IncomeFrame.lua
 Datasources\Gold.lua
 Datasources\Currency.lua
 Datasources\Items.lua

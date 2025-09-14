@@ -62,9 +62,6 @@ local function flattenTable(inventoryTable)
 end
 
 local function getKnownItems(checkBank, db)
-  if not db then
-    db = {}
-  end
   local itemTable = {}
   local reagentBag = private.wowVersion == private.gameTypes.RETAIL and 1 or 0
   local bankBags = checkBank and NUM_BANKBAGSLOTS or 0
@@ -72,7 +69,7 @@ local function getKnownItems(checkBank, db)
 
   for containerIndex = startIndex, NUM_BAG_SLOTS + reagentBag + bankBags do
     local cIndex = tostring(containerIndex)
-    itemTable[cIndex] = private.copy(db[cIndex])
+    itemTable[cIndex] = private.copy(db.items[cIndex])
   end
 
   return itemTable
@@ -101,17 +98,21 @@ function Items:updateKnownItems(checkBank, db)
   end
 
   for bag, itemData in pairs(currentItems) do
-    db[bag] = itemData
+    db.items[bag] = itemData
   end
 
   return changes
 end
 
 function Items:update(source, checkBank, db)
+  if not db.initializedInventory then
+    return
+  end
   if not db.items then
     db.items = {}
   end
-  local itemChanges = Items:updateKnownItems(checkBank, db.items)
+
+  local itemChanges = Items:updateKnownItems(db.seenBank and checkBank, db)
 
   for k, v in pairs(itemChanges) do
     local addon = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
@@ -121,17 +122,14 @@ function Items:update(source, checkBank, db)
   end
 end
 
-function Items:initialize(db)
-  print("hi")
-  -- if not db then
-  --   db = {}
-  -- end
-  if not db then
-    db = {}
-  end
+function Items:initialize(db, checkBank)
   if not db.items then
     db.items = {}
   end
+  Items:updateKnownItems(checkBank, db)
+  db.initializedInventory = true
 
-  Items:updateKnownItems(false, db.items)
+  if checkBank then
+    db.seenBank = true
+  end
 end

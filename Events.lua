@@ -27,9 +27,10 @@ local events = {
   {
     EVENT = "PLAYER_ENTERING_WORLD",
     EXEC = function(db)
+      print(db)
       for _, v in ipairs(private.dataSources) do
         if v and v.initialize then
-          v.initialize(db)
+          v:initialize(db)
         end
       end
     end
@@ -129,9 +130,9 @@ local events = {
   },
   {
     EVENT = "BANKFRAME_OPENED",
-    EXEC = function()
+    EXEC = function(db)
       bankFrameOpen = true
-      Items:updateKnownItems(true)
+      Items:initialize(db, true)
     end
   },
   { EVENT = "BANKFRAME_CLOSED", EXEC = function() bankFrameOpen = false end },
@@ -161,10 +162,6 @@ function MyAccountant:HandleGameEvent(event, ...)
   -- Definition not found in constants, should be impossible
   if not eventInfo then
     return
-  end
-
-  if not self.db.char then
-    self.db.char = {}
   end
 
   if eventInfo.SOURCE then

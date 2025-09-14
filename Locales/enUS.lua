@@ -10,6 +10,13 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 --- VERSION 2.0
 -----------------------------------------
 
+L["currency_item"] = "%d item(s)"
+L["currency_currencies"] = "%d currency (all)"
+
+L["currencies"] = "Currencies"
+L["items"] = "Items"
+L["gold"] = "Gold"
+
 L["unknown"] = "Unknown"
 
 L["option_items"] = "Items"

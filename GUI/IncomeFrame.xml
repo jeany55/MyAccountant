@@ -135,20 +135,22 @@
                 <Anchor point="LEFT" relativeTo="totalOutcomeText" y="-21" />
               </Anchors>
             </FontString>
-            <FontString name="totalProfit" text="" inherits="GameTooltipText" />
-            <FontString name="totalOutcome" inherits="GameTooltipText">
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="totalProfit">
-                  <Offset>
-                    <AbsDimension x="0" y="21"/>
-                  </Offset>
-                </Anchor>
-              </Anchors>
-            </FontString>
             <FontString name="totalIncome" inherits="GameTooltipText">
               <Anchors>
-                <Anchor point="LEFT" relativeTo="totalOutcome" />
+                <Anchor point="LEFT" relativeTo="totalIncomeText" relativePoint="RIGHT" x="40" />
                 <Anchor point="TOP" relativeTo="totalIncomeText" relativePoint="TOP" />
+              </Anchors>
+            </FontString>
+            <FontString name="totalOutcome" inherits="GameTooltipText">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="totalOutcomeText" relativePoint="TOP" />
+                <Anchor point="LEFT" relativeTo="totalIncome" relativePoint="LEFT" />
+              </Anchors>
+            </FontString>
+            <FontString name="totalProfit" text="" inherits="GameTooltipText">
+              <Anchors>
+                <Anchor point="TOP" relativeTo="totalProfitText" relativePoint="TOP" />
+                <Anchor point="LEFT" relativeTo="totalIncome" relativePoint="LEFT" />
               </Anchors>
             </FontString>
             <FontString name="$parent1Title" text="Title 1" inherits="GameTooltipTextSmall">
