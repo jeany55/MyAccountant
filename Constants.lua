@@ -222,6 +222,27 @@ private.sources = {
   }
 }
 
+private.AUTO_COMPLETE_OPTIONS = {
+  Gold = { type = "DataType" },
+  Currency = { type = "DataType" },
+  Items = { type = "DataType" },
+  -- Epic Items = { type = "ItemFilter", filter = "itemEpic" },
+  ['Rare Items'] = { type = "ItemFilter", filter = "itemQuality" },
+  ['Epic Items'] = { type = "ItemFilter", filter = "itemQuality" },
+  ['Legendary Items'] = { type = "ItemFilter", filter = "itemQuality" },
+  ['Training Costs'] = { type = "SourceFilter" },
+  ['Taxi Fares'] = { type = "SourceFilter" },
+  ['Loot'] = { type = "SourceFilter" },
+  ['Guild'] = { type = "SourceFilter" },
+  ['Trade'] = { type = "SourceFilter" },
+  ['Merchants'] = { type = "SourceFilter" },
+  ['Mail'] = { type = "SourceFilter" },
+  ['Auctions'] = { type = "SourceFilter" },
+  ['Quests'] = { type = "SourceFilter" },
+  ['Transmogrify'] = { type = "SourceFilter" },
+  ['Other'] = { type = "SourceFilter" }
+}
+
 local DEFAULT_SOURCES_MISTS_CLASSIC = {
   "TRAINING_COSTS",
   "TAXI_FARES",

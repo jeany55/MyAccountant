@@ -1,0 +1,48 @@
+<Ui>
+  <Frame name="AccountantFrame" parent="UIParent" inherits="BasicFrameTemplateWithInset">
+    <Size x="500" y="362"/>
+    <Anchors>
+      <Anchor point="CENTER"/>
+    </Anchors>
+    <Frames>
+      <EditBox name="searchBox" inherits="AutoCompleteEditBoxTemplate" autoFocus="false">
+        <FontString inherits="ChatFontNormal"/>
+        <Size x="300" y="15"/>
+        <Anchors>
+          <Anchor point="CENTER"/>
+        </Anchors>
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture name="$parentSearchIcon" file="Interface\Common\UI-Searchbox-Icon" parentKey="searchIcon">
+              <Size x="14" y="14"/>
+              <Anchors>
+                <Anchor point="LEFT" x="-17" y="-2"/>
+              </Anchors>
+            </Texture>
+            <Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
+              <Size x="8" y="28"/>
+              <Anchors>
+                <Anchor point="TOPLEFT" x="-25" y="7"/>
+              </Anchors>
+              <TexCoords left="0" right="0.0625" top="0" bottom="0.625"/>
+            </Texture>
+            <Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
+              <Size x="350" y="28"/>
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT" />
+              </Anchors>
+              <TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625"/>
+            </Texture>
+            <Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
+              <Size x="8" y="28"/>
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT" />
+              </Anchors>
+              <TexCoords left="0.9375" right="1.0" top="0" bottom="0.625"/>
+            </Texture>
+          </Layer>
+        </Layers>
+      </EditBox>
+    </Frames>
+  </Frame>
+</Ui>

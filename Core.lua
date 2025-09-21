@@ -14,8 +14,8 @@ function MyAccountant:OnInitialize()
   -- MyAccountant:PrepDatabaseDay()
   MyAccountant:RegisterAllEvents()
   MyAccountant:SetupOptions()
-
-  MyAccountant:InitializeIncomeFrame()
+  MyAccountant:PrepDatabaseDay()
+  MyAccountant:InitializeFrame()
 
   --   private.currentMoney = GetMoney()
   -- Save faction and class color to db for character dropdown

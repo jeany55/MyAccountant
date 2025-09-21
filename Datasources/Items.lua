@@ -117,8 +117,11 @@ function Items:update(source, checkBank, db)
   for k, v in pairs(itemChanges) do
     local addon = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
     local itemChange = v.amount
-
-    addon:AddData(itemChange, source, "Item", tostring(k))
+    local item = Item:CreateFromItemID(tonumber(k))
+    item:ContinueOnItemLoad(function()
+      addon:AddData(itemChange, source, "Item", tostring(k), nil, item:GetItemName(), item:GetItemQuality(), item:GetItemIcon(),
+                    ITEM_QUALITY_COLORS[item:GetItemQuality()].hex)
+    end)
   end
 end
 

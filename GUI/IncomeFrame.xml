@@ -1,4 +1,4 @@
-<Ui>
+<!-- <Ui>
   <Frame name="IncomeFrame" parent="UIParent" inherits="PortraitFrameTemplate">
     <Size x="500" y="362"/>
     <Anchors>
@@ -491,4 +491,4 @@
       </Button>
     </Frames>
   </Frame>
-</Ui>
+</Ui> -->

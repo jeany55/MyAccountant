@@ -22,14 +22,14 @@ function MyAccountant:RegisterMinimap()
     type = "data source",
     text = private.ADDON_NAME,
     icon = private.images.MINIMAP_ICON,
-    OnClick = function(self, btn) print("Testy") end,
+    OnClick = function(self, btn) AccountantFrame:Show() end,
 
     OnTooltipShow = function(tooltip)
       if not tooltip or not tooltip.AddLine then
         return
       end
 
-      MyAccountant:GetMinimapTooltip(tooltip)
+      -- MyAccountant:GetMinimapTooltip(tooltip)
     end
   })
 

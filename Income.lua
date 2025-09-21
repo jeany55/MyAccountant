@@ -77,13 +77,19 @@ function MyAccountant:UpdateActiveQuest()
   lastActiveQuestTime = time()
 end
 
+local function getActiveQuestName()
+  if (time() - lastActiveQuestTime) < 2 then
+    return lastActiveQuest
+  else
+    return nil
+  end
+end
+
 -- ### Initializes current day/time in database if it does not exist
 -- #### Returns
 --  * DB day table ref
 function MyAccountant:PrepDatabaseDay(dateOverride)
   local date = dateOverride and dateOverride or date("*t")
-
-  print(date.year)
 
   local playerName = UnitName("player")
 
@@ -101,10 +107,20 @@ function MyAccountant:PrepDatabaseDay(dateOverride)
     self.db.realm[playerName].db[date.year][date.month] = {}
   end
   if not self.db.realm[playerName].db[date.year][date.month][date.day] then
-    self.db.realm[playerName].db[date.year][date.month][date.day] = {}
+    self.db.realm[playerName].db[date.year][date.month][date.day] = { data = {}, autocomplete = {} }
   end
 
-  return self.db.realm[playerName].db[date.year][date.month][date.day]
+  return self.db.realm[playerName].db[date.year][date.month][date.day].data
+end
+
+function MyAccountant:AddAutocompleteOptionToDatabase(optionName, hexCode, icon)
+  if not optionName then
+    return
+  end
+  local date = date("*t")
+  local playerName = UnitName("player")
+
+  self.db.realm[playerName].db[date.year][date.month][date.day].autocomplete[optionName] = { hexCode = hexCode, icon = icon }
 end
 
 -- ### Add data to the database 
@@ -114,39 +130,51 @@ end
 -- * **dataType**: Type of item being added
 -- * **dataId**: Unique ID for the data type
 -- * **dateOverride?**: _(Optional)_ Override the date being set, otherwise use the date now 
-function MyAccountant:AddData(amount, source, dataType, dataId, dateOverride)
+function MyAccountant:AddData(amount, source, dataType, dataId, dateOverride, name, quality, icon, hexColor)
   local dbDayRef = MyAccountant:PrepDatabaseDay(dateOverride)
   local unixTime = dateOverride and time(dateOverride) or time()
 
-  local offset = (unixTime % transactionSnapshotSeconds)
-
-  local transactionSnapshotTime = unixTime - offset
-
-  if not dbDayRef[transactionSnapshotTime] then
-    dbDayRef[transactionSnapshotTime] = {}
+  if not dbDayRef[dataType] then
+    dbDayRef[dataType] = {}
   end
-  if not dbDayRef[transactionSnapshotTime][dataType] then
-    dbDayRef[transactionSnapshotTime][dataType] = {}
-  end
-  if not dbDayRef[transactionSnapshotTime][dataType][dataId] then
-    dbDayRef[transactionSnapshotTime][dataType][dataId] = { diff = 0, rows = {} }
+  if not dbDayRef[dataType][dataId] then
+    dbDayRef[dataType][dataId] = { diff = 0, rows = {} }
   end
 
-  dbDayRef = dbDayRef[transactionSnapshotTime][dataType][dataId]
+  dbDayRef = dbDayRef[dataType][dataId]
 
   local zone = GetZoneText() and GetZoneText() or L["unknown"]
   dbDayRef.diff = dbDayRef.diff + amount
+
+  local tradeSkill = GetTradeSkillLine()
+  local mappedSource = tradeSkill == "UNKNOWN" and L[source] or tradeSkill
 
   local payload = {}
   payload = {
     zone = zone,
     time = unixTime,
-    source = source,
+    source = mappedSource,
     amount = amount,
-    quest = lastActiveQuest,
-    transaction = transactionSnapshotTime
+    quest = getActiveQuestName(),
+    inRaid = IsInRaid(),
+    inGroup = IsInGroup(),
+    name = name,
+    quality = quality
   }
-  print("Add data amount:" .. amount .. " source:" .. source .. " dataType:" .. dataType .. " dataId:" .. dataId)
+
+  MyAccountant:AddAutocompleteOptionToDatabase(zone)
+  MyAccountant:AddAutocompleteOptionToDatabase(mappedSource)
+  if (IsInRaid()) then
+    MyAccountant:AddAutocompleteOptionToDatabase("Raids")
+  elseif (IsInGroup()) then
+    MyAccountant:AddAutocompleteOptionToDatabase("Groups")
+  else
+    MyAccountant:AddAutocompleteOptionToDatabase("Solo")
+  end
+  MyAccountant:AddAutocompleteOptionToDatabase(name, hexColor, icon)
+  -- MyAccountant:AddAutocompleteOptionToDatabase(zone)
+
+  -- print("Add data amount:" .. amount .. " source:" .. source .. " dataType:" .. dataType .. " dataId:" .. dataId)
   table.insert(dbDayRef.rows, payload)
 end
 
@@ -202,6 +230,22 @@ function MyAccountant:SummarizeDay(date, visualizeBy)
   --   for a, s in pairs(b) do
   --   end
   -- end
+end
+
+function MyAccountant:GetAutocompleteOptions(timeFrame)
+  local options = {}
+  local date = date("*t")
+  local playerName = UnitName("player")
+
+  for dataType, v in pairs(self.db.realm[playerName].db[date.year][date.month][date.day].autocomplete) do
+    options[dataType] = v
+  end
+
+  local returnOptions = {}
+  for k, d in pairs(options) do
+    table.insert(returnOptions, (d.icon and ("|T" .. d.icon .. ":16|t ") or "") .. (d.hexCode and d.hexCode or "") .. k)
+  end
+  return returnOptions
 end
 
 -- function MyAccountant:SummarizeDay(date, visualizeBy)
