@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Title: MyAccountant
 ## Notes: Track where your gold is going or coming from!
 ## Author: Jeany

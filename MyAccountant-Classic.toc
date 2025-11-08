@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: MyAccountant
 ## Notes: Track where your gold is going or coming from!
 ## Author: Jeany
