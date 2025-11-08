@@ -8,11 +8,11 @@ if not L then return end
 
 -- Localization definitions
 -- 1.3
-L["income_panel_zones"] = "Zones"
-L["option_income_panel_hover_max"] = "Max number of zones to show on hover tooltip"
+L["income_panel_zones"] = "Зоны"
+L["option_income_panel_hover_max"] = "Макс. количество зон, отображаемых в подсказке при наведении курсора"
 L["option_income_panel_hover_max_desc"] =
-    "How many zones to show when hovering over the income or outcome of sources. The rest will be summed. Set to zero to disable hover tooltips"
-L["income_panel_other_zones"] = "Other zones"
+    "Сколько зон отображать при наведении курсора на доход или расход источников? Остальные значения будут суммироваться. Установите значение 0, чтобы отключить подсказки при наведении курсора."
+L["income_panel_other_zones"] = "Другие зоны"
 
 -- 1.2
 L["option_income_panel_bottom"] = "Показать золото и кнопки внизу"
