@@ -41,6 +41,18 @@ Track your income as a whole or by each of your characters.
 
 ![](Docs/incomeFrameAllCharacters.png)
 
+See your realm's balance by hovering over the faction icon.
+
+![](Docs/incomeFrameRealmBalance.png)
+
+### **LibDataBroker support**
+
+MyAccountant registers **Realm Balance**, **Session Income**, **Session Profit**, **Today's Income (Character)**, **Today's Profit (Character)**, **Today's Income (Realm)**, **Today's Profit (Realm)**,  **Week's Income (Character)**, **Week's Profit (Character)**, **Week's Income (Realm)**, **Week's Profit (Realm)** with LDB (Lib Data Broker), This lets you to see MyAccountant data in any addon that supports showing LDB data (eg. Titan Panel, Bazooka). 
+
+![](Docs/titanPanelRealmBalance.png)
+
+![](Docs/titanPanelWeekProfit.png)
+
 ### **Sort by what you want**
 
 Configure the income panel to either sort when opening, or click on a table header to sort either by descending or ascending.
