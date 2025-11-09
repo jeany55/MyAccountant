@@ -21,6 +21,23 @@ private.constants = {
   DOWN_ARROW = "Interface\\Addons\\MyAccountant\\Images\\downArrow.tga"
 }
 
+private.ldb_data = {
+  SESSION_INCOME = { label = L["ldb_session_income"], icon = 133784 },
+  SESSION_PROFIT = { label = L["ldb_session_profit"], icon = 133784 },
+  DAILY_INCOME_CHARACTER = { label = L["ldb_daily_income_character"], icon = 133784 },
+  DAILY_NET_CHARACTER = { label = L["ldb_daily_net_character"], icon = 133784 },
+  DAILY_INCOME_REALM = { label = L["ldb_daily_income_realm"], icon = 133784 },
+  DAILY_NET_REALM = { label = L["ldb_daily_net_realm"], icon = 133784 },
+  FACTION_BALANCE = {
+    label = L["ldb_faction_balance"],
+    icon = 133785,
+    tooltip = function()
+      local MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
+      MyAccountant:MakeRealmTotalTooltip(nil)
+    end
+  }
+}
+
 -- All gold source definitions
 private.sources = {
   TRAINING_COSTS = {
@@ -283,5 +300,6 @@ private.default_settings = {
   showViewsButton = true,
   defaultView = "SOURCE",
   showRealmGoldTotals = true,
-  minimapTotalBalance = "CHARACTER"
+  minimapTotalBalance = "CHARACTER",
+  registerLDBData = true
 }

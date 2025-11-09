@@ -568,6 +568,29 @@ local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
 
 end
 
+function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
+  realmBalanceInfo = realmBalanceInfo and realmBalanceInfo or MyAccountant:GetRealmBalanceTotalDataTable()
+
+  local factionIcon
+  if UnitFactionGroup("player") == "Horde" then
+    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+  else
+    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+  end
+
+  for _, data in ipairs(realmBalanceInfo) do
+    local classColor = data.classColor
+
+    if classColor then
+      local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"
+
+      GameTooltip:AddDoubleLine(characterName, "|cffffffff" .. GetMoneyString(data.gold, true) .. "|r")
+    else
+      GameTooltip:AddDoubleLine(data.name, GetMoneyString(data.gold, true))
+    end
+  end
+end
+
 function MyAccountant:DrawRows()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
@@ -613,18 +636,7 @@ function MyAccountant:DrawRows()
     realmInfo:SetText("|T" .. factionIcon .. ":18:18|t")
     realmInfo:SetScript("OnEnter", function()
       GameTooltip:SetOwner(realmInfo, "ANCHOR_CURSOR")
-      for _, data in ipairs(realmBalanceInfo) do
-        local classColor = data.classColor
-
-        if classColor then
-          local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"
-
-          GameTooltip:AddDoubleLine(characterName, "|cffffffff" .. GetMoneyString(data.gold, true) .. "|r")
-        else
-          GameTooltip:AddDoubleLine(data.name, GetMoneyString(data.gold, true))
-        end
-      end
-
+      MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
       GameTooltip:Show()
     end)
     realmInfo:SetScript("OnLeave", function() GameTooltip:Hide() end)

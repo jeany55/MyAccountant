@@ -30,7 +30,20 @@ L["option_minimap_balance_style"] = "Show total balance from"
 L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
 
 L["option_minimap_balance_style_character"] = "This character"
-L["option_minimap_balance_style_realm"] = "Realm balance"
+L["option_minimap_balance_style_realm"] = "Realm"
+
+L["option_ldb"] = "Register and update data with LDB"
+L["option_ldb_desc"] =
+    "If true then 'Session Income, 'Session Profit', 'Todays Income', 'Todays Profit' data from MyAccountant will be available in LDB compatible plugins (eg. Bazooka or Titan Panel). Changing this will require reloading your UI to take effect."
+
+L["ldb_loading"] = "Loading"
+L["ldb_session_income"] = "Session Income"
+L["ldb_session_profit"] = "Session Profit"
+L["ldb_daily_income_character"] = "Today's Income (Character)"
+L["ldb_daily_net_character"] = "Today's Profit (Character)"
+L["ldb_daily_income_realm"] = "Today's Income (Realm)"
+L["ldb_daily_net_realm"] = "Today's Profit (Realm)"
+L["ldb_faction_balance"] = "Realm Balance"
 
 -----------------------------------------
 --- VERSION 1.4

@@ -121,12 +121,19 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
   -- Main
-  { EVENT = "PLAYER_MONEY", EXEC = function() MyAccountant:HandlePlayerMoneyChange() end },
+  {
+    EVENT = "PLAYER_MONEY",
+    EXEC = function()
+      MyAccountant:HandlePlayerMoneyChange()
+      MyAccountant:UpdateDataBrokerData()
+    end
+  },
   {
     EVENT = "PLAYER_ENTERING_WORLD",
     EXEC = function()
       currentMoney = GetMoney()
       MyAccountant:UpdatePlayerBalance()
+      MyAccountant:UpdateDataBrokerData()
     end
   },
   {

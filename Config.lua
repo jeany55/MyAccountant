@@ -186,6 +186,15 @@ function MyAccountant:SetupOptions()
             values = { SHOW_OPTIONS = L["option_slash_behav_chat"], OPEN_WINDOW = L["option_slash_behav_open"] },
             set = function(info, val) self.db.char.slashBehaviour = val end,
             get = function(info) return self.db.char.slashBehaviour end
+          },
+          ldb = {
+            order = 5,
+            name = L["option_ldb"],
+            desc = L["option_ldb_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.registerLDBData = val end,
+            get = function(info) return self.db.char.registerLDBData end
           }
         }
       },

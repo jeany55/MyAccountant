@@ -7,6 +7,75 @@ local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 -- Slash commands
 MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 
+local function registerLDBData()
+  local ldb = LibStub("LibDataBroker-1.1")
+  local amount = 0
+
+  for key, value in pairs(private.ldb_data) do
+    local dataConfig = {
+      type = "data source",
+      text = L["ldb_loading"],
+      icon = "Interface\\Addons\\MyAccountant\\Images\\addonIcon",
+      label = value.label
+    }
+
+    if value.tooltip then
+      dataConfig.OnTooltipShow = value.tooltip
+    end
+
+    if value.icon then
+      dataConfig.icon = value.icon
+    end
+
+    private.ldb_data[key].instance = ldb:NewDataObject(key, dataConfig)
+    private.ldb_data[key].updateData = function(value, optionalColor)
+      local writeValue = optionalColor and "|cff" .. optionalColor .. value .. "|r" or value
+      private.ldb_data[key].instance.text = writeValue
+    end
+    amount = amount + 1
+  end
+
+  MyAccountant:PrintDebugMessage("Registered %d items with LibDataBroker", amount)
+end
+
+function MyAccountant:UpdateDataBrokerData()
+  if not self.db.char.registerLDBData then
+    return
+  end
+
+  local getProfitColor = function(profit)
+    if profit > 0 then
+      return "00ff00"
+    elseif profit < 0 then
+      return "ff0000"
+    else
+      return "ffff00"
+    end
+  end
+
+  local factionBalance = MyAccountant:GetRealmBalanceTotalDataTable()
+  local sessionIncome = MyAccountant:GetSessionIncome()
+  local sessionOutcome = MyAccountant:GetSessionOutcome()
+  local sessionNet = sessionIncome - sessionOutcome
+  local sessionNetColor = getProfitColor(sessionNet)
+
+  local characterDailySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("TODAY"))
+  local characterDailyNet = characterDailySummary.income - characterDailySummary.outcome
+  local characterDailyNetColor = getProfitColor(characterDailyNet)
+
+  local realmDailySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("TODAY", nil, "ALL_CHARACTERS"))
+  local realmDailyNet = realmDailySummary.income - realmDailySummary.outcome
+  local realmDailyNetColor = getProfitColor(characterDailyNet)
+
+  private.ldb_data.FACTION_BALANCE.updateData(GetMoneyString(factionBalance[1].gold, true))
+  private.ldb_data.SESSION_INCOME.updateData(GetMoneyString(sessionIncome, true))
+  private.ldb_data.SESSION_PROFIT.updateData(GetMoneyString(abs(sessionNet), true), sessionNetColor)
+  private.ldb_data.DAILY_INCOME_CHARACTER.updateData(GetMoneyString(characterDailySummary.income, true))
+  private.ldb_data.DAILY_NET_CHARACTER.updateData(GetMoneyString(abs(characterDailyNet), true), characterDailyNetColor)
+  private.ldb_data.DAILY_INCOME_REALM.updateData(GetMoneyString(realmDailySummary.income, true))
+  private.ldb_data.DAILY_NET_REALM.updateData(GetMoneyString(abs(realmDailyNet), true), realmDailyNetColor)
+end
+
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
   -- Save faction and class color to db for character dropdown/realm totals
@@ -20,6 +89,10 @@ function MyAccountant:OnInitialize()
 
   MyAccountant:checkDatabaseDayConfigured()
   MyAccountant:SetupOptions()
+  -- Register data objects with LDB (so other addons can see data from MyAccountant)
+  if self.db.char.registerLDBData then
+    registerLDBData()
+  end
   MyAccountant:InitializeUI()
   MyAccountant:RegisterAllEvents()
 
