@@ -4,10 +4,12 @@ MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local activeSource = nil
 
+local currentMoney = GetMoney()
+
 -- Main money handler
-local handlePlayerMoneyChange = function()
+function MyAccountant:HandlePlayerMoneyChange()
   local newMoney = GetMoney()
-  local moneyChange = newMoney - private.currentMoney
+  local moneyChange = newMoney - currentMoney
 
   local source = activeSource and activeSource or "OTHER"
 
@@ -19,7 +21,8 @@ local handlePlayerMoneyChange = function()
     MyAccountant:PrintDebugMessage("Added outcome of |cffff0000%s|r to %s", GetMoneyString(abs(moneyChange), true), source)
   end
 
-  private.currentMoney = newMoney
+  currentMoney = newMoney
+  self.db.factionrealm[UnitName("player")].config.gold = GetMoney()
   MyAccountant:updateFrameIfOpen()
 end
 
@@ -117,8 +120,8 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
   -- Main
-  { EVENT = "PLAYER_MONEY", EXEC = handlePlayerMoneyChange },
-  { EVENT = "PLAYER_ENTERING_WORLD", EXEC = function() private.currentMoney = GetMoney() end },
+  { EVENT = "PLAYER_MONEY", EXEC = function() MyAccountant:HandlePlayerMoneyChange() end },
+  { EVENT = "PLAYER_ENTERING_WORLD", EXEC = function() currentMoney = GetMoney() end },
   {
     EVENT = "PLAYER_REGEN_DISABLED",
     EXEC = function(config)
@@ -162,6 +165,7 @@ end
 
 function MyAccountant:RegisterAllEvents()
   local amount = 0
+  currentMoney = GetMoney()
 
   for _, v in ipairs(events) do
     local source = v.SOURCE

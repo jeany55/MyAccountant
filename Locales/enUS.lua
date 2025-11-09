@@ -6,6 +6,15 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 
+----------------------------------------
+--- VERSION 1.5
+-----------------------------------------
+L["income_panel_hover_realm_total"] = "Realm balance"
+
+L["option_show_realm_total_tooltip"] = "Show faction icon (hover to see realm balance)"
+L["option_show_realm_total_tooltip_desc"] =
+    "If true, hovering over the faction icon at the the bottom of the income panel will show you your total gold across your realm. Only shows if the addon knows about more than one character, log into them to update."
+
 -----------------------------------------
 --- VERSION 1.4
 -----------------------------------------

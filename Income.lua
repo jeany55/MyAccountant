@@ -441,3 +441,29 @@ function MyAccountant:ResetZoneData()
     end
   end
 end
+
+function MyAccountant:GetRealmBalanceTotalDataTable()
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
+  local data = {}
+  local goldTotal = 0
+  local numberOfCharacters = 0
+
+  for characterName, characterData in pairs(self.db.factionrealm) do
+    if (characterData and characterData.config and characterData.config.gold) then
+      goldTotal = goldTotal + characterData.config.gold
+      table.insert(data, {
+        name = characterName,
+        gold = characterData.config.gold,
+        classColor = characterData.config.classColor,
+        faction = characterData.config.faction
+      })
+      numberOfCharacters = numberOfCharacters + 1
+    end
+  end
+
+  table.sort(data, function(a, b) return a.gold > b.gold end)
+  table.insert(data, 1, { name = L["income_panel_hover_realm_total"], gold = goldTotal })
+
+  return data
+end

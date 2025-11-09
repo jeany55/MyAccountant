@@ -9,15 +9,19 @@ MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
+  -- Save faction and class color to db for character dropdown/realm totals
+  local _, className = UnitClass("player")
+  local _, _, _, colorCode = GetClassColor(className)
+  self.db.factionrealm[UnitName("player")].config = {
+    classColor = colorCode,
+    faction = UnitFactionGroup("player"),
+    gold = GetMoney()
+  }
+
   MyAccountant:checkDatabaseDayConfigured()
   MyAccountant:SetupOptions()
   MyAccountant:InitializeUI()
   MyAccountant:RegisterAllEvents()
-  private.currentMoney = GetMoney()
-  -- Save faction and class color to db for character dropdown
-  local _, className = UnitClass("player")
-  local _, _, _, colorCode = GetClassColor(className)
-  self.db.factionrealm[UnitName("player")].config = { classColor = colorCode, faction = UnitFactionGroup("player") }
 
   -- Register global confirmations
   StaticPopupDialogs["MYACCOUNTANT_RESET_GPH"] = {
