@@ -47,7 +47,9 @@ See your realm's balance by hovering over the faction icon.
 
 ### **LibDataBroker support**
 
-MyAccountant registers `Realm Balance`, `Session Income`, `Session Profit`, `Today's Income (Character)`, `Today's Profit (Character)`, `Today's Income (Realm)`, `Today's Profit (Realm)`, ` Week's Income (Character)`, `Week's Profit (Character)`, `Week's Income (Realm)`, and `Week's Profit (Realm)` with **LDB (Lib Data Broker)**, This lets you to see MyAccountant data in any addon that supports showing LDB data (eg. Titan Panel, Bazooka). 
+MyAccountant registers `Realm Balance`, `Session Income`, `Session Profit`, `Today's Income (Character)`, `Today's Profit (Character)`, `Today's Income (Realm)`, `Today's Profit (Realm)`, ` Week's Income (Character)`, `Week's Profit (Character)`, `Week's Income (Realm)`, and `Week's Profit (Realm)` with **LDB (Lib Data Broker)**.
+
+This lets you to see MyAccountant data in any addon that supports showing LDB data (eg. Titan Panel, Bazooka). 
 
 ![](Docs/titanPanelRealmBalance.png)
 
