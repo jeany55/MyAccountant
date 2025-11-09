@@ -397,6 +397,14 @@
         <Frames>
           <Frame name="bottomMoneyInfo" parent="bottomInfoPanel" inherits="SmallMoneyFrameTemplate">
             <Layers>
+              <Layer>
+                <FontString name="realmInfo" inherits="GameTooltipText">
+                  <Color a="1" r="1" g="1" b="1" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="bottomMoneyInfo" relativePoint="LEFT" x="3" y="-1" />
+                  </Anchors>
+                </FontString>
+              </Layer>
               <Layer level="BACKGROUND">
                 <Texture file="Interface/FrameGeneral/UI-Background-Marble" horizTile="true" vertTile="true">
                   <Color r="0.7" g="0.7" b="0.7" a="1" />

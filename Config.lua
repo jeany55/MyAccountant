@@ -366,8 +366,18 @@ function MyAccountant:SetupOptions()
             set = function(info, val) self.db.char.hideInactiveSources = val end,
             get = function(info) return self.db.char.hideInactiveSources end
           },
-          max_zones = {
+          show_realm_total_hover = {
             order = 6,
+            name = L["option_show_realm_total_tooltip"],
+            desc = L["option_show_realm_total_tooltip_desc"],
+            type = "toggle",
+            width = "full",
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            set = function(info, val) self.db.char.showRealmGoldTotals = val end,
+            get = function(info) return self.db.char.showRealmGoldTotals end
+          },
+          max_zones = {
+            order = 7,
             name = L["option_income_panel_hover_max"],
             desc = L["option_income_panel_hover_max_desc"],
             type = "range",
@@ -379,7 +389,7 @@ function MyAccountant:SetupOptions()
             get = function(info) return self.db.char.maxZonesIncomePanel end
           },
           default_sort = {
-            order = 7,
+            order = 8,
             name = L["option_income_panel_default_sort"],
             desc = L["option_income_panel_default_sort_desc"],
             type = "select",

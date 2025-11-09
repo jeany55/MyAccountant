@@ -569,6 +569,8 @@ local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
 end
 
 function MyAccountant:DrawRows()
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
   local tableType = Tabs[ActiveTab]
@@ -596,6 +598,40 @@ function MyAccountant:DrawRows()
   scrollFrame:SetScript("OnVerticalScroll",
                         function(self, offset) FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction) end)
   FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20);
+
+  local realmBalanceInfo = MyAccountant:GetRealmBalanceTotalDataTable()
+  local showRealmBalanceTooltip = self.db.char.showRealmGoldTotals and (#realmBalanceInfo > 2)
+
+  local factionIcon
+  if UnitFactionGroup("player") == "Horde" then
+    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+  else
+    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+  end
+  -- Setup realm balance totals when hovering over bottom character balance
+  if (showRealmBalanceTooltip) then
+    realmInfo:SetText("|T" .. factionIcon .. ":18:18|t")
+    realmInfo:SetScript("OnEnter", function()
+      GameTooltip:SetOwner(realmInfo, "ANCHOR_CURSOR")
+      for _, data in ipairs(realmBalanceInfo) do
+        local classColor = data.classColor
+
+        if classColor then
+          local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"
+
+          GameTooltip:AddDoubleLine(characterName, "|cffffffff" .. GetMoneyString(data.gold, true) .. "|r")
+        else
+          GameTooltip:AddDoubleLine(data.name, GetMoneyString(data.gold, true))
+        end
+      end
+
+      GameTooltip:Show()
+    end)
+    realmInfo:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  else
+    realmInfo:SetText("")
+    realmInfo:SetScript("OnEnter", function() end)
+  end
 
   updateSortingIcons()
 
