@@ -282,5 +282,6 @@ private.default_settings = {
   maxZonesIncomePanel = 5,
   showViewsButton = true,
   defaultView = "SOURCE",
-  showRealmGoldTotals = true
+  showRealmGoldTotals = true,
+  minimapTotalBalance = "CHARACTER"
 }

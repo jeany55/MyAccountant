@@ -115,7 +115,14 @@ function MyAccountant:GetHeaderMoneyString(money)
 end
 
 function MyAccountant:GetMinimapTooltip(tooltip)
-  local money = GetMoneyString(GetMoney(), true)
+  local money
+  if self.db.char.minimapTotalBalance == "CHARACTER" then
+    money = GetMoneyString(GetMoney(), true)
+  else
+    local balanceData = MyAccountant:GetRealmBalanceTotalDataTable()
+    money = GetMoneyString(balanceData[1].gold, true)
+  end
+
   tooltip:AddLine("MyAccountant - " .. money, 1, 1, 1)
 
   local data

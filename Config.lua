@@ -195,7 +195,19 @@ function MyAccountant:SetupOptions()
         name = "Minimap tooltip",
         order = 1,
         args = {
+          balance_style = {
+            order = 1,
+            width = 1.15,
+            name = L["option_minimap_balance_style"],
+            desc = L["option_minimap_balance_style_desc"],
+            type = "select",
+            values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] },
+            set = function(info, val) self.db.char.minimapTotalBalance = val end,
+            get = function(info) return self.db.char.minimapTotalBalance end
+          },
+          linebreak = { order = 1.1, type = "description", name = "" },
           minimap_style = {
+            order = 2,
             name = L["option_minimap_style"],
             desc = L["option_minimap_style_desc"],
             type = "select",
@@ -204,6 +216,7 @@ function MyAccountant:SetupOptions()
             get = function(info) return self.db.char.tooltipStyle end
           },
           data_type = {
+            order = 3,
             name = L["option_minimap_data_type"],
             desc = L["option_minimap_data_type_desc"],
             type = "select",
@@ -212,6 +225,7 @@ function MyAccountant:SetupOptions()
             get = function(_) return self.db.char.minimapData end
           },
           show_gold_per_hour = {
+            order = 4,
             name = L["option_gold_per_hour"],
             desc = L["option_gold_per_hour_desc"],
             width = "full",
@@ -220,6 +234,7 @@ function MyAccountant:SetupOptions()
             get = function(info) return self.db.char.goldPerHour end
           },
           left_click = {
+            order = 5,
             name = L["option_minimap_left_click"],
             desc = L["option_minimap_left_click_desc"],
             type = "select",
@@ -235,6 +250,7 @@ function MyAccountant:SetupOptions()
             get = function(info) return self.db.char.leftClickMinimap end
           },
           right_click = {
+            order = 6,
             name = L["option_minimap_right_click"],
             desc = L["option_minimap_right_click_desc"],
             type = "select",
