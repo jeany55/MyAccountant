@@ -47,7 +47,7 @@ See your realm's balance by hovering over the faction icon.
 
 ### **LibDataBroker support**
 
-MyAccountant registers realm balance, session income and profit, today's income and profit, and the week's income and profit with LDB (Lib Data Broker),
+MyAccountant registers realm balance, session income and profit, today's income and profit, and the week's income and profit with **LDB (Lib Data Broker)**.
 
 This lets you to see MyAccountant data in any addon that supports showing LDB data (eg. Titan Panel, Bazooka).
 
