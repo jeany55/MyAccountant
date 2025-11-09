@@ -67,13 +67,29 @@ function MyAccountant:UpdateDataBrokerData()
   local realmDailyNet = realmDailySummary.income - realmDailySummary.outcome
   local realmDailyNetColor = getProfitColor(characterDailyNet)
 
+  local characterWeeklySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("WEEK"))
+  local characterWeeklyNet = characterWeeklySummary.income - characterWeeklySummary.outcome
+  local characterWeeklyNetColor = getProfitColor(characterWeeklyNet)
+
+  local realmWeeklySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("WEEK", nil, "ALL_CHARACTERS"))
+  local realmWeeklyNet = realmWeeklySummary.income - realmWeeklySummary.outcome
+  local realmWeeklyNetColor = getProfitColor(realmWeeklyNet)
+
   private.ldb_data.FACTION_BALANCE.updateData(GetMoneyString(factionBalance[1].gold, true))
   private.ldb_data.SESSION_INCOME.updateData(GetMoneyString(sessionIncome, true))
   private.ldb_data.SESSION_PROFIT.updateData(GetMoneyString(abs(sessionNet), true), sessionNetColor)
+
   private.ldb_data.DAILY_INCOME_CHARACTER.updateData(GetMoneyString(characterDailySummary.income, true))
   private.ldb_data.DAILY_NET_CHARACTER.updateData(GetMoneyString(abs(characterDailyNet), true), characterDailyNetColor)
+
   private.ldb_data.DAILY_INCOME_REALM.updateData(GetMoneyString(realmDailySummary.income, true))
   private.ldb_data.DAILY_NET_REALM.updateData(GetMoneyString(abs(realmDailyNet), true), realmDailyNetColor)
+
+  private.ldb_data.WEEKLY_INCOME_CHARACTER.updateData(GetMoneyString(characterWeeklySummary.income, true))
+  private.ldb_data.WEEKLY_NET_CHARACTER.updateData(GetMoneyString(abs(characterWeeklyNet), true), characterWeeklyNetColor)
+
+  private.ldb_data.WEEKLY_INCOME_REALM.updateData(GetMoneyString(realmWeeklySummary.income, true))
+  private.ldb_data.WEEKLY_NET_REALM.updateData(GetMoneyString(abs(realmWeeklyNet), true), realmWeeklyNetColor)
 end
 
 function MyAccountant:OnInitialize()

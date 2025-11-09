@@ -43,6 +43,10 @@ L["ldb_daily_income_character"] = "Today's Income (Character)"
 L["ldb_daily_net_character"] = "Today's Profit (Character)"
 L["ldb_daily_income_realm"] = "Today's Income (Realm)"
 L["ldb_daily_net_realm"] = "Today's Profit (Realm)"
+L["ldb_weekly_income_character"] = "Week's Income (Character)"
+L["ldb_weekly_net_character"] = "Week's Profit (Character)"
+L["ldb_weekly_income_realm"] = "Week's Income (Realm)"
+L["ldb_weekly_net_realm"] = "Week's Profit (Realm)"
 L["ldb_faction_balance"] = "Realm Balance"
 
 -----------------------------------------

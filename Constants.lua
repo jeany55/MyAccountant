@@ -28,6 +28,10 @@ private.ldb_data = {
   DAILY_NET_CHARACTER = { label = L["ldb_daily_net_character"], icon = 133784 },
   DAILY_INCOME_REALM = { label = L["ldb_daily_income_realm"], icon = 133784 },
   DAILY_NET_REALM = { label = L["ldb_daily_net_realm"], icon = 133784 },
+  WEEKLY_NET_CHARACTER = { label = L["ldb_weekly_net_character"], icon = 133784 },
+  WEEKLY_INCOME_CHARACTER = { label = L["ldb_weekly_income_character"], icon = 133784 },
+  WEEKLY_INCOME_REALM = { label = L["ldb_weekly_income_realm"], icon = 133784 },
+  WEEKLY_NET_REALM = { label = L["ldb_weekly_net_realm"], icon = 133784 },
   FACTION_BALANCE = {
     label = L["ldb_faction_balance"],
     icon = 133785,
