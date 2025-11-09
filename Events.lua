@@ -22,9 +22,10 @@ function MyAccountant:HandlePlayerMoneyChange()
   end
 
   currentMoney = newMoney
-  self.db.factionrealm[UnitName("player")].config.gold = GetMoney()
   MyAccountant:updateFrameIfOpen()
 end
+
+function MyAccountant:UpdatePlayerBalance() self.db.factionrealm[UnitName("player")].config.gold = GetMoney() end
 
 -- Tracking if mail is from the AH is difficult - not a great event to track it.
 -- Best we can do is check to see if any of the mail is from AH.
@@ -121,7 +122,13 @@ local events = {
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
   -- Main
   { EVENT = "PLAYER_MONEY", EXEC = function() MyAccountant:HandlePlayerMoneyChange() end },
-  { EVENT = "PLAYER_ENTERING_WORLD", EXEC = function() currentMoney = GetMoney() end },
+  {
+    EVENT = "PLAYER_ENTERING_WORLD",
+    EXEC = function()
+      currentMoney = GetMoney()
+      MyAccountant:UpdatePlayerBalance()
+    end
+  },
   {
     EVENT = "PLAYER_REGEN_DISABLED",
     EXEC = function(config)
