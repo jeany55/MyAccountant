@@ -74,6 +74,7 @@ Decide which income sources you want to track by disabling ones you aren't inter
 ## Supported languages
 * <B>English</B>
 * <B>Russian</B>&nbsp;(by ZamestoTV)
+* <B>Simplified Chinese</B>&nbsp;(by cclolz)
 
 ## How to contribute
 
