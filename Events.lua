@@ -125,6 +125,7 @@ local events = {
     EVENT = "PLAYER_MONEY",
     EXEC = function()
       MyAccountant:HandlePlayerMoneyChange()
+      MyAccountant:UpdatePlayerBalance()
       MyAccountant:UpdateDataBrokerData()
     end
   },
