@@ -18,14 +18,8 @@ end
 -- eg. L["option_general"] = "Général"
 
 ----------------------------------------
---- VERSION 1.5
+--- VERSION 1.6
 -----------------------------------------
-L["income_panel_hover_realm_total"] = "Realm balance"
-
-L["option_show_realm_total_tooltip"] = "Show faction icon (hover to see realm balance)"
-L["option_show_realm_total_tooltip_desc"] =
-    "If true, hovering over the faction icon at the the bottom of the income panel will show you your total gold across your realm. Only shows if the addon knows about more than one character, log into them to update."
-
 L["option_minimap_balance_style"] = "Show total balance from"
 L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
 
@@ -48,6 +42,15 @@ L["ldb_weekly_net_character"] = "Week's Profit (Character)"
 L["ldb_weekly_income_realm"] = "Week's Income (Realm)"
 L["ldb_weekly_net_realm"] = "Week's Profit (Realm)"
 L["ldb_faction_balance"] = "Realm Balance"
+
+----------------------------------------
+--- VERSION 1.5
+-----------------------------------------
+L["income_panel_hover_realm_total"] = "Realm balance"
+
+L["option_show_realm_total_tooltip"] = "Show faction icon (hover to see realm balance)"
+L["option_show_realm_total_tooltip_desc"] =
+    "If true, hovering over the faction icon at the the bottom of the income panel will show you your total gold across your realm. Only shows if the addon knows about more than one character, log into them to update."
 
 -----------------------------------------
 --- VERSION 1.4
