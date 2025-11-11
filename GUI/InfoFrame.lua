@@ -22,11 +22,11 @@ local minimumSpacingBetweenItemAndValue = 5
 
 function MyAccountant:InformInfoFrameOfDataChange(dataType, value)
   local frameRow = frames[dataType]
-  if not frameRow.value:IsShown() then
-    return
-  end
+
   frameRow.value:SetText(value)
-  MyAccountant:UpdateInfoFrameSize()
+  if frameRow.value:IsShown() then
+    MyAccountant:UpdateInfoFrameSize()
+  end
 end
 
 function MyAccountant:InitializeInfoFrame()
