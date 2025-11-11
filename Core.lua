@@ -7,7 +7,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 -- Slash commands
 MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 
-local function registerLDBData()
+--- Registers data events in constants.ldb_data for the addon's info frame. Passing registerWithLDB as true will register the events with LDB as well.
+---@param registerWithLDB boolean
+local function registerDataEvents(registerWithLDB)
   local ldb = LibStub("LibDataBroker-1.1")
   local amount = 0
 
@@ -21,25 +23,35 @@ local function registerLDBData()
 
     if value.tooltip then
       dataConfig.OnTooltipShow = value.tooltip
+      private.ldb_data[key].tooltip = value.tooltip
     end
 
     if value.icon then
       dataConfig.icon = value.icon
     end
 
-    private.ldb_data[key].instance = ldb:NewDataObject(key, dataConfig)
+    if registerWithLDB then
+      private.ldb_data[key].instance = ldb:NewDataObject(key, dataConfig)
+    end
+    private.ldb_data[key].value = L["ldb_loading"]
+    private.ldb_data[key].label = value.label
     private.ldb_data[key].updateData = function(value, optionalColor)
       local writeValue = optionalColor and "|cff" .. optionalColor .. value .. "|r" or value
-      private.ldb_data[key].instance.text = writeValue
+      if private.ldb_data[key].instance then
+        private.ldb_data[key].instance.text = writeValue
+      end
+      private.ldb_data[key].label = value.label
+      private.ldb_data[key].value = writeValue
+      MyAccountant:InformInfoFrameOfDataChange(key, writeValue)
     end
     amount = amount + 1
   end
 
-  MyAccountant:PrintDebugMessage("Registered %d items with LibDataBroker", amount)
+  MyAccountant:PrintDebugMessage("Registered %d items with LibDataBroker (if configured) and MyAccountant's info frame", amount)
 end
 
-function MyAccountant:UpdateDataBrokerData()
-  if not self.db.char.registerLDBData then
+function MyAccountant:UpdateDataEventData()
+  if (not self.db.char.registerLDBData) and (not self.db.char.showInfoFrame) then
     return
   end
 
@@ -106,11 +118,10 @@ function MyAccountant:OnInitialize()
   MyAccountant:checkDatabaseDayConfigured()
   MyAccountant:SetupOptions()
   -- Register data objects with LDB (so other addons can see data from MyAccountant)
-  if self.db.char.registerLDBData then
-    registerLDBData()
-  end
+  registerDataEvents(self.db.char.registerLDBData)
   MyAccountant:InitializeUI()
   MyAccountant:RegisterAllEvents()
+  MyAccountant:InitializeInfoFrame()
 
   -- Register global confirmations
   StaticPopupDialogs["MYACCOUNTANT_RESET_GPH"] = {

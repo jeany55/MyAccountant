@@ -10,7 +10,7 @@ local selectedCharacter = UnitName("player")
 
 -- Tab data for bottom of panel
 local ActiveTab = 1
-local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME" }
+local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME", "BALANCE" }
 
 -- Holds whether viewing by source or by zone 
 local ViewType
@@ -24,7 +24,22 @@ UserSetSort = nil
 -- Returns a sorted List
 function MyAccountant:GetSortedTable(type, viewType)
   local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
-  local incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter, ViewType)
+  local incomeTable = {}
+
+  if Tabs[ActiveTab] == "BALANCE" then
+
+    local index = 1
+    local data = MyAccountant:GetRealmBalanceTotalDataTable()
+
+    for _, value in ipairs(data) do
+      if index > 1 then
+        table.insert(incomeTable, { title = value.name, outcome = value.gold, income = 0 })
+      end
+      index = index + 1
+    end
+  else
+    incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter, ViewType)
+  end
 
   local function sortingFunction(source1, source2)
     if sortType == "SOURCE_ASC" then
@@ -248,9 +263,6 @@ function MyAccountant:InitializeUI()
   ViewType = self.db.char.defaultView
 
   -- Localization
-  incomeHeaderText:SetText(L["incoming_header"])
-  outcomeHeaderText:SetText(L["outcoming_header"])
-
   totalIncomeText:SetText(L["header_total_income"])
   totalOutcomeText:SetText(L["header_total_outcome"])
   totalProfitText:SetText(L["header_total_net"])
@@ -261,9 +273,10 @@ function MyAccountant:InitializeUI()
   IncomeFrameTab4:SetText(L["this_month"])
   IncomeFrameTab5:SetText(L["this_year"])
   IncomeFrameTab6:SetText(L["all_time"])
+  IncomeFrameTab7:SetText(L["balance"])
 
   -- Tab configuration
-  PanelTemplates_SetNumTabs(IncomeFrame, 6)
+  PanelTemplates_SetNumTabs(IncomeFrame, 7)
   PanelTemplates_SetTab(IncomeFrame, 1)
 end
 
@@ -336,11 +349,16 @@ function MyAccountant:updateFrame()
   viewingType:Show()
 
   -- Character selection / frame info
-  if Tabs[ActiveTab] == "SESSION" then
+  if Tabs[ActiveTab] == "SESSION" or Tabs[ActiveTab] == "BALANCE" then
     characterDropdown:Hide()
-
   else
     characterDropdown:Show()
+  end
+
+  if self.db.char.showBalanceTab then
+    IncomeFrameTab7:Show()
+  else
+    IncomeFrameTab7:Hide()
   end
 
   if Tabs[ActiveTab] == "TODAY" then
@@ -361,7 +379,9 @@ function MyAccountant:updateFrame()
   local frameX = 500
   local frameY = 347
 
-  if ViewType == "SOURCE" then
+  if Tabs[ActiveTab] == "BALANCE" then
+    sourceHeaderText:SetText(L["character"])
+  elseif ViewType == "SOURCE" then
     swapViewButton:SetText(L["income_panel_zones"])
     sourceHeaderText:SetText(L["source_header"])
   else
@@ -372,6 +392,10 @@ function MyAccountant:updateFrame()
   if self.db.char.showViewsButton then
     swapViewButton:Show()
   else
+    swapViewButton:Hide()
+  end
+
+  if Tabs[ActiveTab] == "BALANCE" then
     swapViewButton:Hide()
   end
 
@@ -457,6 +481,15 @@ function MyAccountant:updateFrame()
   local income = 0
   local outcome = 0
 
+  totalIncomeText:Show()
+  totalOutcomeText:Show()
+  totalIncome:Show()
+  totalOutcome:Show()
+  totalProfitText:SetText(L["header_total_net"])
+
+  incomeHeaderText:SetText(L["incoming_header"])
+  outcomeHeaderText:SetText(L["outcoming_header"])
+
   if view == "SESSION" then
     income = MyAccountant:GetSessionIncome()
     outcome = MyAccountant:GetSessionOutcome()
@@ -464,6 +497,18 @@ function MyAccountant:updateFrame()
     local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime(selectedCharacter))
     income = summary.income
     outcome = summary.outcome
+  elseif view == "BALANCE" then
+    local summary = MyAccountant:GetRealmBalanceTotalDataTable()
+    income = summary[1].gold
+    outcome = 0
+    totalIncomeText:Hide()
+    totalOutcomeText:Hide()
+    totalIncome:Hide()
+    totalOutcome:Hide()
+    totalProfitText:SetText(L["income_panel_hover_realm_total"])
+    incomeHeaderText:SetText("")
+    outcomeHeaderText:SetText(L["balance"])
+
   else
     local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(view, nil, selectedCharacter))
     income = summary.income

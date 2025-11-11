@@ -305,5 +305,11 @@ private.default_settings = {
   defaultView = "SOURCE",
   showRealmGoldTotals = true,
   minimapTotalBalance = "CHARACTER",
-  registerLDBData = true
+  registerLDBData = true,
+  showInfoFrame = false,
+  requireShiftToMove = true,
+  lockInfoFrame = false,
+  infoFrameDataToShow = {},
+  showBalanceTab = true,
+  rightAlignInfoValues = true
 }

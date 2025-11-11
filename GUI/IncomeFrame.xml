@@ -492,6 +492,11 @@
           <Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" x="-20" />
         </Anchors>
       </Button>
+      <Button name="$parentTab7" parent="IncomeFrame" inherits="MyAccountantTabTemplate" id="7" text="Balance" virtual="true">
+        <Anchors>
+          <Anchor point="LEFT" relativeTo="$parentTab6" relativePoint="RIGHT" x="-20" />
+        </Anchors>
+      </Button>
     </Frames>
   </Frame>
 </Ui>

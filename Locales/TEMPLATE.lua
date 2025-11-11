@@ -18,6 +18,35 @@ end
 -- eg. L["option_general"] = "Général"
 
 ----------------------------------------
+--- VERSION 1.7
+----------------------------------------
+L["character"] = "Character"
+L["balance"] = "Balance"
+
+L["option_info_frame"] = "Information Frame"
+L["option_info_frame_desc"] =
+    "The information frame is a small draggable frame that can show information such as realm balance, session info, or other data."
+
+L["option_info_frame_show"] = "Show information frame"
+L["option_info_frame_show_desc"] = "Whether or not to show the information frame."
+
+L["option_info_frame_drag_shift"] = "Requires shift to be held to be moved"
+L["option_info_frame_drag_shift_desc"] =
+    "Whether or not shift needs to be held to drag the information frame. Required to be unlocked."
+
+L["option_info_frame_lock"] = "Lock frame position"
+L["option_info_frame_lock_desc"] = "If true, prevents the information frame from being moved."
+
+L["option_info_frame_right_align"] = "Right align data text"
+L["option_info_frame_right_align_desc"] = "If false, data will be left aligned instead of right aligned."
+
+L["option_info_frame_items"] = "Information to show"
+L["option_info_frame_lock_desc"] = "Which information to show on the information frame."
+
+L["option_income_frame_balance_tab"] = "Show balance tab"
+L["option_income_frame_balance_tab_desc"] = "Show balance tab, allowing you to see total realm balance"
+
+----------------------------------------
 --- VERSION 1.6
 -----------------------------------------
 L["option_minimap_balance_style"] = "Show total balance from"

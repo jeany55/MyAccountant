@@ -126,7 +126,7 @@ local events = {
     EXEC = function()
       MyAccountant:HandlePlayerMoneyChange()
       MyAccountant:UpdatePlayerBalance()
-      MyAccountant:UpdateDataBrokerData()
+      MyAccountant:UpdateDataEventData()
     end
   },
   {
@@ -134,7 +134,7 @@ local events = {
     EXEC = function()
       currentMoney = GetMoney()
       MyAccountant:UpdatePlayerBalance()
-      MyAccountant:UpdateDataBrokerData()
+      MyAccountant:UpdateDataEventData()
     end
   },
   {

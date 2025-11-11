@@ -133,6 +133,11 @@ function MyAccountant:SetupOptions()
     }
   end
 
+  local infoFrameOptions = {}
+  for key, value in pairs(private.ldb_data) do
+    infoFrameOptions[key] = value.label
+  end
+
   -- Ace3 Options table for showing up in WoW addon options
   local options = {
     type = "group",
@@ -284,7 +289,82 @@ function MyAccountant:SetupOptions()
         inline = true,
         args = sources_options
       },
-      incomePanel = {
+      info_frame = {
+        type = "group",
+        order = 2.1,
+        inline = true,
+        name = L["option_info_frame"],
+        args = {
+          desc = { order = 1, type = "description", name = L["option_info_frame_desc"] },
+          show_frame = {
+            order = 2,
+            width = "full",
+            type = "toggle",
+            name = L["option_info_frame_show"],
+            desc = L["option_info_frame_show_desc"],
+            get = function(info) return self.db.char.showInfoFrame end,
+            set = function(info, val)
+              self.db.char.showInfoFrame = val
+              MyAccountant:UpdateInformationFrameStatus()
+            end
+          },
+          require_shift = {
+            order = 2.5,
+            width = "full",
+            type = "toggle",
+            disabled = function() return self.db.char.showInfoFrame == false end,
+            name = L["option_info_frame_drag_shift"],
+            desc = L["option_info_frame_drag_shift_desc"],
+            get = function(info) return self.db.char.requireShiftToMove end,
+            set = function(info, val) self.db.char.requireShiftToMove = val end
+          },
+          lock_frame = {
+            order = 3,
+            width = "full",
+            type = "toggle",
+            disabled = function() return self.db.char.showInfoFrame == false end,
+            name = L["option_info_frame_lock"],
+            desc = L["option_info_frame_lock_desc"],
+            get = function(info) return self.db.char.lockInfoFrame end,
+            set = function(info, val)
+              self.db.char.lockInfoFrame = val
+              MyAccountant:UpdateInformationFrameStatus()
+            end
+          },
+          right_align_text = {
+            order = 3.5,
+            width = "full",
+            type = "toggle",
+            disabled = function() return self.db.char.showInfoFrame == false end,
+            name = L["option_info_frame_right_align"],
+            desc = L["option_info_frame_right_align_desc"],
+            get = function(info) return self.db.char.rightAlignInfoValues end,
+            set = function(info, val)
+              self.db.char.rightAlignInfoValues = val
+              MyAccountant:UpdateInformationFrameStatus()
+              MyAccountant:UpdateWhichInfoFrameRowsToRender()
+              MyAccountant:UpdateInfoFrameSize()
+            end
+          },
+          data_to_show = {
+            order = 4,
+            type = "multiselect",
+            disabled = function() return self.db.char.showInfoFrame == false end,
+            values = infoFrameOptions,
+            width = "full",
+            name = L["option_info_frame_items"],
+            desc = L["option_info_frame_items"],
+            get = function(_, key) return self.db.char.infoFrameDataToShow[key] end,
+            set = function(_, key, val)
+              self.db.char.infoFrameDataToShow[key] = val
+              MyAccountant:UpdateInformationFrameStatus()
+              MyAccountant:UpdateWhichInfoFrameRowsToRender()
+              MyAccountant:UpdateInfoFrameSize()
+            end
+          }
+        }
+      },
+      income_panel = {
         type = "group",
         inline = true,
         name = "Income panel",
@@ -307,6 +387,15 @@ function MyAccountant:SetupOptions()
             width = "full",
             set = function(info, val) self.db.char.showIncomePanelBottom = val end,
             get = function(info) return self.db.char.showIncomePanelBottom end
+          },
+          show_balance_tab = {
+            order = 1.2,
+            name = L["option_income_frame_balance_tab"],
+            desc = L["option_income_frame_balance_tab_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showBalanceTab = val end,
+            get = function(info) return self.db.char.showBalanceTab end
           },
           show_views_button = {
             order = 1.3,

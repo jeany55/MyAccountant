@@ -18,5 +18,6 @@ Config.lua
 GUI\Templates.xml
 GUI\IncomeFrame.lua
 GUI\IncomeFrame.xml
+GUI\InfoFrame.lua
 Income.lua
 Events.lua
