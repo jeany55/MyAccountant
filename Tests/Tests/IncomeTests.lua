@@ -8,6 +8,22 @@ local Name = ...
 local Tests = WoWUnit(Name .. ".IncomeTests")
 local AssertEqual, Replace = WoWUnit.AreEqual, WoWUnit.Replace
 
+local function setSources()
+  MyAccountant.db.char.sources = {
+    "TRAINING_COSTS",
+    "TAXI_FARES",
+    "LOOT",
+    "GUILD",
+    "TRADE",
+    "MERCHANTS",
+    "MAIL",
+    "REPAIR",
+    "AUCTIONS",
+    "QUESTS",
+    "OTHER"
+  }
+end
+
 function Tests.TestSessionIncome_1()
   MyAccountant:ResetSession()
 
@@ -99,12 +115,11 @@ function Tests.TestSessionOutcome_2()
 end
 
 function Tests.TestDailyIncome_1()
+  setSources()
   MyAccountant:ResetAllData()
-
   MyAccountant:AddIncome("OTHER", 123)
   MyAccountant:AddIncome("LOOT", 4324)
   MyAccountant:AddIncome("MERCHANTS", 11)
-
   local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
 
   AssertEqual(123, table.OTHER.income)
@@ -151,6 +166,7 @@ function Tests.TestDailyIncome_2()
 end
 
 function Tests.TestDailyOutcome_1()
+  setSources()
   MyAccountant:ResetAllData()
 
   MyAccountant:AddOutcome("OTHER", 123)
@@ -169,6 +185,7 @@ function Tests.TestDailyOutcome_1()
 end
 
 function Tests.TestDailyOutcome_2()
+  setSources()
   MyAccountant:ResetAllData()
 
   MyAccountant:AddOutcome("OTHER", 123)
@@ -203,6 +220,7 @@ function Tests.TestDailyOutcome_2()
 end
 
 function Tests.TestWeeklyIncome_1()
+  setSources()
   MyAccountant:ResetAllData()
 
   -- Set target date on SAT JULY 5
@@ -225,6 +243,7 @@ function Tests.TestWeeklyIncome_1()
 end
 
 function Tests.TestWeeklyIncome_2()
+  setSources()
   MyAccountant:ResetAllData()
 
   -- Set target date on SAT JULY 5
@@ -267,6 +286,7 @@ function Tests.TestWeeklyIncome_2()
 end
 
 function Tests.TestWeeklyOutcome_1()
+  setSources()
   MyAccountant:ResetAllData()
 
   -- Set target date on SAT JULY 5
@@ -289,6 +309,7 @@ function Tests.TestWeeklyOutcome_1()
 end
 
 function Tests.TestWeeklyOutcome_2()
+  setSources()
   MyAccountant:ResetAllData()
 
   -- Set target date on SAT JULY 5
@@ -331,6 +352,7 @@ function Tests.TestWeeklyOutcome_2()
 end
 
 function Tests.TestWeekly_IncomeOutcome()
+  setSources()
   MyAccountant:ResetAllData()
 
   -- Set target date on SAT JULY 5

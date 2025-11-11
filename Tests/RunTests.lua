@@ -280,6 +280,7 @@ GetLootRollItemLink = Fn
 GetLootMethod = Const("personalloot")
 GetExpansionLevel = Const(EXPANSION)
 GetMaxPlayerLevel = Const(MAX_LEVEL)
+GetMoney = Fn
 GetMaximumExpansionLevel = Const(EXPANSION + (PREPATCH and 1 or 0))
 RollOnLoot = Fn
 GroupLootContainer_RemoveFrame = Fn
