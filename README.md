@@ -41,9 +41,35 @@ Track your income as a whole or by each of your characters.
 
 ![](Docs/incomeFrameAllCharacters.png)
 
-See your realm's balance by hovering over the faction icon.
+### **See what you want on the information frame**
+
+MyAccountant can show a small information frame containing realm balance and session, daily, or weekly summaries. Configure it in addon options to show what you want to see.
+
+![](Docs/infoFrame.png)
+
+![](Docs/infoFrameConfig.png)
+
+### **See your balance**
+
+MyAccountant tracks your gold balance across all your characters on your realm and offers several ways to show that information. You can turn off unwanted methods in Addon options.
+
+#### Faction icon
+
+Hover over the faction icon to see your realm's total balance.
 
 ![](Docs/incomeFrameRealmBalance.png)
+
+#### Balance tab
+
+Use the balance tab on the income panel
+
+![](Docs/balanceFrame.png)
+
+#### Information panel
+
+You can also configure the information panel to show realm balance.
+
+![](Docs/infoFrameRealmBalance.png)
 
 ### **LibDataBroker support**
 
