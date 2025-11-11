@@ -375,7 +375,7 @@ function MyAccountant:updateFrame()
     viewingType:Hide()
   end
 
-  local frameX = 500
+  local frameX = 525
   local frameY = 347
 
   if Tabs[ActiveTab] == "BALANCE" then

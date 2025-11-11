@@ -1,6 +1,6 @@
 <Ui>
   <Frame name="IncomeFrame" parent="UIParent" inherits="PortraitFrameTemplate">
-    <Size x="500" y="347"/>
+    <Size x="525" y="347"/>
     <Anchors>
       <Anchor point="CENTER"/>
     </Anchors>
