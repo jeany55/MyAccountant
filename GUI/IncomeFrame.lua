@@ -27,13 +27,12 @@ function MyAccountant:GetSortedTable(type, viewType)
   local incomeTable = {}
 
   if Tabs[ActiveTab] == "BALANCE" then
-
     local index = 1
     local data = MyAccountant:GetRealmBalanceTotalDataTable()
 
     for _, value in ipairs(data) do
       if index > 1 then
-        table.insert(incomeTable, { title = value.name, outcome = value.gold, income = 0 })
+        table.insert(incomeTable, { titleColor = value.classColor, title = value.name, outcome = value.gold, income = 0 })
       end
       index = index + 1
     end
@@ -704,7 +703,12 @@ function MyAccountant:DrawRows()
     local currentRow = incomeTable[i + scrollIndex]
 
     if currentRow then
-      _G[title]:SetText(currentRow.title)
+      local titleValue = currentRow.title
+      if currentRow.titleColor then
+        titleValue = "|c" .. currentRow.titleColor .. titleValue .. "|r"
+      end
+
+      _G[title]:SetText(titleValue)
 
       local income = currentRow.income
       local outcome = currentRow.outcome
