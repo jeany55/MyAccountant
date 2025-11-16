@@ -8,6 +8,32 @@ end
 
 -- Localization definitions
 
+-- VERESION 1.7
+L["character"] = "角色"
+L["balance"] = "余额"
+
+L["option_info_frame"] = "信息框架"
+L["option_info_frame_desc"] =
+    "信息框架是一个可拖动的小框架，可以显示服务器余额、会话信息或其他数据等信息。"
+
+L["option_info_frame_show"] = "显示信息框架"
+L["option_info_frame_show_desc"] = "是否显示信息框架。"
+
+L["option_info_frame_drag_shift"] = "需要按住 Shift 键才能移动"
+L["option_info_frame_drag_shift_desc"] = "是否需要按住 Shift 键才能拖动信息框架。需要解锁后才能移动。"
+
+L["option_info_frame_lock"] = "锁定框架位置"
+L["option_info_frame_lock_desc"] = "如果为真，则防止信息框架被移动。"
+
+L["option_info_frame_right_align"] = "数据文本右对齐"
+L["option_info_frame_right_align_desc"] = "如果为假，数据将左对齐而不是右对齐。"
+
+L["option_info_frame_items"] = "要显示的信息"
+L["option_info_frame_items_desc"] = "在信息框架上显示哪些信息。"
+
+L["option_income_frame_balance_tab"] = "显示余额标签页"
+L["option_income_frame_balance_tab_desc"] = "显示余额标签页，允许你查看服务器总余额"
+
 --- VERSION 1.6
 L["option_minimap_balance_style"] = "显示来自的总余额"
 L["option_minimap_balance_style_desc"] = "提示中显示的总余额"
