@@ -109,6 +109,9 @@ function MyAccountant:OnInitialize()
   -- Save faction and class color to db for character dropdown/realm totals
   local _, className = UnitClass("player")
   local _, _, _, colorCode = GetClassColor(className)
+  if not self.db.factionrealm[UnitName("player")] then
+    self.db.factionrealm[UnitName("player")] = {}
+  end
   self.db.factionrealm[UnitName("player")].config = {
     classColor = colorCode,
     faction = UnitFactionGroup("player"),
