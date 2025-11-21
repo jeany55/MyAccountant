@@ -6,6 +6,23 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 ----------------------------------------
+--- VERSION 1.8
+----------------------------------------
+L["option_minimap_tooltip"] = "Minimap tooltip"
+L["option_income_panel"] = "Income panel"
+L["option_addon_data"] = "Addon data"
+L["options_developer_options"] = "Developer options"
+
+L["about_author"] = "By %s"
+L["about_github"] = "Github"
+L["about_languages"] = "Supported languanges"
+L["english"] = "English"
+L["russian"] = "Russian (by ZamestoTv)"
+L["simplified_chinese"] = "Simplified Chinese (by cclolz)"
+
+L["about_special_thanks_to"] = "Special thanks to"
+
+----------------------------------------
 --- VERSION 1.7
 ----------------------------------------
 L["character"] = "Character"

@@ -18,7 +18,11 @@ private.GameTypes = {
 private.constants = {
   MINIMAP_ICON = "Interface\\AddOns\\MyAccountant\\Images\\minimap.tga",
   UP_ARROW = "Interface\\Addons\\MyAccountant\\Images\\upArrow.tga",
-  DOWN_ARROW = "Interface\\Addons\\MyAccountant\\Images\\downArrow.tga"
+  DOWN_ARROW = "Interface\\Addons\\MyAccountant\\Images\\downArrow.tga",
+  ADDON_ICON = "Interface\\Addons\\MyAccountant\\Images\\addonIcon.tga",
+  COIN_IMG = "Interface\\Addons\\MyAccountant\\Images\\addonCoin.tga",
+  AUTHOR = "Jeany (Nazgrim)",
+  GITHUB = "https://github.com/jeany55/MyAccountant"
 }
 
 private.ldb_data = {

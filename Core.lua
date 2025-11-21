@@ -119,7 +119,7 @@ function MyAccountant:OnInitialize()
   }
 
   MyAccountant:checkDatabaseDayConfigured()
-  MyAccountant:SetupOptions()
+  MyAccountant:SetupAddonOptions()
   -- Register data objects with LDB (so other addons can see data from MyAccountant)
   registerDataEvents(self.db.char.registerLDBData)
   MyAccountant:InitializeUI()
@@ -147,6 +147,32 @@ function MyAccountant:OnInitialize()
     hideOnEscape = true,
     preferredIndex = 3
   }
+end
+
+function MyAccountant:RegisterMinimapIcon()
+  local libIcon = LibStub("LibDBIcon-1.0", true)
+
+  -- Setup minimap options if not yet
+  if not self.db.char.minimapIconOptions then
+    self.db.char.minimapIconOptions = {}
+  end
+
+  local miniButton = LibStub("LibDataBroker-1.1"):NewDataObject(private.ADDON_NAME, {
+    type = "data source",
+    text = private.ADDON_NAME,
+    icon = private.constants.MINIMAP_ICON,
+    OnClick = function(self, btn) MyAccountant:HandleMinimapClick(btn) end,
+
+    OnTooltipShow = function(tooltip)
+      if not tooltip or not tooltip.AddLine then
+        return
+      end
+
+      MyAccountant:GetMinimapTooltip(tooltip)
+    end
+  })
+
+  libIcon:Register(private.ADDON_NAME, miniButton, self.db.char.minimapIconOptions)
 end
 
 function MyAccountant:OnEnable()
@@ -323,4 +349,16 @@ private.copy = function(obj, seen)
     res[private.copy(k, s)] = private.copy(v, s)
   end
   return res
+end
+
+private.supportsWoWVersions = function(versions)
+  local currentVersion = private.wowVersion
+
+  for _, v in ipairs(versions) do
+    if v == currentVersion then
+      return true
+    end
+  end
+
+  return false
 end
