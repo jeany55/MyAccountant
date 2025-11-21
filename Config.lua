@@ -43,12 +43,12 @@ function MyAccountant:SetupAddonOptions()
     type = "group",
     name = "",
     args = {
-      logo = { name = "|TInterface\\Addons\\MyAccountant\\Images\\aboutLogo.tga:101:350|t", type = "description", order = 0 },
+      logo = { name = "|TInterface\\Addons\\MyAccountant\\Images\\aboutLogo.tga:91:350|t", type = "description", order = 0 },
       version = {
         type = "description",
         fontSize = "large",
         order = 0.1,
-        name = "|TInterface\\Addons\\MyAccountant\\Images\\addonIcon.tga:0|t v." .. private.ADDON_VERSION
+        name = "|TInterface\\Addons\\MyAccountant\\Images\\addonIcon.tga:0|t |cffecad19v." .. private.ADDON_VERSION .. "|r"
       },
       author = {
         name = " ",
@@ -90,7 +90,7 @@ function MyAccountant:SetupAddonOptions()
             name = " |TInterface\\Addons\\MyAccountant\\Images\\Flags\\ru.tga:14:18|t   " .. L["russian"]
           },
           cn = {
-            order = 2,
+            order = 3,
             type = "description",
             name = " |TInterface\\Addons\\MyAccountant\\Images\\Flags\\cn.tga:14:18|t   " .. L["simplified_chinese"]
           }

@@ -28,7 +28,7 @@ L["about_special_thanks_to"] = "Special thanks to"
 L["character"] = "Character"
 L["balance"] = "Balance"
 
-L["option_info_frame"] = "Information Frame"
+L["option_info_frame"] = "Information frame"
 L["option_info_frame_desc"] =
     "The information frame is a small draggable frame that can show information such as realm balance, session info, or other data."
 
