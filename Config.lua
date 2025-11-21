@@ -113,57 +113,65 @@ function MyAccountant:SetupAddonOptions()
     type = "group",
     name = L["option_general"],
     args = {
-      show_minimap = {
+      general = {
+        type = "group",
         order = 1,
-        name = L["option_minimap"],
-        desc = L["option_minimap_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val)
-          self.db.char.showMinimap = val
-          if val == true then
-            showMinimap()
-          else
-            hideMinimap()
-          end
-        end,
-        get = function(info) return self.db.char.showMinimap end
-      },
-      hide_zero = {
-        order = 2,
-        name = L["option_hide_zero"],
-        desc = L["option_hide_zero_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.hideZero = val end,
-        get = function(info) return self.db.char.hideZero end
-      },
-      show_income_colors = {
-        order = 3,
-        name = L["option_color_income"],
-        desc = L["option_color_income_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.colorGoldInIncomePanel = val end,
-        get = function(info) return self.db.char.colorGoldInIncomePanel end
-      },
-      slash_behav = {
-        order = 4,
-        name = L["option_slash_behav"],
-        desc = L["option_slash_behav_desc"],
-        type = "select",
-        values = { SHOW_OPTIONS = L["option_slash_behav_chat"], OPEN_WINDOW = L["option_slash_behav_open"] },
-        set = function(info, val) self.db.char.slashBehaviour = val end,
-        get = function(info) return self.db.char.slashBehaviour end
-      },
-      ldb = {
-        order = 5,
-        name = L["option_ldb"],
-        desc = L["option_ldb_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.registerLDBData = val end,
-        get = function(info) return self.db.char.registerLDBData end
+        inline = true,
+        name = L["option_general"],
+        args = {
+          show_minimap = {
+            order = 1,
+            name = L["option_minimap"],
+            desc = L["option_minimap_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val)
+              self.db.char.showMinimap = val
+              if val == true then
+                showMinimap()
+              else
+                hideMinimap()
+              end
+            end,
+            get = function(info) return self.db.char.showMinimap end
+          },
+          hide_zero = {
+            order = 2,
+            name = L["option_hide_zero"],
+            desc = L["option_hide_zero_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.hideZero = val end,
+            get = function(info) return self.db.char.hideZero end
+          },
+          show_income_colors = {
+            order = 3,
+            name = L["option_color_income"],
+            desc = L["option_color_income_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.colorGoldInIncomePanel = val end,
+            get = function(info) return self.db.char.colorGoldInIncomePanel end
+          },
+          slash_behav = {
+            order = 4,
+            name = L["option_slash_behav"],
+            desc = L["option_slash_behav_desc"],
+            type = "select",
+            values = { SHOW_OPTIONS = L["option_slash_behav_chat"], OPEN_WINDOW = L["option_slash_behav_open"] },
+            set = function(info, val) self.db.char.slashBehaviour = val end,
+            get = function(info) return self.db.char.slashBehaviour end
+          },
+          ldb = {
+            order = 5,
+            name = L["option_ldb"],
+            desc = L["option_ldb_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.registerLDBData = val end,
+            get = function(info) return self.db.char.registerLDBData end
+          }
+        }
       },
       developer_options = {
         type = "group",
@@ -187,76 +195,84 @@ function MyAccountant:SetupAddonOptions()
     type = "group",
     name = L["option_minimap_tooltip"],
     args = {
-      balance_style = {
-        order = 1,
-        width = 1.15,
-        name = L["option_minimap_balance_style"],
-        desc = L["option_minimap_balance_style_desc"],
-        type = "select",
-        values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] },
-        set = function(info, val) self.db.char.minimapTotalBalance = val end,
-        get = function(info) return self.db.char.minimapTotalBalance end
-      },
-      linebreak = { order = 1.1, type = "description", name = "" },
-      minimap_style = {
-        order = 2,
-        name = L["option_minimap_style"],
-        desc = L["option_minimap_style_desc"],
-        type = "select",
-        values = { INCOME_OUTCOME = L["option_minimap_style_income_outcome"], NET = L["option_minimap_style_net"] },
-        set = function(info, val) self.db.char.tooltipStyle = val end,
-        get = function(info) return self.db.char.tooltipStyle end
-      },
-      data_type = {
-        order = 3,
-        name = L["option_minimap_data_type"],
-        desc = L["option_minimap_data_type_desc"],
-        type = "select",
-        values = { SESSION = L["option_minimap_data_type_session"], TODAY = L["option_minimap_data_type_today"] },
-        set = function(_, val) self.db.char.minimapData = val end,
-        get = function(_) return self.db.char.minimapData end
-      },
-      show_gold_per_hour = {
-        order = 4,
-        name = L["option_gold_per_hour"],
-        desc = L["option_gold_per_hour_desc"],
-        width = "full",
-        type = "toggle",
-        set = function(info, val) self.db.char.goldPerHour = val end,
-        get = function(info) return self.db.char.goldPerHour end
-      },
-      left_click = {
-        order = 5,
-        name = L["option_minimap_left_click"],
-        desc = L["option_minimap_left_click_desc"],
-        type = "select",
-        width = 1.3,
-        values = {
-          NOTHING = L["option_minimap_click_nothing"],
-          OPEN_INCOME_PANEL = L["option_minimap_click_income_panel"],
-          OPEN_OPTIONS = L["option_minimap_click_options"],
-          RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
-          RESET_SESSION = L["option_minimap_click_reset_session"]
-        },
-        set = function(info, val) self.db.char.leftClickMinimap = val end,
-        get = function(info) return self.db.char.leftClickMinimap end
-      },
-      right_click = {
-        order = 6,
-        name = L["option_minimap_right_click"],
-        desc = L["option_minimap_right_click_desc"],
-        type = "select",
-        width = 1.3,
-        values = {
-          NOTHING = L["option_minimap_click_nothing"],
-          OPEN_INCOME_PANEL = L["option_minimap_click_income_panel"],
-          OPEN_OPTIONS = L["option_minimap_click_options"],
-          RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
-          RESET_SESSION = L["option_minimap_click_reset_session"]
-        },
-        set = function(info, val) self.db.char.rightClickMinimap = val end,
-        get = function(info) return self.db.char.rightClickMinimap end
+      minimap = {
+        type = "group",
+        inline = true,
+        name = L["option_minimap_tooltip"],
+        args = {
+          balance_style = {
+            order = 1,
+            width = 1.15,
+            name = L["option_minimap_balance_style"],
+            desc = L["option_minimap_balance_style_desc"],
+            type = "select",
+            values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] },
+            set = function(info, val) self.db.char.minimapTotalBalance = val end,
+            get = function(info) return self.db.char.minimapTotalBalance end
+          },
+          linebreak = { order = 1.1, type = "description", name = "" },
+          minimap_style = {
+            order = 2,
+            name = L["option_minimap_style"],
+            desc = L["option_minimap_style_desc"],
+            type = "select",
+            values = { INCOME_OUTCOME = L["option_minimap_style_income_outcome"], NET = L["option_minimap_style_net"] },
+            set = function(info, val) self.db.char.tooltipStyle = val end,
+            get = function(info) return self.db.char.tooltipStyle end
+          },
+          data_type = {
+            order = 3,
+            name = L["option_minimap_data_type"],
+            desc = L["option_minimap_data_type_desc"],
+            type = "select",
+            values = { SESSION = L["option_minimap_data_type_session"], TODAY = L["option_minimap_data_type_today"] },
+            set = function(_, val) self.db.char.minimapData = val end,
+            get = function(_) return self.db.char.minimapData end
+          },
+          show_gold_per_hour = {
+            order = 4,
+            name = L["option_gold_per_hour"],
+            desc = L["option_gold_per_hour_desc"],
+            width = "full",
+            type = "toggle",
+            set = function(info, val) self.db.char.goldPerHour = val end,
+            get = function(info) return self.db.char.goldPerHour end
+          },
+          left_click = {
+            order = 5,
+            name = L["option_minimap_left_click"],
+            desc = L["option_minimap_left_click_desc"],
+            type = "select",
+            width = 1.3,
+            values = {
+              NOTHING = L["option_minimap_click_nothing"],
+              OPEN_INCOME_PANEL = L["option_minimap_click_income_panel"],
+              OPEN_OPTIONS = L["option_minimap_click_options"],
+              RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
+              RESET_SESSION = L["option_minimap_click_reset_session"]
+            },
+            set = function(info, val) self.db.char.leftClickMinimap = val end,
+            get = function(info) return self.db.char.leftClickMinimap end
+          },
+          right_click = {
+            order = 6,
+            name = L["option_minimap_right_click"],
+            desc = L["option_minimap_right_click_desc"],
+            type = "select",
+            width = 1.3,
+            values = {
+              NOTHING = L["option_minimap_click_nothing"],
+              OPEN_INCOME_PANEL = L["option_minimap_click_income_panel"],
+              OPEN_OPTIONS = L["option_minimap_click_options"],
+              RESET_GOLD_PER_HOUR = L["option_minimap_click_reset_gold_per_hour"],
+              RESET_SESSION = L["option_minimap_click_reset_session"]
+            },
+            set = function(info, val) self.db.char.rightClickMinimap = val end,
+            get = function(info) return self.db.char.rightClickMinimap end
+          }
+        }
       }
+
     }
   }
 
@@ -413,153 +429,160 @@ function MyAccountant:SetupAddonOptions()
     type = "group",
     name = L["option_income_panel"],
     args = {
-      hide_combat = {
-        order = 3,
-        name = L["option_close_entering_combat"],
-        desc = L["option_close_entering_combat_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.closeWhenEnteringCombat = val end,
-        get = function(info) return self.db.char.closeWhenEnteringCombat end
-      },
-      show_bottom = {
-        order = 1,
-        name = L["option_income_panel_bottom"],
-        desc = L["option_income_panel_bottom_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.showIncomePanelBottom = val end,
-        get = function(info) return self.db.char.showIncomePanelBottom end
-      },
-      show_balance_tab = {
-        order = 1.2,
-        name = L["option_income_frame_balance_tab"],
-        desc = L["option_income_frame_balance_tab_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.showBalanceTab = val end,
-        get = function(info) return self.db.char.showBalanceTab end
-      },
-      show_views_button = {
-        order = 1.3,
-        name = L["option_income_panel_show_view_button"],
-        desc = L["option_income_panel_show_view_button_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.showViewsButton = val end,
-        get = function(info) return self.db.char.showViewsButton end
-      },
-      show_default_view = {
-        name = L["option_income_panel_default_show"],
-        desc = L["option_income_panel_default_show_desc"],
-        width = 1.5,
-        order = 1.2,
-        disabled = function() return self.db.char.showIncomePanelBottom == false end,
-        type = "select",
-        values = { SOURCE = L["option_income_panel_default_show_source"], ZONE = L["option_income_panel_default_show_zone"] },
-        set = function(info, val) self.db.char.defaultView = val end,
-        get = function(info) return self.db.char.defaultView end
-      },
-      button_action_1 = {
-        name = L["option_income_panel_button_1"],
-        desc = L["option_income_panel_button_1_desc"],
-        order = 2,
-        disabled = function() return self.db.char.showIncomePanelBottom == false end,
-        type = "select",
-        values = {
-          NOTHING = L["income_panel_action_nothing"],
-          OPTIONS = L["income_panel_action_options"],
-          CLEAR_SESSION = L["income_panel_action_session"],
-          RESET_GPH = L["income_panel_action_gph"]
-        },
-        set = function(info, val) self.db.char.incomePanelButton1 = val end,
-        get = function(info) return self.db.char.incomePanelButton1 end
-      },
-      button_action_2 = {
-        name = L["option_income_panel_button_2"],
-        desc = L["option_income_panel_button_2_desc"],
-        order = 2,
-        disabled = function() return self.db.char.showIncomePanelBottom == false end,
-        type = "select",
-        values = {
-          NOTHING = L["income_panel_action_nothing"],
-          OPTIONS = L["income_panel_action_options"],
-          CLEAR_SESSION = L["income_panel_action_session"],
-          RESET_GPH = L["income_panel_action_gph"]
-        },
-        set = function(info, val) self.db.char.incomePanelButton2 = val end,
-        get = function(info) return self.db.char.incomePanelButton2 end
-      },
-      button_action_3 = {
-        name = L["option_income_panel_button_3"],
-        desc = L["option_income_panel_button_3_desc"],
-        order = 2,
-        disabled = function() return self.db.char.showIncomePanelBottom == false end,
-        type = "select",
-        values = {
-          NOTHING = L["income_panel_action_nothing"],
-          OPTIONS = L["income_panel_action_options"],
-          CLEAR_SESSION = L["income_panel_action_session"],
-          RESET_GPH = L["income_panel_action_gph"]
-        },
-        set = function(info, val) self.db.char.incomePanelButton3 = val end,
-        get = function(info) return self.db.char.incomePanelButton3 end
-      },
-      show_grid = {
-        order = 4,
-        name = L["option_income_panel_grid"],
-        desc = L["option_income_panel_grid_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.showLines = val end,
-        get = function(info) return self.db.char.showLines end
-      },
-      show_empty_rows = {
-        order = 5,
-        name = L["option_show_all_sources"],
-        desc = L["option_show_all_sources_desc"],
-        type = "toggle",
-        width = "full",
-        set = function(info, val) self.db.char.hideInactiveSources = val end,
-        get = function(info) return self.db.char.hideInactiveSources end
-      },
-      show_realm_total_hover = {
-        order = 6,
-        name = L["option_show_realm_total_tooltip"],
-        desc = L["option_show_realm_total_tooltip_desc"],
-        type = "toggle",
-        width = "full",
-        disabled = function() return self.db.char.showIncomePanelBottom == false end,
-        set = function(info, val) self.db.char.showRealmGoldTotals = val end,
-        get = function(info) return self.db.char.showRealmGoldTotals end
-      },
-      max_zones = {
-        order = 7,
-        name = L["option_income_panel_hover_max"],
-        desc = L["option_income_panel_hover_max_desc"],
-        type = "range",
-        width = "full",
-        min = 0,
-        max = 10,
-        step = 1,
-        set = function(info, val) self.db.char.maxZonesIncomePanel = val end,
-        get = function(info) return self.db.char.maxZonesIncomePanel end
-      },
-      default_sort = {
-        order = 8,
-        name = L["option_income_panel_default_sort"],
-        desc = L["option_income_panel_default_sort_desc"],
-        type = "select",
-        width = 1.3,
-        values = {
-          NOTHING = L["option_income_panel_default_sort_none"],
-          SOURCE_ASC = L["option_income_panel_default_sort_source"],
-          INCOME_DESC = L["option_income_panel_default_sort_income"],
-          OUTCOME_DESC = L["option_income_panel_default_sort_outcome"],
-          NET = L["option_income_panel_default_sort_net"]
-        },
-        set = function(info, val) self.db.char.defaultIncomePanelSort = val end,
-        get = function(info) return self.db.char.defaultIncomePanelSort end
+      panel = {
+        type = "group",
+        inline = true,
+        name = L["option_income_panel"],
+        args = {
+          hide_combat = {
+            order = 3,
+            name = L["option_close_entering_combat"],
+            desc = L["option_close_entering_combat_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.closeWhenEnteringCombat = val end,
+            get = function(info) return self.db.char.closeWhenEnteringCombat end
+          },
+          show_bottom = {
+            order = 1,
+            name = L["option_income_panel_bottom"],
+            desc = L["option_income_panel_bottom_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showIncomePanelBottom = val end,
+            get = function(info) return self.db.char.showIncomePanelBottom end
+          },
+          show_balance_tab = {
+            order = 1.2,
+            name = L["option_income_frame_balance_tab"],
+            desc = L["option_income_frame_balance_tab_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showBalanceTab = val end,
+            get = function(info) return self.db.char.showBalanceTab end
+          },
+          show_views_button = {
+            order = 1.3,
+            name = L["option_income_panel_show_view_button"],
+            desc = L["option_income_panel_show_view_button_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showViewsButton = val end,
+            get = function(info) return self.db.char.showViewsButton end
+          },
+          show_default_view = {
+            name = L["option_income_panel_default_show"],
+            desc = L["option_income_panel_default_show_desc"],
+            width = 1.5,
+            order = 1.2,
+            type = "select",
+            values = { SOURCE = L["option_income_panel_default_show_source"], ZONE = L["option_income_panel_default_show_zone"] },
+            set = function(info, val) self.db.char.defaultView = val end,
+            get = function(info) return self.db.char.defaultView end
+          },
+          button_action_1 = {
+            name = L["option_income_panel_button_1"],
+            desc = L["option_income_panel_button_1_desc"],
+            order = 2,
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            type = "select",
+            values = {
+              NOTHING = L["income_panel_action_nothing"],
+              OPTIONS = L["income_panel_action_options"],
+              CLEAR_SESSION = L["income_panel_action_session"],
+              RESET_GPH = L["income_panel_action_gph"]
+            },
+            set = function(info, val) self.db.char.incomePanelButton1 = val end,
+            get = function(info) return self.db.char.incomePanelButton1 end
+          },
+          button_action_2 = {
+            name = L["option_income_panel_button_2"],
+            desc = L["option_income_panel_button_2_desc"],
+            order = 2,
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            type = "select",
+            values = {
+              NOTHING = L["income_panel_action_nothing"],
+              OPTIONS = L["income_panel_action_options"],
+              CLEAR_SESSION = L["income_panel_action_session"],
+              RESET_GPH = L["income_panel_action_gph"]
+            },
+            set = function(info, val) self.db.char.incomePanelButton2 = val end,
+            get = function(info) return self.db.char.incomePanelButton2 end
+          },
+          button_action_3 = {
+            name = L["option_income_panel_button_3"],
+            desc = L["option_income_panel_button_3_desc"],
+            order = 2,
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            type = "select",
+            values = {
+              NOTHING = L["income_panel_action_nothing"],
+              OPTIONS = L["income_panel_action_options"],
+              CLEAR_SESSION = L["income_panel_action_session"],
+              RESET_GPH = L["income_panel_action_gph"]
+            },
+            set = function(info, val) self.db.char.incomePanelButton3 = val end,
+            get = function(info) return self.db.char.incomePanelButton3 end
+          },
+          show_grid = {
+            order = 4,
+            name = L["option_income_panel_grid"],
+            desc = L["option_income_panel_grid_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showLines = val end,
+            get = function(info) return self.db.char.showLines end
+          },
+          show_empty_rows = {
+            order = 5,
+            name = L["option_show_all_sources"],
+            desc = L["option_show_all_sources_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.hideInactiveSources = val end,
+            get = function(info) return self.db.char.hideInactiveSources end
+          },
+          show_realm_total_hover = {
+            order = 6,
+            name = L["option_show_realm_total_tooltip"],
+            desc = L["option_show_realm_total_tooltip_desc"],
+            type = "toggle",
+            width = "full",
+            disabled = function() return self.db.char.showIncomePanelBottom == false end,
+            set = function(info, val) self.db.char.showRealmGoldTotals = val end,
+            get = function(info) return self.db.char.showRealmGoldTotals end
+          },
+          max_zones = {
+            order = 7,
+            name = L["option_income_panel_hover_max"],
+            desc = L["option_income_panel_hover_max_desc"],
+            type = "range",
+            width = "full",
+            min = 0,
+            max = 10,
+            step = 1,
+            set = function(info, val) self.db.char.maxZonesIncomePanel = val end,
+            get = function(info) return self.db.char.maxZonesIncomePanel end
+          },
+          default_sort = {
+            order = 8,
+            name = L["option_income_panel_default_sort"],
+            desc = L["option_income_panel_default_sort_desc"],
+            type = "select",
+            -- disabled = false,
+            width = 1.3,
+            values = {
+              NOTHING = L["option_income_panel_default_sort_none"],
+              SOURCE_ASC = L["option_income_panel_default_sort_source"],
+              INCOME_DESC = L["option_income_panel_default_sort_income"],
+              OUTCOME_DESC = L["option_income_panel_default_sort_outcome"],
+              NET = L["option_income_panel_default_sort_net"]
+            },
+            set = function(info, val) self.db.char.defaultIncomePanelSort = val end,
+            get = function(info) return self.db.char.defaultIncomePanelSort end
+          }
+        }
       }
     }
   }
