@@ -20,9 +20,18 @@ private.constants = {
   UP_ARROW = "Interface\\Addons\\MyAccountant\\Images\\upArrow.tga",
   DOWN_ARROW = "Interface\\Addons\\MyAccountant\\Images\\downArrow.tga",
   ADDON_ICON = "Interface\\Addons\\MyAccountant\\Images\\addonIcon.tga",
-  COIN_IMG = "Interface\\Addons\\MyAccountant\\Images\\addonCoin.tga",
+  ABOUT = "Interface\\Addons\\MyAccountant\\Images\\aboutLogo.tga",
+  HEART = "Interface\\Addons\\MyAccountant\\Images\\heart.tga",
+  PLUS = "Interface\\Addons\\MyAccountant\\Images\\plus.tga",
+  GITHUB_ICON = "Interface\\Addons\\MyAccountant\\Images\\github.tga",
   AUTHOR = "Jeany (Nazgrim)",
-  GITHUB = "https://github.com/jeany55/MyAccountant"
+  GITHUB = "https://github.com/jeany55/MyAccountant",
+  FLAGS = {
+    ENGLISH_US = "Interface\\Addons\\MyAccountant\\Images\\Flags\\enUS.tga",
+    ENGLISH = "Interface\\Addons\\MyAccountant\\Images\\Flags\\en.tga",
+    RUSSIAN = "Interface\\Addons\\MyAccountant\\Images\\Flags\\ru.tga",
+    SIMPLIFIED_CHINESE = "Interface\\Addons\\MyAccountant\\Images\\Flags\\cn.tga"
+  }
 }
 
 private.ldb_data = {
@@ -315,5 +324,15 @@ private.default_settings = {
   lockInfoFrame = false,
   infoFrameDataToShow = {},
   showBalanceTab = true,
-  rightAlignInfoValues = true
+  rightAlignInfoValues = true,
+  tabs = {
+    { id = "a4f5d6c7", name = L["session"], type = "SESSION", startingDate = "", endingDate = "" },
+    { id = "c905d2d2", name = L["today"], type = "DATE", startingDate = "today", endingDate = "today" },
+    { id = "579c11cd", name = L["this_week"], type = "DATE", startingDate = "weekstart", endingDate = "today" },
+    { id = "ed6f61f5", name = L["this_month"], type = "DATE", startingDate = "monthstart", endingDate = "today" },
+    { id = "1143e23f", name = L["this_year"], type = "DATE", startingDate = "yearStart", endingDate = "today" },
+    { id = "b1776d94", name = L["all_time"], type = "DATE", startingDate = "dataStart", endingDate = "today" },
+    { id = "bdc6f79c", name = L["balance"], type = "BALANCE", startingDate = "", endingDate = "" }
+  }
 }
+

@@ -1,7 +1,7 @@
 -- Addon namespace
 local _, private = ...
 
-MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
+local incomePanelOptions = {}
 
 local function showMinimap()
   local libIcon = LibStub("LibDBIcon-1.0", true)
@@ -15,6 +15,11 @@ end
 local function hideMinimap()
   local libIcon = LibStub("LibDBIcon-1.0", true)
   libIcon:Hide(private.ADDON_NAME)
+end
+
+local function forceConfigRerender()
+  local registry = LibStub("AceConfigRegistry-3.0")
+  registry:NotifyChange(private.ADDON_NAME)
 end
 
 -- Initializes Ace3 Addon options table
@@ -38,17 +43,230 @@ function MyAccountant:SetupAddonOptions()
     self.db.char.lastVersion = private.ADDON_VERSION
   end
 
+  local function makeTabConfig()
+    local inputName = ""
+    local inputType = "DATE"
+    local startingDate = ""
+    local endingDate = ""
+
+    local tabConfig = {
+      create = {
+        name = "|T" .. private.constants.PLUS .. ":0|t  |cff67ff7d" .. L["option_new_tab"] .. "|r",
+        order = 0,
+        type = "group",
+        args = {
+          add_new_tab_create_ab53fb = {
+            type = "input",
+            name = L["option_tab_name"],
+            desc = L["option_tab_name_desc"],
+            order = 1,
+            width = 1.5,
+            validate = function(_, val)
+              local trimmedVal = string.trim(val)
+
+              if private.arrayHas(self.db.char.tabs, function(item)
+                return string.lower(item.name) == string.lower(trimmedVal)
+              end) then
+                return L["option_tab_create_fail"]
+              end
+
+              return true
+            end,
+            get = function() return inputName end,
+            set = function(_, val) inputName = string.trim(val) end
+          },
+          break1 = { type = "description", order = 2, name = "" },
+          type = {
+            type = "select",
+            order = 2.5,
+            name = L["option_tab_type"],
+            desc = L["option_tab_type_desc"],
+            values = {
+              DATE = L["option_tab_type_date"],
+              BALANCE = L["option_tab_type_balance"],
+              SESSION = L["option_tab_type_session"]
+            },
+            disabled = function() return inputName == "" end,
+            get = function() return inputType end,
+            set = function(_, val) inputType = val end
+          },
+          break2 = { type = "description", order = 2.6, name = "" },
+          startingDate = {
+            type = "input",
+            name = L["option_tab_starting_date"],
+            disabled = function() return inputType ~= "DATE" or inputName == "" end,
+            order = 3,
+            get = function() return startingDate end,
+            set = function(_, val) startingDate = val end
+          },
+          endingDate = {
+            type = "input",
+            name = L["option_tab_ending_date"],
+            disabled = function() return inputType ~= "DATE" or inputName == "" end,
+            order = 4,
+            get = function() return endingDate end,
+            set = function(_, val) endingDate = val end
+          },
+          createTab = {
+            type = "execute",
+            name = L["option_tab_create"],
+            disabled = function() return inputName == "" end,
+            order = 5,
+            func = function()
+              table.insert(self.db.char.tabs, {
+                id = private.generateUuid(),
+                name = inputName,
+                type = inputType,
+                startingDate = startingDate,
+                endingDate = endingDate
+              })
+
+              makeTabConfig()
+              forceConfigRerender()
+            end
+          }
+        }
+      }
+    }
+
+    local tabOrder = 1
+    local tabAmount = #MyAccountant.db.char.tabs
+
+    local moveTabLeft = function()
+      local index = tabOrder
+
+      return function()
+        private.swapItemInArray(MyAccountant.db.char.tabs, index, index - 1)
+        makeTabConfig()
+        forceConfigRerender()
+      end
+    end
+
+    local moveTabRight = function()
+      local index = tabOrder
+
+      return function()
+        private.swapItemInArray(MyAccountant.db.char.tabs, index, index + 1)
+        makeTabConfig()
+        forceConfigRerender()
+      end
+    end
+
+    local deleteTab = function()
+      local index = tabOrder
+
+      return function()
+        table.remove(self.db.char.tabs, index)
+        makeTabConfig()
+        forceConfigRerender()
+      end
+    end
+
+    for _, tab in ipairs(MyAccountant.db.char.tabs) do
+      tabConfig[tab.id] = {
+        name = tab.name,
+        order = tabOrder,
+        type = "group",
+        args = {
+          delete = {
+            type = "execute",
+            name = L["option_tab_delete"],
+            order = 0,
+            desc = L["option_tab_delete_desc"],
+            confirm = function() return L["option_tab_delete_confirm"] end,
+            func = deleteTab()
+          },
+          break1 = { type = "description", order = 0.05, name = "" },
+          moveLeft = {
+            type = "execute",
+            name = L["option_tab_move_left"],
+            desc = L["option_tab_move_left_desc"],
+            order = 0.1,
+            disabled = tabOrder == 1,
+            func = moveTabLeft()
+          },
+          moveRight = {
+            type = "execute",
+            name = L["option_tab_move_right"],
+            desc = L["option_tab_move_right_desc"],
+            order = 0.2,
+            disabled = tabOrder == tabAmount,
+            func = moveTabRight()
+          },
+          break2 = { type = "description", order = 1.3, name = "" },
+          add = {
+            type = "input",
+            name = L["option_tab_name"],
+            desc = L["option_tab_name_desc"],
+            order = 1,
+            width = 1.5,
+            get = function() return tab.name end,
+            validate = function(_, val)
+              local trimmedVal = string.trim(val)
+
+              if private.arrayHas(self.db.char.tabs, function(item)
+                return string.lower(item.name) == string.lower(trimmedVal)
+              end) then
+                return L["option_tab_create_fail"]
+              end
+
+              return true
+            end,
+            set = function(_, val)
+              tab.name = val
+              makeTabConfig()
+            end
+          },
+          break3 = { type = "description", order = 2, name = "" },
+          type = {
+            type = "select",
+            order = 2.5,
+            name = L["option_tab_type"],
+            desc = L["option_tab_type_desc"],
+            values = {
+              DATE = L["option_tab_type_date"],
+              BALANCE = L["option_tab_type_balance"],
+              SESSION = L["option_tab_type_session"]
+            },
+            get = function() return tab.type end,
+            set = function(_, val) tab.type = val end
+          },
+          break4 = { type = "description", order = 2.7, name = "" },
+          startingDate = {
+            type = "input",
+            name = L["option_tab_starting_date"],
+            order = 3,
+            disabled = function() return tab.type ~= "DATE" end,
+            get = function() return tab.startingDate end,
+            set = function(_, val) tab.startingDate = val end
+          },
+          endingDate = {
+            type = "input",
+            name = L["option_tab_ending_date"],
+            order = 4,
+            disabled = function() return tab.type ~= "DATE" end,
+            get = function() return tab.endingDate end,
+            set = function(_, val) tab.endingDate = val end
+          }
+        }
+      }
+      tabOrder = tabOrder + 1
+    end
+
+    incomePanelOptions.args.options_tabs = { type = "group", name = L["option_tabs"], order = 25, args = tabConfig }
+  end
+
   -- Addon options entry page
   local launchOptionsConfig = {
     type = "group",
     name = "",
     args = {
-      logo = { name = "|TInterface\\Addons\\MyAccountant\\Images\\aboutLogo.tga:91:350|t", type = "description", order = 0 },
+      logo = { name = "|T" .. private.constants.ABOUT .. ":91:350|t", type = "description", order = 0 },
       version = {
         type = "description",
         fontSize = "large",
         order = 0.1,
-        name = "|TInterface\\Addons\\MyAccountant\\Images\\addonIcon.tga:0|t |cffecad19v." .. private.ADDON_VERSION .. "|r"
+        name = " |T" .. private.constants.ADDON_ICON .. ":0|t |cffecad19v." .. private.ADDON_VERSION .. "|r"
       },
       author = {
         name = " ",
@@ -60,7 +278,7 @@ function MyAccountant:SetupAddonOptions()
             type = "description",
             width = "full",
             order = 1,
-            name = "|TInterface\\Addons\\MyAccountant\\Images\\heart.tga:0|t " ..
+            name = "|T" .. private.constants.HEART .. ":0|t " ..
                 format(L["about_author"], "|cffd000ff" .. private.constants.AUTHOR) .. "|r"
           },
           authorbreak = { type = "description", width = "full", fontSize = "medium", name = "", order = 1.05 },
@@ -68,7 +286,8 @@ function MyAccountant:SetupAddonOptions()
             type = "input",
             width = 3,
             order = 1.1,
-            name = "|TInterface\\Addons\\MyAccountant\\Images\\github.tga:15:15|t  " .. L["about_github"],
+            name = "|T" .. private.constants.GITHUB_ICON .. ":15:15|t  " .. L["about_github"],
+            desc = L["about_github_desc"],
             get = function() return private.constants.GITHUB end
           }
         }
@@ -79,20 +298,12 @@ function MyAccountant:SetupAddonOptions()
         inline = true,
         order = 0.3,
         args = {
-          en = {
-            order = 1,
-            type = "description",
-            name = " |TInterface\\Addons\\MyAccountant\\Images\\Flags\\en.tga:14:18|t   " .. L["english"]
-          },
-          ru = {
-            order = 2,
-            type = "description",
-            name = " |TInterface\\Addons\\MyAccountant\\Images\\Flags\\ru.tga:14:18|t   " .. L["russian"]
-          },
+          en = { order = 1, type = "description", name = " |T" .. private.constants.FLAGS.ENGLISH .. ":14:21|t   " .. L["english"] },
+          ru = { order = 2, type = "description", name = " |T" .. private.constants.FLAGS.RUSSIAN .. ":14:21|t   " .. L["russian"] },
           cn = {
             order = 3,
             type = "description",
-            name = " |TInterface\\Addons\\MyAccountant\\Images\\Flags\\cn.tga:14:18|t   " .. L["simplified_chinese"]
+            name = " |T" .. private.constants.FLAGS.SIMPLIFIED_CHINESE .. ":14:21|t   " .. L["simplified_chinese"]
           }
         }
       },
@@ -101,11 +312,16 @@ function MyAccountant:SetupAddonOptions()
         inline = true,
         order = 16,
         name = L["about_special_thanks_to"],
-        args = { quetz = { type = "description", width = "full", order = 17, name = "• Quetz" } }
+        args = {
+          quetz = {
+            type = "description",
+            width = "full",
+            order = 17,
+            name = " |T" .. private.constants.FLAGS.ENGLISH_US .. ":14:21|t   " .. "Quetz"
+          }
+        }
       }
-
     }
-
   }
 
   -- General Options
@@ -425,14 +641,14 @@ function MyAccountant:SetupAddonOptions()
     }
   }
 
-  local incomePanelOptions = {
+  incomePanelOptions = {
     type = "group",
     name = L["option_income_panel"],
     args = {
-      panel = {
+      options_general = {
         type = "group",
-        inline = true,
-        name = L["option_income_panel"],
+        name = L["option_general"],
+        order = 24,
         args = {
           hide_combat = {
             order = 3,
@@ -587,6 +803,8 @@ function MyAccountant:SetupAddonOptions()
     }
   }
 
+  makeTabConfig()
+
   local clearDataOptions = {
     type = "group",
     name = L["option_addon_data"],
@@ -595,47 +813,68 @@ function MyAccountant:SetupAddonOptions()
         name = L["option_clear_gph"],
         desc = L["option_clear_gph_desc"],
         type = "execute",
-        width = 1.5,
+        width = 1.7,
         order = 1,
         confirm = true,
         confirmText = L["reset_gph_confirm"],
         func = function() MyAccountant:ResetGoldPerHour() end
       },
+      linebreak1 = { type = "description", name = "", order = 1.1 },
       clear_session_data = {
         name = L["option_clear_session_data"],
         desc = L["option_clear_session_data_desc"],
         type = "execute",
         order = 2,
-        width = 1.5,
+        width = 1.7,
         confirm = true,
         confirmText = L["option_clear_session_data_confirm"],
         func = function() MyAccountant:ResetSession() end
       },
+      linebreak2 = { type = "description", name = "", order = 2.1 },
+      reset_tabs = {
+        order = 2.5,
+        name = L["option_reset_tabs"],
+        desc = L["option_reset_tabs_desc"],
+        type = "execute",
+        width = 1.7,
+        confirm = true,
+        confirmText = L["option_reset_tabs_confirm"],
+        func = function()
+          local defaultSettings = private.copy(private.default_settings)
+          MyAccountant.db.char.tabs = defaultSettings.tabs
+          makeTabConfig()
+          forceConfigRerender()
+        end
+      },
+      linebreak3 = { type = "description", name = "", order = 2.6 },
       clear_character_data = {
         name = L["option_clear_character_data"],
         desc = L["option_clear_character_data_desc"],
         type = "execute",
         order = 3,
-        width = 1.3,
+        width = 1.7,
         confirm = true,
         confirmText = L["option_clear_character_data_confirm"],
         func = function() MyAccountant:ResetCharacterData() end
       },
+      linebreak4 = { type = "description", name = "", order = 3.1 },
       clear_zone_data = {
         name = L["option_reset_zone_data"],
         desc = L["option_reset_zone_data_desc"],
         order = 5,
-        width = 1.5,
+        width = 1.7,
         type = "execute",
         confirm = true,
         confirmText = L["option_reset_zone_data_confirm"],
         func = function() MyAccountant:ResetZoneData() end
       },
+      linebreak5 = { type = "description", name = "", order = 5.1 },
       clear_all_data = {
         name = L["option_clear_all_data"],
         desc = L["option_clear_all_data_desc"],
         order = 6,
         type = "execute",
+        width = 1.7,
         confirm = true,
         confirmText = L["option_clear_all_data_confirm"],
         func = function() MyAccountant:ResetAllData() end

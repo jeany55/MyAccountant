@@ -1,8 +1,6 @@
 -- Addon namespace
 local _, private = ...
 
-MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
-
 local infoFrame
 
 local frames = {}

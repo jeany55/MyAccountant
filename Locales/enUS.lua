@@ -8,6 +8,41 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 ----------------------------------------
 --- VERSION 1.8
 ----------------------------------------
+L["option_tabs"] = "Tabs"
+L["option_new_tab"] = "New tab"
+
+L["option_reset_tabs"] = "Reset tabs to default"
+L["option_reset_tabs_desc"] = "Reset tab configuration to default tabs. |cffff0000Will erase any custom tabs! Irreversible!|r"
+
+L["option_reset_tabs_confirm"] =
+    "Are you sure you want to reset all tabs to default? This will remove any tab configurations and reset all tabs to default settings. |cffff0000This is irreversible!|r"
+
+L["option_tab_name"] = "Tab label"
+L["option_tab_name_desc"] = "Name of the tab to show on the income panel"
+
+L["option_tab_starting_date"] = "Starting date"
+L["option_tab_ending_date"] = "Ending date"
+L["option_tab_create"] = "Create tab"
+
+L["option_tab_type"] = "Tab type"
+L["option_tab_type_desc"] =
+    "What kind of data this tab will show (session, realm balance, or date). Date allows specific configuration."
+L["option_tab_type_date"] = "Date"
+L["option_tab_type_session"] = "Session"
+L["option_tab_type_balance"] = "Realm Balance"
+
+L["option_tab_create_fail"] = "A tab with that name already exists!"
+
+L["option_tab_move_left"] = "Move left"
+L["option_tab_move_left_desc"] = "Move this tab left."
+
+L["option_tab_move_right"] = "Move right"
+L["option_tab_move_right_desc"] = "Move this tab right."
+
+L["option_tab_delete"] = "Delete tab"
+L["option_tab_delete_desc"] = "Delete this tab from the income panel"
+L["option_tab_delete_confirm"] = "Deleting this tab will remove it from the income panel. |cffff0000Are you sure?|r"
+
 L["option_minimap_tooltip"] = "Minimap tooltip"
 L["option_income_panel"] = "Income panel"
 L["option_addon_data"] = "Addon data"
@@ -15,6 +50,7 @@ L["options_developer_options"] = "Developer options"
 
 L["about_author"] = "By %s"
 L["about_github"] = "Github"
+L["about_github_desc"] = "Find an bug? Have a suggestion? Create an issue!"
 L["about_languages"] = "Supported languanges"
 L["english"] = "English"
 L["russian"] = "Russian (by ZamestoTv)"

@@ -1,7 +1,5 @@
 local _, private = ...
 
-MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
-
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 local characterDropdown
 local viewingType
