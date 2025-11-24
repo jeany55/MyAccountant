@@ -30,7 +30,6 @@ function MyAccountant:SetupAddonOptions()
   -- Set any options to default if they are missing
   for k, v in pairs(private.default_settings) do
     if self.db.char[k] == nil then
-      print("set " .. k)
       self.db.char[k] = v
       count = count + 1
     end
