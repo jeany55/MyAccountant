@@ -327,11 +327,41 @@ private.default_settings = {
   rightAlignInfoValues = true,
   tabs = {
     { id = "a4f5d6c7", name = L["session"], type = "SESSION", startingDate = "", endingDate = "" },
-    { id = "c905d2d2", name = L["today"], type = "DATE", startingDate = "today", endingDate = "today" },
-    { id = "579c11cd", name = L["this_week"], type = "DATE", startingDate = "weekstart", endingDate = "today" },
-    { id = "ed6f61f5", name = L["this_month"], type = "DATE", startingDate = "monthstart", endingDate = "today" },
-    { id = "1143e23f", name = L["this_year"], type = "DATE", startingDate = "yearStart", endingDate = "today" },
-    { id = "b1776d94", name = L["all_time"], type = "DATE", startingDate = "dataStart", endingDate = "today" },
+    {
+      id = "c905d2d2",
+      name = L["today"],
+      type = "DATE",
+      startingDate = "dateValue = today\ndateSummary = date(\"%x\")",
+      useStartingDateForEnd = true
+    },
+    {
+      id = "579c11cd",
+      name = L["this_week"],
+      type = "DATE",
+      startingDate = "dateValue = startOfWeek\n\n-- Calculate weekly label\nlocal lastDayOfWeek = startOfWeek + (6 * 86400)\n\ndateSummary = date(\"%x\", startOfWeek) .. \" - \" .. date(\"%x\", lastDayOfWeek)",
+      endingDate = "dateValue = today"
+    },
+    {
+      id = "ed6f61f5",
+      name = L["this_month"],
+      type = "DATE",
+      startingDate = "dateValue = startOfMonth\ndateSummary = date(\"%B\")",
+      endingDate = "dateValue = today"
+    },
+    {
+      id = "1143e23f",
+      name = L["this_year"],
+      type = "DATE",
+      startingDate = "dateValue = startOfYear\ndateSummary = date(\"%Y\")",
+      endingDate = "dateValue = today"
+    },
+    {
+      id = "b1776d94",
+      name = L["all_time"],
+      type = "DATE",
+      startingDate = "-- 1735689600 is start of 2025 when this addon came out\ndateValue = 1735689600",
+      endingDate = "dateValue = today"
+    },
     { id = "bdc6f79c", name = L["balance"], type = "BALANCE", startingDate = "", endingDate = "" }
   }
 }

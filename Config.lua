@@ -26,13 +26,11 @@ end
 function MyAccountant:SetupAddonOptions()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-  local rotator = CreateFrame("Frame")
-  rotator:Hide()
-
   local count = 0
   -- Set any options to default if they are missing
   for k, v in pairs(private.default_settings) do
     if self.db.char[k] == nil then
+      print("set " .. k)
       self.db.char[k] = v
       count = count + 1
     end
@@ -47,6 +45,7 @@ function MyAccountant:SetupAddonOptions()
     local inputName = ""
     local inputType = "DATE"
     local startingDate = ""
+    local useStartingDateForEnd = false
     local endingDate = ""
 
     local tabConfig = {
@@ -55,7 +54,7 @@ function MyAccountant:SetupAddonOptions()
         order = 0,
         type = "group",
         args = {
-          add_new_tab_create_ab53fb = {
+          add_new_tab = {
             type = "input",
             name = L["option_tab_name"],
             desc = L["option_tab_name_desc"],
@@ -94,16 +93,56 @@ function MyAccountant:SetupAddonOptions()
           startingDate = {
             type = "input",
             name = L["option_tab_starting_date"],
+            desc = L["option_tab_starting_date_desc"],
             disabled = function() return inputType ~= "DATE" or inputName == "" end,
             order = 3,
+            multiline = 9,
+            width = "full",
+            validate = function(_, val)
+              if string.trim(val) == "" then
+                return L["option_tab_expression_invalid_unix_timestamp"]
+              end
+              local success, unixTime = MyAccountant:ParseDateExpression(val)
+              if success then
+                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
+                return true
+              else
+                return unixTime
+              end
+            end,
             get = function() return startingDate end,
             set = function(_, val) startingDate = val end
+          },
+          endingDateOption = {
+            type = "toggle",
+            name = L["option_tab_ending_date_use_start"],
+            desc = L["option_tab_ending_date_use_start_desc"],
+            disabled = function() return inputType ~= "DATE" end,
+            width = "full",
+            order = 3.5,
+            get = function() return useStartingDateForEnd end,
+            set = function(_, val) useStartingDateForEnd = val end
           },
           endingDate = {
             type = "input",
             name = L["option_tab_ending_date"],
-            disabled = function() return inputType ~= "DATE" or inputName == "" end,
+            desc = L["option_tab_starting_date_desc"],
+            disabled = function() return inputType ~= "DATE" or inputName == "" or useStartingDateForEnd end,
+            validate = function(_, val)
+              if string.trim(val) == "" then
+                return L["option_tab_expression_invalid_unix_timestamp"]
+              end
+              local success, unixTime = MyAccountant:ParseDateExpression(val)
+              if success then
+                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
+                return true
+              else
+                return unixTime
+              end
+            end,
             order = 4,
+            multiline = 9,
+            width = "full",
             get = function() return endingDate end,
             set = function(_, val) endingDate = val end
           },
@@ -118,11 +157,13 @@ function MyAccountant:SetupAddonOptions()
                 name = inputName,
                 type = inputType,
                 startingDate = startingDate,
-                endingDate = endingDate
+                endingDate = endingDate,
+                useStartingDateForEnd = useStartingDateForEnd
               })
 
               makeTabConfig()
               forceConfigRerender()
+              MyAccountant:SetupTabs()
             end
           }
         }
@@ -139,6 +180,7 @@ function MyAccountant:SetupAddonOptions()
         private.swapItemInArray(MyAccountant.db.char.tabs, index, index - 1)
         makeTabConfig()
         forceConfigRerender()
+        MyAccountant:SetupTabs()
       end
     end
 
@@ -149,6 +191,7 @@ function MyAccountant:SetupAddonOptions()
         private.swapItemInArray(MyAccountant.db.char.tabs, index, index + 1)
         makeTabConfig()
         forceConfigRerender()
+        MyAccountant:SetupTabs()
       end
     end
 
@@ -159,6 +202,7 @@ function MyAccountant:SetupAddonOptions()
         table.remove(self.db.char.tabs, index)
         makeTabConfig()
         forceConfigRerender()
+        MyAccountant:SetupTabs()
       end
     end
 
@@ -215,6 +259,7 @@ function MyAccountant:SetupAddonOptions()
             set = function(_, val)
               tab.name = val
               makeTabConfig()
+              MyAccountant:SetupTabs()
             end
           },
           break3 = { type = "description", order = 2, name = "" },
@@ -229,24 +274,74 @@ function MyAccountant:SetupAddonOptions()
               SESSION = L["option_tab_type_session"]
             },
             get = function() return tab.type end,
-            set = function(_, val) tab.type = val end
+            set = function(_, val)
+              tab.type = val
+              MyAccountant:SetupTabs()
+            end
           },
           break4 = { type = "description", order = 2.7, name = "" },
           startingDate = {
             type = "input",
             name = L["option_tab_starting_date"],
             order = 3,
+            multiline = 9,
+            width = "full",
             disabled = function() return tab.type ~= "DATE" end,
+            validate = function(_, val)
+              if string.trim(val) == "" then
+                return L["option_tab_expression_invalid_unix_timestamp"]
+              end
+              local success, unixTime = MyAccountant:ParseDateExpression(val)
+              if success then
+                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
+                return true
+              else
+                return unixTime
+              end
+            end,
             get = function() return tab.startingDate end,
-            set = function(_, val) tab.startingDate = val end
+            set = function(_, val)
+              tab.startingDate = val
+              MyAccountant:SetupTabs()
+            end
+          },
+          endingDateOption = {
+            type = "toggle",
+            name = L["option_tab_ending_date_use_start"],
+            desc = L["option_tab_ending_date_use_start_desc"],
+            disabled = function() return tab.type ~= "DATE" end,
+            width = "full",
+            order = 3.5,
+            get = function() return tab.useStartingDateForEnd end,
+            set = function(_, val)
+              tab.useStartingDateForEnd = val
+              MyAccountant:SetupTabs()
+            end
           },
           endingDate = {
             type = "input",
             name = L["option_tab_ending_date"],
             order = 4,
-            disabled = function() return tab.type ~= "DATE" end,
+            multiline = 9,
+            width = "full",
+            disabled = function() return tab.type ~= "DATE" or tab.useStartingDateForEnd end,
+            validate = function(_, val)
+              if string.trim(val) == "" then
+                return L["option_tab_expression_invalid_unix_timestamp"]
+              end
+              local success, unixTime = MyAccountant:ParseDateExpression(val)
+              if success then
+                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
+                return true
+              else
+                return unixTime
+              end
+            end,
             get = function() return tab.endingDate end,
-            set = function(_, val) tab.endingDate = val end
+            set = function(_, val)
+              tab.endingDate = val
+              MyAccountant:SetupTabs()
+            end
           }
         }
       }

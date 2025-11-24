@@ -71,41 +71,55 @@ function MyAccountant:UpdateDataEventData()
   local sessionNet = sessionIncome - sessionOutcome
   local sessionNetColor = getProfitColor(sessionNet)
 
-  local characterDailySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("TODAY"))
-  local characterDailyNet = characterDailySummary.income - characterDailySummary.outcome
-  local characterDailyNetColor = getProfitColor(characterDailyNet)
+  -- Prepare some variables to allow settings easier to configure
+  local currentDate = date("*t")
+  local dayInSeconds = 86400
 
-  local realmDailySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("TODAY", nil, "ALL_CHARACTERS"))
-  local realmDailyNet = realmDailySummary.income - realmDailySummary.outcome
-  local realmDailyNetColor = getProfitColor(characterDailyNet)
+  local today = time()
+  local startOfWeek = time() - ((currentDate.wday - 1) * dayInSeconds)
+  local startOfMonth = time() - ((currentDate.day - 1) * dayInSeconds)
+  local startOfYear = time() - ((currentDate.yday - 1) * dayInSeconds)
 
-  local characterWeeklySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("WEEK"))
-  local characterWeeklyNet = characterWeeklySummary.income - characterWeeklySummary.outcome
-  local characterWeeklyNetColor = getProfitColor(characterWeeklyNet)
+  -- To do: figure this bit out with dynamic tabs now
 
-  local realmWeeklySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("WEEK", nil, "ALL_CHARACTERS"))
-  local realmWeeklyNet = realmWeeklySummary.income - realmWeeklySummary.outcome
-  local realmWeeklyNetColor = getProfitColor(realmWeeklyNet)
+  -- local characterDailySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("TODAY"))
+  -- local characterDailyNet = characterDailySummary.income - characterDailySummary.outcome
+  -- local characterDailyNetColor = getProfitColor(characterDailyNet)
 
-  private.ldb_data.FACTION_BALANCE.updateData(GetMoneyString(factionBalance[1].gold, true))
-  private.ldb_data.SESSION_INCOME.updateData(GetMoneyString(sessionIncome, true))
-  private.ldb_data.SESSION_PROFIT.updateData(GetMoneyString(abs(sessionNet), true), sessionNetColor)
+  -- local realmDailySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("TODAY", nil, "ALL_CHARACTERS"))
+  -- local realmDailyNet = realmDailySummary.income - realmDailySummary.outcome
+  -- local realmDailyNetColor = getProfitColor(characterDailyNet)
 
-  private.ldb_data.DAILY_INCOME_CHARACTER.updateData(GetMoneyString(characterDailySummary.income, true))
-  private.ldb_data.DAILY_NET_CHARACTER.updateData(GetMoneyString(abs(characterDailyNet), true), characterDailyNetColor)
+  -- local characterWeeklySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("WEEK"))
+  -- local characterWeeklyNet = characterWeeklySummary.income - characterWeeklySummary.outcome
+  -- local characterWeeklyNetColor = getProfitColor(characterWeeklyNet)
 
-  private.ldb_data.DAILY_INCOME_REALM.updateData(GetMoneyString(realmDailySummary.income, true))
-  private.ldb_data.DAILY_NET_REALM.updateData(GetMoneyString(abs(realmDailyNet), true), realmDailyNetColor)
+  -- local realmWeeklySummary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData("WEEK", nil, "ALL_CHARACTERS"))
+  -- local realmWeeklyNet = realmWeeklySummary.income - realmWeeklySummary.outcome
+  -- local realmWeeklyNetColor = getProfitColor(realmWeeklyNet)
 
-  private.ldb_data.WEEKLY_INCOME_CHARACTER.updateData(GetMoneyString(characterWeeklySummary.income, true))
-  private.ldb_data.WEEKLY_NET_CHARACTER.updateData(GetMoneyString(abs(characterWeeklyNet), true), characterWeeklyNetColor)
+  -- private.ldb_data.FACTION_BALANCE.updateData(GetMoneyString(factionBalance[1].gold, true))
+  -- private.ldb_data.SESSION_INCOME.updateData(GetMoneyString(sessionIncome, true))
+  -- private.ldb_data.SESSION_PROFIT.updateData(GetMoneyString(abs(sessionNet), true), sessionNetColor)
 
-  private.ldb_data.WEEKLY_INCOME_REALM.updateData(GetMoneyString(realmWeeklySummary.income, true))
-  private.ldb_data.WEEKLY_NET_REALM.updateData(GetMoneyString(abs(realmWeeklyNet), true), realmWeeklyNetColor)
+  -- private.ldb_data.DAILY_INCOME_CHARACTER.updateData(GetMoneyString(characterDailySummary.income, true))
+  -- private.ldb_data.DAILY_NET_CHARACTER.updateData(GetMoneyString(abs(characterDailyNet), true), characterDailyNetColor)
+
+  -- private.ldb_data.DAILY_INCOME_REALM.updateData(GetMoneyString(realmDailySummary.income, true))
+  -- private.ldb_data.DAILY_NET_REALM.updateData(GetMoneyString(abs(realmDailyNet), true), realmDailyNetColor)
+
+  -- private.ldb_data.WEEKLY_INCOME_CHARACTER.updateData(GetMoneyString(characterWeeklySummary.income, true))
+  -- private.ldb_data.WEEKLY_NET_CHARACTER.updateData(GetMoneyString(abs(characterWeeklyNet), true), characterWeeklyNetColor)
+
+  -- private.ldb_data.WEEKLY_INCOME_REALM.updateData(GetMoneyString(realmWeeklySummary.income, true))
+  -- private.ldb_data.WEEKLY_NET_REALM.updateData(GetMoneyString(abs(realmWeeklyNet), true), realmWeeklyNetColor)
 end
 
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
+
+  self.db.char.tabs = nil
+
   -- Save faction and class color to db for character dropdown/realm totals
   local _, className = UnitClass("player")
   local _, _, _, colorCode = GetClassColor(className)
@@ -168,7 +182,8 @@ function MyAccountant:RegisterMinimapIcon()
         return
       end
 
-      MyAccountant:GetMinimapTooltip(tooltip)
+      -- To do: Figure this out
+      -- MyAccountant:GetMinimapTooltip(tooltip)
     end
   })
 
@@ -240,3 +255,55 @@ function MyAccountant:PrintDebugMessage(message, ...)
   end
 end
 
+function MyAccountant:GetDateFunction(expression)
+  local wrappedExpression = [[
+    return function(today,startOfWeek,startOfMonth,startOfYear,oneDay)
+      local dateValue = nil
+      local labelValue = nil
+      local dateSummary = nil
+      %s
+      return dateValue, labelValue, dateSummary
+    end
+  ]]
+
+  local loadedFun, _ = loadstring(string.format(wrappedExpression, expression))
+  if not loadedFun then
+    return nil
+  end
+
+  return loadedFun()
+end
+
+function MyAccountant:ParseDateExpression(expression)
+  local dateFunction = MyAccountant:GetDateFunction(expression)
+  if not dateFunction then
+    return false, L["option_tab_expression_invalid_lua"]
+  end
+
+  -- Prepare some variables to allow settings easier to configure
+  local currentDate = date("*t")
+  local dayInSeconds = 86400
+
+  local today = time()
+  local startOfWeek = time() - ((currentDate.wday - 1) * dayInSeconds)
+  local startOfMonth = time() - ((currentDate.day - 1) * dayInSeconds)
+  local startOfYear = time() - ((currentDate.yday - 1) * dayInSeconds)
+
+  local success, dateValue, labelValue = pcall(dateFunction, today, startOfWeek, startOfMonth, startOfYear, dayInSeconds)
+
+  if not success then
+    return false, L["option_tab_expression_invalid_lua_bad"]
+  end
+
+  if not dateValue or dateValue == "" then
+    return false, L["option_tab_expression_invalid_unix_timestamp"]
+  end
+
+  local successDate, _ = pcall(date, "*t", dateValue)
+
+  if not successDate then
+    return false, L["option_tab_expression_invalid_unix_timestamp"]
+  end
+
+  return true, dateValue, labelValue
+end

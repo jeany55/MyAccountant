@@ -199,33 +199,28 @@ function MyAccountant:FetchDataRow(playerName, year, month, day)
   return private.copy(self.db.factionrealm[playerName][year][month][day])
 end
 
-function MyAccountant:GetHistoricalData(type, dateOverride, characterOverride, dataRefOverride)
+function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, dataRefOverride)
   if characterOverride == "ALL_CHARACTERS" then
     local allCharacterData = {}
     for k, _ in pairs(self.db.factionrealm) do
-      MyAccountant:GetHistoricalData(type, dateOverride, k, allCharacterData)
+      MyAccountant:GetHistoricalData(tab, nil, k, allCharacterData)
     end
     return allCharacterData
   end
+
   local playerName = characterOverride and characterOverride or UnitName("player")
   -- Calculate how many days we're from the start of the week
-  local now = dateOverride and dateOverride or date("*t")
+
+  -- local now = dateOverride and dateOverride or date("*t")
   local data = dataRefOverride and dataRefOverride or {}
 
-  local unixTime = dateOverride and time(dateOverride) or time()
-  local offset
-
-  if type == "WEEK" then
-    offset = now.wday
-  elseif type == "MONTH" then
-    offset = now.day
-  elseif type == "YEAR" then
-    offset = now.yday
-  elseif type == "TODAY" then
-    offset = 1
+  if (tab.startingDateValue > tab.endingDateValue) then
+    return data
   end
 
-  for _ = 1, offset do
+  local unixTime = tab.endingDateValue
+
+  while unixTime >= tab.startingDateValue do
     local currentDay = date("*t", unixTime)
     local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
 
@@ -332,18 +327,18 @@ function MyAccountant:IsSourceActive(source)
   return false
 end
 
-function MyAccountant:GetIncomeOutcomeTable(type, dateOverride, characterOverride, viewType)
+function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride, viewType)
   local table = {}
   local date = dateOverride and dateOverride or date("*t")
   local playerName = characterOverride and characterOverride or UnitName("player")
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-  if type == "SESSION" then
+  if tab.type == "SESSION" then
     table = private.copy(totalGoldSession)
-  elseif type == "ALL_TIME" then
+  elseif tab.type == "ALL_TIME" then
     table = MyAccountant:GetAllTime(playerName)
   else
-    table = MyAccountant:GetHistoricalData(type, date, playerName)
+    table = MyAccountant:GetHistoricalData(tab, date, playerName)
   end
 
   local talliedTable = { OTHER = table.OTHER }

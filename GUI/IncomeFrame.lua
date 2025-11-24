@@ -8,7 +8,7 @@ local selectedCharacter = UnitName("player")
 
 -- Tab data for bottom of panel
 local ActiveTab = 1
-local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME", "BALANCE" }
+-- local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME", "BALANCE" }
 
 -- Holds whether viewing by source or by zone 
 local ViewType
@@ -19,12 +19,64 @@ RenderedLines = {}
 -- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
 UserSetSort = nil
 
+local Tabs = {}
+
+local tabPool = {}
+
+local function getTabFrame(index, name)
+  if tabPool[index] then
+    return tabPool[index]
+  else
+    local frame = CreateFrame("Button", "$parentTab" .. index, IncomeFrame, "MyAccountantTabTemplate", index)
+    table.insert(tabPool, frame)
+    return frame
+  end
+end
+
+function MyAccountant:SetupTabs()
+  local newTabs = {}
+  local tabIndex = 1
+  local previousTab = nil
+
+  for _, tab in ipairs(self.db.char.tabs) do
+    local tabFrame = getTabFrame(tabIndex, tab.name)
+    tabFrame:SetText(tab.name)
+    local startingFn = MyAccountant:GetDateFunction(tab.startingDate)
+
+    local endingFn = nil
+    if tab.type == "DATE" then
+      endingFn = tab.useStartingDateForEnd and startingFn or MyAccountant:GetDateFunction(tab.endingDate)
+    end
+
+    if previousTab then
+      tabFrame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
+    else
+      tabFrame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT")
+    end
+
+    table.insert(newTabs, {
+      frame = tabFrame,
+      type = tab.type,
+      label = tab.name,
+      startingDateFn = tab.type == "DATE" and startingFn or nil,
+      endingDateFn = endingFn
+    })
+    previousTab = tabFrame
+    tabIndex = tabIndex + 1
+  end
+
+  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)
+  PanelTemplates_SetTab(IncomeFrame, 1)
+
+  Tabs = newTabs
+end
+
 -- Returns a sorted List
-function MyAccountant:GetSortedTable(type, viewType)
+function MyAccountant:GetSortedTable(tab, viewType)
   local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
   local incomeTable = {}
 
-  if Tabs[ActiveTab] == "BALANCE" then
+  if tab.type == "BALANCE" then
     local index = 1
     local data = MyAccountant:GetRealmBalanceTotalDataTable()
 
@@ -35,7 +87,7 @@ function MyAccountant:GetSortedTable(type, viewType)
       index = index + 1
     end
   else
-    incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter, ViewType)
+    incomeTable = MyAccountant:GetIncomeOutcomeTable(tab, nil, selectedCharacter, ViewType)
   end
 
   local function sortingFunction(source1, source2)
@@ -264,17 +316,8 @@ function MyAccountant:InitializeUI()
   totalOutcomeText:SetText(L["header_total_outcome"])
   totalProfitText:SetText(L["header_total_net"])
 
-  IncomeFrameTab1:SetText(L["session"])
-  IncomeFrameTab2:SetText(L["today"])
-  IncomeFrameTab3:SetText(L["this_week"])
-  IncomeFrameTab4:SetText(L["this_month"])
-  IncomeFrameTab5:SetText(L["this_year"])
-  IncomeFrameTab6:SetText(L["all_time"])
-  IncomeFrameTab7:SetText(L["balance"])
-
-  -- Tab configuration
-  PanelTemplates_SetNumTabs(IncomeFrame, 7)
-  PanelTemplates_SetTab(IncomeFrame, 1)
+  -- Tab config
+  MyAccountant:SetupTabs()
 end
 
 local function updateSortingIcons()
@@ -337,48 +380,62 @@ function MyAccountant:updateFrameIfOpen()
   end
 end
 
+local function rerenderTabs()
+  -- Prepare some variables to allow settings easier to configure
+  local currentDate = date("*t")
+  local dayInSeconds = 86400
+
+  local today = time()
+  local startOfWeek = time() - ((currentDate.wday - 1) * dayInSeconds)
+  local startOfMonth = time() - ((currentDate.day - 1) * dayInSeconds)
+  local startOfYear = time() - ((currentDate.yday - 1) * dayInSeconds)
+
+  for _, tab in ipairs(Tabs) do
+    if tab.type == "DATE" then
+      local startingDateValue, startingLabelValue, startingDateSummary =
+          tab.startingDateFn(today, startOfWeek, startOfMonth, startOfYear, dayInSeconds)
+      tab.startingDateValue = startingDateValue
+      if startingLabelValue then
+        tab.frame:SetText(startingLabelValue)
+      end
+      if startingDateSummary then
+        tab.dateSummary = startingDateSummary
+      end
+
+      local endingDateValue, endingLabelValue, endingDateSummary =
+          tab.endingDateFn(today, startOfWeek, startOfMonth, startOfYear, dayInSeconds)
+      tab.endingDateValue = endingDateValue
+      if endingLabelValue then
+        tab.frame:SetText(endingDateValue)
+      end
+      if endingDateSummary then
+        tab.dateSummary = endingDateSummary
+      end
+    end
+  end
+end
+
 function MyAccountant:updateFrame()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
 
-  viewingType:Show()
+  local selectedTab = Tabs[ActiveTab]
 
-  -- Character selection / frame info
-  if Tabs[ActiveTab] == "SESSION" or Tabs[ActiveTab] == "BALANCE" then
-    characterDropdown:Hide()
-  else
+  -- Character selection
+  if selectedTab.type == "DATE" then
     characterDropdown:Show()
+  else
+    characterDropdown:Hide()
   end
 
-  if self.db.char.showBalanceTab then
-    IncomeFrameTab7:Show()
-  else
-    IncomeFrameTab7:Hide()
-  end
-
-  if Tabs[ActiveTab] == "TODAY" then
-    viewingType:SetText(date("%x"))
-  elseif Tabs[ActiveTab] == "WEEK" then
-    local today = date("*t")
-    local firstDayOfWeek = time() - ((today.wday - 1) * 86400)
-    local lastDayOfWeek = firstDayOfWeek + (6 * 86400)
-    viewingType:SetText(date("%x", firstDayOfWeek) .. " - " .. date("%x", lastDayOfWeek))
-  elseif Tabs[ActiveTab] == "MONTH" then
-    viewingType:SetText(date("%B"))
-  elseif Tabs[ActiveTab] == "YEAR" then
-    viewingType:SetText(date("%Y"))
-  else
-    viewingType:Hide()
-  end
+  viewingType:SetText(selectedTab.dateSummary and selectedTab.dateSummary or "")
 
   local frameX = 525
   local frameY = 347
 
-  if Tabs[ActiveTab] == "BALANCE" then
-    sourceHeaderText:SetText(L["character"])
-  elseif ViewType == "SOURCE" then
+  if ViewType == "SOURCE" then
     swapViewButton:SetText(L["income_panel_zones"])
     sourceHeaderText:SetText(L["source_header"])
   else
@@ -386,13 +443,9 @@ function MyAccountant:updateFrame()
     sourceHeaderText:SetText(L["income_panel_zone"])
   end
 
-  if self.db.char.showViewsButton then
+  if self.db.char.showViewsButton and selectedTab.type ~= "BALANCE" then
     swapViewButton:Show()
   else
-    swapViewButton:Hide()
-  end
-
-  if Tabs[ActiveTab] == "BALANCE" then
     swapViewButton:Hide()
   end
 
@@ -474,7 +527,6 @@ function MyAccountant:updateFrame()
   IncomeFrame:SetSize(frameX, frameY)
 
   -- Update header labels
-  local view = Tabs[ActiveTab]
   local income = 0
   local outcome = 0
 
@@ -487,14 +539,10 @@ function MyAccountant:updateFrame()
   incomeHeaderText:SetText(L["incoming_header"])
   outcomeHeaderText:SetText(L["outcoming_header"])
 
-  if view == "SESSION" then
+  if selectedTab.type == "SESSION" then
     income = MyAccountant:GetSessionIncome()
     outcome = MyAccountant:GetSessionOutcome()
-  elseif view == "ALL_TIME" then
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime(selectedCharacter))
-    income = summary.income
-    outcome = summary.outcome
-  elseif view == "BALANCE" then
+  elseif selectedTab.type == "BALANCE" then
     local summary = MyAccountant:GetRealmBalanceTotalDataTable()
     income = summary[1].gold
     outcome = 0
@@ -505,9 +553,8 @@ function MyAccountant:updateFrame()
     totalProfitText:SetText(L["income_panel_hover_realm_total"])
     incomeHeaderText:SetText("")
     outcomeHeaderText:SetText(L["balance"])
-
   else
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(view, nil, selectedCharacter))
+    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(selectedTab, nil, selectedCharacter))
     income = summary.income
     outcome = summary.outcome
   end
@@ -638,8 +685,7 @@ function MyAccountant:DrawRows()
 
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
-  local tableType = Tabs[ActiveTab]
-  local incomeTable = MyAccountant:GetSortedTable(tableType, ViewType)
+  local incomeTable = MyAccountant:GetSortedTable(Tabs[ActiveTab], ViewType)
   local maxHoverLines = self.db.char.maxZonesIncomePanel
   local colorIncome = self.db.char.colorGoldInIncomePanel
 
@@ -769,6 +815,7 @@ function MyAccountant:ShowPanel()
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
     UserSetSort = self.db.char.defaultIncomePanelSort
+    rerenderTabs()
     MyAccountant:updateFrame()
     IncomeFrame:Show()
   end
