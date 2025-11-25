@@ -325,6 +325,7 @@ private.default_settings = {
   infoFrameDataToShow = {},
   showBalanceTab = true,
   rightAlignInfoValues = true,
-  tabs = private.defaultTabs
+  tabs = private.defaultTabs,
+  showTabExport = false
 }
 

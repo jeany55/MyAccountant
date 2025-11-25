@@ -39,19 +39,21 @@ function MyAccountant:SetupTabs()
   local previousTab = nil
 
   for _, tab in ipairs(self.db.char.tabs) do
-    local tabFrame = getTabFrame(tabIndex, tab.name)
-    tabFrame:SetText(tab.name)
-    local dateFn = tab.type == "DATE" and MyAccountant:GetDateFunction(tab.dateExpression) or nil
+    if tab.visible then
+      local tabFrame = getTabFrame(tabIndex, tab.name)
+      tabFrame:SetText(tab.name)
+      local dateFn = tab.type == "DATE" and MyAccountant:GetDateFunction(tab.dateExpression) or nil
 
-    if previousTab then
-      tabFrame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
-    else
-      tabFrame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT")
+      if previousTab then
+        tabFrame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
+      else
+        tabFrame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT")
+      end
+
+      table.insert(newTabs, { frame = tabFrame, type = tab.type, label = tab.name, dateFn = dateFn })
+      previousTab = tabFrame
+      tabIndex = tabIndex + 1
     end
-
-    table.insert(newTabs, { frame = tabFrame, type = tab.type, label = tab.name, dateFn = dateFn })
-    previousTab = tabFrame
-    tabIndex = tabIndex + 1
   end
 
   PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)

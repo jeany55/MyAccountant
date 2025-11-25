@@ -119,12 +119,15 @@ function MyAccountant:SetupAddonOptions()
               if string.trim(val) == "" then
                 return L["option_tab_expression_invalid_unix_timestamp"]
               end
-              local success, unixTime = MyAccountant:ParseDateExpression(val)
+              local success, startDate, endDate, labelText, dateSummaryText = MyAccountant:ParseDateExpression(val)
               if success then
-                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
+                MyAccountant:PrintDebugMessage(
+                    "Lua snippet evaluation successful - returned start " .. startDate .. " and end " .. endDate .. " -- label: " ..
+                        (labelText and labelText or "None, ") .. "dateSummaryText: " ..
+                        (dateSummaryText and dateSummaryText or "None"))
                 return true
               else
-                return unixTime
+                return L["option_tab_expression_invalid_unix_timestamp"]
               end
             end,
             get = function() return dateExpression end,
@@ -309,6 +312,26 @@ function MyAccountant:SetupAddonOptions()
               tab.dateExpression = val
               MyAccountant:SetupTabs()
             end
+          },
+          devDate = {
+            order = 4,
+            name = "Tab libary export",
+            desc = "[DEV OPTION]: The format of this tab for adding to this addon's default tab library",
+            hidden = function() return not self.db.char.showTabExport end,
+            type = "input",
+            multiline = 9,
+            width = "full",
+            get = function()
+              return string.format([=[{
+  id = "%s",
+  name = "%s",
+  type = "%s",
+  visible = %s,
+  ldb = %s,
+  dateExpression = [[%s]]
+}]=], tab.id, tab.name, tab.type, tostring(tab.visible), tostring(tab.ldb), tab.dateExpression)
+            end,
+            set = function() end
           }
         }
       }
@@ -460,9 +483,20 @@ function MyAccountant:SetupAddonOptions()
           show_debug_messages = {
             name = L["option_debug_messages"],
             desc = L["option_debug_messages_desc"],
+            order = 1,
+            width = "full",
             type = "toggle",
             set = function(info, val) self.db.char.showDebugMessages = val end,
             get = function(info) return self.db.char.showDebugMessages end
+          },
+          tab_export = {
+            name = L["option_developer_tab_export"],
+            desc = L["option_developer_tab_export_desc"],
+            order = 2,
+            width = "full",
+            type = "toggle",
+            set = function(info, val) self.db.char.showTabExport = val end,
+            get = function(info) return self.db.char.showTabExport end
           }
         }
       }

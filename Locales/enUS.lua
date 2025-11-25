@@ -8,8 +8,19 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 ----------------------------------------
 --- VERSION 1.8
 ----------------------------------------
+L["yesterday"] = "Yesterday"
+L["two_days_ago"] = "Two Days Ago"
+L["three_days_ago"] = "Three Days Ago"
+L["last_month"] = "Last Month"
+L["last_week"] = "Last Week"
+L["two_weeks_ago"] = "Two Weeks Ago"
+
 L["option_tabs"] = "Tabs"
 L["option_new_tab"] = "New tab"
+
+L["option_developer_tab_export"] = "Show tab export field"
+L["option_developer_tab_export_desc"] =
+    "Shows an input field under tab options containing the necessary LUA export structure for adding to addon's default tabs"
 
 L["option_reset_tabs"] = "Reset tabs to default"
 L["option_reset_tabs_desc"] = "Reset tab configuration to default tabs. |cffff0000Will erase any custom tabs! Irreversible!|r"

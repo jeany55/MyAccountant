@@ -58,5 +58,83 @@ dateSummaryText = date("%Y")]]
 startDate = 1735689600
 endDate = today]]
   },
-  { id = "bdc6f79c", name = L["balance"], type = "BALANCE", dateExpression = "", visible = true, ldb = true }
+  { id = "bdc6f79c", name = L["balance"], type = "BALANCE", dateExpression = "", visible = true, ldb = true },
+  {
+    id = "f49bfaf1",
+    name = L["yesterday"],
+    type = "DATE",
+    visible = false,
+    ldb = false,
+    dateExpression = [[local yesterday = today - oneDay
+
+startDate = yesterday
+endDate = yesterday
+dateSummaryText = date("%x", yesterday)]]
+  },
+  {
+    id = "aed52786",
+    name = L["two_days_ago"],
+    type = "DATE",
+    visible = false,
+    ldb = false,
+    dateExpression = [[local twoDaysAgo = today - (oneDay * 2)
+
+startDate = twoDaysAgo
+endDate = twoDaysAgo
+dateSummaryText = date("%x", twoDaysAgo)]]
+  },
+  {
+    id = "265b7cc9",
+    name = L["three_days_ago"],
+    type = "DATE",
+    visible = false,
+    ldb = false,
+    dateExpression = [[local threeDaysAgo = today - (oneDay * 3)
+
+startDate = threeDaysAgo
+endDate = threeDaysAgo
+dateSummaryText = date("%x", threeDaysAgo)]]
+  },
+  {
+    id = "d58140c5",
+    name = L["last_month"],
+    type = "DATE",
+    visible = false,
+    ldb = false,
+    dateExpression = [[local lastDayOfPreviousMonth = startOfMonth - oneDay
+local data = date("*t", lastDayOfPreviousMonth)
+local firstDayOfPreviousMonth = lastDayOfPreviousMonth - ((data.day - 1) * oneDay)
+
+startDate = firstDayOfPreviousMonth
+endDate = lastDayOfPreviousMonth
+dateSummaryText = date("%x", firstDayOfPreviousMonth) .. " - " .. date("%x", lastDayOfPreviousMonth)]]
+  },
+  {
+    id = "ff219b39",
+    name = L["last_week"],
+    type = "DATE",
+    visible = false,
+    ldb = false,
+    dateExpression = [[local lastDayOfPreviousWeek = startOfWeek - oneDay
+local data = date("*t", lastDayOfPreviousWeek)
+local firstDayOfPreviousWeek = lastDayOfPreviousWeek - ((data.wday - 1) * oneDay)
+
+startDate = firstDayOfPreviousWeek
+endDate = lastDayOfPreviousWeek
+dateSummaryText = date("%x", firstDayOfPreviousWeek) .. " - " .. date("%x", lastDayOfPreviousWeek)]]
+  },
+  {
+    id = "46c6f214",
+    name = L["two_weeks_ago"],
+    type = "DATE",
+    visible = false,
+    ldb = false,
+    dateExpression = [[local lastDayOfTwoWeeksAgo = startOfWeek - (oneDay * 8)
+local data = date("*t", lastDayOfTwoWeeksAgo)
+local firstDayOfTwoWeeksAgo = lastDayOfTwoWeeksAgo - ((data.wday - 1) * oneDay)
+
+startDate = firstDayOfTwoWeeksAgo
+endDate = lastDayOfTwoWeeksAgo
+dateSummaryText = date("%x", firstDayOfTwoWeeksAgo) .. " - " .. date("%x", lastDayOfTwoWeeksAgo)  ]]
+  }
 }
