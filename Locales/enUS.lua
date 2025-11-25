@@ -20,16 +20,11 @@ L["option_reset_tabs_confirm"] =
 L["option_tab_name"] = "Tab label"
 L["option_tab_name_desc"] = "Name of the tab to show on the income panel"
 
-L["option_tab_starting_date"] = "Starting date expression"
-L["option_tab_ending_date"] = "Ending date expression"
-
-L["option_tab_ending_date_use_start"] = "Use starting date expression for ending date"
-L["option_tab_ending_date_use_start_desc"] =
-    "Use starting date expression for ending date, this will limit this tab to showing results from one day only."
+L["option_tab_date_expression"] = "Date expression"
 
 L["option_tab_create"] = "Create tab"
 
-L["option_tab_starting_date_desc"] =
+L["option_tab_date_expression_desc"] =
     "Date expressions are short LUA snippets allowing for advanced configuration of dates. This expression must set dateValue with a unixTime. labelValue may be used to change the label if needed."
 
 L["option_tab_type"] = "Tab type"
@@ -44,6 +39,15 @@ L["option_tab_create_fail"] = "A tab with that name already exists!"
 L["option_tab_expression_invalid_lua"] = "This lua appears to be invalid"
 L["option_tab_expression_invalid_lua_bad"] = "This lua expression failed to execute - check syntax errors!"
 L["option_tab_expression_invalid_unix_timestamp"] = "This lua express needs to return a valid unix timestamp by setting dateValue"
+
+L["option_tab_visible"] = "Visible"
+L["option_tab_visible_desc"] = "Show this tab on the income frame"
+
+L["option_tab_advanced"] = "Advanced Configuration"
+
+L["option_tab_ldb"] = "Register data with LDB"
+L["option_tab_ldb_desc"] =
+    "If selected, data returned from this tab will be registered with LibDataBroker allowing you to see it in other addons like Titan Panel or Bazooka."
 
 L["option_tab_move_left"] = "Move left"
 L["option_tab_move_left_desc"] = "Move this tab left."

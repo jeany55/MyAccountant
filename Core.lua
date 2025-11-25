@@ -258,11 +258,12 @@ end
 function MyAccountant:GetDateFunction(expression)
   local wrappedExpression = [[
     return function(today,startOfWeek,startOfMonth,startOfYear,oneDay)
-      local dateValue = nil
-      local labelValue = nil
-      local dateSummary = nil
+      local startDate = nil
+      local endDate = nil
+      local labelText = nil
+      local dateSummaryText = nil
       %s
-      return dateValue, labelValue, dateSummary
+      return startDate, endDate, labelText, dateSummaryText
     end
   ]]
 
@@ -289,21 +290,32 @@ function MyAccountant:ParseDateExpression(expression)
   local startOfMonth = time() - ((currentDate.day - 1) * dayInSeconds)
   local startOfYear = time() - ((currentDate.yday - 1) * dayInSeconds)
 
-  local success, dateValue, labelValue = pcall(dateFunction, today, startOfWeek, startOfMonth, startOfYear, dayInSeconds)
+  local success, startDate, endDate, labelText, dateSummaryText =
+      pcall(dateFunction, today, startOfWeek, startOfMonth, startOfYear, dayInSeconds)
 
   if not success then
-    return false, L["option_tab_expression_invalid_lua_bad"]
+    return false, L["option_tab_expression_invalid_lua_bad"], nil, nil, nil
   end
 
-  if not dateValue or dateValue == "" then
-    return false, L["option_tab_expression_invalid_unix_timestamp"]
+  if not startDate or startDate == "" then
+    return false, L["option_tab_expression_invalid_unix_timestamp"], nil, nil, nil
   end
 
-  local successDate, _ = pcall(date, "*t", dateValue)
+  if not endDate or endDate == "" then
+    return false, L["option_tab_expression_invalid_unix_timestamp"], nil, nil, nil
+  end
+
+  local successDate, _ = pcall(date, "*t", startDate)
 
   if not successDate then
-    return false, L["option_tab_expression_invalid_unix_timestamp"]
+    return false, L["option_tab_expression_invalid_unix_timestamp"], nil, nil, nil
   end
 
-  return true, dateValue, labelValue
+  local successDate2, _ = pcall(date, "*t", endDate), nil, nil, nil
+
+  if not successDate2 then
+    return false, L["option_tab_expression_invalid_unix_timestamp"], nil, nil, nil
+  end
+
+  return true, startDate, endDate, labelText, dateSummaryText
 end

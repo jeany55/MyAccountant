@@ -11,7 +11,8 @@
 embeds.xml
 
 Locales\Locales.xml
-Constants.lua
+Constants\TabLibrary.lua
+Constants\Constants.lua
 Core.lua
 Utils.lua
 Config.lua

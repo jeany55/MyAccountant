@@ -214,13 +214,13 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
   -- local now = dateOverride and dateOverride or date("*t")
   local data = dataRefOverride and dataRefOverride or {}
 
-  if (tab.startingDateValue > tab.endingDateValue) then
+  if (tab.startDate > tab.endDate) then
     return data
   end
 
-  local unixTime = tab.endingDateValue
+  local unixTime = tab.endDate
 
-  while unixTime >= tab.startingDateValue do
+  while unixTime >= tab.startDate do
     local currentDay = date("*t", unixTime)
     local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
 

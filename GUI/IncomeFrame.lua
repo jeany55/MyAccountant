@@ -41,12 +41,7 @@ function MyAccountant:SetupTabs()
   for _, tab in ipairs(self.db.char.tabs) do
     local tabFrame = getTabFrame(tabIndex, tab.name)
     tabFrame:SetText(tab.name)
-    local startingFn = MyAccountant:GetDateFunction(tab.startingDate)
-
-    local endingFn = nil
-    if tab.type == "DATE" then
-      endingFn = tab.useStartingDateForEnd and startingFn or MyAccountant:GetDateFunction(tab.endingDate)
-    end
+    local dateFn = tab.type == "DATE" and MyAccountant:GetDateFunction(tab.dateExpression) or nil
 
     if previousTab then
       tabFrame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
@@ -54,13 +49,7 @@ function MyAccountant:SetupTabs()
       tabFrame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT")
     end
 
-    table.insert(newTabs, {
-      frame = tabFrame,
-      type = tab.type,
-      label = tab.name,
-      startingDateFn = tab.type == "DATE" and startingFn or nil,
-      endingDateFn = endingFn
-    })
+    table.insert(newTabs, { frame = tabFrame, type = tab.type, label = tab.name, dateFn = dateFn })
     previousTab = tabFrame
     tabIndex = tabIndex + 1
   end
@@ -392,24 +381,15 @@ local function rerenderTabs()
 
   for _, tab in ipairs(Tabs) do
     if tab.type == "DATE" then
-      local startingDateValue, startingLabelValue, startingDateSummary =
-          tab.startingDateFn(today, startOfWeek, startOfMonth, startOfYear, dayInSeconds)
-      tab.startingDateValue = startingDateValue
-      if startingLabelValue then
-        tab.frame:SetText(startingLabelValue)
+      local startDate, endDate, labelText, dateSummaryText = tab.dateFn(today, startOfWeek, startOfMonth, startOfYear,
+                                                                        dayInSeconds)
+      tab.startDate = startDate
+      tab.endDate = endDate
+      if labelText then
+        tab.frame:SetText(labelText)
       end
-      if startingDateSummary then
-        tab.dateSummary = startingDateSummary
-      end
-
-      local endingDateValue, endingLabelValue, endingDateSummary =
-          tab.endingDateFn(today, startOfWeek, startOfMonth, startOfYear, dayInSeconds)
-      tab.endingDateValue = endingDateValue
-      if endingLabelValue then
-        tab.frame:SetText(endingDateValue)
-      end
-      if endingDateSummary then
-        tab.dateSummary = endingDateSummary
+      if dateSummaryText then
+        tab.dateSummary = dateSummaryText
       end
     end
   end

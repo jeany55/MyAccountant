@@ -43,9 +43,9 @@ function MyAccountant:SetupAddonOptions()
   local function makeTabConfig()
     local inputName = ""
     local inputType = "DATE"
-    local startingDate = ""
-    local useStartingDateForEnd = false
-    local endingDate = ""
+    local dateExpression = ""
+    local visible = false
+    local ldb = false
 
     local tabConfig = {
       create = {
@@ -73,7 +73,16 @@ function MyAccountant:SetupAddonOptions()
             get = function() return inputName end,
             set = function(_, val) inputName = string.trim(val) end
           },
-          break1 = { type = "description", order = 2, name = "" },
+          visible = {
+            type = "toggle",
+            width = "full",
+            order = 1.1,
+            name = L["option_tab_visible"],
+            desc = L["option_tab_visible_desc"],
+            get = function() return visible end,
+            set = function(_, val) visible = val end,
+            disabled = function() return inputName == "" end
+          },
           type = {
             type = "select",
             order = 2.5,
@@ -88,14 +97,23 @@ function MyAccountant:SetupAddonOptions()
             get = function() return inputType end,
             set = function(_, val) inputType = val end
           },
-          break2 = { type = "description", order = 2.6, name = "" },
-          startingDate = {
+          ldb = {
+            type = "toggle",
+            width = "full",
+            order = 2.6,
+            name = L["option_tab_ldb"],
+            desc = L["option_tab_ldb_desc"],
+            get = function() return ldb end,
+            set = function(_, val) ldb = val end,
+            disabled = function() return inputName == "" end
+          },
+          dateExpression = {
             type = "input",
-            name = L["option_tab_starting_date"],
-            desc = L["option_tab_starting_date_desc"],
+            name = L["option_tab_date_expression"],
+            desc = L["option_tab_date_expression_desc"],
             disabled = function() return inputType ~= "DATE" or inputName == "" end,
             order = 3,
-            multiline = 9,
+            multiline = 15,
             width = "full",
             validate = function(_, val)
               if string.trim(val) == "" then
@@ -109,41 +127,8 @@ function MyAccountant:SetupAddonOptions()
                 return unixTime
               end
             end,
-            get = function() return startingDate end,
-            set = function(_, val) startingDate = val end
-          },
-          endingDateOption = {
-            type = "toggle",
-            name = L["option_tab_ending_date_use_start"],
-            desc = L["option_tab_ending_date_use_start_desc"],
-            disabled = function() return inputType ~= "DATE" end,
-            width = "full",
-            order = 3.5,
-            get = function() return useStartingDateForEnd end,
-            set = function(_, val) useStartingDateForEnd = val end
-          },
-          endingDate = {
-            type = "input",
-            name = L["option_tab_ending_date"],
-            desc = L["option_tab_starting_date_desc"],
-            disabled = function() return inputType ~= "DATE" or inputName == "" or useStartingDateForEnd end,
-            validate = function(_, val)
-              if string.trim(val) == "" then
-                return L["option_tab_expression_invalid_unix_timestamp"]
-              end
-              local success, unixTime = MyAccountant:ParseDateExpression(val)
-              if success then
-                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
-                return true
-              else
-                return unixTime
-              end
-            end,
-            order = 4,
-            multiline = 9,
-            width = "full",
-            get = function() return endingDate end,
-            set = function(_, val) endingDate = val end
+            get = function() return dateExpression end,
+            set = function(_, val) dateExpression = val end
           },
           createTab = {
             type = "execute",
@@ -155,9 +140,9 @@ function MyAccountant:SetupAddonOptions()
                 id = private.generateUuid(),
                 name = inputName,
                 type = inputType,
-                startingDate = startingDate,
-                endingDate = endingDate,
-                useStartingDateForEnd = useStartingDateForEnd
+                dateExpression = dateExpression,
+                visible = visible,
+                ldb = ldb
               })
 
               makeTabConfig()
@@ -207,7 +192,7 @@ function MyAccountant:SetupAddonOptions()
 
     for _, tab in ipairs(MyAccountant.db.char.tabs) do
       tabConfig[tab.id] = {
-        name = tab.name,
+        name = function() return tab.visible and tab.name or "|cff777777" .. tab.name .. "|r" end,
         order = tabOrder,
         type = "group",
         args = {
@@ -261,7 +246,16 @@ function MyAccountant:SetupAddonOptions()
               MyAccountant:SetupTabs()
             end
           },
-          break3 = { type = "description", order = 2, name = "" },
+          visible = {
+            type = "toggle",
+            width = "full",
+            order = 1.1,
+            name = L["option_tab_visible"],
+            desc = L["option_tab_visible_desc"],
+            get = function() return tab.visible end,
+            set = function(_, val) tab.visible = val end
+          },
+          break3 = { type = "header", order = 2, name = L["option_tab_advanced"] },
           type = {
             type = "select",
             order = 2.5,
@@ -278,10 +272,19 @@ function MyAccountant:SetupAddonOptions()
               MyAccountant:SetupTabs()
             end
           },
-          break4 = { type = "description", order = 2.7, name = "" },
-          startingDate = {
+          ldb = {
+            type = "toggle",
+            width = "full",
+            order = 2.6,
+            name = L["option_tab_ldb"],
+            desc = L["option_tab_ldb_desc"],
+            get = function() return tab.ldb end,
+            set = function(_, val) tab.ldb = val end
+          },
+          dateExpression = {
             type = "input",
-            name = L["option_tab_starting_date"],
+            name = L["option_tab_date_expression"],
+            desc = L["option_tab_date_expression_desc"],
             order = 3,
             multiline = 9,
             width = "full",
@@ -290,55 +293,20 @@ function MyAccountant:SetupAddonOptions()
               if string.trim(val) == "" then
                 return L["option_tab_expression_invalid_unix_timestamp"]
               end
-              local success, unixTime = MyAccountant:ParseDateExpression(val)
+              local success, startDate, endDate, labelText, dateSummaryText = MyAccountant:ParseDateExpression(val)
               if success then
-                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
+                MyAccountant:PrintDebugMessage(
+                    "Lua snippet evaluation successful - returned start " .. startDate .. " and end " .. endDate .. "label: " ..
+                        (labelText and labelText or "None, ") .. "dateSummaryText: " ..
+                        (dateSummaryText and dateSummaryText or "None"))
                 return true
               else
-                return unixTime
-              end
-            end,
-            get = function() return tab.startingDate end,
-            set = function(_, val)
-              tab.startingDate = val
-              MyAccountant:SetupTabs()
-            end
-          },
-          endingDateOption = {
-            type = "toggle",
-            name = L["option_tab_ending_date_use_start"],
-            desc = L["option_tab_ending_date_use_start_desc"],
-            disabled = function() return tab.type ~= "DATE" end,
-            width = "full",
-            order = 3.5,
-            get = function() return tab.useStartingDateForEnd end,
-            set = function(_, val)
-              tab.useStartingDateForEnd = val
-              MyAccountant:SetupTabs()
-            end
-          },
-          endingDate = {
-            type = "input",
-            name = L["option_tab_ending_date"],
-            order = 4,
-            multiline = 9,
-            width = "full",
-            disabled = function() return tab.type ~= "DATE" or tab.useStartingDateForEnd end,
-            validate = function(_, val)
-              if string.trim(val) == "" then
                 return L["option_tab_expression_invalid_unix_timestamp"]
               end
-              local success, unixTime = MyAccountant:ParseDateExpression(val)
-              if success then
-                MyAccountant:PrintDebugMessage("Lua snippet evaluation successful - returned " .. unixTime)
-                return true
-              else
-                return unixTime
-              end
             end,
-            get = function() return tab.endingDate end,
+            get = function() return tab.dateExpression end,
             set = function(_, val)
-              tab.endingDate = val
+              tab.dateExpression = val
               MyAccountant:SetupTabs()
             end
           }
