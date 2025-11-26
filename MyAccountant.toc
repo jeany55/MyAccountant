@@ -1,4 +1,4 @@
-## Interface: 110205
+## Interface: 120000
 ## Title: MyAccountant
 ## Notes: Track where your gold is going or coming from!
 ## Author: Jeany
@@ -20,4 +20,5 @@ GUI\IncomeFrame.lua
 GUI\IncomeFrame.xml
 GUI\InfoFrame.lua
 Income.lua
+
 Events.lua
