@@ -76,7 +76,7 @@ function MyAccountant:SetupAddonOptions()
   end
 
   if not self.db.char.seenVersionMessage1p8 then
-    -- self.db.char.seenVersionMessage1p8 = true
+    self.db.char.seenVersionMessage1p8 = true
     if self.db.char.lastVersion then
       print("|cffff2ebd" .. private.ADDON_NAME .. "|r: " .. string.format(L["version_welcome_message"], private.ADDON_VERSION))
     else

@@ -39,8 +39,6 @@ MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
 
-  self.db.char.tabs = nil
-
   -- Save faction and class color to db for character dropdown/realm totals
   local _, className = UnitClass("player")
   local _, _, _, colorCode = GetClassColor(className)
