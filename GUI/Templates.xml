@@ -7,9 +7,6 @@
       <OnLoad>
                 self:SetFrameLevel(1)
       </OnLoad>
-      <OnClick>
-                MyAccountant:TabClick(self:GetID())
-      </OnClick>
     </Scripts>
   </Button>
 </Ui>

@@ -8,12 +8,40 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 ----------------------------------------
 --- VERSION 1.8
 ----------------------------------------
+L["ldb_name_income"] = "%s - Income"
+L["ldb_name_profit"] = "%s - Profit"
+L["ldb_name_outcome"] = "%s - Outcome"
+
+L["ldb_name_income_character"] = "Income - %s"
+L["ldb_name_outcome_character"] = "Outcome - %s"
+L["ldb_name_profit_character"] = "Profit - %s"
+L["ldb_name_income_realm"] = "Income - %s (Realm)"
+L["ldb_name_outcome_realm"] = "Outcome - %s (Realm)"
+L["ldb_name_profit_realm"] = "Profit - %s (Realm)"
+
+L["option_info_frame_warning"] = ""
+
+L["version_welcome_message"] =
+    "Welcome to %s! Minimap tooltip settings and info frame settings have been reset to defaults. Please check addon options to customize them and your tabs to your liking."
+L["version_first_install_message"] =
+    "All settings have been set to defaults. Please check addon options to customize your minimap tooltip, info frame data options, as well as your tabs!"
+
 L["yesterday"] = "Yesterday"
 L["two_days_ago"] = "Two Days Ago"
 L["three_days_ago"] = "Three Days Ago"
 L["last_month"] = "Last Month"
 L["last_week"] = "Last Week"
 L["two_weeks_ago"] = "Two Weeks Ago"
+
+L["option_tab_text"] =
+    "Tab configuration allows you to specify which tabs you see and in which order. Select a desired tab on the left to enable or disable."
+L["option_tab_linebreak"] = "Automatically linebreak"
+L["option_tab_linebreak_desc"] =
+    "If true a tab that will extend past the income frame edge will automatically line break into a new row of tabs."
+
+L["option_tab_advanced"] = "Advanced mode"
+L["option_tab_advanced_desc"] =
+    "Advanced mode allows you to create new tabs, delete existing ones, and allows for advanced configuration. New tabs require some lua knowledge - you may look at existing tabs for examples."
 
 L["option_tabs"] = "Tabs"
 L["option_new_tab"] = "New tab"
@@ -35,8 +63,7 @@ L["option_tab_date_expression"] = "Date expression"
 
 L["option_tab_create"] = "Create tab"
 
-L["option_tab_date_expression_desc"] =
-    "Date expressions are short LUA snippets allowing for advanced configuration of dates. This expression must set dateValue with a unixTime. labelValue may be used to change the label if needed."
+L["option_tab_date_expression_desc"] = "Date expressions allow for advanced configuration with Lua code."
 
 L["option_tab_type"] = "Tab type"
 L["option_tab_type_desc"] =
@@ -49,12 +76,27 @@ L["option_tab_create_fail"] = "A tab with that name already exists!"
 
 L["option_tab_expression_invalid_lua"] = "This lua appears to be invalid"
 L["option_tab_expression_invalid_lua_bad"] = "This lua expression failed to execute - check syntax errors!"
+
+L["option_tab_expression_missing_startDate"] = "You must set a start date by calling Tab:setStartDate()"
+L["option_tab_expression_missing_endDate"] = "You must set a end date by calling Tab:setEndDate()"
+
+L["option_tab_expression_invalid_startDate"] = "Start date must be a valid unix timestamp (number)"
+L["option_tab_expression_invalid_endDate"] = "End date must be a valid unix timestamp (number)"
+
 L["option_tab_expression_invalid_unix_timestamp"] = "This lua express needs to return a valid unix timestamp by setting dateValue"
 
 L["option_tab_visible"] = "Visible"
 L["option_tab_visible_desc"] = "Show this tab on the income frame"
 
 L["option_tab_advanced"] = "Advanced Configuration"
+
+L["option_tab_info_frame"] = "Register data with information frame"
+L["option_tab_info_frame_desc"] =
+    "If selected, data returned from this tab will be available on the Information Frame. Configured in the Information Frame options."
+
+L["option_tab_minimap"] = "Register data with minimap tooltip options"
+L["option_tab_minimap_desc"] =
+    "If true, data from this tab will be available as summary data on the minimap tooltip options page."
 
 L["option_tab_ldb"] = "Register data with LDB"
 L["option_tab_ldb_desc"] =
@@ -111,22 +153,12 @@ L["option_info_frame_right_align_desc"] = "If false, data will be left aligned i
 L["option_info_frame_items"] = "Information to show"
 L["option_info_frame_lock_desc"] = "Which information to show on the information frame."
 
-L["option_income_frame_balance_tab"] = "Show balance tab"
-L["option_income_frame_balance_tab_desc"] = "Show balance tab, allowing you to see total realm balance"
+L["option_minimap_data"] = "Show summary data from"
+L["option_minimap_data_desc"] = "What data to show on the minimap tooltip"
 
 ----------------------------------------
 --- VERSION 1.6
 -----------------------------------------
-L["option_minimap_balance_style"] = "Show total balance from"
-L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
-
-L["option_minimap_balance_style_character"] = "This character"
-L["option_minimap_balance_style_realm"] = "Realm"
-
-L["option_ldb"] = "Register and update data with LDB"
-L["option_ldb_desc"] =
-    "If true then 'Session Income, 'Session Profit', 'Todays Income', 'Todays Profit' data from MyAccountant will be available in LDB compatible plugins (eg. Bazooka or Titan Panel). Changing this will require reloading your UI to take effect."
-
 L["ldb_loading"] = "Loading"
 L["ldb_session_income"] = "Session Income"
 L["ldb_session_profit"] = "Session Profit"

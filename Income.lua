@@ -1,14 +1,17 @@
 -- Addon namespace
+--- @type nil, MyAccountantPrivate
 local _, private = ...
 local AddonStartTime = time()
 
 local GoldMade = 0
 
+--- @class MyAccountant
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 -- Used for session data and calculating gold per hour
 local totalGoldSession = {}
 
+--- Resets all function data
 function MyAccountant:ResetSession()
   totalGoldSession = {}
   GoldMade = 0
@@ -16,18 +19,21 @@ function MyAccountant:ResetSession()
   MyAccountant:PrintDebugMessage("Reset session")
 end
 
+--- Resets all data for all characters
 function MyAccountant:ResetAllData()
   self.db.factionrealm = {}
   MyAccountant:checkDatabaseDayConfigured()
 end
 
+--- Resets data for current character
 function MyAccountant:ResetCharacterData()
   local playerName = UnitName("player")
   self.db.factionrealm[playerName] = {}
   MyAccountant:checkDatabaseDayConfigured()
 end
 
--- Called to ensure the year and day exists in DB
+--- Called to ensure the year and day exists in DB
+--- @param dateOverride integer? Unix timestamp override, if not provided the current date is used
 function MyAccountant:checkDatabaseDayConfigured(dateOverride)
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
@@ -51,6 +57,8 @@ function MyAccountant:checkDatabaseDayConfigured(dateOverride)
   end
 end
 
+--- Returns the current gold per hour value for the session
+--- @return integer moneyPerHour Money per hour
 function MyAccountant:GetGoldPerHour()
   local totalRunTime = time() - AddonStartTime
   if totalRunTime == 0 then
@@ -67,7 +75,10 @@ function MyAccountant:ResetGoldPerHour()
   MyAccountant:PrintDebugMessage("Reset gold per hour")
 end
 
--- Main function to add income - added to correct day automatically unless third optional param used
+--- Main function to add income - added to correct day automatically unless third optional param used
+--- @param category Source Source
+--- @param amount integer Amount of money to add
+--- @param dateOverride integer? Unix timestamp override, if not provided the current date is used
 function MyAccountant:AddIncome(category, amount, dateOverride)
   MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
@@ -111,7 +122,10 @@ function MyAccountant:AddIncome(category, amount, dateOverride)
   totalGoldSession[category].zones[zone].income = totalGoldSession[category].zones[zone].income + amount
 end
 
--- Main function to add outcome - added to correct day automatically unless third optional param used
+--- Main function to add outcome - added to correct day automatically unless third optional param used
+--- @param category Source Source
+--- @param amount integer Amount of money to add
+--- @param dateOverride integer? Unix timestamp override, if not provided the current date is used
 function MyAccountant:AddOutcome(category, amount, dateOverride)
   MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
@@ -154,9 +168,10 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
   totalGoldSession[category].zones[zone].outcome = totalGoldSession[category].zones[zone].outcome + amount
 end
 
--- dayData - Day data object
--- category - Source type, passing nil will sum the whole day
--- type - "income"/"outcome" - passing nil will return net
+--- Sums day
+--- @param dayData table Day data
+--- @param category Source|nil Category to sum, nil for all
+--- @param type string|nil "income"/"outcome", nil for net
 local function sumDay(dayData, category, type)
 
   if (category == nil) then
@@ -196,14 +211,20 @@ function MyAccountant:FetchDataRow(playerName, year, month, day)
     return {}
   end
 
-  return private.copy(self.db.factionrealm[playerName][year][month][day])
+  return private.utils.copy(self.db.factionrealm[playerName][year][month][day])
 end
 
+---Gets historical data
+---@param tab Tab
+---@param dateOverride any
+---@param characterOverride any
+---@param dataRefOverride any
+---@return table
 function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, dataRefOverride)
   if characterOverride == "ALL_CHARACTERS" then
     local allCharacterData = {}
     for k, _ in pairs(self.db.factionrealm) do
-      MyAccountant:GetHistoricalData(tab, nil, k, allCharacterData)
+      MyAccountant:GetHistoricalData(tab, dateOverride, k, allCharacterData)
     end
     return allCharacterData
   end
@@ -214,13 +235,16 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
   -- local now = dateOverride and dateOverride or date("*t")
   local data = dataRefOverride and dataRefOverride or {}
 
-  if (tab.startDate > tab.endDate) then
+  local startDate = tab:getStartDate()
+  local endDate = tab:getEndDate()
+
+  if (startDate > endDate) then
     return data
   end
 
-  local unixTime = tab.endDate
+  local unixTime = endDate
 
-  while unixTime >= tab.startDate do
+  while unixTime >= startDate do
     local currentDay = date("*t", unixTime)
     local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
 
@@ -267,7 +291,7 @@ function MyAccountant:GetAllTime(characterOverride, refDataOverride)
     return totalledData
   end
 
-  for keyName, yearData in pairs(private.copy(self.db.factionrealm[playerName])) do
+  for keyName, yearData in pairs(private.utils.copy(self.db.factionrealm[playerName])) do
     if keyName ~= "config" then
       for _, monthData in pairs(yearData) do
         for _, dayData in pairs(monthData) do
@@ -327,15 +351,20 @@ function MyAccountant:IsSourceActive(source)
   return false
 end
 
+--- Returns income outcome table for given tab and desired character/date if wanted
+--- @param tab Tab
+--- @param dateOverride integer? Unix timestamp override, if not provided the current date is used
+--- @param characterOverride string? Character name override, if not provided the current character is used
+--- @param viewType ViewType View type, SOURCE or ZONE
 function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride, viewType)
   local table = {}
   local date = dateOverride and dateOverride or date("*t")
   local playerName = characterOverride and characterOverride or UnitName("player")
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-  if tab.type == "SESSION" then
-    table = private.copy(totalGoldSession)
-  elseif tab.type == "ALL_TIME" then
+  if tab:getType() == "SESSION" then
+    table = private.utils.copy(totalGoldSession)
+  elseif tab:getType() == "ALL_TIME" then
     table = MyAccountant:GetAllTime(playerName)
   else
     table = MyAccountant:GetHistoricalData(tab, date, playerName)

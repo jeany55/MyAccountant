@@ -12,10 +12,12 @@
 embeds.xml
 
 Locales\Locales.xml
-Constants\TabLibrary.lua
-Constants\Constants.lua
 Core.lua
 Utils.lua
+Models\Tab.lua
+API\Tabs.lua
+Constants\TabLibrary.lua
+Constants\Constants.lua
 Config.lua
 GUI\Templates.xml
 GUI\IncomeFrame.lua

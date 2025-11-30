@@ -1,31 +1,11 @@
 local _, private = ...
 
+--- @class MyAccountant
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local activeSource = nil
 
 local currentMoney = GetMoney()
-
--- Main money handler
-function MyAccountant:HandlePlayerMoneyChange()
-  local newMoney = GetMoney()
-  local moneyChange = newMoney - currentMoney
-
-  local source = activeSource and activeSource or "OTHER"
-
-  if moneyChange > 0 then
-    MyAccountant:AddIncome(source, moneyChange)
-    MyAccountant:PrintDebugMessage("Added income of |cff00ff00%s|r to %s", GetMoneyString(moneyChange, true), source)
-  elseif moneyChange < 0 then
-    MyAccountant:AddOutcome(source, abs(moneyChange))
-    MyAccountant:PrintDebugMessage("Added outcome of |cffff0000%s|r to %s", GetMoneyString(abs(moneyChange), true), source)
-  end
-
-  currentMoney = newMoney
-  MyAccountant:updateFrameIfOpen()
-end
-
-function MyAccountant:UpdatePlayerBalance() self.db.factionrealm[UnitName("player")].config.gold = GetMoney() end
 
 -- Tracking if mail is from the AH is difficult - not a great event to track it.
 -- Best we can do is check to see if any of the mail is from AH.
@@ -40,10 +20,13 @@ local isMailFromAuctionHouse = function()
   return false
 end
 
--- All event definitions
--- SOURCE must match one of the source definitions in Constants.lua
--- RESET = true will reset the category
--- EXEC is a function to execute when the event happens
+--- @class Event
+--- @field EVENT string
+--- @field SOURCE? string  Must match one of the source definitions in Constants.lua
+--- @field RESET? boolean True will reset the category
+--- @field EXEC? fun(config: table<string, any>, ...: any) Function to execute when the event happens
+
+--- @type Event[]
 local events = {
   -- Trade
   { EVENT = "TRADE_SHOW", SOURCE = "TRADE" },
@@ -126,7 +109,8 @@ local events = {
     EXEC = function()
       MyAccountant:HandlePlayerMoneyChange()
       MyAccountant:UpdatePlayerBalance()
-      MyAccountant:UpdateDataEventData()
+      MyAccountant:UpdateAllTabSummaryData()
+      MyAccountant:UpdateInfoFrameSize()
     end
   },
   {
@@ -134,7 +118,9 @@ local events = {
     EXEC = function()
       currentMoney = GetMoney()
       MyAccountant:UpdatePlayerBalance()
-      MyAccountant:UpdateDataEventData()
+      MyAccountant:UpdateAllTabSummaryData()
+      MyAccountant:UpdateInfoFrameSize()
+      MyAccountant:RerenderInfoFrame()
     end
   },
   {
@@ -146,6 +132,27 @@ local events = {
     end
   }
 }
+
+-- Main money handler
+function MyAccountant:HandlePlayerMoneyChange()
+  local newMoney = GetMoney()
+  local moneyChange = newMoney - currentMoney
+
+  --- @type Source
+  local source = activeSource and activeSource or "OTHER"
+
+  if moneyChange > 0 then
+    MyAccountant:AddIncome(source, moneyChange)
+    MyAccountant:PrintDebugMessage("Added income of |cff00ff00%s|r to %s", GetMoneyString(moneyChange, true), source)
+  elseif moneyChange < 0 then
+    MyAccountant:AddOutcome(source, abs(moneyChange))
+    MyAccountant:PrintDebugMessage("Added outcome of |cffff0000%s|r to %s", GetMoneyString(abs(moneyChange), true), source)
+  end
+  currentMoney = newMoney
+  MyAccountant:updateFrameIfOpen()
+end
+
+function MyAccountant:UpdatePlayerBalance() self.db.factionrealm[UnitName("player")].config.gold = GetMoney() end
 
 local function findEvent(event)
   for _, v in ipairs(events) do
@@ -189,7 +196,7 @@ function MyAccountant:RegisterAllEvents()
 
     if source then
       local versions = private.sources[source].versions
-      registerEvent = private.supportsWoWVersions(versions)
+      registerEvent = private.utils.supportsWoWVersions(versions)
     else
       registerEvent = true
     end

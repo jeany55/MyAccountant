@@ -1,12 +1,17 @@
 -- Addon namespace
+--- @type nil, MyAccountantPrivate
 local _, private = ...
 
-private.ADDON_NAME = "MyAccountant"
-private.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MyAccountant", "Version")
-
+--- @type AceLocale-3.0
 local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-private.GameTypes = {
+--- @class SourceDefinition
+--- @field title string Human readable label of the source
+--- @field versions GameTypes[] List of supported WoW versions for the source
+--- @field required boolean? Whether the source is required and cannot be disabled in settings
+
+--- @enum GameTypes Versions of WoW MyAccountant knows about
+GameTypes = {
   CLASSIC_ERA = "CLASSIC_ERA",
   BCC = "BURNING_CRUSADE",
   WOTLK = "WOTLK",
@@ -14,6 +19,8 @@ private.GameTypes = {
   MISTS_CLASSIC = "MISTS_CLASSIC",
   RETAIL = "RETAIL"
 }
+
+private.GameTypes = GameTypes
 
 private.constants = {
   MINIMAP_ICON = "Interface\\AddOns\\MyAccountant\\Images\\minimap.tga",
@@ -26,185 +33,94 @@ private.constants = {
   GITHUB_ICON = "Interface\\Addons\\MyAccountant\\Images\\github.tga",
   AUTHOR = "Jeany (Nazgrim)",
   GITHUB = "https://github.com/jeany55/MyAccountant",
+  BULLET_POINT = "Interface\\Addons\\MyAccountant\\Images\\bulletPoint.tga",
   FLAGS = {
-    ENGLISH_US = "Interface\\Addons\\MyAccountant\\Images\\Flags\\enUS.tga",
     ENGLISH = "Interface\\Addons\\MyAccountant\\Images\\Flags\\en.tga",
     RUSSIAN = "Interface\\Addons\\MyAccountant\\Images\\Flags\\ru.tga",
     SIMPLIFIED_CHINESE = "Interface\\Addons\\MyAccountant\\Images\\Flags\\cn.tga"
   }
 }
 
-private.ldb_data = {
-  SESSION_INCOME = { label = L["ldb_session_income"], icon = 133784 },
-  SESSION_PROFIT = { label = L["ldb_session_profit"], icon = 133784 },
-  DAILY_INCOME_CHARACTER = { label = L["ldb_daily_income_character"], icon = 133784 },
-  DAILY_NET_CHARACTER = { label = L["ldb_daily_net_character"], icon = 133784 },
-  DAILY_INCOME_REALM = { label = L["ldb_daily_income_realm"], icon = 133784 },
-  DAILY_NET_REALM = { label = L["ldb_daily_net_realm"], icon = 133784 },
-  WEEKLY_NET_CHARACTER = { label = L["ldb_weekly_net_character"], icon = 133784 },
-  WEEKLY_INCOME_CHARACTER = { label = L["ldb_weekly_income_character"], icon = 133784 },
-  WEEKLY_INCOME_REALM = { label = L["ldb_weekly_income_realm"], icon = 133784 },
-  WEEKLY_NET_REALM = { label = L["ldb_weekly_net_realm"], icon = 133784 },
-  FACTION_BALANCE = {
-    label = L["ldb_faction_balance"],
-    icon = 133785,
-    tooltip = function()
-      local MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
-      MyAccountant:MakeRealmTotalTooltip(nil)
-    end
-  }
-}
+--- @enum Source
+--- |'TRAINING_COSTS'
+--- |'TAXI_FARES'
+--- |'LOOT'
+--- |'GUILD'
+--- |'TRADE'
+--- |'MERCHANTS'
+--- |'MAIL'
+--- |'REPAIR'
+--- |'AUCTIONS'
+--- |'QUESTS'
+--- |'TALENTS'
+--- |'LFG'
+--- |'BARBER'
+--- |'TRANSMOGRIFY'
+--- |'GARRISONS'
+--- |'OTHER'
 
 -- All gold source definitions
-private.sources = {
+--- @class SourceDefinitions
+--- @field [Source] SourceDefinition
+local sources = {
   TRAINING_COSTS = {
     title = L["TRAINING_COSTS"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   TAXI_FARES = {
     title = L["TAXI_FARES"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   LOOT = {
     title = L["LOOT"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   GUILD = {
     title = L["GUILD"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   TRADE = {
     title = L["TRADE"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   MERCHANTS = {
     title = L["MERCHANTS"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   MAIL = {
     title = L["MAIL"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   REPAIR = {
     title = L["REPAIR"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   AUCTIONS = {
     title = L["AUCTIONS"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   QUESTS = {
     title = L["QUESTS"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
   TALENTS = {
     title = L["TALENTS"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
   },
-  LFG = {
-    title = L["LFG"],
-    versions = { private.GameTypes.MISTS_CLASSIC, private.GameTypes.WOTLK, private.GameTypes.CATA, private.GameTypes.RETAIL }
-  },
-  BARBER = {
-    title = L["BARBER"],
-    versions = { private.GameTypes.MISTS_CLASSIC, private.GameTypes.WOTLK, private.GameTypes.CATA, private.GameTypes.RETAIL }
-  },
-  TRANSMOGRIFY = {
-    title = L["TRANSMOGRIFY"],
-    versions = { private.GameTypes.CATA, private.GameTypes.MISTS_CLASSIC, private.GameTypes.RETAIL }
-  },
-  GARRISONS = { title = L["GARRISONS"], versions = { private.GameTypes.RETAIL } },
+  LFG = { title = L["LFG"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL } },
+  BARBER = { title = L["BARBER"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL } },
+  TRANSMOGRIFY = { title = L["TRANSMOGRIFY"], versions = { GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL } },
+  GARRISONS = { title = L["GARRISONS"], versions = { GameTypes.RETAIL } },
   OTHER = {
     title = L["OTHER"],
-    versions = {
-      private.GameTypes.CLASSIC_ERA,
-      private.GameTypes.BCC,
-      private.GameTypes.WOTLK,
-      private.GameTypes.CATA,
-      private.GameTypes.MISTS_CLASSIC,
-      private.GameTypes.RETAIL
-    },
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL },
     required = true
   }
 }
 
+private.sources = sources
+
+--- @type Source[]
 local DEFAULT_SOURCES_MISTS_CLASSIC = {
   "TRAINING_COSTS",
   "TAXI_FARES",
@@ -220,6 +136,7 @@ local DEFAULT_SOURCES_MISTS_CLASSIC = {
   "OTHER"
 }
 
+--- @type Source[]
 local DEFAULT_SOURCES_WOTLK = {
   "TRAINING_COSTS",
   "TAXI_FARES",
@@ -236,6 +153,7 @@ local DEFAULT_SOURCES_WOTLK = {
   "OTHER"
 }
 
+--- @type Source[]
 local DEFAULT_SOURCES_RETAIL = {
   "TRAINING_COSTS",
   "TAXI_FARES",
@@ -252,6 +170,7 @@ local DEFAULT_SOURCES_RETAIL = {
   "OTHER"
 }
 
+--- @type Source[]
 local DEFAULT_SOURCES_CLASSIC_ERA = {
   "TRAINING_COSTS",
   "TAXI_FARES",
@@ -273,22 +192,22 @@ local wowVersion
 
 if buildVersion < 20000 then
   defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
-  wowVersion = private.GameTypes.CLASSIC_ERA
+  wowVersion = GameTypes.CLASSIC_ERA
 elseif buildVersion < 30000 then
   defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
-  wowVersion = private.GameTypes.BCC
+  wowVersion = GameTypes.BCC
 elseif buildVersion < 40000 then
   defaultSources = DEFAULT_SOURCES_WOTLK
-  wowVersion = private.GameTypes.WOTLK
+  wowVersion = GameTypes.WOTLK
 elseif buildVersion < 50000 then
   defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
-  wowVersion = private.GameTypes.CATA
+  wowVersion = GameTypes.CATA
 elseif buildVersion < 60000 then
   defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
-  wowVersion = private.GameTypes.MISTS_CLASSIC
+  wowVersion = GameTypes.MISTS_CLASSIC
 elseif buildVersion > 90000 then
   defaultSources = DEFAULT_SOURCES_RETAIL
-  wowVersion = private.GameTypes.RETAIL
+  wowVersion = GameTypes.RETAIL
 end
 
 private.wowVersion = wowVersion
@@ -304,7 +223,7 @@ private.default_settings = {
   tooltipStyle = "INCOME_OUTCOME",
   leftClickMinimap = "OPEN_INCOME_PANEL",
   rightClickMinimap = "RESET_GOLD_PER_HOUR",
-  minimapData = "SESSION",
+  minimapDataV2 = format(L["ldb_name_profit"], L["session"]),
   defaultIncomePanelSort = "NOTHING",
   colorGoldInIncomePanel = false,
   showLines = true,
@@ -319,13 +238,13 @@ private.default_settings = {
   showRealmGoldTotals = true,
   minimapTotalBalance = "CHARACTER",
   registerLDBData = true,
-  showInfoFrame = false,
+  showInfoFrameV2 = false,
   requireShiftToMove = true,
   lockInfoFrame = false,
-  infoFrameDataToShow = {},
-  showBalanceTab = true,
+  infoFrameDataToShowV2 = {},
   rightAlignInfoValues = true,
-  tabs = private.defaultTabs,
+  tabLinebreak = true,
+  tabAdvancedMode = false,
   showTabExport = false
 }
 
