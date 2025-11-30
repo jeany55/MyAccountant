@@ -27,12 +27,12 @@ UserSetSort = nil
 --- @field id integer Id used when creating the tab
 --- @field frame CharacterFrameTabTemplate
 
---- @type table<string, FrameRefInfo>
 local tabFrames = {}
 
 --- @class IncomeFrameTab
 --- @field frame FrameRefInfo WoW tab frame info
 --- @field tab Tab Tab object reference
+--- @field tabIndex integer Index of the tab
 
 --- @type table<string, IncomeFrameTab>
 local incomeFrameTabs = {}
@@ -42,26 +42,19 @@ IncomeFrame = IncomeFrame
 
 local frameCreationIndex = 1
 
---- Gets or instantiates tab frame
---- @param tab Tab Tab instance
---- @return FrameRefInfo frame WoW tab frame
-local function getTabFrame(tab)
-  local name = tab:getName()
-
-  if tabFrames[name] then
-    return tabFrames[name]
+--- Gets tab frame
+--- @param index number
+--- @return Frame
+local function getTabFrame(index)
+  if tabFrames[index] then
+    return tabFrames[index]
   else
     local frame = CreateFrame("Button", "$parentTab" .. frameCreationIndex, IncomeFrame, "MyAccountantTabTemplate",
                               frameCreationIndex)
-    frame:SetScript("OnClick", function() MyAccountant:TabClick(tab, frameCreationIndex) end)
 
-    --- @type FrameRefInfo
-    local frameRef = { id = frameCreationIndex, frame = frame }
-
-    tabFrames[name] = frameRef
-
+    table.insert(tabFrames, frame)
     frameCreationIndex = frameCreationIndex + 1
-    return frameRef
+    return frame
   end
 end
 
@@ -71,32 +64,69 @@ function MyAccountant:SetupTabs()
   local newTabs = {}
   local tabIndex = 1
   local previousTab = nil
+  local firstItemInRow = nil
+  local row = 1
+  local tabIndex = 1
+  local lineBreak = false
+
+  for _, tabFrame in ipairs(tabFrames) do
+    tabFrame:ClearAllPoints()
+    tabFrame:Hide()
+  end
 
   for _, tab in ipairs(self.db.char.tabs) do
     --- @type Tab
     tab = tab
 
+    local currentTabIndex = tabIndex
+
     if tab:getVisible() then
-      local frameName = tab:getName()
-      local tabLabel = tab:getLabel()
-      local tabFrame = getTabFrame(tab)
+      local frame = getTabFrame(tabIndex)
+      frame:ClearAllPoints()
+      frame:SetText(tab:getLabel())
+      frame:Show()
+      frame:SetFrameLevel(250 + row)
+      frame:SetScript("OnClick", function()
+        frame:SetFrameLevel(400)
 
-      newTabs[frameName] = { frame = tabFrame, tab = tab }
+        MyAccountant:TabClick(tab, frame:GetID())
+        PanelTemplates_SetTab(IncomeFrame, currentTabIndex)
+      end)
 
-      tabFrame.frame:SetText(tabLabel)
-
-      if previousTab then
-        tabFrame.frame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
+      if not previousTab then
+        frame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
+      elseif lineBreak then
+        frame:SetPoint("TOPLEFT", firstItemInRow, "BOTTOMLEFT", 15, 7)
+        firstItemInRow = frame
+        row = row + 1
       else
-        tabFrame.frame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT")
+        frame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
       end
 
-      previousTab = tabFrame.frame
+      if tabIndex == 1 then
+        -- Load this data immediately
+        ActiveTab = tab
+        MyAccountant:updateFrame()
+      end
+
+      frame:SetFrameLevel(250 - row)
+
+      if not firstItemInRow then
+        firstItemInRow = frame
+      end
+
+      if tab:getLineBreak() then
+        lineBreak = true
+      else
+        lineBreak = false
+      end
+
+      previousTab = frame
       tabIndex = tabIndex + 1
     end
   end
 
-  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)
+  PanelTemplates_SetNumTabs(IncomeFrame, frameCreationIndex - 1)
   PanelTemplates_SetTab(IncomeFrame, 1)
 
   incomeFrameTabs = newTabs
@@ -195,6 +225,8 @@ function MyAccountant:InitializeUI()
   playerCharacter.Portrait:SetAllPoints()
   SetPortraitTexture(playerCharacter.Portrait, "player")
 
+  IncomeFrame:SetWidth(self.db.char.incomeFrameWidth)
+
   -- Setup character dropdown
   LibDD:UIDropDownMenu_Initialize(characterDropdown, function()
     local icon
@@ -249,6 +281,8 @@ function MyAccountant:InitializeUI()
   IncomeFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
   IncomeFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 
+  IncomeFrame:SetFrameLevel(100)
+
   -- Backdrop
   legendFrame:SetFrameLevel(2)
   legendFrame:SetBackdrop({
@@ -284,7 +318,7 @@ function MyAccountant:InitializeUI()
     row:SetThickness(1)
     row:SetColorTexture(1, 1, 1, 0.1)
     row:SetStartPoint("BOTTOMLEFT", "legendFrame", 7, startingRowHeight)
-    row:SetEndPoint("BOTTOMLEFT", "legendFrame", legendFrame:GetWidth() - 4, startingRowHeight)
+    row:SetEndPoint("RIGHT", IncomeFrame, -3, startingRowHeight + 80)
     table.insert(RenderedLines, row)
     startingRowHeight = startingRowHeight - 20
   end
@@ -447,7 +481,7 @@ function MyAccountant:updateFrame()
 
   viewingType:SetText(selectedTab:getDateSummaryText() or "")
 
-  local frameX = 525
+  local frameX = self.db.char.incomeFrameWidth
   local frameY = 347
 
   if ViewType == "SOURCE" then

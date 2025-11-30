@@ -27,6 +27,7 @@ local TabType = { DATE = "DATE", SESSION = "SESSION", BALANCE = "BALANCE" }
 --- @field private _labelColor string
 --- @field _tabType TabType
 --- @field private _startDate integer
+--- @field _lineBreak boolean
 --- @field private _endDate integer
 --- @field _id string
 --- @field private _dataInstances table<string, TabDataInstance>
@@ -40,6 +41,7 @@ Tab.__index = Tab
 --- @field infoFrameEnabled boolean?
 --- @field minimapSummaryEnabled boolean?
 --- @field luaExpression string?
+--- @field lineBreak boolean?
 --- @field id string?
 --- @field visible boolean
 local TabConstructOptionsDefault = {
@@ -48,6 +50,7 @@ local TabConstructOptionsDefault = {
   ldbEnabled = false,
   infoFrameEnabled = false,
   minimapSummaryEnabled = false,
+  lineBreak = false,
   luaExpression = "",
   id = nil
 }
@@ -80,6 +83,8 @@ function Tab:construct(options)
   tab._startDate = -1
   --- @type integer Unix timestamp
   tab._endDate = -1
+  --- @type boolean
+  tab._lineBreak = options.lineBreak or TabConstructOptionsDefault.lineBreak
   --- @type table
   tab._customOptionFields = {}
   --- @type string Lua expression for date setup
@@ -202,6 +207,14 @@ function Tab:setDateSummaryText(text) self._dateSummaryLabel = text end
 --- Gets whether or not this tab is eligible to show on the info frame
 --- @return boolean infoFrameStatus
 function Tab:getInfoFrameEnabled() return self._infoFrameEnabled end
+
+--- Returns whether or not this tab has a line break after it in the income frame
+--- @return boolean lineBreak
+function Tab:getLineBreak() return self._lineBreak end
+
+--- Sets whether or not this tab has a line break after it in the income frame
+--- @param lineBreak boolean
+function Tab:setLineBreak(lineBreak) self._lineBreak = lineBreak end
 
 --- Sets whether or not this tab is eligible to show on the info frame
 --- @param enabled boolean

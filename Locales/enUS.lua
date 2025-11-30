@@ -19,7 +19,12 @@ L["ldb_name_income_realm"] = "Income - %s (Realm)"
 L["ldb_name_outcome_realm"] = "Outcome - %s (Realm)"
 L["ldb_name_profit_realm"] = "Profit - %s (Realm)"
 
-L["option_info_frame_warning"] = ""
+L["option_tab_linebreak"] = "Linebreak after this tab"
+L["option_tab_linebreak_desc"] =
+    "If true, this tab will be the last tab on the current row in the income panel. The next one will be on a new row."
+
+L["option_income_frame_width"] = "Income frame width"
+L["option_income_frame_width_desc"] = "The width of the income frame."
 
 L["version_welcome_message"] =
     "Welcome to %s! Minimap tooltip settings and info frame settings have been reset to defaults. Please check addon options to customize them and your tabs to your liking."
@@ -35,9 +40,6 @@ L["two_weeks_ago"] = "Two Weeks Ago"
 
 L["option_tab_text"] =
     "Tab configuration allows you to specify which tabs you see and in which order. Select a desired tab on the left to enable or disable."
-L["option_tab_linebreak"] = "Automatically linebreak"
-L["option_tab_linebreak_desc"] =
-    "If true a tab that will extend past the income frame edge will automatically line break into a new row of tabs."
 
 L["option_tab_advanced"] = "Advanced mode"
 L["option_tab_advanced_desc"] =

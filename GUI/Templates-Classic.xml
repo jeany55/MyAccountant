@@ -5,7 +5,7 @@
   <Button name="MyAccountantTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">
     <Scripts>
       <OnLoad>
-                self:SetFrameLevel(1)
+        self:SetFrameLevel(5)
       </OnLoad>
     </Scripts>
   </Button>

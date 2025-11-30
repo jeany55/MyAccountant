@@ -86,8 +86,9 @@ local Utils = {
   --- @param index2 integer
   swapItemInArray = function(table, index1, index2)
     -- Copy refs for safety
-    local intermediary1 = private.utils.copy(table[index1])
-    local intermediary2 = private.utils.copy(table[index2])
+    print("copy")
+    local intermediary1 = table[index1]
+    local intermediary2 = table[index2]
 
     table[index1] = intermediary2
     table[index2] = intermediary1

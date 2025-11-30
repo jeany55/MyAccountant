@@ -89,7 +89,8 @@ Tab:setEndDate(DateUtils.getToday())]]
     visible = true,
     ldbEnabled = true,
     infoFrameEnabled = true,
-    minimapSummaryEnabled = false
+    minimapSummaryEnabled = false,
+    lineBreak = true
   }),
   Tab:construct({
     id = "dae4c72b",

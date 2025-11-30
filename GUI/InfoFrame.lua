@@ -232,7 +232,7 @@ end
 --- Updates the show/hidden and lock status of the information frame
 function MyAccountant:UpdateInformationFrameStatus()
   infoFrame:SetMovable(not self.db.char.lockInfoFrame)
-  if self.db.char.showInfoFrame then
+  if self.db.char.showInfoFrameV2 then
     infoFrame:Show()
   else
     infoFrame:Hide()

@@ -245,6 +245,7 @@ private.default_settings = {
   rightAlignInfoValues = true,
   tabLinebreak = true,
   tabAdvancedMode = false,
-  showTabExport = false
+  showTabExport = false,
+  incomeFrameWidth = 525
 }
 

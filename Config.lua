@@ -58,6 +58,7 @@ function MyAccountant:SetupAddonOptions()
         infoFrameEnabled = tab._infoFrameEnabled,
         minimapSummaryEnabled = tab._minimapSummaryEnabled,
         luaExpression = tab._luaExpression,
+        lineBreak = tab._lineBreak,
         id = tab._id,
         visible = tab._visible
       }))
@@ -96,6 +97,7 @@ function MyAccountant:SetupAddonOptions()
     local minimapShow = false
     local infoFrameShow = false
     local ldb = false
+    local lineBreak = false
 
     local tabConfig = {
       tabDesc = { type = "description", name = L["option_tab_text"], order = 0 },
@@ -104,19 +106,10 @@ function MyAccountant:SetupAddonOptions()
         inline = true,
         name = L["option_general"],
         args = {
-          lineBreak = {
-            type = "toggle",
-            width = "full",
-            order = 1,
-            name = L["option_tab_linebreak"],
-            desc = L["option_tab_linebreak_desc"],
-            get = function() return self.db.char.tabLinebreak end,
-            set = function(_, val) self.db.char.tabLinebreak = val end
-          },
           advancedMode = {
             type = "toggle",
             width = "full",
-            order = 2,
+            order = 1,
             name = L["option_tab_advanced"],
             desc = L["option_tab_advanced_desc"],
             get = function() return self.db.char.tabAdvancedMode end,
@@ -158,6 +151,16 @@ function MyAccountant:SetupAddonOptions()
             desc = L["option_tab_visible_desc"],
             get = function() return visible end,
             set = function(_, val) visible = val end,
+            disabled = function() return inputName == "" end
+          },
+          lineBreak = {
+            type = "toggle",
+            width = "full",
+            order = 2,
+            name = L["option_tab_linebreak"],
+            desc = L["option_tab_linebreak_desc"],
+            get = function() return lineBreak end,
+            set = function(_, val) lineBreak = val end,
             disabled = function() return inputName == "" end
           },
           type = {
@@ -261,6 +264,7 @@ function MyAccountant:SetupAddonOptions()
       local index = tabOrder
 
       return function()
+        print("moving tab left", index, index - 1)
         private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index - 1)
         makeTabConfig()
         forceConfigRerender()
@@ -366,6 +370,18 @@ function MyAccountant:SetupAddonOptions()
             get = function() return tab:getVisible() end,
             set = function(_, val)
               tab:setVisible(val)
+              MyAccountant:SetupTabs()
+            end
+          },
+          lineBreak = {
+            type = "toggle",
+            width = "full",
+            order = 1.12,
+            name = L["option_tab_linebreak"],
+            desc = L["option_tab_linebreak_desc"],
+            get = function() return tab:getLineBreak() end,
+            set = function(_, val)
+              tab:setLineBreak(val)
               MyAccountant:SetupTabs()
             end
           },
@@ -970,6 +986,18 @@ function MyAccountant:SetupAddonOptions()
             disabled = function() return self.db.char.showIncomePanelBottom == false end,
             set = function(info, val) self.db.char.showRealmGoldTotals = val end,
             get = function(info) return self.db.char.showRealmGoldTotals end
+          },
+          income_frame_width = {
+            order = 6.5,
+            name = L["option_income_frame_width"],
+            desc = L["option_income_frame_width_desc"],
+            type = "range",
+            width = "full",
+            min = 450,
+            max = 800,
+            step = 1,
+            set = function(info, val) self.db.char.incomeFrameWidth = val end,
+            get = function(info) return self.db.char.incomeFrameWidth end
           },
           max_zones = {
             order = 7,
