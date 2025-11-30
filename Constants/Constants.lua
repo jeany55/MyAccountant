@@ -246,6 +246,6 @@ private.default_settings = {
   tabLinebreak = true,
   tabAdvancedMode = false,
   showTabExport = false,
-  incomeFrameWidth = 525
+  incomeFrameWidth = 532
 }
 

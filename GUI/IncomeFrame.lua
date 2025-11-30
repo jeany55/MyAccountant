@@ -68,6 +68,7 @@ function MyAccountant:SetupTabs()
   local row = 1
   local tabIndex = 1
   local lineBreak = false
+  local numTabs = 0
 
   for _, tabFrame in ipairs(tabFrames) do
     tabFrame:ClearAllPoints()
@@ -78,20 +79,36 @@ function MyAccountant:SetupTabs()
     --- @type Tab
     tab = tab
 
-    local currentTabIndex = tabIndex
+    if tab:getVisible() then
+      local tabframe = getTabFrame(tabIndex)
+      tabframe:Show()
+      tabframe:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
+      if tabIndex == 1 then
+        -- Load this data immediately
+        ActiveTab = tab
+        MyAccountant:updateFrame()
+      end
+      tabIndex = tabIndex + 1
+    end
+  end
 
+  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)
+  PanelTemplates_SetTab(IncomeFrame, 1)
+
+  -- On retail, it rerenders all the tabs (breaking linebreaks) so we need to reposition them after creating them
+  local previousTab = nil
+  local firstItemInRow = nil
+  local lineBreak = false
+  local row = 1
+  local tabIndex = 1
+  for _, tab in ipairs(self.db.char.tabs) do
+    --- @type Tab
+    local tab = tab
     if tab:getVisible() then
       local frame = getTabFrame(tabIndex)
-      frame:ClearAllPoints()
-      frame:SetText(tab:getLabel())
-      frame:Show()
-      frame:SetFrameLevel(250 + row)
-      frame:SetScript("OnClick", function()
-        frame:SetFrameLevel(400)
-
-        MyAccountant:TabClick(tab, frame:GetID())
-        PanelTemplates_SetTab(IncomeFrame, currentTabIndex)
-      end)
+      if not firstItemInRow then
+        firstItemInRow = frame
+      end
 
       if not previousTab then
         frame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
@@ -103,33 +120,20 @@ function MyAccountant:SetupTabs()
         frame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
       end
 
-      if tabIndex == 1 then
-        -- Load this data immediately
-        ActiveTab = tab
-        MyAccountant:updateFrame()
-      end
-
       frame:SetFrameLevel(250 - row)
+      frame:SetScript("OnClick", function()
+        if row == 1 then
+          frame:SetFrameLevel(400)
+        end
 
-      if not firstItemInRow then
-        firstItemInRow = frame
-      end
-
-      if tab:getLineBreak() then
-        lineBreak = true
-      else
-        lineBreak = false
-      end
-
+        MyAccountant:TabClick(tab, frame:GetID())
+        PanelTemplates_SetTab(IncomeFrame, currentTabIndex)
+      end)
+      lineBreak = tab:getLineBreak()
       previousTab = frame
       tabIndex = tabIndex + 1
     end
   end
-
-  PanelTemplates_SetNumTabs(IncomeFrame, frameCreationIndex - 1)
-  PanelTemplates_SetTab(IncomeFrame, 1)
-
-  incomeFrameTabs = newTabs
 end
 
 --- Returns a sorted list of income and outcome data
