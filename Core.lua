@@ -45,6 +45,10 @@ function MyAccountant:OnInitialize()
   if not self.db.factionrealm[UnitName("player")] then
     self.db.factionrealm[UnitName("player")] = {}
   end
+  if self.db.realm.warBandGold == nil then
+    self.db.realm.warBandGold = 0
+    self.db.realm.seenWarband = false
+  end
   self.db.factionrealm[UnitName("player")].config = {
     classColor = colorCode,
     faction = UnitFactionGroup("player"),

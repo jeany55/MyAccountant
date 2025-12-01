@@ -468,7 +468,6 @@ end
 
 function MyAccountant:GetRealmBalanceTotalDataTable()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
-
   local data = {}
   local goldTotal = 0
   local numberOfCharacters = 0
@@ -484,6 +483,12 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
       })
       numberOfCharacters = numberOfCharacters + 1
     end
+  end
+
+  local warbandGold = self.db.realm.warBandGold or 0
+  if (self.db.char.showWarbandInRealmBalance and self.db.realm.seenWarband) then
+    goldTotal = goldTotal + warbandGold
+    table.insert(data, { name = "|T939375:0|t " .. L["warband"], gold = warbandGold })
   end
 
   table.sort(data, function(a, b) return a.gold > b.gold end)

@@ -12,9 +12,14 @@ L["ldb_name_income"] = "%s - Income"
 L["ldb_name_profit"] = "%s - Profit"
 L["ldb_name_outcome"] = "%s - Outcome"
 
+L["warband"] = "Warband"
+L["option_show_warband_in_realm_balance"] = "Show Warband balance in realm balance totals"
+L["option_show_warband_in_realm_balance_desc"] =
+    "If enabled, Warband balance will be included in realm balance tooltips. The Warband balance is updated when you open your bank."
+
 L["option_tab_developer_export"] = "Tab libary export"
 L["option_tab_developer_export_desc"] =
-    "[Developer Option}: Shows the LUA code necessary to add this tab to the addon's default tab library."
+    "[Developer Option]: Shows the LUA code necessary to add this tab to the addon's default tab library."
 
 L["ldb_name_income_character"] = "Income - %s"
 L["ldb_name_outcome_character"] = "Outcome - %s"

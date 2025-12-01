@@ -103,6 +103,8 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_OPENED", SOURCE = "GARRISONS" },
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
+  -- Bank (Warband)
+  { EVENT = "BANKFRAME_OPENED", EXEC = function() MyAccountant:UpdateWarbandBalance() end },
   -- Main
   {
     EVENT = "PLAYER_MONEY",
@@ -153,6 +155,19 @@ function MyAccountant:HandlePlayerMoneyChange()
 end
 
 function MyAccountant:UpdatePlayerBalance() self.db.factionrealm[UnitName("player")].config.gold = GetMoney() end
+
+--- Updates the Warband balance from the bank (Retail only)
+function MyAccountant:UpdateWarbandBalance()
+  if private.wowVersion == GameTypes.RETAIL then
+    local warbandBalance = C_Bank.FetchDepositedMoney(Enum.BankType.Account)
+
+    if warbandBalance then
+      self.db.realm.warBandGold = warbandBalance
+      self.db.realm.seenWarband = true
+      MyAccountant:PrintDebugMessage("Updated known Warband balance to %s", GetMoneyString(warbandBalance, true))
+    end
+  end
+end
 
 local function findEvent(event)
   for _, v in ipairs(events) do
