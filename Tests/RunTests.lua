@@ -262,6 +262,8 @@ tremove = table.remove
 unpack = unpack or table.unpack
 FindInTableIf = function (tbl, pred) for k,v in pairs(tbl) do if pred(v) then return k, v end end end
 time = function(...) return math.floor(os.time(...)) end
+date = os.date
+random = math.random
 max = math.max
 min = math.min
 ceil = math.ceil
@@ -450,7 +452,7 @@ fire("ADDON_LOADED", "WoWUnit")
 
 -- Import addon
 import(importPath .. "/" .. Name .. ".toc")
-import("Tests.Tests.tests")
+import("Tests.Tests.IncomeTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)

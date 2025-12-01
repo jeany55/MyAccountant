@@ -8,6 +8,9 @@ local Name = ...
 local Tests = WoWUnit(Name .. ".IncomeTests")
 local AssertEqual, Replace = WoWUnit.AreEqual, WoWUnit.Replace
 
+-- Access private Tab class from addon namespace
+local _, private = ...
+
 local function setSources()
   MyAccountant.db.char.sources = {
     "TRAINING_COSTS",
@@ -22,6 +25,38 @@ local function setSources()
     "QUESTS",
     "OTHER"
   }
+end
+
+-- Helper function to create a "TODAY" tab
+local function createTodayTab()
+  local Tab = private.Tab
+  local tab = Tab:construct({
+    tabName = "TestToday",
+    tabType = "DATE",
+    visible = true
+  })
+  -- Set dates for today
+  local today = time()
+  tab:setStartDate(today)
+  tab:setEndDate(today)
+  return tab
+end
+
+-- Helper function to create a "WEEK" tab with specific date
+local function createWeekTab(endDateTimestamp)
+  local Tab = private.Tab
+  local DateUtils = private.ApiUtils.DateUtils
+  local tab = Tab:construct({
+    tabName = "TestWeek",
+    tabType = "DATE",
+    visible = true
+  })
+  
+  -- Calculate start of week for the given date
+  local startOfWeek = DateUtils.getStartOfWeek(endDateTimestamp)
+  tab:setStartDate(startOfWeek)
+  tab:setEndDate(endDateTimestamp)
+  return tab
 end
 
 function Tests.TestSessionIncome_1()
@@ -120,7 +155,8 @@ function Tests.TestDailyIncome_1()
   MyAccountant:AddIncome("OTHER", 123)
   MyAccountant:AddIncome("LOOT", 4324)
   MyAccountant:AddIncome("MERCHANTS", 11)
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
 
   AssertEqual(123, table.OTHER.income)
   AssertEqual(4324, table.LOOT.income)
@@ -151,7 +187,8 @@ function Tests.TestDailyIncome_2()
   MyAccountant:AddIncome("LOOT", 12)
   MyAccountant:AddIncome("MERCHANTS", 141)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
 
   AssertEqual(16791, table.OTHER.income)
   AssertEqual(5680, table.LOOT.income)
@@ -173,7 +210,8 @@ function Tests.TestDailyOutcome_1()
   MyAccountant:AddOutcome("LOOT", 4324)
   MyAccountant:AddOutcome("MERCHANTS", 11)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
 
   AssertEqual(123, table.OTHER.outcome)
   AssertEqual(4324, table.LOOT.outcome)
@@ -205,7 +243,8 @@ function Tests.TestDailyOutcome_2()
   MyAccountant:AddOutcome("LOOT", 12)
   MyAccountant:AddOutcome("MERCHANTS", 141)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("TODAY", nil, nil, "SOURCE")
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
 
   AssertEqual(4448, table.OTHER.outcome)
   AssertEqual(5680, table.LOOT.outcome)
@@ -237,7 +276,8 @@ function Tests.TestWeeklyIncome_1()
   MyAccountant:AddIncome("OTHER", 100, july9)
   MyAccountant:AddIncome("OTHER", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
+  local tab = createWeekTab(1751960666 + 172800)
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(300, table.OTHER.income)
 end
@@ -271,7 +311,8 @@ function Tests.TestWeeklyIncome_2()
   -- Default settings has LFG disabled, this will be talled in OTHER
   MyAccountant:AddIncome("LFG", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
+  local tab = createWeekTab(1751960666 + 172800)
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(400, table.OTHER.income)
   AssertEqual(200, table.TRADE.income)
@@ -303,7 +344,8 @@ function Tests.TestWeeklyOutcome_1()
   MyAccountant:AddOutcome("OTHER", 100, july9)
   MyAccountant:AddOutcome("OTHER", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
+  local tab = createWeekTab(1751960666 + 172800)
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(300, table.OTHER.outcome)
 end
@@ -337,7 +379,8 @@ function Tests.TestWeeklyOutcome_2()
   -- Default settings has LFG disabled, this will be talled in OTHER
   MyAccountant:AddOutcome("LFG", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
+  local tab = createWeekTab(1751960666 + 172800)
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(400, table.OTHER.outcome)
   AssertEqual(200, table.TRADE.outcome)
@@ -389,7 +432,8 @@ function Tests.TestWeekly_IncomeOutcome()
   -- Default settings has LFG disabled, this will be talled in OTHER
   MyAccountant:AddIncome("LFG", 100, july10)
 
-  local table = MyAccountant:GetIncomeOutcomeTable("WEEK", july10, nil, "SOURCE")
+  local tab = createWeekTab(1751960666 + 172800)
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(600, table.OTHER.income)
   AssertEqual(200, table.TRADE.income)
@@ -402,4 +446,166 @@ function Tests.TestWeekly_IncomeOutcome()
   local summary = MyAccountant:SummarizeData(table)
   AssertEqual(1122, summary.income)
   AssertEqual(110, summary.outcome)
+end
+
+-- Test SESSION tab type with GetIncomeOutcomeTable
+function Tests.TestSessionTab()
+  setSources()
+  MyAccountant:ResetSession()
+  
+  MyAccountant:AddIncome("LOOT", 100)
+  MyAccountant:AddIncome("QUESTS", 200)
+  MyAccountant:AddOutcome("MERCHANTS", 50)
+  
+  local Tab = private.Tab
+  local sessionTab = Tab:construct({
+    tabName = "TestSession",
+    tabType = "SESSION",
+    visible = true
+  })
+  
+  local table = MyAccountant:GetIncomeOutcomeTable(sessionTab, nil, nil, "SOURCE")
+  
+  AssertEqual(100, table.LOOT.income)
+  AssertEqual(200, table.QUESTS.income)
+  AssertEqual(50, table.MERCHANTS.outcome)
+  
+  local summary = MyAccountant:SummarizeData(table)
+  AssertEqual(300, summary.income)
+  AssertEqual(50, summary.outcome)
+end
+
+-- Test Tab construction and basic getters/setters
+function Tests.TestTabConstruction()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "TestTab",
+    tabType = "DATE",
+    visible = true,
+    ldbEnabled = true,
+    infoFrameEnabled = false,
+    lineBreak = true
+  })
+  
+  AssertEqual("TestTab", tab:getName())
+  AssertEqual("DATE", tab:getType())
+  AssertEqual(true, tab:getVisible())
+  AssertEqual(true, tab:getLdbEnabled())
+  AssertEqual(false, tab:getInfoFrameEnabled())
+  AssertEqual(true, tab:getLineBreak())
+  
+  -- Test setters
+  tab:setVisible(false)
+  AssertEqual(false, tab:getVisible())
+  
+  tab:setLineBreak(false)
+  AssertEqual(false, tab:getLineBreak())
+  
+  tab:setName("NewName")
+  AssertEqual("NewName", tab:getName())
+  
+  -- Test date setters/getters
+  local testDate = 1700000000
+  tab:setStartDate(testDate)
+  tab:setEndDate(testDate + 86400)
+  AssertEqual(testDate, tab:getStartDate())
+  AssertEqual(testDate + 86400, tab:getEndDate())
+end
+
+-- Test Tab ID generation
+function Tests.TestTabIdGeneration()
+  local Tab = private.Tab
+  
+  -- Test with provided ID
+  local tab1 = Tab:construct({
+    tabName = "Tab1",
+    tabType = "DATE",
+    visible = true,
+    id = "custom-id-123"
+  })
+  AssertEqual("custom-id-123", tab1:getId())
+  
+  -- Test with auto-generated ID
+  local tab2 = Tab:construct({
+    tabName = "Tab2",
+    tabType = "DATE",
+    visible = true
+  })
+  
+  -- Auto-generated ID should exist and be 8 characters
+  local id = tab2:getId()
+  AssertEqual(8, string.len(id))
+  
+  -- Two tabs should have different IDs
+  local tab3 = Tab:construct({
+    tabName = "Tab3",
+    tabType = "DATE",
+    visible = true
+  })
+  local areEqual = tab2:getId() == tab3:getId()
+  AssertEqual(false, areEqual)
+end
+
+-- Test ResetSession functionality
+function Tests.TestResetSession()
+  MyAccountant:ResetSession()
+  
+  MyAccountant:AddIncome("LOOT", 500)
+  MyAccountant:AddIncome("QUESTS", 300)
+  
+  AssertEqual(800, MyAccountant:GetSessionIncome())
+  
+  -- Reset and verify it's cleared
+  MyAccountant:ResetSession()
+  AssertEqual(0, MyAccountant:GetSessionIncome())
+  
+  -- Add new data after reset
+  MyAccountant:AddIncome("OTHER", 100)
+  AssertEqual(100, MyAccountant:GetSessionIncome())
+end
+
+-- Test multiple days in a date range
+function Tests.TestMultipleDaysInRange()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add income across 5 consecutive days starting from July 8
+  local july8Timestamp = 1751960666
+  for i = 0, 4 do
+    local dayTime = date("*t", july8Timestamp + (i * 86400))
+    MyAccountant:AddIncome("LOOT", 100, dayTime)
+    MyAccountant:AddOutcome("MERCHANTS", 25, dayTime)
+  end
+  
+  -- Create a tab spanning all 5 days
+  local Tab = private.Tab
+  local tab = Tab:construct({
+    tabName = "FiveDays",
+    tabType = "DATE",
+    visible = true
+  })
+  local endTime = july8Timestamp + (4 * 86400)
+  tab:setStartDate(july8Timestamp)
+  tab:setEndDate(endTime)
+  
+  local endDate = date("*t", endTime)
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, endDate, nil, "SOURCE")
+  
+  AssertEqual(500, table.LOOT.income)
+  AssertEqual(125, table.MERCHANTS.outcome)
+end
+
+-- Test IsSourceActive functionality
+function Tests.TestIsSourceActive()
+  setSources()
+  
+  -- These sources are in the setSources() list
+  AssertEqual(true, MyAccountant:IsSourceActive("LOOT"))
+  AssertEqual(true, MyAccountant:IsSourceActive("QUESTS"))
+  AssertEqual(true, MyAccountant:IsSourceActive("MERCHANTS"))
+  
+  -- LFG is not in the default sources list
+  AssertEqual(false, MyAccountant:IsSourceActive("LFG"))
+  AssertEqual(false, MyAccountant:IsSourceActive("NONEXISTENT"))
 end
