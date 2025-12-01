@@ -1071,8 +1071,23 @@ function MyAccountant:SetupAddonOptions()
         confirm = true,
         confirmText = L["option_reset_tabs_confirm"],
         func = function()
-          local defaultSettings = private.utils.copy(private.default_settings)
-          MyAccountant.db.char.tabs = defaultSettings.tabs
+          -- Need to deserialize saved data back into Tab objects
+          local instantiatedTabs = {}
+          for _, tab in ipairs(private.tabLibrary) do
+            table.insert(instantiatedTabs, private.Tab:construct({
+              tabName = tab._tabName,
+              tabType = tab._tabType,
+              ldbEnabled = tab._ldbEnabled,
+              infoFrameEnabled = tab._infoFrameEnabled,
+              minimapSummaryEnabled = tab._minimapSummaryEnabled,
+              luaExpression = tab._luaExpression,
+              lineBreak = tab._lineBreak,
+              id = tab._id,
+              visible = tab._visible
+            }))
+          end
+          self.db.char.tabs = instantiatedTabs
+
           makeTabConfig()
           forceConfigRerender()
         end
