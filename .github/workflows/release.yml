@@ -18,6 +18,9 @@ on:
       changeNotes:
         description: Change notes to attach to release
         default: ""
+      minify:
+        description: "Minify release"
+        default: true
       deployToCurse:
         description: "Deploy to Curse"
         default: true
@@ -102,6 +105,7 @@ jobs:
 
       # Minify Lua files to remove comments and whitespace (safe for WoW addons)
       - name: Minify Lua files
+        if: ${{ inputs.minify }}
         run: |
           set -e
 
