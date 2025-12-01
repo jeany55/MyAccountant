@@ -163,8 +163,8 @@ function MyAccountant:UpdatePlayerBalance() self.db.factionrealm[UnitName("playe
 
 --- Updates the Warband balance from the bank (Retail only)
 function MyAccountant:UpdateWarbandBalance()
-  -- Only available on retail and if C_Bank API exists
-  if C_Bank and C_Bank.FetchDepositedMoney then
+  -- Only available on retail and if C_Bank API and Enum.BankType exist
+  if C_Bank and C_Bank.FetchDepositedMoney and Enum and Enum.BankType and Enum.BankType.Account then
     local warbandBalance = C_Bank.FetchDepositedMoney(Enum.BankType.Account)
     if warbandBalance then
       -- Store in a special "Warband" entry in factionrealm

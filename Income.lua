@@ -496,7 +496,8 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   table.insert(data, 1, { name = L["income_panel_hover_realm_total"], gold = goldTotal })
 
   -- Add Warband balance as second row if on retail and option is enabled
-  if private.wowVersion == GameTypes.RETAIL and self.db.char.showWarbandInRealmBalance and warbandGold > 0 then
+  -- Show even if zero to maintain consistency with character balance display
+  if private.wowVersion == GameTypes.RETAIL and self.db.char.showWarbandInRealmBalance and self.db.factionrealm.Warband then
     table.insert(data, 2, {
       name = "|TInterface\\Icons\\inv_misc_bag_38:0|t " .. L["warband"],
       gold = warbandGold,
