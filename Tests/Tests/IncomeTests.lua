@@ -277,7 +277,7 @@ function Tests.TestWeeklyIncome_1()
   MyAccountant:AddIncome("OTHER", 100, july10)
 
   local tab = createWeekTab(1751960666 + 172800)
-  local table = MyAccountant:GetIncomeOutcomeTable(tab, date("*t", 1751960666 + 172800), nil, "SOURCE")
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(300, table.OTHER.income)
 end
@@ -312,7 +312,7 @@ function Tests.TestWeeklyIncome_2()
   MyAccountant:AddIncome("LFG", 100, july10)
 
   local tab = createWeekTab(1751960666 + 172800)
-  local table = MyAccountant:GetIncomeOutcomeTable(tab, date("*t", 1751960666 + 172800), nil, "SOURCE")
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(400, table.OTHER.income)
   AssertEqual(200, table.TRADE.income)
@@ -345,7 +345,7 @@ function Tests.TestWeeklyOutcome_1()
   MyAccountant:AddOutcome("OTHER", 100, july10)
 
   local tab = createWeekTab(1751960666 + 172800)
-  local table = MyAccountant:GetIncomeOutcomeTable(tab, date("*t", 1751960666 + 172800), nil, "SOURCE")
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(300, table.OTHER.outcome)
 end
@@ -380,7 +380,7 @@ function Tests.TestWeeklyOutcome_2()
   MyAccountant:AddOutcome("LFG", 100, july10)
 
   local tab = createWeekTab(1751960666 + 172800)
-  local table = MyAccountant:GetIncomeOutcomeTable(tab, date("*t", 1751960666 + 172800), nil, "SOURCE")
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(400, table.OTHER.outcome)
   AssertEqual(200, table.TRADE.outcome)
@@ -433,7 +433,7 @@ function Tests.TestWeekly_IncomeOutcome()
   MyAccountant:AddIncome("LFG", 100, july10)
 
   local tab = createWeekTab(1751960666 + 172800)
-  local table = MyAccountant:GetIncomeOutcomeTable(tab, date("*t", 1751960666 + 172800), nil, "SOURCE")
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, july10, nil, "SOURCE")
 
   AssertEqual(600, table.OTHER.income)
   AssertEqual(200, table.TRADE.income)
@@ -585,10 +585,12 @@ function Tests.TestMultipleDaysInRange()
     tabType = "DATE",
     visible = true
   })
+  local endTime = baseTime + (4 * 86400)
   tab:setStartDate(baseTime)
-  tab:setEndDate(baseTime + (4 * 86400))
+  tab:setEndDate(endTime)
   
-  local table = MyAccountant:GetIncomeOutcomeTable(tab, date("*t", baseTime + (4 * 86400)), nil, "SOURCE")
+  local endDate = date("*t", endTime)
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, endDate, nil, "SOURCE")
   
   AssertEqual(500, table.LOOT.income)
   AssertEqual(125, table.MERCHANTS.outcome)
