@@ -543,7 +543,8 @@ function Tests.TestTabIdGeneration()
     tabType = "DATE",
     visible = true
   })
-  AssertEqual(false, tab2:getId() == tab3:getId())
+  local areEqual = tab2:getId() == tab3:getId()
+  AssertEqual(false, areEqual)
 end
 
 -- Test ResetSession functionality
