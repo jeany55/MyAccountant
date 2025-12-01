@@ -103,6 +103,8 @@ jobs:
       # Minify Lua files to remove comments and whitespace (safe for WoW addons)
       - name: Minify Lua files
         run: |
+          set -e
+
           # Install LuaSrcDiet via LuaRocks
           sudo apt-get update
           sudo apt-get install -y lua5.1 luarocks
@@ -111,7 +113,12 @@ jobs:
           # Minify all addon Lua files (excluding Libs/ which are third-party)
           for file in $(find . -name "*.lua" -type f ! -path "./Libs/*"); do
             echo "Minifying: $file"
-            luasrcdiet "$file" -o "$file.min" --noopt-binequiv --noopt-locals --noopt-strings --noopt-numbers --noopt-srcequiv
+            luasrcdiet "$file" -o "$file.min" \
+              --noopt-binequiv \
+              --noopt-locals \
+              --noopt-strings \
+              --noopt-numbers \
+              --noopt-srcequiv
             mv "$file.min" "$file"
           done
 
