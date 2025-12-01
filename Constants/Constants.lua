@@ -210,6 +210,14 @@ elseif buildVersion > 90000 then
   wowVersion = GameTypes.RETAIL
 end
 
+--- Padding behaves differently on the different tab components across Wow versions
+local paddingInBetweenTabs = 3
+if wowVersion ~= GameTypes.RETAIL then
+  paddingInBetweenTabs = -18
+end
+
+private.constants.TAB_PADDING = paddingInBetweenTabs
+
 private.wowVersion = wowVersion
 
 private.default_settings = {

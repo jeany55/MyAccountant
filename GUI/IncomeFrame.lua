@@ -120,7 +120,7 @@ function MyAccountant:SetupTabs()
         firstItemInRow = frame
         row = row + 1
       else
-        frame:SetPoint("LEFT", previousTab, "RIGHT", -18, 0)
+        frame:SetPoint("LEFT", previousTab, "RIGHT", private.constants.TAB_PADDING, 0)
       end
 
       frame:SetFrameLevel(250 - row)
