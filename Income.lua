@@ -209,6 +209,12 @@ local function sumDay(dayData, category, type)
   end
 end
 
+--- Fetches data row for a specific player and date
+--- @param playerName string
+--- @param year integer
+--- @param month integer
+--- @param day integer
+--- @return table<Source, {income: integer, outcome: integer}>
 function MyAccountant:FetchDataRow(playerName, year, month, day)
   if not self.db.factionrealm[playerName] or not self.db.factionrealm[playerName][year] or
       not self.db.factionrealm[playerName][year][month] or not self.db.factionrealm[playerName][year][month][day] then
@@ -283,6 +289,10 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
   return data
 end
 
+--- Gets all-time historical data for a character
+--- @param characterOverride string? Character name, or "ALL_CHARACTERS" for realm-wide
+--- @param refDataOverride table? Reference to existing data table to append to
+--- @return table<Source, {income: integer, outcome: integer, zones: table}>
 function MyAccountant:GetAllTime(characterOverride, refDataOverride)
   local data = refDataOverride and refDataOverride or {}
   local playerName = characterOverride and characterOverride or UnitName("player")
@@ -329,6 +339,9 @@ function MyAccountant:GetAllTime(characterOverride, refDataOverride)
   return data
 end
 
+--- Summarizes data by totaling income and outcome
+--- @param data table<Source, {income: integer, outcome: integer}>
+--- @return {income: integer, outcome: integer}
 function MyAccountant:SummarizeData(data)
   local summary = { income = 0, outcome = 0 }
 
@@ -340,12 +353,19 @@ function MyAccountant:SummarizeData(data)
   return summary
 end
 
--- Gets total session income, if no category is passed a total sum will be returned
+--- Gets total session income, if no category is passed a total sum will be returned
+--- @param category Source?
+--- @return integer
 function MyAccountant:GetSessionIncome(category) return sumDay(totalGoldSession, category, "income") end
 
--- Gets total session outcome, if no category is passed a total sum will be returned
+--- Gets total session outcome, if no category is passed a total sum will be returned
+--- @param category Source?
+--- @return integer
 function MyAccountant:GetSessionOutcome(category) return sumDay(totalGoldSession, category, "outcome") end
 
+--- Checks if a source is active in the user's settings
+--- @param source Source
+--- @return boolean
 function MyAccountant:IsSourceActive(source)
   for _, v in ipairs(self.db.char.sources) do
     if v == source then
@@ -470,11 +490,17 @@ function MyAccountant:ResetZoneData()
   end
 end
 
+--- Gets realm-wide balance totals for all characters
+--- @return table[] Array of character data with gold totals
 function MyAccountant:GetRealmBalanceTotalDataTable()
+  --- @type AceLocale-3.0
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
+  --- @type table[]
   local data = {}
+  --- @type integer
   local goldTotal = 0
+  --- @type integer
   local numberOfCharacters = 0
 
   for characterName, characterData in pairs(self.db.factionrealm) do

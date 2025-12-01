@@ -25,6 +25,7 @@ local function hideMinimap()
   libIcon:Hide(private.ADDON_NAME)
 end
 
+--- Forces the config to rerender by notifying the registry of changes
 local function forceConfigRerender()
   local registry = LibStub("AceConfigRegistry-3.0")
   registry:NotifyChange(private.ADDON_NAME)
@@ -91,14 +92,23 @@ function MyAccountant:SetupAddonOptions()
     self.db.char.lastVersion = private.ADDON_VERSION
   end
 
+  --- Creates the tab configuration for the options UI
   local function makeTabConfig()
+    --- @type string
     local inputName = ""
+    --- @type TabType
     local inputType = "DATE"
+    --- @type string
     local luaExpression = ""
+    --- @type boolean
     local visible = false
+    --- @type boolean
     local minimapShow = false
+    --- @type boolean
     local infoFrameShow = false
+    --- @type boolean
     local ldb = false
+    --- @type boolean
     local lineBreak = false
 
     local tabConfig = {
@@ -279,9 +289,13 @@ function MyAccountant:SetupAddonOptions()
       }
     }
 
+    --- @type integer
     local tabOrder = 1
+    --- @type integer
     local tabAmount = #MyAccountant.db.char.tabs
 
+    --- Creates a closure for moving a tab left
+    --- @return function
     local moveTabLeft = function()
       local index = tabOrder
 
@@ -294,6 +308,8 @@ function MyAccountant:SetupAddonOptions()
       end
     end
 
+    --- Creates a closure for moving a tab right
+    --- @return function
     local moveTabRight = function()
       local index = tabOrder
 
@@ -305,6 +321,8 @@ function MyAccountant:SetupAddonOptions()
       end
     end
 
+    --- Creates a closure for deleting a tab
+    --- @return function
     local deleteTab = function()
       local index = tabOrder
 
@@ -316,6 +334,7 @@ function MyAccountant:SetupAddonOptions()
       end
     end
 
+    --- @type table<string, string>
     local infoFrameOptions = {}
     infoFrameOptionsTabMap = {}
 
@@ -760,8 +779,11 @@ function MyAccountant:SetupAddonOptions()
     }
   }
 
+  --- @type table<Source, table>
   local sources_options = {}
   -- Handler for checking/getting check box status for active sources
+  --- @param checked boolean
+  --- @param item Source
   local function handleSetSourceCheck(checked, item)
     -- If setting, just append onto the array
     if checked == true then
@@ -777,6 +799,8 @@ function MyAccountant:SetupAddonOptions()
     end
   end
 
+  --- @param item Source
+  --- @return boolean
   local function handleGetSourceCheck(item)
     for _, v in ipairs(self.db.char.sources) do
       if v == item then
