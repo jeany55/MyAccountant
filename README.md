@@ -1,13 +1,16 @@
-# MyAccountant
+### ![MyAccountant](Docs/myAccountant.png)
+
 [![GitHub Release](https://img.shields.io/github/v/release/jeany55/MyAccountant?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iNDYiIGhlaWdodD0iNDYiIGZpbGw9IiNmZmZmZmYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNMjAuNTg1IDE3LjE1NWMuNDQzLTIuNDIuNDctNC45LjA4My03LjMzbC0uMDY0LS40YTIuMTU4IDIuMTU4IDAgMCAwLTIuMTMyLTEuODE5SDkuNzZhLjA2LjA2IDAgMCAxLS4wNTktLjA2YzAtLjk5Mi0uODA0LTEuNzk2LTEuNzk3LTEuNzk2SDUuNjEyYTIuMTggMi4xOCAwIDAgMC0yLjE2NCAxLjkybC0uMjczIDIuMjY5YTIzLjczIDIzLjczIDAgMCAwIC4yMTcgNy4wOTQgMi4xMjggMi4xMjggMCAwIDAgMS45NDIgMS43NGwxLjUxNC4xMWMzLjQzLjI0NSA2Ljg3NC4yNDUgMTAuMzA0IDBsMS42MzgtLjExOGExLjk2OCAxLjk2OCAwIDAgMCAxLjc5NS0xLjYxWiI%2BPC9wYXRoPgo8L3N2Zz4%3D&logoColor=white)](https://github.com/jeany55/MyAccountant/releases/latest)
 [![CurseForge Downloads](https://img.shields.io/curseforge/dt/1299016?style=flat&logo=curseforge&logoColor=%23FFFFFF)](https://www.curseforge.com/wow/addons/myaccountant)
 [![Tests](https://img.shields.io/github/actions/workflow/status/jeany55/MyAccountant/tests.yml?branch=main&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iNDYiIGhlaWdodD0iNDYiIGZpbGw9IiNmZmZmZmYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNMTMuMTYgNC40MDdhMi4yNSAyLjI1IDAgMCAwLTIuMzIgMGwtLjUxNy4zMTFhOS43NSA5Ljc1IDAgMCAxLTQuMTE1IDEuMzU0bC0uMzI1LjAzMUExLjI1IDEuMjUgMCAwIDAgNC43NSA3LjM0N3YxLjY0NGExMC4yNSAxMC4yNSAwIDAgMCAzLjEyNiA3LjM3bDMuMjU1IDMuMTQ3YTEuMjUgMS4yNSAwIDAgMCAxLjczOCAwbDMuMjU1LTMuMTQ3YTEwLjI1IDEwLjI1IDAgMCAwIDMuMTI2LTcuMzdWNy4zNDdhMS4yNSAxLjI1IDAgMCAwLTEuMTMzLTEuMjQ0bC0uMzI1LS4wM2E5Ljc1IDkuNzUgMCAwIDEtNC4xMTUtMS4zNTVsLS41MTYtLjMxWiI%2BPC9wYXRoPgo8L3N2Zz4%3D&label=tests)](https://github.com/jeany55/MyAccountant/actions/workflows/tests.yml)
+## About
 
-**MyAccountant** is a World of Warcraft Addon that helps track where your money is going.
+**MyAccountant** is a World of Warcraft Addon that helps track where your money is going, showing you exactly what you want to see.
+
+
+Heavily inspired by AccountantClassic, see a breakdown by source or zone by any timeframe you want. MyAccountant currently supports all versions of WoW.
 
 ![My Accountant](Docs/header1.png)
-
-Heavily inspired by AccountantClassic, see a breakdown by source or zone - either by session, day, week, month, year, or all time. MyAccountant currently supports all versions of WoW.
 
 ## Features
 
@@ -21,7 +24,9 @@ Track your gold per hour on the configurable minimap icon
 
 ### **See your income**
 
-A configurable income panel allows you to see where your money is coming and going from, showing you a session or historic breakdown.
+The configurable income panel allows you to see where your money is coming and going from, showing you a session or historic breakdown.
+
+![](Docs/incomeFrameGeneralConfig.png)
 
 **See it by source**
 
@@ -35,6 +40,16 @@ Mouse over an income or outcome to see a breakdown. Configurable in options.
 
 ![](Docs/zoneBreakdown.png)
 
+### **Configure your tabs**
+
+Set which tabs you want to see and in which order.
+
+![](Docs/incomePanelConfig.png)
+
+Advanced mode allows you to add your own tabs and configure them with lua snippets, specifying the exact date range you want to see.
+
+![](Docs/incomePanelConfigAdvanced.png)
+
 ### **See all your characters**
 
 Track your income as a whole or by each of your characters.
@@ -43,7 +58,7 @@ Track your income as a whole or by each of your characters.
 
 ### **See what you want on the information frame**
 
-MyAccountant can show a small information frame containing realm balance and session, daily, or weekly summaries. Configure it in addon options to show what you want to see.
+MyAccountant can show a small information frame containing income data. Configure it in addon options to show what you want to see.
 
 ![](Docs/infoFrame.png)
 
@@ -73,7 +88,7 @@ You can also configure the information panel to show realm balance.
 
 ### **LibDataBroker support**
 
-MyAccountant registers realm balance, session income and profit, today's income and profit, and the week's income and profit with **LDB (Lib Data Broker)**.
+MyAccountant registers data from tabs with **LDB (Lib Data Broker)**. You can specify which tabs send LDB data in tab configuration.
 
 This lets you see MyAccountant information in any addon that supports showing LDB data like Titan Panel or Bazooka.
 

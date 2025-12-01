@@ -180,6 +180,12 @@ L["ldb_weekly_income_realm"] = "Week's Income (Realm)"
 L["ldb_weekly_net_realm"] = "Week's Profit (Realm)"
 L["ldb_faction_balance"] = "Realm Balance"
 
+L["option_minimap_balance_style"] = "Show total balance from"
+L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
+
+L["option_minimap_balance_style_character"] = "This character"
+L["option_minimap_balance_style_realm"] = "Realm"
+
 ----------------------------------------
 --- VERSION 1.5
 -----------------------------------------

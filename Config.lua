@@ -682,8 +682,17 @@ function MyAccountant:SetupAddonOptions()
         inline = true,
         name = L["option_minimap_tooltip"],
         args = {
-          data_type = {
+          balanceStyle = {
             order = 1,
+            name = L["option_minimap_balance_style"],
+            desc = L["option_minimap_balance_style_desc"],
+            type = "select",
+            values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] },
+            set = function(info, val) self.db.char.minimapTotalBalance = val end,
+            get = function(info) return self.db.char.minimapTotalBalance end
+          },
+          data_type = {
+            order = 2,
             name = L["option_minimap_data"],
             desc = L["option_minimap_data_desc"],
             type = "select",

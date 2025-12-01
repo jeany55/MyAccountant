@@ -161,10 +161,18 @@ function MyAccountant:MakeMinimapTooltip(tooltip)
     end
   end
 
-  if foundInstance then
-    tooltip:AddLine("MyAccountant - " .. foundInstance.value, 1, 1, 1)
+  local moneyString = ""
+  if self.db.char.minimapTotalBalance == "REALM" then
+    local goldData = MyAccountant:GetRealmBalanceTotalDataTable()
+    moneyString = GetMoneyString(goldData[1].gold, true)
   else
-    tooltip:AddLine("MyAccountant", 1, 1, 1)
+    moneyString = GetMoneyString(GetMoney(), true)
+  end
+
+  tooltip:AddLine(private.ADDON_NAME .. " - " .. moneyString, 1, 1, 1)
+
+  if foundInstance then
+    tooltip:AddLine(foundInstance.label .. ": " .. foundInstance.value, 1, 1, 1)
   end
 
   if self.db.char.goldPerHour then
