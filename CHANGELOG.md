@@ -4,67 +4,81 @@
 
 All notable changes to this project are documented in this file.
 
-## [v1.7.2] - 2025-11-18
+## v1.7.2
+_2025-11-18_
 
 * Fixes errors when logging in on new characters the addon is unaware of
 
-## [v1.7.1] - 2025-11-16
+## v1.7.1
+_2025-11-16_
 
 * Updates **Simplified Chinese** localization
 
-## [v1.7.0] - 2025-11-11
+## v1.7.0
+_2025-11-11_
 
 ### New Features
 * You can now view `Realm Balance` as a new tab on the bottom of the income frame. You can disable this in options.
 * Adds new information frame. This is a small little frame you can configure in Addon options to show data like session or weekly income.
 
-## [v1.6.3] - 2025-11-10
+## v1.6.3
+_2025-11-10_
 
 * Fix simplified chinese not being available
 
-## [v1.6.2] - 2025-11-10
+## v1.6.2
+_2025-11-10_
 
 * Adds **Simplified Chinese** localization (thanks cclolz!)
 
-## [v1.6.1] - 2025-11-10
+## v1.6.1
+_2025-11-10_
 
 ### Bugfix
 * Fixes realm totals not updating properly
 
-## [v1.6.0] - 2025-11-10
+## v1.6.0
+_2025-11-10_
 
 ### New Features
 * Data is now sent to `LibDataBroker` for realm balance, session, daily, and weekly info. This lets you see data in any addon supporting LDB (eg. Titan Panel or Bazooka)
 * A new option has been added to the minimap tooltip to show realm balance instead of character balance
 
-## [v1.5.0] - 2025-11-09
+## v1.5.0
+_2025-11-09_
 
 ### New Feature
 #### Realm balance
 If you have logged into more than one character, a new faction icon will appear to the left of your gold total on the income frame. Hovering over it will show your total gold across your realm. You can disable this in the addon options.
   * If you are upgrading from a previous version, you will need to log into each character once to get a total
 
-## [v1.4.5] - 2025-11-08
+## v1.4.5
+_2025-11-08_
 
 * Update to latest MOP and classic versions
 
-## [v1.4.4] - 2025-11-08
+## v1.4.4
+_2025-11-08_
 
 * Updates Russian translation
 
-## [v1.4.3] - 2025-11-08
+## v1.4.3
+_2025-11-08_
 
 * Upgraded retail
 
-## [v1.4.2] - 2025-09-23
+## v1.4.2
+_2025-09-23_
 
 * Update version for MOP 5.5.1
 
-## [v1.4.1] - 2025-08-05
+## v1.4.1
+_2025-08-05_
 
 * Updated retail version for `11.2.0`
 
-## [v1.4.0] - 2025-07-28
+## v1.4.0
+_2025-07-28_
 
 ### New Feature
 * A new button has been added to the income panel that allows you to swap to a `Zone view` - this lets you see the same data visualized by zone
@@ -73,39 +87,46 @@ If you have logged into more than one character, a new faction icon will appear 
 ### Bugfix
 * Guild tracking has been a bit wonky so a few events have been removed for now
 
-## [v1.3.1] - 2025-07-23
+## v1.3.1
+_2025-07-23_
 
 * **Bugfix**: Viewing `All Characters` was causing zone income to increase
   * If you are affected by this you'll need to reset your data - a new `Clear zone data for all characters` button is available in Options.
 
-## [v1.3.0] - 2025-07-23
+## v1.3.0
+_2025-07-23_
 
 **New Feature**
 * Zone income is now tracked! If you hover over a source income or outcome in the panel you can see a breakdown by zone
   * This is not retroactive and is only shown for new data, old income/outcome will not have a zone breakdown
   * Configurable in options - you can turn off the tooltip or configure the number of zones shown
 
-## [v1.2.4] - 2025-07-22
+## v1.2.4
+_2025-07-22_
 
 * Fixes `Hide Inactive Sources` option not working properly
 * Fixes the scrollbar showing when it shouldn't
 * Fixes the table overflowing the boundaries of the window slightly
 
-## [v1.2.3] - 2025-07-13
+## v1.2.3
+_2025-07-13_
 
 * Fix `other` category causing error
 
-## [v1.2.2] - 2025-07-11
+## v1.2.2
+_2025-07-11_
 
 * Refactor, code cleanup
 
-## [v1.2.1] - 2025-07-11
+## v1.2.1
+_2025-07-11_
 
 * **Bugfix:** Income panel will now update if open when money changes
 * Can now use `/mya o` as shorthand to open panel
 * Updated Russian translation
 
-## [v1.2.0] - 2025-07-10
+## v1.2.0
+_2025-07-10_
 
 ### New Features
 * Added current money and buttons on bottom of income frame - configurable in options
@@ -117,35 +138,43 @@ If you have logged into more than one character, a new faction icon will appear 
 * Fixed locale not applying to tabs at bottom
 * Fixed Vanilla text on the tabs jumping when selected
 
-## [v1.1.3] - 2025-07-07
+## v1.1.3
+_2025-07-07_
 
 * Fixes error when attempting to reset player character data
 
-## [v1.1.2] - 2025-07-05
+## v1.1.2
+_2025-07-05_
 
 * Fix tab error on Retail
 * Add icon to Addon on Retail
 
-## [v1.1.1] - 2025-07-05
+## v1.1.1
+_2025-07-05_
 
 _No release notes provided_
 
-## [v1.1.0] - 2025-07-04
+## v1.1.0
+_2025-07-04_
 
 _No release notes provided_
 
-## [v1.0.3] - 2025-07-03
+## v1.0.3
+_2025-07-03_
 
 _No release notes provided_
 
-## [v1.0.2] - 2025-07-03
+## v1.0.2
+_2025-07-03_
 
 _No release notes provided_
 
-## [v1.0.1] - 2025-07-03
+## v1.0.1
+_2025-07-03_
 
 _No release notes provided_
 
-## [v1.0.0] - 2025-07-03
+## v1.0.0
+_2025-07-03_
 
 _No release notes provided_
