@@ -111,7 +111,7 @@ jobs:
           sudo luarocks install luasrcdiet
 
           # Minify all addon Lua files (excluding Libs/ which are third-party)
-          for file in $(find . -name "*.lua" -type f ! -path "./Libs/*"); do
+          find . -name "*.lua" -type f ! -path "*/Libs/*" -print0 | while IFS= read -r -d '' file; do
             echo "Minifying: $file"
             luasrcdiet "$file" -o "$file.min" \
               --noopt-binequiv \
