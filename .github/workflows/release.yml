@@ -89,11 +89,8 @@ jobs:
           git push origin tag "v$VERSION"
 
       # Remove anything unneeded for the build artifact
-      # Then put it into all into a nested folder and zip it
-      - name: Generate zip
-        run : |
-          echo "Making zip for version $VERSION"
-
+      - name: Remove unneeded files
+        run: |
           rm -rf ./.git
           rm -rf ./.github
           rm .gitignore
@@ -101,8 +98,27 @@ jobs:
           rm LICENSE
           rm README.md
           rm -rf Docs
-
           rm -rf Tests
+
+      # Minify Lua files to remove comments and whitespace (safe for WoW addons)
+      - name: Minify Lua files
+        run: |
+          # Install LuaSrcDiet via LuaRocks
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 luarocks
+          sudo luarocks install luasrcdiet
+
+          # Minify all addon Lua files (excluding Libs/ which are third-party)
+          for file in $(find . -name "*.lua" -type f ! -path "./Libs/*"); do
+            echo "Minifying: $file"
+            luasrcdiet "$file" -o "$file.min" --noopt-binequiv --noopt-locals --noopt-strings --noopt-numbers --noopt-srcequiv
+            mv "$file.min" "$file"
+          done
+
+      # Put it into all into a nested folder and zip it
+      - name: Generate zip
+        run : |
+          echo "Making zip for version $VERSION"
 
           mkdir MyAccountant
           mv * MyAccountant || true
