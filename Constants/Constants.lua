@@ -186,8 +186,11 @@ local DEFAULT_SOURCES_CLASSIC_ERA = {
 }
 
 -- Determine WoW version to set default and available sources
+--- @type integer
 local buildVersion = select(4, GetBuildInfo())
+--- @type Source[]
 local defaultSources
+--- @type GameTypes
 local wowVersion
 
 if buildVersion < 20000 then
@@ -211,6 +214,7 @@ elseif buildVersion > 90000 then
 end
 
 --- Padding behaves differently on the different tab components across Wow versions
+--- @type integer
 local paddingInBetweenTabs = 3
 if wowVersion ~= GameTypes.RETAIL then
   paddingInBetweenTabs = -18

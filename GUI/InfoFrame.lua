@@ -5,16 +5,23 @@ local _, private = ...
 --- @type Frame
 local infoFrame
 
+--- @type AceLocale-3.0
 local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
+--- @type integer
 local topFramePadding = 10
+--- @type integer
 local bottomFramePadding = 10
 
+--- @type integer
 local leftRowPadding = 10
+--- @type integer
 local rightRowPadding = 10
 
+--- @type integer
 local rowSpacing = 5
 
+--- @type integer
 local minimumSpacingBetweenItemAndValue = 10
 
 --- @class InfoFrameRow

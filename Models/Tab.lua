@@ -2,6 +2,7 @@
 --- @type nil, MyAccountantPrivate
 local _, private = ...
 
+--- @type AceLocale-3.0
 local L = LibStub("AceLocale-3.0"):GetLocale("MyAccountant")
 
 --- @enum TabType

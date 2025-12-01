@@ -31,6 +31,7 @@ private = private or {}
 --- @field db AceDBObject-3.0
 --- @field checkDatabaseDayConfigured fun(self: MyAccountant, dateOverride: integer?): nil
 MyAccountant = LibStub("AceAddon-3.0"):NewAddon(private.ADDON_NAME, "AceConsole-3.0", "AceEvent-3.0")
+--- @type AceLocale-3.0
 local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
 -- Slash commands
@@ -115,6 +116,7 @@ function MyAccountant:OnDisable()
   -- Called when the addon is disabled
 end
 
+--- Prints help message to chat
 local function printHelpMessage()
   MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
   MyAccountant:Print(L["help1"])

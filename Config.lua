@@ -5,7 +5,9 @@ local _, private = ...
 --- @type AceConfig.OptionsTable
 local incomePanelOptions
 
+--- @type AceConfig.OptionsTable
 local infoFrameConfig
+--- @type table<string, Tab>
 local infoFrameOptionsTabMap = {}
 --- Shows minimap icon and registers if it doesn't exist
 local function showMinimap()

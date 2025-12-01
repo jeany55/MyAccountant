@@ -1,14 +1,17 @@
 -- Addon namespace
 --- @type nil, MyAccountantPrivate
 local _, private = ...
+--- @type integer
 local AddonStartTime = time()
 
+--- @type integer
 local GoldMade = 0
 
 --- @class MyAccountant
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 -- Used for session data and calculating gold per hour
+--- @type table<Source, {income: integer, outcome: integer, zones: table<string, {income: integer, outcome: integer}>}>
 local totalGoldSession = {}
 
 --- Resets all function data
@@ -169,9 +172,10 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
 end
 
 --- Sums day
---- @param dayData table Day data
---- @param category Source|nil Category to sum, nil for all
---- @param type string|nil "income"/"outcome", nil for net
+--- @param dayData table<Source, {income: integer, outcome: integer}> Day data
+--- @param category Source? Category to sum, nil for all
+--- @param type string? "income"/"outcome", nil for net
+--- @return integer
 local function sumDay(dayData, category, type)
 
   if (category == nil) then

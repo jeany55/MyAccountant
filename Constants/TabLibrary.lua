@@ -5,6 +5,7 @@ local _, private = ...
 --- @type AceLocale-3.0
 local L = LibStub("AceLocale-3.0"):GetLocale("MyAccountant")
 
+--- @type Tab
 local Tab = private.Tab
 
 private.tabLibrary = {

@@ -1,14 +1,18 @@
+--- @type nil, MyAccountantPrivate
 local _, private = ...
 
 --- @class MyAccountant
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
+--- @type Source?
 local activeSource = nil
 
+--- @type integer
 local currentMoney = GetMoney()
 
 -- Tracking if mail is from the AH is difficult - not a great event to track it.
 -- Best we can do is check to see if any of the mail is from AH.
+--- @return boolean
 local isMailFromAuctionHouse = function()
   local _, totalItems = GetInboxNumItems()
   for i = 1, totalItems do
@@ -154,6 +158,8 @@ end
 
 function MyAccountant:UpdatePlayerBalance() self.db.factionrealm[UnitName("player")].config.gold = GetMoney() end
 
+--- @param event string
+--- @return Event?
 local function findEvent(event)
   for _, v in ipairs(events) do
     if v.EVENT == event then

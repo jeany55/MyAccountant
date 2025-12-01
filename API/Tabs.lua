@@ -2,6 +2,7 @@
 --- @type nil, MyAccountantPrivate
 local _, private = ...
 
+--- @type AceLocale-3.0
 local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
 --- @class MyAccountant
@@ -16,6 +17,7 @@ local FieldType = { CHECKBOX = "toggle", INPUT = "input" }
 local Locale = { get = function(key) return L[key] end }
 
 --- DateUtils
+--- @type integer
 local dayInSeconds = 86400
 
 --- @class DateUtils
@@ -92,6 +94,7 @@ local DateUtils = {
   end
 }
 
+--- @type string
 local apiWrapperFunction = [[
   return function(Tab, Locale, DateUtils, FieldType)
     %s

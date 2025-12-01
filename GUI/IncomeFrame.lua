@@ -1,23 +1,30 @@
 --- @type nil, MyAccountantPrivate
 local _, private = ...
 
+--- @type table
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
+--- @type Frame?
 local characterDropdown
+--- @type ViewType?
 local viewingType
 
+--- @type string
 local selectedCharacter = UnitName("player")
 
 -- Which tab is current selected?
---- @type Tab
+--- @type Tab?
 local ActiveTab = nil
 
 -- Holds whether viewing by source or by zone 
+--- @type ViewType?
 local ViewType
 
 -- Hold grid lines to show/hide if user doesn't want to see them
+--- @type table<integer, Frame>
 RenderedLines = {}
 
 -- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
+--- @type string?
 UserSetSort = nil
 
 --- @class CharacterFrameTabTemplate: Frame
@@ -27,6 +34,7 @@ UserSetSort = nil
 --- @field id integer Id used when creating the tab
 --- @field frame CharacterFrameTabTemplate
 
+--- @type Frame[]
 local tabFrames = {}
 
 --- @class IncomeFrameTab
@@ -40,6 +48,7 @@ local incomeFrameTabs = {}
 --- @class Frame
 IncomeFrame = IncomeFrame
 
+--- @type integer
 local frameCreationIndex = 1
 
 --- Gets tab frame
@@ -402,6 +411,7 @@ function MyAccountant:InitializeUI()
   MyAccountant:SetupTabs()
 end
 
+--- Updates the sorting icons based on current sort
 local function updateSortingIcons()
   if UserSetSort == "SOURCE_ASC" then
     sourceHeaderIcon:Show()
@@ -446,6 +456,8 @@ local function updateSortingIcons()
   end
 end
 
+--- Handles bottom button clicks
+--- @param action string
 local function bottomButtonClickHandler(action)
   if action == "OPTIONS" then
     Settings.OpenToCategory(private.ADDON_NAME)
@@ -462,6 +474,7 @@ function MyAccountant:updateFrameIfOpen()
   end
 end
 
+--- Rerenders all tabs by running their loaded functions
 local function rerenderTabs()
   -- Prepare some variables to allow settings easier to configure
 
@@ -642,9 +655,21 @@ function MyAccountant:updateFrame()
   MyAccountant:DrawRows()
 end
 
+--- @param source1 {income: integer, outcome: integer}
+--- @param source2 {income: integer, outcome: integer}
+--- @return boolean
 local sortZoneIncome = function(source1, source2) return source1.income > source2.income end
+--- @param source1 {income: integer, outcome: integer}
+--- @param source2 {income: integer, outcome: integer}
+--- @return boolean
 local sortZoneOutcome = function(source1, source2) return source1.outcome > source2.outcome end
 
+--- Adds a hover tooltip to a frame
+--- @param owner Frame
+--- @param type string
+--- @param itemList table
+--- @param maxLines integer
+--- @param colorIncome boolean
 local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
