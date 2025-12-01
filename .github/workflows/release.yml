@@ -21,6 +21,7 @@ on:
       minify:
         description: "Minify release"
         default: true
+        type: boolean
       deployToCurse:
         description: "Deploy to Curse"
         default: true

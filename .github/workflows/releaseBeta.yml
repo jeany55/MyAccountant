@@ -21,6 +21,7 @@ on:
       minify:
         description: "Minify release"
         default: true
+        type: boolean
       suffix:
         description: Suffix to end build with
         default: ""
