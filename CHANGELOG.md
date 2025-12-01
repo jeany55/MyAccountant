@@ -40,8 +40,8 @@ All notable changes to this project are documented in this file.
 ## [v1.5.0] - 2025-11-09
 
 ### New Feature
-### Realm balance
-f you have logged into more than one character, a new faction icon will appear to the left of your gold total on the income frame. Hovering over it will show your total gold across your realm. You can disable this in the addon options.
+#### Realm balance
+If you have logged into more than one character, a new faction icon will appear to the left of your gold total on the income frame. Hovering over it will show your total gold across your realm. You can disable this in the addon options.
   * If you are upgrading from a previous version, you will need to log into each character once to get a total
 
 ## [v1.4.5] - 2025-11-08
