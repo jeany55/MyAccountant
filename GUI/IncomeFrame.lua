@@ -81,6 +81,7 @@ function MyAccountant:SetupTabs()
 
     if tab:getVisible() then
       local tabframe = getTabFrame(tabIndex)
+      tabframe:SetText(tab:getLabel())
       tabframe:Show()
       tabframe:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
       if tabIndex == 1 then
@@ -104,8 +105,10 @@ function MyAccountant:SetupTabs()
   for _, tab in ipairs(self.db.char.tabs) do
     --- @type Tab
     local tab = tab
+    local currentTabIndex = tabIndex
     if tab:getVisible() then
       local frame = getTabFrame(tabIndex)
+      frame:ClearAllPoints()
       if not firstItemInRow then
         firstItemInRow = frame
       end
