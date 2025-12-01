@@ -570,10 +570,10 @@ function Tests.TestMultipleDaysInRange()
   setSources()
   MyAccountant:ResetAllData()
   
-  -- Add income across 5 consecutive days
-  local baseTime = 1751960666
+  -- Add income across 5 consecutive days starting from July 8
+  local july8Timestamp = 1751960666
   for i = 0, 4 do
-    local dayTime = date("*t", baseTime + (i * 86400))
+    local dayTime = date("*t", july8Timestamp + (i * 86400))
     MyAccountant:AddIncome("LOOT", 100, dayTime)
     MyAccountant:AddOutcome("MERCHANTS", 25, dayTime)
   end
@@ -585,8 +585,8 @@ function Tests.TestMultipleDaysInRange()
     tabType = "DATE",
     visible = true
   })
-  local endTime = baseTime + (4 * 86400)
-  tab:setStartDate(baseTime)
+  local endTime = july8Timestamp + (4 * 86400)
+  tab:setStartDate(july8Timestamp)
   tab:setEndDate(endTime)
   
   local endDate = date("*t", endTime)
