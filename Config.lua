@@ -118,6 +118,24 @@ function MyAccountant:SetupAddonOptions()
         },
         order = 1
       },
+      developerMode = {
+        type = "group",
+        inline = true,
+        name = L["options_developer_options"],
+        order = 2,
+        args = {
+          showTabExport = {
+            type = "toggle",
+            width = "full",
+            order = 1,
+            disabled = function() return not self.db.char.tabAdvancedMode end,
+            name = L["option_tab_developer_export"],
+            desc = L["option_tab_developer_export_desc"],
+            get = function() return self.db.char.showTabExport end,
+            set = function(_, val) self.db.char.showTabExport = val end
+          }
+        }
+      },
       create = {
         name = "|T" .. private.constants.PLUS .. ":0|t  |cff67ff7d" .. L["option_new_tab"] .. "|r",
         order = 0,
@@ -134,7 +152,9 @@ function MyAccountant:SetupAddonOptions()
               local trimmedVal = string.trim(val)
 
               if private.utils.arrayHas(self.db.char.tabs,
-                                        function(item) return string.lower(item.name) == string.lower(trimmedVal) end) then
+                                        function(item)
+                return string.lower(item:getName()) == string.lower(trimmedVal)
+              end) then
                 return L["option_tab_create_fail"]
               end
 
@@ -471,15 +491,30 @@ function MyAccountant:SetupAddonOptions()
               MyAccountant:SetupTabs()
             end
           },
-          devDate = {
+          devExport = {
             order = 4,
-            name = "Tab libary export",
-            desc = "[DEV OPTION]: The format of this tab for adding to this addon's default tab library",
-            hidden = function() return not self.db.char.showTabExport and (not self.db.char.tabAdvancedMode) end,
+            name = L["option_tab_developer_export"],
+            desc = L["option_tab_developer_export_desc"],
+            hidden = function() return not self.db.char.showTabExport end,
             type = "input",
             multiline = 9,
             width = "full",
-            get = function() return "" end,
+            get = function()
+              local stringTemplate = [=[Tab:construct({
+  id = "%s",
+  tabName = "%s",
+  tabType = "%s",
+  visible = %s,
+  ldbEnabled = %s,
+  infoFrameEnabled = %s,
+  minimapSummaryEnabled = %s,
+  luaExpression = [[%s]]
+})]=]
+
+              return format(stringTemplate, tab:getId(), tab:getName(), tab:getType(), tostring(tab:getVisible()),
+                            tostring(tab:getLdbEnabled()), tostring(tab:getInfoFrameEnabled()),
+                            tostring(tab:getMinimapSummaryEnabled()), tab:getLuaExpression())
+            end,
             set = function() end
           }
         }
@@ -631,15 +666,6 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             set = function(info, val) self.db.char.showDebugMessages = val end,
             get = function(info) return self.db.char.showDebugMessages end
-          },
-          tab_export = {
-            name = L["option_developer_tab_export"],
-            desc = L["option_developer_tab_export_desc"],
-            order = 2,
-            width = "full",
-            type = "toggle",
-            set = function(info, val) self.db.char.showTabExport = val end,
-            get = function(info) return self.db.char.showTabExport end
           }
         }
       }

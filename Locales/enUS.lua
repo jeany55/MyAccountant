@@ -12,6 +12,10 @@ L["ldb_name_income"] = "%s - Income"
 L["ldb_name_profit"] = "%s - Profit"
 L["ldb_name_outcome"] = "%s - Outcome"
 
+L["option_tab_developer_export"] = "Tab libary export"
+L["option_tab_developer_export_desc"] =
+    "[Developer Option}: Shows the LUA code necessary to add this tab to the addon's default tab library."
+
 L["ldb_name_income_character"] = "Income - %s"
 L["ldb_name_outcome_character"] = "Outcome - %s"
 L["ldb_name_profit_character"] = "Profit - %s"
@@ -31,13 +35,15 @@ L["version_welcome_message"] =
 L["version_first_install_message"] =
     "All settings have been set to defaults. Please check addon options to customize your minimap tooltip, info frame data options, as well as your tabs!"
 
+L["random_day"] = "Random Day (Week)"
 L["yesterday"] = "Yesterday"
 L["two_days_ago"] = "Two Days Ago"
 L["three_days_ago"] = "Three Days Ago"
+L["four_days_ago"] = "Four Days Ago"
 L["last_month"] = "Last Month"
 L["last_week"] = "Last Week"
 L["two_weeks_ago"] = "Two Weeks Ago"
-
+L["last_weekend"] = "Last Weekend"
 L["option_tab_text"] =
     "Tab configuration allows you to specify which tabs you see and in which order. Select a desired tab on the left to enable or disable."
 

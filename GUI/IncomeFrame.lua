@@ -854,7 +854,7 @@ end
 --- @param tabCreationId integer Id assigned when creating the tab frame
 function MyAccountant:TabClick(tab, tabCreationId)
   PanelTemplates_SetTab(IncomeFrame, tabCreationId);
-
+  tab:runLoadedFunction()
   ActiveTab = tab
   MyAccountant:updateFrame()
 end

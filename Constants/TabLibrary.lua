@@ -135,6 +135,36 @@ Tab:setEndDate(threeDaysAgo)
 Tab:setDateSummaryText(date("%x", threeDaysAgo))]]
   }),
   Tab:construct({
+    id = "4ab152ea",
+    tabName = L["four_days_ago"],
+    tabType = "DATE",
+    visible = false,
+    ldbEnabled = false,
+    infoFrameEnabled = false,
+    minimapSummaryEnabled = false,
+    luaExpression = [[local fourDaysAgo = DateUtils.subtractDays(DateUtils.getToday(), 4)
+    
+Tab:setStartDate(fourDaysAgo)
+Tab:setEndDate(fourDaysAgo)
+Tab:setDateSummaryText(date("%x", fourDaysAgo))]]
+  }),
+  Tab:construct({
+    id = "87bcece6",
+    tabName = L["last_weekend"],
+    tabType = "DATE",
+    visible = true,
+    ldbEnabled = false,
+    infoFrameEnabled = false,
+    minimapSummaryEnabled = false,
+    luaExpression = [[local firstDayOfPreviousWeek = DateUtils.getStartOfWeek(DateUtils.subtractDay(DateUtils.getStartOfWeek()))
+local saturday = DateUtils.addDays(firstDayOfPreviousWeek, 5)
+local sunday = DateUtils.addDays(firstDayOfPreviousWeek, 6)
+ 
+Tab:setStartDate(saturday)
+Tab:setEndDate(sunday)
+Tab:setDateSummaryText(date("%x", saturday) .. " - " .. date("%x", sunday))]]
+  }),
+  Tab:construct({
     id = "52afc54c",
     tabName = L["last_month"],
     tabType = "DATE",
@@ -179,5 +209,24 @@ local lastDayOfTwoWeeksAgo = DateUtils.addDays(firstDayOfTwoWeeksAgo, 6)
 Tab:setStartDate(firstDayOfTwoWeeksAgo)
 Tab:setEndDate(lastDayOfTwoWeeksAgo)
 Tab:setDateSummaryText(date("%x", firstDayOfTwoWeeksAgo) .. " - " .. date("%x", lastDayOfTwoWeeksAgo))]]
+  }),
+  Tab:construct({
+    id = "cbbaac91",
+    tabName = L["random_day"],
+    tabType = "DATE",
+    visible = false,
+    ldbEnabled = false,
+    infoFrameEnabled = false,
+    minimapSummaryEnabled = false,
+    luaExpression = [[local currentDate = date("*t", timestamp)
+local currentDayInMonth = currentDate.day
+local startOfMonth = DateUtils.getStartOfMonth()
+
+local dayOffset = math.random(1, currentDayInMonth)
+local day = DateUtils.addDays(startOfMonth, dayOffset)
+
+Tab:setStartDate(day)
+Tab:setEndDate(day)
+Tab:setDateSummaryText(date("%x", day))]]
   })
 }
