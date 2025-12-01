@@ -353,7 +353,7 @@ end
 
 --- Returns income outcome table for given tab and desired character/date if wanted
 --- @param tab Tab
---- @param dateOverride integer? Unix timestamp override, if not provided the current date is used
+--- @param dateOverride table? Date timestamp object override, if not provided the current date is used
 --- @param characterOverride string? Character name override, if not provided the current character is used
 --- @param viewType ViewType View type, SOURCE or ZONE
 function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride, viewType)
