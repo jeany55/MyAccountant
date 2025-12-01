@@ -513,7 +513,7 @@ function MyAccountant:SetupAddonOptions()
 
               return format(stringTemplate, tab:getId(), tab:getName(), tab:getType(), tostring(tab:getVisible()),
                             tostring(tab:getLdbEnabled()), tostring(tab:getInfoFrameEnabled()),
-                            tostring(tab:getMinimapSummaryEnabled()), tab:getLuaExpression())
+                            tostring(tab:getMinimapSummaryEnabled()), tab:getLuaExpression() or "")
             end,
             set = function() end
           }

@@ -35,7 +35,7 @@ L["version_welcome_message"] =
 L["version_first_install_message"] =
     "All settings have been set to defaults. Please check addon options to customize your minimap tooltip, info frame data options, as well as your tabs!"
 
-L["random_day"] = "Random Day (Week)"
+L["random_day"] = "Random Day (Month)"
 L["yesterday"] = "Yesterday"
 L["two_days_ago"] = "Two Days Ago"
 L["three_days_ago"] = "Three Days Ago"
