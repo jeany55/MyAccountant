@@ -472,6 +472,7 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local data = {}
   local goldTotal = 0
   local numberOfCharacters = 0
+  -- Track warband gold separately; remains 0 if no warband data exists
   local warbandGold = 0
 
   for characterName, characterData in pairs(self.db.factionrealm) do
