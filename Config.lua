@@ -641,6 +641,16 @@ function MyAccountant:SetupAddonOptions()
             set = function(info, val) self.db.char.colorGoldInIncomePanel = val end,
             get = function(info) return self.db.char.colorGoldInIncomePanel end
           },
+          show_warband_in_realm_balance = {
+            order = 3.5,
+            name = L["option_show_warband_in_realm_balance"],
+            desc = L["option_show_warband_in_realm_balance_desc"],
+            type = "toggle",
+            width = "full",
+            disabled = function() return private.wowVersion ~= GameTypes.RETAIL end,
+            set = function(info, val) self.db.char.showWarbandInRealmBalance = val end,
+            get = function(info) return self.db.char.showWarbandInRealmBalance end
+          },
           slash_behav = {
             order = 4,
             name = L["option_slash_behav"],

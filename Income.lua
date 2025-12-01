@@ -472,22 +472,38 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local data = {}
   local goldTotal = 0
   local numberOfCharacters = 0
+  local warbandGold = 0
 
   for characterName, characterData in pairs(self.db.factionrealm) do
     if (characterData and characterData.config and characterData.config.gold) then
-      goldTotal = goldTotal + characterData.config.gold
-      table.insert(data, {
-        name = characterName,
-        gold = characterData.config.gold,
-        classColor = characterData.config.classColor,
-        faction = characterData.config.faction
-      })
-      numberOfCharacters = numberOfCharacters + 1
+      -- Skip Warband entry for character list, handle it separately
+      if characterName ~= "Warband" then
+        goldTotal = goldTotal + characterData.config.gold
+        table.insert(data, {
+          name = characterName,
+          gold = characterData.config.gold,
+          classColor = characterData.config.classColor,
+          faction = characterData.config.faction
+        })
+        numberOfCharacters = numberOfCharacters + 1
+      else
+        warbandGold = characterData.config.gold
+      end
     end
   end
 
   table.sort(data, function(a, b) return a.gold > b.gold end)
   table.insert(data, 1, { name = L["income_panel_hover_realm_total"], gold = goldTotal })
+
+  -- Add Warband balance as second row if on retail and option is enabled
+  if private.wowVersion == GameTypes.RETAIL and self.db.char.showWarbandInRealmBalance and warbandGold > 0 then
+    table.insert(data, 2, {
+      name = "|TInterface\\Icons\\inv_misc_bag_38:0|t " .. L["warband"],
+      gold = warbandGold,
+      classColor = nil,
+      faction = nil
+    })
+  end
 
   return data
 end

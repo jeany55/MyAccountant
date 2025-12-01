@@ -254,6 +254,7 @@ private.default_settings = {
   tabLinebreak = true,
   tabAdvancedMode = false,
   showTabExport = false,
-  incomeFrameWidth = 532
+  incomeFrameWidth = 532,
+  showWarbandInRealmBalance = true
 }
 

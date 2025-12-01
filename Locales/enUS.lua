@@ -190,10 +190,15 @@ L["option_minimap_balance_style_realm"] = "Realm"
 --- VERSION 1.5
 -----------------------------------------
 L["income_panel_hover_realm_total"] = "Realm balance"
+L["warband"] = "Warband"
 
 L["option_show_realm_total_tooltip"] = "Show faction icon (hover to see realm balance)"
 L["option_show_realm_total_tooltip_desc"] =
     "If true, hovering over the faction icon at the the bottom of the income panel will show you your total gold across your realm. Only shows if the addon knows about more than one character, log into them to update."
+
+L["option_show_warband_in_realm_balance"] = "Show Warband balance in realm totals"
+L["option_show_warband_in_realm_balance_desc"] =
+    "If enabled, Warband balance will be shown in realm balance tooltips. Only available on retail. The Warband balance is updated when you open your bank."
 
 -----------------------------------------
 --- VERSION 1.4
