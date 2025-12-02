@@ -170,8 +170,8 @@ end
 
 --- Sums day
 --- @param dayData table Day data
---- @param category Source|nil Category to sum, nil for all
---- @param type string|nil "income"/"outcome", nil for net
+--- @param category Source? Category to sum, nil for all
+--- @param type string? "income"/"outcome", nil for net
 local function sumDay(dayData, category, type)
 
   if (category == nil) then

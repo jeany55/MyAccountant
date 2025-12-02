@@ -262,7 +262,7 @@ function Tab:setLdbEnabled(enabled)
     end
 
     for _, v in pairs(self._dataInstances) do
-      v.ldbDataObject = registerLdbData(v.label)
+      v.ldbDataObject = registerLdbData(v.label, v.tooltip)
     end
 
     self.initializedLdb = true

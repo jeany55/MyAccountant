@@ -193,7 +193,6 @@ end
 function MyAccountant:UpdateInfoFrameSize()
   local minimumHeight = 20
   local minimumWidth = 32
-
   local neededHeight = 0
   local amount = 0
 
