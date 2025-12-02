@@ -83,23 +83,29 @@ local DateUtils = {
   --- @return integer timestamp Unix timestamp in the future
   subtractDays = function(time, days) return time - (dayInSeconds * days) end,
 
-  --- Gets the number of days in the month from a timestamp
+  --- Gets the total number of days in the month containing the given timestamp
   --- @param timestamp integer Unix timestamp
-  --- @return integer days The number of days in the month for the date
+  --- @return integer days The total number of days in the month (e.g., 31 for July)
   getDaysInMonth = function(timestamp)
     local currentDate = date("!*t", timestamp)
-    -- Create a date for the first day of the next month
-    local nextMonth = currentDate.month + 1
-    local year = currentDate.year
-    if nextMonth > 12 then
-      nextMonth = 1
-      year = year + 1
+    local currentMonth = currentDate.month
+    
+    -- Start from the beginning of the month
+    local startOfMonth = timestamp - ((currentDate.day - 1) * dayInSeconds)
+    
+    -- Count days until month changes
+    local daysInMonth = 0
+    local checkTimestamp = startOfMonth
+    while true do
+      local checkDate = date("!*t", checkTimestamp)
+      if checkDate.month ~= currentMonth then
+        break
+      end
+      daysInMonth = daysInMonth + 1
+      checkTimestamp = checkTimestamp + dayInSeconds
     end
-    -- Get timestamp for first day of next month, then subtract one day to get last day of current month
-    local firstOfNextMonth = time{year=year, month=nextMonth, day=1, hour=0, min=0, sec=0}
-    local lastOfThisMonth = firstOfNextMonth - dayInSeconds
-    local lastDate = date("!*t", lastOfThisMonth)
-    return lastDate.day
+    
+    return daysInMonth
   end
 }
 
