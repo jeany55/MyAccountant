@@ -59,8 +59,6 @@ L["option_tab_advanced_desc"] =
 L["option_tabs"] = "Tabs"
 L["option_new_tab"] = "New tab"
 
-
-
 L["option_reset_tabs"] = "Reset tabs to default"
 L["option_reset_tabs_desc"] = "Reset tab configuration to default tabs. |cffff0000Will erase any custom tabs! Irreversible!|r"
 
@@ -93,8 +91,6 @@ L["option_tab_expression_missing_endDate"] = "You must set a end date by calling
 
 L["option_tab_expression_invalid_startDate"] = "Start date must be a valid unix timestamp (number)"
 L["option_tab_expression_invalid_endDate"] = "End date must be a valid unix timestamp (number)"
-
-
 
 L["option_tab_visible"] = "Visible"
 L["option_tab_visible_desc"] = "Show this tab on the income frame"
@@ -172,7 +168,6 @@ L["option_minimap_data_desc"] = "What data to show on the minimap tooltip"
 -----------------------------------------
 L["ldb_loading"] = "Loading"
 
-
 L["option_minimap_balance_style"] = "Show total balance from"
 L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
 
@@ -237,7 +232,9 @@ L["income_panel_action_options"] = "Open addon options"
 L["income_panel_action_session"] = "Clear session data"
 L["income_panel_action_gph"] = "Reset gold per hour"
 
-
+L["income_panel_button_OPTIONS"] = "Options"
+L["income_panel_button_CLEAR_SESSION"] = "Clear session"
+L["income_panel_button_RESET_GPH"] = "Reset GPH"
 
 L["character_selection_all"] = "All characters"
 
@@ -271,7 +268,6 @@ L["option_slash_behav_desc"] = "Specify the behaviour when entering /mya in chat
 L["option_slash_behav_chat"] = "Show options in chat"
 L["option_slash_behav_open"] = "Open accountant window"
 
-
 -- Options, minimap
 
 L["option_minimap_left_click"] = "When left clicking"
@@ -285,8 +281,6 @@ L["option_minimap_click_income_panel"] = "Open/close income panel"
 L["option_minimap_click_options"] = "Open addon options"
 L["option_minimap_click_reset_session"] = "Reset session income/outcome"
 L["option_minimap_click_reset_gold_per_hour"] = "Reset gold per hour"
-
-
 
 -- Options, income panel
 L["option_close_entering_combat"] = "Close panel when entering combat"

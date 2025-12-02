@@ -94,6 +94,9 @@ L["income_panel_action_options"] = "打开插件选项"
 L["income_panel_action_session"] = "清除会话数据"
 L["income_panel_action_gph"] = "重置每小时金币数"
 
+L["income_panel_button_OPTIONS"] = "选项"
+L["income_panel_button_CLEAR_SESSION"] = "清除会话"
+L["income_panel_button_RESET_GPH"] = "重置每小时金币"
 
 L["character_selection_all"] = "所有角色"
 
@@ -139,8 +142,6 @@ L["option_minimap_click_income_panel"] = "打开/关闭收入面板"
 L["option_minimap_click_options"] = "打开插件选项"
 L["option_minimap_click_reset_session"] = "重置会话收入/支出"
 L["option_minimap_click_reset_gold_per_hour"] = "重置每小时金币数"
-
-
 
 -- Options, income panel
 L["option_close_entering_combat"] = "进入战斗时关闭面板"
