@@ -1,5 +1,7 @@
 # Custom Tabs with Lua Snippets
 
+![Custom Tabs](../Docs/customTabs.svg)
+
 ## What and Why
 
 ### What is This Feature?
@@ -16,6 +18,8 @@ While MyAccountant comes with many built-in tabs (Today, This Week, This Month, 
 - **Flexible Configuration**: Add custom toggles or settings specific to your tab's needs
 
 This feature gives you the power to make MyAccountant work exactly how you want it to.
+
+**Bonus**: You can even share your custom tabs with the community using the built-in developer export feature!
 
 ## Examples
 
@@ -145,6 +149,26 @@ Tab:setEndDate(today)
 -- Use a localized key from the addon
 Tab:setLabelText(Locale.get("today"))
 Tab:setDateSummaryText(date("%x", today))
+```
+
+### Example 11: Random Date Range (Advanced)
+
+Create a tab that tracks a random day from the current month - showing that you can use any Lua logic:
+
+```lua
+local currentDate = date("*t", DateUtils.getToday())
+local currentDayInMonth = currentDate.day
+local startOfMonth = DateUtils.getStartOfMonth()
+
+-- Pick a random day from 1 to current day of month
+local dayOffset = math.random(1, currentDayInMonth)
+local randomDay = DateUtils.addDays(startOfMonth, dayOffset - 1)
+
+Tab:setStartDate(randomDay)
+Tab:setEndDate(randomDay)
+Tab:setDateSummaryText(date("%x", randomDay))
+Tab:setLabelText("Random Day")
+Tab:setLabelColor("FF69B4")  -- Hot pink for fun!
 ```
 
 ## How to Set Up Your Own Custom Tab
@@ -556,14 +580,17 @@ Subtracts a specified number of days from the given timestamp.
 
 ##### `DateUtils.getDaysInMonth(timestamp)`
 
-Returns the number of days in the month for the given timestamp.
+Returns the current day of the month for the given timestamp (1-31).
+
+**Note**: Despite the name, this function returns the current **day number** of the month, not the total number of days in the month.
 
 - **Parameters:**
   - `timestamp` (number): Unix timestamp
-- **Returns:** (number) Number of days in the month (28-31)
+- **Returns:** (number) Current day of the month (1-31)
 - **Example:**
   ```lua
-  local daysThisMonth = DateUtils.getDaysInMonth(DateUtils.getToday())
+  local currentDay = DateUtils.getDaysInMonth(DateUtils.getToday())
+  -- If today is January 15th, currentDay will be 15
   ```
 
 ### Locale Object
@@ -711,6 +738,7 @@ Double-check your date calculations:
 - Ensure you're using the right DateUtils functions
 - Verify timestamp values are reasonable (not negative, not too far in future)
 - Test with different dates to identify edge cases
+- **Enable Debug Messages**: Go to addon options and enable "Show debug messages" under the Debug section. This will print the calculated date range to chat whenever your tab's lua expression is evaluated, making it easy to see what dates your code is producing.
 
 ### Tab doesn't appear
 
@@ -720,11 +748,43 @@ Make sure:
 - The tab was successfully created (no error message)
 - You're looking at the income panel (not just the options)
 
+## Sharing Your Custom Tabs
+
+Once you've created a custom tab you're proud of, you can easily share it with the community!
+
+### How to Export Your Tab
+
+1. Go to **Tabs** configuration in the addon options
+2. Enable **Advanced mode**
+3. Enable **Tab library export** option (this is a developer option)
+4. Select your custom tab
+5. You'll see a **Tab library export** field appear with the complete `Tab:construct()` code
+6. Copy this code and share it on forums, Discord, or wherever the community gathers!
+
+### Example Export
+
+When you export a tab, you'll get code like this:
+
+```lua
+Tab:construct({
+  id = "abc123de",
+  tabName = "My Custom Tab",
+  tabType = "DATE",
+  visible = true,
+  ldbEnabled = false,
+  infoFrameEnabled = false,
+  minimapSummaryEnabled = false,
+  luaExpression = [[Tab:setStartDate(DateUtils.getToday())
+Tab:setEndDate(DateUtils.getToday())]]
+})
+```
+
+Others can use this code as inspiration or add it to their own tab library!
+
 ## Additional Resources
 
 - **Lua Documentation**: [lua.org](https://www.lua.org/manual/5.1/)
-- **Unix Timestamp Converter**: Helpful for debugging timestamp values
-- **WoW Lua Forums**: Community support for WoW addon development
+- **Unix Timestamp Converter**: [unixtimestamp.com](https://www.unixtimestamp.com/) - Helpful for debugging timestamp values
 - **MyAccountant GitHub**: [github.com/jeany55/MyAccountant](https://github.com/jeany55/MyAccountant) - Report issues or request features
 
 ---

@@ -1,0 +1,27 @@
+<svg width="600" height="120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="600" height="120" fill="#1a1a2e" rx="8"/>
+  
+  <!-- Tab icon on left -->
+  <g transform="translate(30, 30)">
+    <!-- Tab background -->
+    <rect x="0" y="10" width="50" height="50" fill="#16213e" stroke="#0f3460" stroke-width="2" rx="4"/>
+    <!-- Code symbol -->
+    <text x="25" y="45" font-family="monospace" font-size="30" fill="#e94560" text-anchor="middle" font-weight="bold">{}</text>
+  </g>
+  
+  <!-- Separator line -->
+  <line x1="110" y1="30" x2="110" y2="90" stroke="#0f3460" stroke-width="2"/>
+  
+  <!-- Title text -->
+  <text x="130" y="50" font-family="Arial, sans-serif" font-size="24" fill="#e94560" font-weight="bold">Custom Tabs</text>
+  <text x="130" y="75" font-family="Arial, sans-serif" font-size="16" fill="#a0a0b0">Create Your Own Date Ranges with Lua</text>
+  
+  <!-- Decorative code snippet on right -->
+  <g transform="translate(450, 30)">
+    <rect width="130" height="60" fill="#0f3460" rx="4" opacity="0.6"/>
+    <text x="10" y="20" font-family="monospace" font-size="10" fill="#4ecca3">Tab:setStartDate</text>
+    <text x="10" y="35" font-family="monospace" font-size="10" fill="#4ecca3">Tab:setEndDate</text>
+    <text x="10" y="50" font-family="monospace" font-size="10" fill="#4ecca3">DateUtils.getToday()</text>
+  </g>
+</svg>
