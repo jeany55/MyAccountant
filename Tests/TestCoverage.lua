@@ -1,6 +1,25 @@
 ------------------------------------------------------------
 -- TestCoverage.lua
 -- Calculates and displays test coverage for MyAccountant
+--
+-- Usage: lua5.1 Tests/TestCoverage.lua
+--
+-- This script analyzes all non-test Lua files in the repository
+-- (excluding Tests/ and Libs/ directories) and calculates what
+-- percentage of functions are covered by tests.
+--
+-- The coverage calculation works by:
+-- 1. Scanning all source files to identify function definitions
+-- 2. Reading all test files to see which functions are referenced
+-- 3. Computing the percentage of functions that appear in tests
+-- 4. Displaying a detailed report showing per-file coverage
+--
+-- The report shows:
+-- - File-by-file coverage breakdown
+-- - Total lines of code
+-- - Total functions found
+-- - Number of functions covered by tests
+-- - Overall test coverage percentage
 ------------------------------------------------------------
 
 local function readFile(path)
@@ -13,9 +32,16 @@ local function readFile(path)
   return content
 end
 
+-- Scan directory for files matching a pattern
+-- Note: This uses shell commands and assumes trusted input
+-- Only use with hardcoded paths in a development environment
 local function scanDirectory(dir, pattern, exclude)
   local files = {}
-  local handle = io.popen('find "' .. dir .. '" -type f -name "' .. pattern .. '" 2>/dev/null')
+  -- Construct find command with proper quoting
+  local cmd = string.format('find "%s" -type f -name "%s" 2>/dev/null', 
+                           dir:gsub('"', '\\"'), 
+                           pattern:gsub('"', '\\"'))
+  local handle = io.popen(cmd)
   if not handle then
     return files
   end
@@ -42,7 +68,7 @@ local function extractFunctions(content, filepath)
   local functions = {}
   
   -- Pattern 1: function AddonName:FunctionName or function AddonName.FunctionName
-  for funcName in content:gmatch("function%s+[%w_]+[:%.]([%w_]+)%s*%(") do
+  for funcName in content:gmatch("function%s+[%w_]*[:%.]([%w_]+)%s*%(") do
     table.insert(functions, funcName)
   end
   
@@ -72,11 +98,14 @@ local function countLinesOfCode(content)
   for line in content:gmatch("[^\r\n]+") do
     local trimmed = line:match("^%s*(.-)%s*$")
     
-    -- Check for multiline comment start/end
-    if trimmed:match("^%-%-%[%[") then
+    -- Check for multiline comment start and end on same line
+    if trimmed:match("^%-%-%[%[.-%]%]") then
+      -- Single line multiline comment, skip it
+    elseif trimmed:match("^%-%-%[%[") then
+      -- Start of multiline comment
       inMultilineComment = true
-    end
-    if trimmed:match("%]%]") then
+    elseif trimmed:match("^.*%]%]") and inMultilineComment then
+      -- End of multiline comment
       inMultilineComment = false
     elseif not inMultilineComment then
       -- Skip blank lines and single-line comments
@@ -89,13 +118,21 @@ local function countLinesOfCode(content)
   return count
 end
 
+-- Escape special Lua pattern characters
+local function escapePattern(str)
+  return str:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
+end
+
 -- Check if a function is covered by tests
 local function isFunctionCovered(funcName, testContent)
+  -- Escape the function name to avoid pattern matching issues
+  local escapedName = escapePattern(funcName)
+  
   -- Check if function name appears in test content
   -- This is a simplified coverage check - it looks for references to the function
-  if testContent:match("[:%.]" .. funcName .. "%s*%(") or
-     testContent:match("['\"]" .. funcName .. "['\"]") or
-     testContent:match(funcName .. "%s*%(") then
+  if testContent:match("[:%.]" .. escapedName .. "%s*%(") or
+     testContent:match("['\"]" .. escapedName .. "['\"]") or
+     testContent:match(escapedName .. "%s*%(") then
     return true
   end
   return false
