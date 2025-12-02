@@ -458,6 +458,9 @@ import("Tests.Tests.ApiTabsTests")
 import("Tests.Tests.EventsTests")
 import("Tests.Tests.CoreTests")
 import("Tests.Tests.ConfigTests")
+import("Tests.Tests.CoverageBoostTests")
+import("Tests.Tests.FinalCoverageTests")
+import("Tests.Tests.TargetedCoverageTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)
