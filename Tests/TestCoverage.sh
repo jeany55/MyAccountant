@@ -9,4 +9,4 @@ set -e
 export TZ=UTC
 
 # Run the Lua test coverage script
-lua5.1 Tests/TestCoverage.lua "$@"
+lua Tests/TestCoverage.lua "$@"
