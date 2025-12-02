@@ -122,7 +122,7 @@ end
 local function printHelpMessage()
   MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
   MyAccountant:Print(L["help1"])
-  MyAccountant:Print("----------------------")
+  MyAccountant:Print(L["help_separator"])
   MyAccountant:Print(L["help2"])
   MyAccountant:Print(L["help3"])
   MyAccountant:Print(L["help4"])
