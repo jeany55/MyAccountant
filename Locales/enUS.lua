@@ -59,9 +59,7 @@ L["option_tab_advanced_desc"] =
 L["option_tabs"] = "Tabs"
 L["option_new_tab"] = "New tab"
 
-L["option_developer_tab_export"] = "Show tab export field"
-L["option_developer_tab_export_desc"] =
-    "Shows an input field under tab options containing the necessary LUA export structure for adding to addon's default tabs"
+
 
 L["option_reset_tabs"] = "Reset tabs to default"
 L["option_reset_tabs_desc"] = "Reset tab configuration to default tabs. |cffff0000Will erase any custom tabs! Irreversible!|r"
@@ -96,7 +94,7 @@ L["option_tab_expression_missing_endDate"] = "You must set a end date by calling
 L["option_tab_expression_invalid_startDate"] = "Start date must be a valid unix timestamp (number)"
 L["option_tab_expression_invalid_endDate"] = "End date must be a valid unix timestamp (number)"
 
-L["option_tab_expression_invalid_unix_timestamp"] = "This lua express needs to return a valid unix timestamp by setting dateValue"
+
 
 L["option_tab_visible"] = "Visible"
 L["option_tab_visible_desc"] = "Show this tab on the income frame"
@@ -143,7 +141,7 @@ L["about_special_thanks_to"] = "Special thanks to"
 ----------------------------------------
 --- VERSION 1.7
 ----------------------------------------
-L["character"] = "Character"
+
 L["balance"] = "Balance"
 
 L["option_info_frame"] = "Information frame"
@@ -173,17 +171,7 @@ L["option_minimap_data_desc"] = "What data to show on the minimap tooltip"
 --- VERSION 1.6
 -----------------------------------------
 L["ldb_loading"] = "Loading"
-L["ldb_session_income"] = "Session Income"
-L["ldb_session_profit"] = "Session Profit"
-L["ldb_daily_income_character"] = "Today's Income (Character)"
-L["ldb_daily_net_character"] = "Today's Profit (Character)"
-L["ldb_daily_income_realm"] = "Today's Income (Realm)"
-L["ldb_daily_net_realm"] = "Today's Profit (Realm)"
-L["ldb_weekly_income_character"] = "Week's Income (Character)"
-L["ldb_weekly_net_character"] = "Week's Profit (Character)"
-L["ldb_weekly_income_realm"] = "Week's Income (Realm)"
-L["ldb_weekly_net_realm"] = "Week's Profit (Realm)"
-L["ldb_faction_balance"] = "Realm Balance"
+
 
 L["option_minimap_balance_style"] = "Show total balance from"
 L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
@@ -249,9 +237,7 @@ L["income_panel_action_options"] = "Open addon options"
 L["income_panel_action_session"] = "Clear session data"
 L["income_panel_action_gph"] = "Reset gold per hour"
 
-L["income_panel_button_OPTIONS"] = "Options"
-L["income_panel_button_CLEAR_SESSION"] = "Clear session"
-L["income_panel_button_RESET_GPH"] = "Reset GPH"
+
 
 L["character_selection_all"] = "All characters"
 
@@ -284,13 +270,9 @@ L["option_slash_behav_desc"] = "Specify the behaviour when entering /mya in chat
 
 L["option_slash_behav_chat"] = "Show options in chat"
 L["option_slash_behav_open"] = "Open accountant window"
-L["option_slash_behav_report"] = "Print report in chat"
+
 
 -- Options, minimap
-L["option_minimap_style"] = "Display income info as"
-L["option_minimap_style_desc"] = "How income and outcome information should appear on the minimap tooltip"
-L["option_minimap_style_income_outcome"] = "Income and outcome"
-L["option_minimap_style_net"] = "Net gain/loss"
 
 L["option_minimap_left_click"] = "When left clicking"
 L["option_minimap_left_click_desc"] = "What the behaviour should be when left clicking on the minimap icon"
@@ -304,11 +286,7 @@ L["option_minimap_click_options"] = "Open addon options"
 L["option_minimap_click_reset_session"] = "Reset session income/outcome"
 L["option_minimap_click_reset_gold_per_hour"] = "Reset gold per hour"
 
-L["option_minimap_data_type"] = "Show data from"
-L["option_minimap_data_type_desc"] = "What data set to show income information from on the minimap icon"
 
-L["option_minimap_data_type_session"] = "This session"
-L["option_minimap_data_type_today"] = "Today"
 
 -- Options, income panel
 L["option_close_entering_combat"] = "Close panel when entering combat"
@@ -394,10 +372,6 @@ L["incoming_header"] = "Incoming"
 L["outcoming_header"] = "Outgoing"
 
 -- General
-L["total_incoming"] = "Total incoming:"
-L["total_outgoing"] = "Total outgoing:"
-L["net_gain"] = "Net gain:"
-L["net_loss"] = "Net loss:"
 
 -- Available sources
 L["TRAINING_COSTS"] = "Training Costs"

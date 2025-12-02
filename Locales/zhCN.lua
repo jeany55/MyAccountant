@@ -9,7 +9,6 @@ end
 -- Localization definitions
 
 -- VERESION 1.7
-L["character"] = "角色"
 L["balance"] = "余额"
 
 L["option_info_frame"] = "信息框架"
@@ -46,17 +45,6 @@ L["option_ldb_desc"] =
     "如果为真，MyAccountant 的'会话收入'、'会话利润'、'今日收入'、'今日利润'数据将在与 LDB 兼容的插件（如 Bazooka 或 Titan Panel）中提供。更改此项将需要重新加载 UI 才能生效。"
 
 L["ldb_loading"] = "加载中"
-L["ldb_session_income"] = "会话收入"
-L["ldb_session_profit"] = "会话利润"
-L["ldb_daily_income_character"] = "今日收入（角色）"
-L["ldb_daily_net_character"] = "今日利润（角色）"
-L["ldb_daily_income_realm"] = "今日收入（服务器）"
-L["ldb_daily_net_realm"] = "今日利润（服务器）"
-L["ldb_weekly_income_character"] = "周收入（角色）"
-L["ldb_weekly_net_character"] = "周利润（角色）"
-L["ldb_weekly_income_realm"] = "周收入（服务器）"
-L["ldb_weekly_net_realm"] = "周利润（服务器）"
-L["ldb_faction_balance"] = "服务器余额"
 
 --- VERSION 1.5
 L["income_panel_hover_realm_total"] = "服务器余额"
@@ -106,9 +94,6 @@ L["income_panel_action_options"] = "打开插件选项"
 L["income_panel_action_session"] = "清除会话数据"
 L["income_panel_action_gph"] = "重置每小时金币数"
 
-L["income_panel_button_OPTIONS"] = "选项"
-L["income_panel_button_CLEAR_SESSION"] = "清除会话"
-L["income_panel_button_RESET_GPH"] = "重置每小时金币"
 
 L["character_selection_all"] = "所有角色"
 
@@ -140,13 +125,8 @@ L["option_slash_behav_desc"] = "指定在聊天中输入 /mya 时的行为"
 
 L["option_slash_behav_chat"] = "在聊天中显示选项"
 L["option_slash_behav_open"] = "打开会计窗口"
-L["option_slash_behav_report"] = "在聊天中打印报告"
 
 -- Options, minimap
-L["option_minimap_style"] = "显示收入信息为"
-L["option_minimap_style_desc"] = "收入和支出信息应如何出现在小地图提示中"
-L["option_minimap_style_income_outcome"] = "收入和支出"
-L["option_minimap_style_net"] = "净收益/亏损"
 
 L["option_minimap_left_click"] = "左键点击时"
 L["option_minimap_left_click_desc"] = "左键点击小地图图标时的行为"
@@ -160,11 +140,7 @@ L["option_minimap_click_options"] = "打开插件选项"
 L["option_minimap_click_reset_session"] = "重置会话收入/支出"
 L["option_minimap_click_reset_gold_per_hour"] = "重置每小时金币数"
 
-L["option_minimap_data_type"] = "显示来自的数据"
-L["option_minimap_data_type_desc"] = "在小地图图标上显示收入信息的数据集"
 
-L["option_minimap_data_type_session"] = "本会话"
-L["option_minimap_data_type_today"] = "今天"
 
 -- Options, income panel
 L["option_close_entering_combat"] = "进入战斗时关闭面板"
@@ -250,10 +226,6 @@ L["incoming_header"] = "收入"
 L["outcoming_header"] = "支出"
 
 -- General
-L["total_incoming"] = "总收入："
-L["total_outgoing"] = "总支出："
-L["net_gain"] = "净收益："
-L["net_loss"] = "净亏损："
 
 -- Available sources
 L["TRAINING_COSTS"] = "训练费用"
