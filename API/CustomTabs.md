@@ -2,14 +2,14 @@
 
 ## Overview
 
-MyAccountant allows you to create fully customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what matters to you.
+MyAccountant allows you to create fully customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what timeframes you want.
 
 With custom tabs, you can:
 
-- **Track Personalized Time Periods**: Create tabs for specific date ranges like "raid week", "farming weekend", or "tournament period"
-- **Use Dynamic Date Calculations**: Build tabs that automatically adjust based on complex date logic
-- **Customize Display**: Format date ranges and labels to match your workflow
-- **Add Configuration Options**: Create custom toggles or settings specific to your tab's needs
+- **Track Personalized Time Periods**: Create tabs for specific date ranges (eg. "raid days", "farming weekend", "first weekend of the month")
+- **Use Dynamic Date Calculations**: Build tabs that automatically adjust based on complex logic. You have access to the WoW API - you can make a tab show different data depending on where your character is, if they're in combat, or whatever you can imagine.
+- **Customize Display**: Format date ranges and labels to whatever you like
+- **Add Configuration Options**: Create custom toggles or settings specific to your tab's needs, allowing for user input!
 
 This documentation is intended to help show you how to create your own custom tabs, from simple single-day trackers to advanced date range calculations. It also contains an API reference.
 
@@ -19,7 +19,7 @@ This documentation is intended to help show you how to create your own custom ta
 
 Creating custom tabs requires a small amount of lua knowledge. The general idea is
 1. Advanced configuration is only allowed for Date tab types
-2. The date type needs to at the bare minimum set the start and end date in unix time (the number of seconds since 1970). Several utility functions are provided to help with date calculations.
+2. The date type needs to, at the bare minimum, set the start and end date in unix time (the number of seconds since 1970). Several utility functions are provided to help with date calculations.
 
 
 ![Tab Configuration](../Docs/incomePanelConfigAdvanced.png)
@@ -142,7 +142,7 @@ Tab:setDateSummaryText(date("%x", today))
 
 ### Example 10: Using Locale for Internationalization
 
-Use localized strings in your tab:
+Use localized strings in your tab. Currently you may only fetch existing localized keys (not set any).
 
 ```lua
 local today = DateUtils.getToday()
@@ -650,7 +650,7 @@ Represents a text input field.
 
 ## Standard Lua Functions Available
 
-In addition to the MyAccountant-specific APIs, you have access to standard Lua functions commonly used for date formatting:
+In addition to the MyAccountant-specific APIs, you have access to the WoW API and standard Lua functions commonly used for date formatting:
 
 ### `date(format, [time])`
 
@@ -697,19 +697,6 @@ You also have access to standard Lua libraries:
 - Comparison operators: `==`, `~=`, `<`, `>`, `<=`, `>=`
 - Conditional statements: `if/then/else`, `while`, `for`
 
-## Tips and Best Practices
-
-1. **Start Simple**: Begin with a basic example and gradually add complexity
-2. **Test Thoroughly**: Create your tab and verify the date range is correct
-3. **Use Comments**: Add comments in your lua code to document what each section does
-4. **Check Existing Tabs**: Look at the built-in tabs for inspiration and patterns
-5. **Validate Timestamps**: Always ensure your date calculations produce valid Unix timestamps
-6. **Format Dates Consistently**: Use `date()` formatting that matches your locale preferences
-7. **Handle Edge Cases**: Consider what happens at month/year boundaries
-8. **Keep It Maintainable**: Don't make your expressions too complex - simpler is better
-9. **Use Variables**: Store intermediate calculations in variables with descriptive names
-10. **Test Different Dates**: Make sure your tab works correctly on different days of the week/month
-
 ## Troubleshooting
 
 ### "You must set a start date"
@@ -731,10 +718,8 @@ There's a syntax error in your lua code. Check for:
 ### Tab shows wrong dates
 
 Double-check your date calculations:
-- Review your lua expression logic carefully
-- Ensure you're using the right DateUtils functions
-- Verify timestamp values are reasonable (not negative, not too far in future)
-- Test with different dates to identify edge cases
+- Review your lua expression logic carefully.
+- Ensure you're using the right DateUtils functions.
 - **Enable Debug Messages**: Go to addon options and enable "Show debug messages" under the Debug section. This will print the calculated date range to chat whenever your tab's lua expression is evaluated, making it easy to see what dates your code is producing.
 
 ### Tab doesn't appear
@@ -774,11 +759,11 @@ Tab:setEndDate(DateUtils.getToday())]]
 })
 ```
 
-## Advanced Usage Warning
+## ⚠️ Advanced Usage Warning
 
-⚠️ The `Tab` object passed to your lua expression is the same Tab object used internally by the addon. While this gives you powerful capabilities, it also means you need to be careful:
+ The `Tab` object passed to your lua expression is the same Tab object used internally by the addon. While this gives you powerful capabilities, it also means you need to be careful:
 
-- Methods that execute side effects beyond date/label configuration (like methods that update LDB data or info frames during expression evaluation) are available and can be called. Be careful or you might end up with unintended behaviour (like an infinite recursive loop!)
+- Methods that execute side effects beyond date/label configuration (like methods that update LDB data) are available and can be called. Be careful or you might end up with unintended behaviour (like an infinite recursive loop!)
 - **Deleting or overriding Tab object fields** may result in unexpected behaviour and break the Addon.
 
 Stick to the documented methods for safe and predictable behavior.
@@ -787,5 +772,3 @@ Stick to the documented methods for safe and predictable behavior.
 
 - **Lua Documentation**: [lua.org](https://www.lua.org/manual/5.1/)
 - **Unix Timestamp Converter**: [unixtimestamp.com](https://www.unixtimestamp.com/) - Helpful for debugging timestamp values
-- **MyAccountant GitHub**: [github.com/jeany55/MyAccountant](https://github.com/jeany55/MyAccountant) - Report issues or request features
-
