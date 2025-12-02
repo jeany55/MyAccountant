@@ -88,24 +88,19 @@ local DateUtils = {
   --- @return integer days The total number of days in the month (e.g., 31 for July)
   getDaysInMonth = function(timestamp)
     local currentDate = date("!*t", timestamp)
-    local currentMonth = currentDate.month
+    local month = currentDate.month
+    local year = currentDate.year
     
-    -- Start from the beginning of the month
-    local startOfMonth = timestamp - ((currentDate.day - 1) * dayInSeconds)
+    -- Days per month lookup table
+    local daysPerMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
     
-    -- Count days until month changes
-    local daysInMonth = 0
-    local checkTimestamp = startOfMonth
-    while true do
-      local checkDate = date("!*t", checkTimestamp)
-      if checkDate.month ~= currentMonth then
-        break
-      end
-      daysInMonth = daysInMonth + 1
-      checkTimestamp = checkTimestamp + dayInSeconds
+    -- Check for leap year if February
+    if month == 2 then
+      local isLeapYear = (year % 4 == 0 and year % 100 ~= 0) or (year % 400 == 0)
+      return isLeapYear and 29 or 28
     end
     
-    return daysInMonth
+    return daysPerMonth[month]
   end
 }
 
