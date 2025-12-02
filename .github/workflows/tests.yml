@@ -21,5 +21,20 @@ jobs:
       - name: Install Lua
         run: sudo apt install lua5.1
 
+      - name: Install LuaRocks and LuaCov
+        run: |
+          sudo apt install -y luarocks
+          sudo luarocks install luacov
+
       - name: Run tests
         run: ./Tests/RunTests.sh
+
+      - name: Run test coverage
+        run: ./Tests/TestCoverage.sh
+
+      - name: Publish test results
+        uses: test-summary/action@v2
+        with:
+          paths: "test-results/junit.xml"
+          show: "all"
+        if: always()

@@ -482,17 +482,115 @@ fire("PLAYER_ENTERING_WORLD")
 fire("PLAYER_ALIVE")
 update()
 
+-------------------------------------------------------
+--                  JUnit XML Output                 --
+-------------------------------------------------------
+
+local function escapeXML(str)
+    if not str then return "" end
+    str = tostring(str)
+    str = str:gsub("&", "&amp;")
+    str = str:gsub("<", "&lt;")
+    str = str:gsub(">", "&gt;")
+    str = str:gsub('"', "&quot;")
+    str = str:gsub("'", "&apos;")
+    return str
+end
+
+local function writeJUnitXML(testResults, outputPath)
+    local totalTests = 0
+    local totalFailures = 0
+    local totalTime = 0
+    
+    -- Calculate totals
+    for _, group in ipairs(testResults) do
+        totalTests = totalTests + group.total
+        totalFailures = totalFailures + group.failures
+        totalTime = totalTime + (group.time or 0)
+    end
+    
+    -- Create output directory if it doesn't exist
+    os.execute("mkdir -p " .. outputPath:match("^(.+)/[^/]+$"))
+    
+    -- Open file for writing
+    local file = io.open(outputPath, "w")
+    if not file then
+        print("Warning: Could not create JUnit XML file at " .. outputPath)
+        return false
+    end
+    
+    -- Write XML header
+    file:write('<?xml version="1.0" encoding="UTF-8"?>\n')
+    file:write(string.format('<testsuites tests="%d" failures="%d" time="%.3f">\n', 
+        totalTests, totalFailures, totalTime))
+    
+    -- Write each test suite
+    for _, group in ipairs(testResults) do
+        file:write(string.format('  <testsuite name="%s" tests="%d" failures="%d" time="%.3f">\n',
+            escapeXML(group.name), group.total, group.failures, group.time or 0))
+        
+        -- Write each test case
+        for _, test in ipairs(group.tests) do
+            if test.passed then
+                file:write(string.format('    <testcase name="%s" classname="%s" time="%.3f"/>\n',
+                    escapeXML(test.name), escapeXML(group.name), test.time or 0))
+            else
+                file:write(string.format('    <testcase name="%s" classname="%s" time="%.3f">\n',
+                    escapeXML(test.name), escapeXML(group.name), test.time or 0))
+                file:write(string.format('      <failure message="%s"><![CDATA[%s]]></failure>\n',
+                    escapeXML(test.error or "Test failed"), test.error or "Test failed"))
+                file:write('    </testcase>\n')
+            end
+        end
+        
+        file:write('  </testsuite>\n')
+    end
+    
+    file:write('</testsuites>\n')
+    file:close()
+    
+    return true
+end
+
 -- Run tests
 print("[Testing]")
 WoWUnit:RunTests("PLAYER_LOGIN")
 
 -- Gather results
 local passedGroups = 0
+local junitResults = {}
 for _, group in ipairs(WoWUnit.children) do
     local failed = {}
+    local groupResult = {
+        name = group.name,
+        total = #group.children,
+        failures = 0,
+        time = 0,
+        tests = {}
+    }
+    
     for i, test in ipairs(group.children) do
-        if test.numOk ~= 1 then table.insert(failed, i) end
+        local testPassed = test.numOk == 1
+        if not testPassed then 
+            table.insert(failed, i)
+            groupResult.failures = groupResult.failures + 1
+        end
+        
+        -- Add test to JUnit results
+        local errorMessage = ""
+        if not testPassed and test.errors then
+            errorMessage = table.concat(test.errors, ", "):gsub("|n|n", "\n"):gsub("|n", " ")
+        end
+        
+        table.insert(groupResult.tests, {
+            name = test.name,
+            passed = testPassed,
+            error = errorMessage,
+            time = 0 -- WoWUnit doesn't track individual test times
+        })
     end
+    
+    table.insert(junitResults, groupResult)
 
     print(group.name .. ": " .. (#failed == 0 and "Passed" or "FAILED") .. " (" .. (#group.children - #failed) .. "/" .. #group.children .. ")")
 
@@ -503,6 +601,10 @@ for _, group in ipairs(WoWUnit.children) do
 
     passedGroups = passedGroups + (#failed == 0 and 1 or 0)
 end
+
+-- Write JUnit XML report
+writeJUnitXML(junitResults, "test-results/junit.xml")
+print("[JUnit XML report written to test-results/junit.xml]")
 
 -- Show results
 local success = passedGroups == #WoWUnit.children
