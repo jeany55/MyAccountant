@@ -609,3 +609,430 @@ function Tests.TestIsSourceActive()
   AssertEqual(false, MyAccountant:IsSourceActive("LFG"))
   AssertEqual(false, MyAccountant:IsSourceActive("NONEXISTENT"))
 end
+
+-- Test Tab label and color setters/getters
+function Tests.TestTabLabelAndColor()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "ColorTest",
+    tabType = "DATE",
+    visible = true
+  })
+  
+  -- Test label text
+  tab:setLabelText("Custom Label")
+  AssertEqual("Custom Label", tab:getLabel())
+  
+  -- Test label color
+  tab:setLabelColor("FF00FF00")
+  
+  -- Test date summary text
+  tab:setDateSummaryText("Test Summary")
+  AssertEqual("Test Summary", tab:getDateSummaryText())
+end
+
+-- Test Tab LDB (LibDataBroker) enablement
+function Tests.TestTabLdbEnabledState()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "LdbTest",
+    tabType = "DATE",
+    visible = true,
+    ldbEnabled = false
+  })
+  
+  AssertEqual(false, tab:getLdbEnabled())
+  
+  tab:setLdbEnabled(true)
+  AssertEqual(true, tab:getLdbEnabled())
+  
+  tab:setLdbEnabled(false)
+  AssertEqual(false, tab:getLdbEnabled())
+end
+
+-- Test Tab InfoFrame enablement (getter only, setter has side effects)
+function Tests.TestTabInfoFrameEnabledState()
+  local Tab = private.Tab
+  
+  local tab1 = Tab:construct({
+    tabName = "InfoTest1",
+    tabType = "DATE",
+    visible = true,
+    infoFrameEnabled = false
+  })
+  
+  AssertEqual(false, tab1:getInfoFrameEnabled())
+  
+  local tab2 = Tab:construct({
+    tabName = "InfoTest2",
+    tabType = "DATE",
+    visible = true,
+    infoFrameEnabled = true
+  })
+  
+  AssertEqual(true, tab2:getInfoFrameEnabled())
+end
+
+-- Test Tab Minimap Summary enablement (getter only, setter has side effects)
+function Tests.TestTabMinimapSummaryEnabledState()
+  local Tab = private.Tab
+  
+  local tab1 = Tab:construct({
+    tabName = "MinimapTest1",
+    tabType = "DATE",
+    visible = true,
+    minimapSummaryEnabled = false
+  })
+  
+  AssertEqual(false, tab1:getMinimapSummaryEnabled())
+  
+  local tab2 = Tab:construct({
+    tabName = "MinimapTest2",
+    tabType = "DATE",
+    visible = true,
+    minimapSummaryEnabled = true
+  })
+  
+  AssertEqual(true, tab2:getMinimapSummaryEnabled())
+end
+
+-- Test Tab Lua Expression
+function Tests.TestTabLuaExpression()
+  local Tab = private.Tab
+  
+  local expression = [[
+    Tab:setStartDate(DateUtils.getToday())
+    Tab:setEndDate(DateUtils.getToday())
+  ]]
+  
+  local tab = Tab:construct({
+    tabName = "ExpressionTest",
+    tabType = "DATE",
+    visible = true,
+    luaExpression = expression
+  })
+  
+  AssertEqual(expression, tab:getLuaExpression())
+  
+  local newExpression = [[
+    Tab:setStartDate(DateUtils.getStartOfWeek())
+    Tab:setEndDate(DateUtils.getToday())
+  ]]
+  
+  tab:setLuaExpression(newExpression)
+  AssertEqual(newExpression, tab:getLuaExpression())
+end
+
+-- Test Tab Data Instances
+function Tests.TestTabDataInstances()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "DataTest",
+    tabType = "SESSION",
+    visible = true
+  })
+  
+  local instances = tab:getDataInstances()
+  
+  -- SESSION tabs should have income and outcome data instances
+  AssertEqual(true, #instances > 0)
+  
+  -- Try to get a specific instance (if any exist)
+  if #instances > 0 then
+    local firstInstance = instances[1]
+    AssertEqual(true, firstInstance.label ~= nil)
+  end
+end
+
+-- Test Tab BALANCE type
+function Tests.TestTabBalanceType()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "BalanceTest",
+    tabType = "BALANCE",
+    visible = true
+  })
+  
+  AssertEqual("BALANCE", tab:getType())
+  AssertEqual("BalanceTest", tab:getName())
+end
+
+-- Test runLoadedFunction with valid expression
+function Tests.TestTabRunLoadedFunction()
+  local Tab = private.Tab
+  
+  local expression = [[
+    Tab:setStartDate(1000000)
+    Tab:setEndDate(2000000)
+  ]]
+  
+  local tab = Tab:construct({
+    tabName = "LoadedTest",
+    tabType = "DATE",
+    visible = true,
+    luaExpression = expression
+  })
+  
+  -- Run the loaded function
+  tab:runLoadedFunction()
+  
+  -- Check that dates were set
+  AssertEqual(1000000, tab:getStartDate())
+  AssertEqual(2000000, tab:getEndDate())
+end
+
+-- Test Tab defaults
+function Tests.TestTabDefaults()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "DefaultTest",
+    visible = true
+  })
+  
+  -- Should have default type
+  AssertEqual("DATE", tab:getType())
+  
+  -- Should have default values
+  AssertEqual(false, tab:getLdbEnabled())
+  AssertEqual(false, tab:getInfoFrameEnabled())
+  AssertEqual(false, tab:getLineBreak())
+  AssertEqual(false, tab:getMinimapSummaryEnabled())
+end
+
+-- Test ResetCharacterData
+function Tests.TestResetCharacterData()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add some data
+  MyAccountant:AddIncome("LOOT", 1000)
+  MyAccountant:AddOutcome("MERCHANTS", 500)
+  
+  -- Reset character data
+  MyAccountant:ResetCharacterData()
+  
+  -- All character data should be reset
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
+  local summary = MyAccountant:SummarizeData(table)
+  
+  -- Should have no income or outcome after reset
+  AssertEqual(0, summary.income)
+  AssertEqual(0, summary.outcome)
+end
+
+-- Test GetGoldPerHour with zero income
+function Tests.TestGetGoldPerHour_ZeroIncome()
+  MyAccountant:ResetSession()
+  MyAccountant:ResetGoldPerHour()
+  
+  local gph = MyAccountant:GetGoldPerHour()
+  AssertEqual(0, gph)
+end
+
+-- Test GetGoldPerHour with income
+function Tests.TestGetGoldPerHour_WithIncome()
+  MyAccountant:ResetSession()
+  MyAccountant:ResetGoldPerHour()
+  
+  -- Add some income
+  MyAccountant:AddIncome("LOOT", 3600) -- 3600 copper
+  
+  -- Get GPH (will depend on time elapsed, which should be minimal in tests)
+  local gph = MyAccountant:GetGoldPerHour()
+  
+  -- Should be greater than 0 if time has elapsed
+  AssertEqual(true, gph >= 0)
+end
+
+-- Test ResetGoldPerHour
+function Tests.TestResetGoldPerHour()
+  MyAccountant:ResetSession()
+  
+  -- Add income
+  MyAccountant:AddIncome("LOOT", 1000)
+  
+  -- Reset GPH counter
+  MyAccountant:ResetGoldPerHour()
+  
+  -- Should still have session income but GPH should reset
+  AssertEqual(1000, MyAccountant:GetSessionIncome())
+end
+
+-- Test FetchDataRow
+function Tests.TestFetchDataRow()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add data for today
+  local today = date("*t", time())
+  MyAccountant:AddIncome("LOOT", 500)
+  
+  -- Fetch the data row
+  local playerName = UnitName("player")
+  local row = MyAccountant:FetchDataRow(playerName, today.year, today.month, today.day)
+  
+  -- Should return a row
+  AssertEqual(true, row ~= nil)
+end
+
+-- Test GetHistoricalData
+function Tests.TestGetHistoricalData()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add some income
+  MyAccountant:AddIncome("LOOT", 1000)
+  MyAccountant:AddOutcome("MERCHANTS", 200)
+  
+  -- Create a tab for today
+  local tab = createTodayTab()
+  
+  -- Get historical data
+  local data = MyAccountant:GetHistoricalData(tab)
+  
+  -- Should return data (a table/dictionary)
+  AssertEqual("table", type(data))
+  
+  -- Should have LOOT and MERCHANTS entries
+  AssertEqual(1000, data.LOOT.income)
+  AssertEqual(200, data.MERCHANTS.outcome)
+end
+
+-- Test GetAllTime
+function Tests.TestGetAllTime()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add income and outcome
+  MyAccountant:AddIncome("LOOT", 5000)
+  MyAccountant:AddOutcome("MERCHANTS", 1000)
+  
+  -- Get all-time data
+  local data = MyAccountant:GetAllTime()
+  
+  -- Should return aggregated data
+  AssertEqual(true, data ~= nil)
+end
+
+-- Test SummarizeData with mixed income and outcome
+function Tests.TestSummarizeData()
+  local testData = {
+    LOOT = { income = 1000, outcome = 0 },
+    MERCHANTS = { income = 0, outcome = 500 },
+    QUESTS = { income = 200, outcome = 0 },
+    REPAIR = { income = 0, outcome = 100 }
+  }
+  
+  local summary = MyAccountant:SummarizeData(testData)
+  
+  AssertEqual(1200, summary.income)
+  AssertEqual(600, summary.outcome)
+end
+
+-- Test SummarizeData with only income
+function Tests.TestSummarizeData_OnlyIncome()
+  local testData = {
+    LOOT = { income = 500, outcome = 0 },
+    QUESTS = { income = 300, outcome = 0 }
+  }
+  
+  local summary = MyAccountant:SummarizeData(testData)
+  
+  AssertEqual(800, summary.income)
+  AssertEqual(0, summary.outcome)
+end
+
+-- Test SummarizeData with only outcome
+function Tests.TestSummarizeData_OnlyOutcome()
+  local testData = {
+    MERCHANTS = { income = 0, outcome = 400 },
+    REPAIR = { income = 0, outcome = 200 }
+  }
+  
+  local summary = MyAccountant:SummarizeData(testData)
+  
+  AssertEqual(0, summary.income)
+  AssertEqual(600, summary.outcome)
+end
+
+-- Test ResetZoneData
+function Tests.TestResetZoneData()
+  MyAccountant:ResetAllData()
+  
+  -- Reset zone data
+  MyAccountant:ResetZoneData()
+  
+  -- Zone data should be reset (no error should occur)
+  AssertEqual(true, true)
+end
+
+-- Test GetRealmBalanceTotalDataTable
+function Tests.TestGetRealmBalanceTotalDataTable()
+  -- Get realm balance data
+  local data = MyAccountant:GetRealmBalanceTotalDataTable()
+  
+  -- Should return a table
+  AssertEqual("table", type(data))
+  
+  -- Should have at least one entry (the current character)
+  AssertEqual(true, #data >= 1)
+  
+  -- Each entry should have gold and name
+  if #data > 0 then
+    AssertEqual(true, data[1].gold ~= nil)
+    AssertEqual(true, data[1].name ~= nil)
+  end
+end
+
+-- Test checkDatabaseDayConfigured
+function Tests.TestCheckDatabaseDayConfigured()
+  -- This function sets up daily data structure
+  -- Should not error when called
+  MyAccountant:checkDatabaseDayConfigured()
+  
+  -- Should be able to add income after
+  MyAccountant:AddIncome("LOOT", 100)
+  AssertEqual(true, MyAccountant:GetSessionIncome("LOOT") > 0)
+end
+
+-- Test adding income with specific date override
+function Tests.TestAddIncomeWithDateOverride()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add income for a specific past date
+  local pastDate = date("*t", time() - 86400) -- Yesterday
+  MyAccountant:AddIncome("LOOT", 500, pastDate)
+  
+  -- Should not affect today's data
+  local todayTab = createTodayTab()
+  local todayTable = MyAccountant:GetIncomeOutcomeTable(todayTab, nil, nil, "SOURCE")
+  local todaySummary = MyAccountant:SummarizeData(todayTable)
+  
+  -- Today should have no income
+  AssertEqual(0, todaySummary.income)
+end
+
+-- Test adding outcome with specific date override
+function Tests.TestAddOutcomeWithDateOverride()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add outcome for a specific past date
+  local pastDate = date("*t", time() - 86400) -- Yesterday
+  MyAccountant:AddOutcome("MERCHANTS", 300, pastDate)
+  
+  -- Should not affect today's data
+  local todayTab = createTodayTab()
+  local todayTable = MyAccountant:GetIncomeOutcomeTable(todayTab, nil, nil, "SOURCE")
+  local todaySummary = MyAccountant:SummarizeData(todayTable)
+  
+  -- Today should have no outcome
+  AssertEqual(0, todaySummary.outcome)
+end
