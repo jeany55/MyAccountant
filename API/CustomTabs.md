@@ -51,7 +51,7 @@ Tab:setEndDate(DateUtils.getToday())
 
 -- Calculate label
 local startOfWeek = DateUtils.getStartOfWeek()
-local lastDayOfWeek = DateUtils.addWeek(startOfWeek)
+local lastDayOfWeek = DateUtils.addDays(startOfWeek, 6)
 
 Tab:setDateSummaryText(date("%x", startOfWeek) .. " - " .. date("%x", lastDayOfWeek))
 ```
@@ -129,7 +129,7 @@ local today = DateUtils.getToday()
 Tab:setStartDate(today)
 Tab:setEndDate(today)
 Tab:setLabelText("Today")
-Tab:setLabelColor("00FF00")  -- Green color (RGB hex without alpha)
+Tab:setLabelColor("00FF00")  -- Green color (RGB hex: RRGGBB format)
 Tab:setDateSummaryText(date("%x", today))
 ```
 
@@ -264,16 +264,17 @@ Changes the tab's display name (overrides the name set in configuration).
   Tab:setLabelText("My Custom Period")
   ```
 
-##### `Tab:setLabelColor(argb)`
+##### `Tab:setLabelColor(colorHex)`
 
 Sets the color of the tab label using an RGB hex string.
 
 - **Parameters:**
-  - `argb` (string): RGB color in hex format (e.g., "FF0000" for red, "00FF00" for green)
+  - `colorHex` (string): RGB color in 6-character hex format RRGGBB (e.g., "FF0000" for red, "00FF00" for green, "FFD700" for gold). Do not include the alpha channel or "#" prefix.
 - **Returns:** None
 - **Example:**
   ```lua
   Tab:setLabelColor("FFD700")  -- Gold color
+  Tab:setLabelColor("FF0000")  -- Red color
   ```
 
 ##### `Tab:setLineBreak(lineBreak)`
