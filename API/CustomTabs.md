@@ -101,7 +101,7 @@ Tab:setDateSummaryText(date("%x", saturday) .. " - " .. date("%x", sunday))
 Track from a specific date to today:
 
 ```lua
--- 1735689600 is January 1, 2025
+-- 1735689600 is January 1st, 2025
 Tab:setStartDate(1735689600)
 Tab:setEndDate(DateUtils.getToday())
 ```
@@ -707,9 +707,10 @@ There's a syntax error in your lua code. Check for:
 ### Tab shows wrong dates
 
 Double-check your date calculations:
-- Print intermediate values to verify calculations
+- Review your lua expression logic carefully
 - Ensure you're using the right DateUtils functions
 - Verify timestamp values are reasonable (not negative, not too far in future)
+- Test with different dates to identify edge cases
 
 ### Tab doesn't appear
 
