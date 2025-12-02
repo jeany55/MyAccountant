@@ -122,7 +122,7 @@ end
 -- Display coverage report
 local function displayCoverageReport(stats)
   print("\n" .. string.rep("=", 70))
-  print("MyAccountant Test Coverage Report (Real Coverage via LuaCov)")
+  print("MyAccountant Test Coverage Report (LuaCov)")
   print(string.rep("=", 70) .. "\n")
   
   -- Sort files by coverage (lowest first to highlight what needs work)
@@ -159,9 +159,6 @@ local function displayCoverageReport(stats)
   print(string.rep("-", 70))
   print(string.format("Overall Test Coverage:        %.2f%%", stats.overallCoverage))
   print(string.rep("=", 70))
-  print("\nNote: This is REAL line-by-line coverage based on test execution,")
-  print("not simplified string matching. Coverage tracks which lines of code")
-  print("are actually executed when tests run.\n")
   
   return stats.overallCoverage
 end
