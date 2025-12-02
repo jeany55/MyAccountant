@@ -753,7 +753,7 @@ Once you've created a custom tab you're proud of, you can easily share it with t
 3. Enable **Tab library export** option (this is a developer option)
 4. Select your custom tab
 5. You'll see a **Tab library export** field appear with the complete `Tab:construct()` code
-6. Copy this code and [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new) with your custom tab - if it's useful, it might be added to the default tab library for everyone to enjoy!
+6. Copy this code and [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new?labels=custom-tab,enhancement) with your custom tab - if it's useful, it might be added to the default tab library for everyone to enjoy!
 
 ### Example Export
 
@@ -793,4 +793,4 @@ Stick to the documented methods (primarily `setStartDate()`, `setEndDate()`, `se
 
 ---
 
-**Happy customizing! If you create a useful custom tab, [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new) to share it - it might be added to the default tab library!**
+**Happy customizing! If you create a useful custom tab, [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new?labels=custom-tab,enhancement) to share it - it might be added to the default tab library!**
