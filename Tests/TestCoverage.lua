@@ -2,7 +2,7 @@
 -- TestCoverage.lua
 -- Calculates and displays test coverage for MyAccountant
 --
--- Usage: lua Tests/TestCoverage.lua
+-- Usage: lua Tests/TestCoverage.lua (or lua5.1 Tests/TestCoverage.lua)
 --
 -- This script provides real test coverage analysis using LuaCov,
 -- tracking which lines of code are actually executed during tests.
@@ -21,6 +21,31 @@
 -- Note: This requires LuaCov to be installed (luarocks install luacov)
 ------------------------------------------------------------
 
+-- Detect available Lua interpreter
+local function getLuaInterpreter()
+  -- Try 'lua' first (most common)
+  local handle = io.popen("which lua 2>/dev/null")
+  if handle then
+    local result = handle:read("*all")
+    handle:close()
+    if result and result ~= "" then
+      return "lua"
+    end
+  end
+  
+  -- Fall back to 'lua5.1'
+  handle = io.popen("which lua5.1 2>/dev/null")
+  if handle then
+    local result = handle:read("*all")
+    handle:close()
+    if result and result ~= "" then
+      return "lua5.1"
+    end
+  end
+  
+  return nil
+end
+
 -- Check if LuaCov is available
 local function checkLuaCov()
   local handle = io.popen("which luacov 2>/dev/null")
@@ -34,8 +59,14 @@ end
 
 -- Run tests with LuaCov to generate coverage data
 local function runTestsWithCoverage()
+  local luaCmd = getLuaInterpreter()
+  if not luaCmd then
+    print("Error: No Lua interpreter found. Please install lua or lua5.1.")
+    return false
+  end
+  
   print("Running tests with coverage tracking...")
-  local result = os.execute("lua Tests/RunTests.lua > /dev/null 2>&1")
+  local result = os.execute(luaCmd .. " Tests/RunTests.lua > /dev/null 2>&1")
   -- Handle both Lua 5.1 (returns exit code) and later versions (returns true/false, string, number)
   if result ~= true and result ~= 0 then
     print("Error: Tests failed. Cannot calculate coverage.")
