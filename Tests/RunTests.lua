@@ -510,7 +510,11 @@ local function writeJUnitXML(testResults, outputPath)
     end
     
     -- Create output directory if it doesn't exist
-    os.execute("mkdir -p " .. outputPath:match("^(.+)/[^/]+$"))
+    -- Validate path contains only safe characters before executing shell command
+    local dirPath = outputPath:match("^(.+)/[^/]+$")
+    if dirPath and dirPath:match("^[%w%-%._/]+$") then
+        os.execute("mkdir -p " .. dirPath)
+    end
     
     -- Open file for writing
     local file = io.open(outputPath, "w")
@@ -579,6 +583,7 @@ for _, group in ipairs(WoWUnit.children) do
         -- Add test to JUnit results
         local errorMessage = ""
         if not testPassed and test.errors then
+            -- Convert WoW API newline escape sequences (|n) to actual newlines for XML
             errorMessage = table.concat(test.errors, ", "):gsub("|n|n", "\n"):gsub("|n", " ")
         end
         
