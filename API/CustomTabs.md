@@ -1,7 +1,5 @@
 # Custom Tabs with Lua Snippets
 
-![Custom Tabs](../Docs/customTabs.svg)
-
 ## Overview
 
 MyAccountant allows you to create fully customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what matters to you.
@@ -13,15 +11,24 @@ With custom tabs, you can:
 - **Customize Display**: Format date ranges and labels to match your workflow
 - **Add Configuration Options**: Create custom toggles or settings specific to your tab's needs
 
-This documentation will guide you through creating your own custom tabs, from simple single-day trackers to advanced date range calculations. You'll learn about the available APIs, see practical examples, and discover how to share your creations with the community.
+This documentation is intended to help show you how to create your own custom tabs, from simple single-day trackers to advanced date range calculations. It also contains an API reference.
 
-**Ready to get started?** Jump to the [Examples](#examples) section to see what's possible, or head to the [Setup Guide](#how-to-set-up-your-own-custom-tab) to create your first custom tab!
+
+
+## Requirements
+
+Creating custom tabs requires a small amount of lua knowledge. The general idea is
+1. Advanced configuration is only allowed for Date tab types
+2. The date type needs to at the bare minimum set the start and end date in unix time (the number of seconds since 1970). Several utility functions are provided to help with date calculations.
+
+
+![Tab Configuration](../Docs/incomePanelConfigAdvanced.png)
 
 ## Examples
 
-### Example 1: Simple Single Day
+### Example 1: Today
 
-Track a single day - the simplest possible custom tab:
+Track a single day such as today - the simplest possible custom tab:
 
 ```lua
 Tab:setStartDate(DateUtils.getToday())
@@ -173,12 +180,12 @@ Tab:setLabelColor("FF69B4")  -- Hot pink for fun!
 
 1. Open the game and type `/mya options` to open the addon configuration
 2. Navigate to **Tabs** in the left sidebar
-3. Enable **Advanced mode** checkbox at the top of the tab configuration panel
+3. Enable **Advanced mode** at the top of the tab configuration panel
 
 ### Step 2: Create a New Tab
 
-1. Click the **New tab** option in the tabs list (appears when advanced mode is enabled)
-2. Enter a **Tab label** - this is the name that will appear on your tab
+1. Click the **New tab** option in the tabs list
+2. Enter a **Tab label** - this is the name that will appear on your tab. It must be unique.
 3. Select **Tab type** as "Date" (Session and Balance types don't use lua expressions)
 
 ### Step 3: Write Your Lua Expression
@@ -207,18 +214,12 @@ The addon will automatically validate your lua expression. If there are errors, 
 1. **Show in Income Panel** - Toggle visibility of this tab
 2. **LibDataBroker** - Enable if you want this tab's data available to LDB-compatible addons
 3. **Info Frame** - Enable if you want this tab's data in the info frame
-4. **Minimap Summary** - Enable if you want this tab's data on the minimap icon
+4. **Minimap Summary** - Enable if you want this tab's data to be an option on the minimap icon
 5. **Linebreak** - If enabled, this tab will be the last on its row, and the next tab will start a new row
 
 ### Step 6: Create the Tab
 
-Click the **Create tab** button. Your new tab will appear in the tabs list and on the income panel!
-
-### Step 7: Test and Refine
-
-1. Check that your tab displays the correct date range
-2. Verify the data shown matches your expectations
-3. Adjust your lua expression as needed by selecting your tab and modifying the expression
+Click the **Create tab** button. Your new tab will appear in the tabs list and on the income panel! You can select it to move it left or right.
 
 ## API Reference
 
@@ -753,7 +754,7 @@ Once you've created a custom tab you're proud of, you can easily share it with t
 3. Enable **Tab library export** option (this is a developer option)
 4. Select your custom tab
 5. You'll see a **Tab library export** field appear with the complete `Tab:construct()` code
-6. Copy this code and [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new?labels=custom-tab,enhancement) with your custom tab - if it's useful, it might be added to the default tab library for everyone to enjoy!
+6. Copy this code and [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new?labels=custom-tab,enhancement) with your custom tab - we can then add it to the Tab library.
 
 ### Example Export
 
@@ -773,17 +774,14 @@ Tab:setEndDate(DateUtils.getToday())]]
 })
 ```
 
-Others can use this code as inspiration or add it to their own tab library!
-
 ## Advanced Usage Warning
 
-⚠️ **Important**: The `Tab` object passed to your lua expression is the same Tab object used internally by the addon. While this gives you powerful capabilities, it also means you need to be careful:
+⚠️ The `Tab` object passed to your lua expression is the same Tab object used internally by the addon. While this gives you powerful capabilities, it also means you need to be careful:
 
-- **Do not** call methods that execute side effects beyond date/label configuration (like methods that update LDB data or info frames during expression evaluation)
-- **Do not** delete or override Tab object fields
-- **Do not** store references to the Tab object for later use outside your expression
+- Methods that execute side effects beyond date/label configuration (like methods that update LDB data or info frames during expression evaluation) are available and can be called. Be careful or you might end up with unintended behaviour (like an infinite recursive loop!)
+- **Deleting or overriding Tab object fields** may result in unexpected behaviour and break the Addon.
 
-Stick to the documented methods (primarily `setStartDate()`, `setEndDate()`, `setDateSummaryText()`, `setLabelText()`, and `setLabelColor()`) for safe and predictable behavior. Using undocumented or internal methods may cause unexpected side effects or break with future addon updates.
+Stick to the documented methods for safe and predictable behavior.
 
 ## Additional Resources
 
@@ -791,6 +789,3 @@ Stick to the documented methods (primarily `setStartDate()`, `setEndDate()`, `se
 - **Unix Timestamp Converter**: [unixtimestamp.com](https://www.unixtimestamp.com/) - Helpful for debugging timestamp values
 - **MyAccountant GitHub**: [github.com/jeany55/MyAccountant](https://github.com/jeany55/MyAccountant) - Report issues or request features
 
----
-
-**Happy customizing! If you create a useful custom tab, [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new?labels=custom-tab,enhancement) to share it - it might be added to the default tab library!**

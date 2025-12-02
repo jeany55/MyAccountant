@@ -54,7 +54,7 @@ Advanced mode allows you to add your own tabs and configure them with lua snippe
 
 ![](Docs/incomePanelConfigAdvanced.png)
 
-📚 **[Learn how to create custom tabs with our comprehensive API documentation →](API/CustomTabs.md)**
+See the [Custom Tab API Documentation](API/CustomTabs.md) for more information
 
 ### **See all your characters**
 
