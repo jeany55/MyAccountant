@@ -54,6 +54,8 @@ Advanced mode allows you to add your own tabs and configure them with lua snippe
 
 ![](Docs/incomePanelConfigAdvanced.png)
 
+See the [Custom Tab API Documentation](API/CustomTabs.md) for more information
+
 ### **See all your characters**
 
 Track your income as a whole or by each of your characters.
