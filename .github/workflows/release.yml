@@ -107,6 +107,7 @@ jobs:
           rm -rf ./.github
           rm .gitignore
           rm .lua-style
+          rm .luacov
           rm LICENSE
           rm README.md
           rm CHANGELOG.md
