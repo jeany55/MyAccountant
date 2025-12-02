@@ -1,6 +1,5 @@
+--- @type nil, MyAccountantPrivate
 local _, private = ...
-
-MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 local characterDropdown
@@ -8,9 +7,9 @@ local viewingType
 
 local selectedCharacter = UnitName("player")
 
--- Tab data for bottom of panel
-local ActiveTab = 1
-local Tabs = { "SESSION", "TODAY", "WEEK", "MONTH", "YEAR", "ALL_TIME", "BALANCE" }
+-- Which tab is current selected?
+--- @type Tab
+local ActiveTab = nil
 
 -- Holds whether viewing by source or by zone 
 local ViewType
@@ -21,12 +20,133 @@ RenderedLines = {}
 -- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
 UserSetSort = nil
 
--- Returns a sorted List
-function MyAccountant:GetSortedTable(type, viewType)
+--- @class CharacterFrameTabTemplate: Frame
+--- @field SetText fun(self: CharacterFrameTabTemplate, text: string): nil Sets the tab text
+
+--- @class FrameRefInfo
+--- @field id integer Id used when creating the tab
+--- @field frame CharacterFrameTabTemplate
+
+local tabFrames = {}
+
+--- @class IncomeFrameTab
+--- @field frame FrameRefInfo WoW tab frame info
+--- @field tab Tab Tab object reference
+--- @field tabIndex integer Index of the tab
+
+--- @type table<string, IncomeFrameTab>
+local incomeFrameTabs = {}
+
+--- @class Frame
+IncomeFrame = IncomeFrame
+
+local frameCreationIndex = 1
+
+--- Gets tab frame
+--- @param index number
+--- @return Frame
+local function getTabFrame(index)
+  if tabFrames[index] then
+    return tabFrames[index]
+  else
+    local frame = CreateFrame("Button", "$parentTab" .. frameCreationIndex, IncomeFrame, "MyAccountantTabTemplate",
+                              frameCreationIndex)
+
+    table.insert(tabFrames, frame)
+    frameCreationIndex = frameCreationIndex + 1
+    return frame
+  end
+end
+
+--- Makes tabs and positions them
+function MyAccountant:SetupTabs()
+  --- @type table<string, IncomeFrameTab>
+  local newTabs = {}
+  local tabIndex = 1
+  local previousTab = nil
+  local firstItemInRow = nil
+  local row = 1
+  local tabIndex = 1
+  local lineBreak = false
+  local numTabs = 0
+
+  for _, tabFrame in ipairs(tabFrames) do
+    tabFrame:ClearAllPoints()
+    tabFrame:Hide()
+  end
+
+  for _, tab in ipairs(self.db.char.tabs) do
+    --- @type Tab
+    tab = tab
+
+    if tab:getVisible() then
+      local tabframe = getTabFrame(tabIndex)
+      tabframe:SetText(tab:getLabel())
+      tabframe:Show()
+      tabframe:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
+      if tabIndex == 1 then
+        -- Load this data immediately
+        ActiveTab = tab
+        MyAccountant:updateFrame()
+      end
+      tabIndex = tabIndex + 1
+    end
+  end
+
+  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)
+  PanelTemplates_SetTab(IncomeFrame, 1)
+
+  -- On retail, it rerenders all the tabs (breaking linebreaks) so we need to reposition them after creating them
+  local previousTab = nil
+  local firstItemInRow = nil
+  local lineBreak = false
+  local row = 1
+  local tabIndex = 1
+  for _, tab in ipairs(self.db.char.tabs) do
+    --- @type Tab
+    local tab = tab
+    local currentTabIndex = tabIndex
+    if tab:getVisible() then
+      local frame = getTabFrame(tabIndex)
+      frame:ClearAllPoints()
+      if not firstItemInRow then
+        firstItemInRow = frame
+      end
+
+      if not previousTab then
+        frame:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
+      elseif lineBreak then
+        frame:SetPoint("TOPLEFT", firstItemInRow, "BOTTOMLEFT", 15, 7)
+        firstItemInRow = frame
+        row = row + 1
+      else
+        frame:SetPoint("LEFT", previousTab, "RIGHT", private.constants.TAB_PADDING, 0)
+      end
+
+      frame:SetFrameLevel(250 - row)
+      frame:SetScript("OnClick", function()
+        if row == 1 then
+          frame:SetFrameLevel(400)
+        end
+
+        MyAccountant:TabClick(tab, frame:GetID())
+        PanelTemplates_SetTab(IncomeFrame, currentTabIndex)
+      end)
+      lineBreak = tab:getLineBreak()
+      previousTab = frame
+      tabIndex = tabIndex + 1
+    end
+  end
+end
+
+--- Returns a sorted list of income and outcome data
+--- @param tab Tab Tab instance
+--- @param viewType ViewType View type (by source or by zone)
+function MyAccountant:GetSortedTable(tab, viewType)
   local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
   local incomeTable = {}
 
-  if Tabs[ActiveTab] == "BALANCE" then
+  if tab:getType() == "BALANCE" then
     local index = 1
     local data = MyAccountant:GetRealmBalanceTotalDataTable()
 
@@ -37,7 +157,7 @@ function MyAccountant:GetSortedTable(type, viewType)
       index = index + 1
     end
   else
-    incomeTable = MyAccountant:GetIncomeOutcomeTable(type, nil, selectedCharacter, ViewType)
+    incomeTable = MyAccountant:GetIncomeOutcomeTable(tab, nil, selectedCharacter, viewType)
   end
 
   local function sortingFunction(source1, source2)
@@ -93,7 +213,7 @@ function MyAccountant:InitializeUI()
   -- Setup Title
   IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
-  IncomeFrame.title:SetText("MyAccountant")
+  IncomeFrame.title:SetText(private.ADDON_NAME)
 
   characterDropdown = LibDD:Create_UIDropDownMenu("CharacterDropDownMenu", IncomeFrame)
   LibDD:UIDropDownMenu_SetWidth(characterDropdown, 107)
@@ -111,6 +231,8 @@ function MyAccountant:InitializeUI()
   playerCharacter.Portrait = playerCharacter:CreateTexture()
   playerCharacter.Portrait:SetAllPoints()
   SetPortraitTexture(playerCharacter.Portrait, "player")
+
+  IncomeFrame:SetWidth(self.db.char.incomeFrameWidth)
 
   -- Setup character dropdown
   LibDD:UIDropDownMenu_Initialize(characterDropdown, function()
@@ -166,6 +288,8 @@ function MyAccountant:InitializeUI()
   IncomeFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
   IncomeFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 
+  IncomeFrame:SetFrameLevel(100)
+
   -- Backdrop
   legendFrame:SetFrameLevel(2)
   legendFrame:SetBackdrop({
@@ -201,7 +325,7 @@ function MyAccountant:InitializeUI()
     row:SetThickness(1)
     row:SetColorTexture(1, 1, 1, 0.1)
     row:SetStartPoint("BOTTOMLEFT", "legendFrame", 7, startingRowHeight)
-    row:SetEndPoint("BOTTOMLEFT", "legendFrame", legendFrame:GetWidth() - 4, startingRowHeight)
+    row:SetEndPoint("RIGHT", IncomeFrame, -3, startingRowHeight + 80)
     table.insert(RenderedLines, row)
     startingRowHeight = startingRowHeight - 20
   end
@@ -266,17 +390,16 @@ function MyAccountant:InitializeUI()
   totalOutcomeText:SetText(L["header_total_outcome"])
   totalProfitText:SetText(L["header_total_net"])
 
-  IncomeFrameTab1:SetText(L["session"])
-  IncomeFrameTab2:SetText(L["today"])
-  IncomeFrameTab3:SetText(L["this_week"])
-  IncomeFrameTab4:SetText(L["this_month"])
-  IncomeFrameTab5:SetText(L["this_year"])
-  IncomeFrameTab6:SetText(L["all_time"])
-  IncomeFrameTab7:SetText(L["balance"])
+  -- Find first active tab
+  for _, tab in ipairs(self.db.char.tabs) do
+    if tab:getVisible() then
+      ActiveTab = tab
+      break
+    end
+  end
 
-  -- Tab configuration
-  PanelTemplates_SetNumTabs(IncomeFrame, 7)
-  PanelTemplates_SetTab(IncomeFrame, 1)
+  -- Tab config
+  MyAccountant:SetupTabs()
 end
 
 local function updateSortingIcons()
@@ -339,48 +462,36 @@ function MyAccountant:updateFrameIfOpen()
   end
 end
 
+local function rerenderTabs()
+  -- Prepare some variables to allow settings easier to configure
+
+  for _, tab in ipairs(incomeFrameTabs) do
+    tab.tabObject:runLoadedFunction()
+    tab.frame:SetText(tab.tabObject:getLabel())
+  end
+end
+
 function MyAccountant:updateFrame()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   -- Update portrait
   SetPortraitTexture(playerCharacter.Portrait, "player")
 
-  viewingType:Show()
+  local selectedTab = ActiveTab
 
-  -- Character selection / frame info
-  if Tabs[ActiveTab] == "SESSION" or Tabs[ActiveTab] == "BALANCE" then
-    characterDropdown:Hide()
-  else
+  -- Character selection
+  if selectedTab:getType() == "DATE" then
     characterDropdown:Show()
-  end
-
-  if self.db.char.showBalanceTab then
-    IncomeFrameTab7:Show()
   else
-    IncomeFrameTab7:Hide()
+    characterDropdown:Hide()
   end
 
-  if Tabs[ActiveTab] == "TODAY" then
-    viewingType:SetText(date("%x"))
-  elseif Tabs[ActiveTab] == "WEEK" then
-    local today = date("*t")
-    local firstDayOfWeek = time() - ((today.wday - 1) * 86400)
-    local lastDayOfWeek = firstDayOfWeek + (6 * 86400)
-    viewingType:SetText(date("%x", firstDayOfWeek) .. " - " .. date("%x", lastDayOfWeek))
-  elseif Tabs[ActiveTab] == "MONTH" then
-    viewingType:SetText(date("%B"))
-  elseif Tabs[ActiveTab] == "YEAR" then
-    viewingType:SetText(date("%Y"))
-  else
-    viewingType:Hide()
-  end
+  viewingType:SetText(selectedTab:getDateSummaryText() or "")
 
-  local frameX = 525
+  local frameX = self.db.char.incomeFrameWidth
   local frameY = 347
 
-  if Tabs[ActiveTab] == "BALANCE" then
-    sourceHeaderText:SetText(L["character"])
-  elseif ViewType == "SOURCE" then
+  if ViewType == "SOURCE" then
     swapViewButton:SetText(L["income_panel_zones"])
     sourceHeaderText:SetText(L["source_header"])
   else
@@ -388,13 +499,9 @@ function MyAccountant:updateFrame()
     sourceHeaderText:SetText(L["income_panel_zone"])
   end
 
-  if self.db.char.showViewsButton then
+  if self.db.char.showViewsButton and selectedTab:getType() ~= "BALANCE" then
     swapViewButton:Show()
   else
-    swapViewButton:Hide()
-  end
-
-  if Tabs[ActiveTab] == "BALANCE" then
     swapViewButton:Hide()
   end
 
@@ -476,7 +583,6 @@ function MyAccountant:updateFrame()
   IncomeFrame:SetSize(frameX, frameY)
 
   -- Update header labels
-  local view = Tabs[ActiveTab]
   local income = 0
   local outcome = 0
 
@@ -489,14 +595,10 @@ function MyAccountant:updateFrame()
   incomeHeaderText:SetText(L["incoming_header"])
   outcomeHeaderText:SetText(L["outcoming_header"])
 
-  if view == "SESSION" then
+  if selectedTab:getType() == "SESSION" then
     income = MyAccountant:GetSessionIncome()
     outcome = MyAccountant:GetSessionOutcome()
-  elseif view == "ALL_TIME" then
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetAllTime(selectedCharacter))
-    income = summary.income
-    outcome = summary.outcome
-  elseif view == "BALANCE" then
+  elseif selectedTab:getType() == "BALANCE" then
     local summary = MyAccountant:GetRealmBalanceTotalDataTable()
     income = summary[1].gold
     outcome = 0
@@ -507,9 +609,8 @@ function MyAccountant:updateFrame()
     totalProfitText:SetText(L["income_panel_hover_realm_total"])
     incomeHeaderText:SetText("")
     outcomeHeaderText:SetText(L["balance"])
-
   else
-    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(view, nil, selectedCharacter))
+    local summary = MyAccountant:SummarizeData(MyAccountant:GetHistoricalData(selectedTab, nil, selectedCharacter))
     income = summary.income
     outcome = summary.outcome
   end
@@ -640,8 +741,7 @@ function MyAccountant:DrawRows()
 
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
-  local tableType = Tabs[ActiveTab]
-  local incomeTable = MyAccountant:GetSortedTable(tableType, ViewType)
+  local incomeTable = MyAccountant:GetSortedTable(ActiveTab, ViewType)
   local maxHoverLines = self.db.char.maxZonesIncomePanel
   local colorIncome = self.db.char.colorGoldInIncomePanel
 
@@ -749,10 +849,13 @@ function MyAccountant:DrawRows()
   end
 end
 
-function MyAccountant:TabClick(id)
-  PanelTemplates_SetTab(IncomeFrame, id);
-  ActiveTab = id
-  PlaySound(841)
+--- Handles tab click 
+--- @param tab Tab
+--- @param tabCreationId integer Id assigned when creating the tab frame
+function MyAccountant:TabClick(tab, tabCreationId)
+  PanelTemplates_SetTab(IncomeFrame, tabCreationId);
+  tab:runLoadedFunction()
+  ActiveTab = tab
   MyAccountant:updateFrame()
 end
 
@@ -771,6 +874,7 @@ function MyAccountant:ShowPanel()
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
     UserSetSort = self.db.char.defaultIncomePanelSort
+    rerenderTabs()
     MyAccountant:updateFrame()
     IncomeFrame:Show()
   end

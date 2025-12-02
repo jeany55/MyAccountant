@@ -1,7 +1,15 @@
 -- From https://gitlab.com/shrugal/PersoLootRoll/-/blob/master/Test.lua
 -- Wraps WoWUnit to be used from the terminal, runs all tests in /Tests folder
 
--- Usage: lua Test.lua
+-- Usage: ./Tests/run-tests.sh (recommended) or lua ./Tests/RunTests.lua
+-- Note: For consistent results across timezones, use the run-tests.sh wrapper script
+
+-- Enable LuaCov code coverage tracking if available
+-- Must be loaded before any other code to track coverage properly
+local luacov_loaded = pcall(require, "luacov")
+if luacov_loaded then
+    print("[Coverage] LuaCov enabled - tracking code coverage during test execution")
+end
 
 local Addon = {}
 local Name = "MyAccountant"
@@ -262,10 +270,13 @@ tremove = table.remove
 unpack = unpack or table.unpack
 FindInTableIf = function (tbl, pred) for k,v in pairs(tbl) do if pred(v) then return k, v end end end
 time = function(...) return math.floor(os.time(...)) end
+date = os.date
+random = math.random
 max = math.max
 min = math.min
 ceil = math.ceil
 floor = math.floor
+abs = math.abs
 GetClassInfo = function(i) local c = CLASSES[i] return c, c:upper():gsub(" ", "_"), i end
 GetLocale = Const(LOCALE)
 GetRealmName = Const(REALM)
@@ -281,6 +292,7 @@ GetLootMethod = Const("personalloot")
 GetExpansionLevel = Const(EXPANSION)
 GetMaxPlayerLevel = Const(MAX_LEVEL)
 GetMoney = Fn
+GetMoneyString = function(amount, withColor) return tostring(amount) end
 GetMaximumExpansionLevel = Const(EXPANSION + (PREPATCH and 1 or 0))
 RollOnLoot = Fn
 GroupLootContainer_RemoveFrame = Fn
@@ -450,7 +462,14 @@ fire("ADDON_LOADED", "WoWUnit")
 
 -- Import addon
 import(importPath .. "/" .. Name .. ".toc")
-import("Tests.Tests.tests")
+import("Tests.Tests.IncomeTests")
+import("Tests.Tests.UtilsTests")
+import("Tests.Tests.TabsApiTests")
+import("Tests.Tests.IncomeExtendedTests")
+import("Tests.Tests.TabModelTests")
+import("Tests.Tests.IncomeAdvancedTests")
+import("Tests.Tests.TabsApiAdvancedTests")
+import("Tests.Tests.TabModelAdvancedTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)
@@ -463,17 +482,120 @@ fire("PLAYER_ENTERING_WORLD")
 fire("PLAYER_ALIVE")
 update()
 
+-------------------------------------------------------
+--                  JUnit XML Output                 --
+-------------------------------------------------------
+
+local function escapeXML(str)
+    if not str then return "" end
+    str = tostring(str)
+    str = str:gsub("&", "&amp;")
+    str = str:gsub("<", "&lt;")
+    str = str:gsub(">", "&gt;")
+    str = str:gsub('"', "&quot;")
+    str = str:gsub("'", "&apos;")
+    return str
+end
+
+local function writeJUnitXML(testResults, outputPath)
+    local totalTests = 0
+    local totalFailures = 0
+    local totalTime = 0
+    
+    -- Calculate totals
+    for _, group in ipairs(testResults) do
+        totalTests = totalTests + group.total
+        totalFailures = totalFailures + group.failures
+        totalTime = totalTime + (group.time or 0)
+    end
+    
+    -- Create output directory if it doesn't exist
+    -- Validate path contains only safe characters before executing shell command
+    local dirPath = outputPath:match("^(.+)/[^/]+$")
+    if dirPath and dirPath:match("^[%w%-%._/]+$") then
+        os.execute("mkdir -p " .. dirPath)
+    end
+    
+    -- Open file for writing
+    local file = io.open(outputPath, "w")
+    if not file then
+        print("Warning: Could not create JUnit XML file at " .. outputPath)
+        return false
+    end
+    
+    -- Write XML header
+    file:write('<?xml version="1.0" encoding="UTF-8"?>\n')
+    file:write(string.format('<testsuites tests="%d" failures="%d" time="%.3f">\n', 
+        totalTests, totalFailures, totalTime))
+    
+    -- Write each test suite
+    for _, group in ipairs(testResults) do
+        file:write(string.format('  <testsuite name="%s" tests="%d" failures="%d" time="%.3f">\n',
+            escapeXML(group.name), group.total, group.failures, group.time or 0))
+        
+        -- Write each test case
+        for _, test in ipairs(group.tests) do
+            if test.passed then
+                file:write(string.format('    <testcase name="%s" classname="%s" time="%.3f"/>\n',
+                    escapeXML(test.name), escapeXML(group.name), test.time or 0))
+            else
+                file:write(string.format('    <testcase name="%s" classname="%s" time="%.3f">\n',
+                    escapeXML(test.name), escapeXML(group.name), test.time or 0))
+                file:write(string.format('      <failure message="%s"><![CDATA[%s]]></failure>\n',
+                    escapeXML(test.error or "Test failed"), test.error or "Test failed"))
+                file:write('    </testcase>\n')
+            end
+        end
+        
+        file:write('  </testsuite>\n')
+    end
+    
+    file:write('</testsuites>\n')
+    file:close()
+    
+    return true
+end
+
 -- Run tests
 print("[Testing]")
 WoWUnit:RunTests("PLAYER_LOGIN")
 
 -- Gather results
 local passedGroups = 0
+local junitResults = {}
 for _, group in ipairs(WoWUnit.children) do
     local failed = {}
+    local groupResult = {
+        name = group.name,
+        total = #group.children,
+        failures = 0,
+        time = 0,
+        tests = {}
+    }
+    
     for i, test in ipairs(group.children) do
-        if test.numOk ~= 1 then table.insert(failed, i) end
+        local testPassed = test.numOk == 1
+        if not testPassed then 
+            table.insert(failed, i)
+            groupResult.failures = groupResult.failures + 1
+        end
+        
+        -- Add test to JUnit results
+        local errorMessage = ""
+        if not testPassed and test.errors then
+            -- Convert WoW API newline escape sequences (|n) to actual newlines for XML
+            errorMessage = table.concat(test.errors, ", "):gsub("|n|n", "\n"):gsub("|n", " ")
+        end
+        
+        table.insert(groupResult.tests, {
+            name = test.name,
+            passed = testPassed,
+            error = errorMessage,
+            time = 0 -- WoWUnit doesn't track individual test times
+        })
     end
+    
+    table.insert(junitResults, groupResult)
 
     print(group.name .. ": " .. (#failed == 0 and "Passed" or "FAILED") .. " (" .. (#group.children - #failed) .. "/" .. #group.children .. ")")
 
@@ -484,6 +606,10 @@ for _, group in ipairs(WoWUnit.children) do
 
     passedGroups = passedGroups + (#failed == 0 and 1 or 0)
 end
+
+-- Write JUnit XML report
+writeJUnitXML(junitResults, "test-results/junit.xml")
+print("[JUnit XML report written to test-results/junit.xml]")
 
 -- Show results
 local success = passedGroups == #WoWUnit.children

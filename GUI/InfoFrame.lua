@@ -1,14 +1,11 @@
 -- Addon namespace
+--- @type nil, MyAccountantPrivate
 local _, private = ...
 
-MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
-
+--- @type Frame
 local infoFrame
 
-local frames = {}
-
-local longestLabel
-local longestLabelWidth = 0
+local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
 local topFramePadding = 10
 local bottomFramePadding = 10
@@ -18,20 +15,125 @@ local rightRowPadding = 10
 
 local rowSpacing = 5
 
-local minimumSpacingBetweenItemAndValue = 5
+local minimumSpacingBetweenItemAndValue = 10
 
-function MyAccountant:InformInfoFrameOfDataChange(dataType, value)
-  local frameRow = frames[dataType]
+--- @class InfoFrameRow
+--- @field label FontString
+--- @field value FontString
+--- @field tab Tab The tab this row belongs to
+--- If a field is shown in the info frame and then unclicked in settings, it will be hidden but not removed until WoW is reloaded next.
+--- @field visible boolean
 
-  frameRow.value:SetText(value)
-  if frameRow.value:IsShown() then
-    MyAccountant:UpdateInfoFrameSize()
+--- @type table<string, InfoFrameRow>
+local infoRows = {}
+
+function MyAccountant:InformInfoFrameOfDataChange(dataInstanceName, newValue)
+  local row
+  if dataInstanceName then
+    row = infoRows[dataInstanceName]
+  end
+
+  if row and row.visible then
+    row.value:SetText(newValue)
+  end
+
+  MyAccountant:RerenderInfoFrame()
+  MyAccountant:UpdateInformationFrameStatus()
+  MyAccountant:UpdateInfoFrameSize()
+end
+
+--- Creates any needed new fontstrings if a new info frame setting is chosen
+--- @param name string The name of the data instance
+--- @param visible boolean Whether the data instance should be shown on the info frame
+--- @param tab Tab The tab the data instance belongs to
+function MyAccountant:InformInfoFrameOfSettingsChange(name, visible, tab)
+  local rowInstance = infoRows[name]
+
+  if not rowInstance and visible then
+    local labelFontString = infoFrame:CreateFontString(nil, "OVERLAY", "GameTooltipTextSmall")
+    local valueFontString = infoFrame:CreateFontString(nil, "OVERLAY", "GameTooltipTextSmall")
+    labelFontString:SetText(name)
+    valueFontString:SetText(L["ldb_loading"])
+
+    --- @type InfoFrameRow
+    local newRowInstance = { label = labelFontString, value = valueFontString, tab = tab, visible = true }
+
+    infoRows[name] = newRowInstance
+  elseif rowInstance then
+    rowInstance.visible = visible
+  end
+
+  MyAccountant:RerenderInfoFrame()
+  MyAccountant:UpdateInformationFrameStatus()
+  MyAccountant:UpdateInfoFrameSize()
+  tab:updateSummaryDataIfNeeded()
+end
+
+function MyAccountant:RerenderInfoFrame()
+  local lastLabel = nil
+  local longestLabel = nil
+
+  for _, row in pairs(infoRows) do
+    row.label:ClearAllPoints()
+    row.value:ClearAllPoints()
+    row.label:Hide()
+    row.value:SetWidth(0)
+    row.value:Hide()
+    if row.visible then
+      row.label:Show()
+      row.value:Show()
+      if not lastLabel then
+        row.label:SetPoint("TOPLEFT", infoFrame, "TOPLEFT", leftRowPadding, -topFramePadding)
+      else
+        row.label:SetPoint("TOPLEFT", lastLabel, "BOTTOMLEFT", 0, -rowSpacing)
+      end
+
+      if not longestLabel or row.label:GetWidth() > longestLabel:GetWidth() then
+        longestLabel = row.label
+      end
+      lastLabel = row.label
+    end
+  end
+
+  local longestValue = nil
+  -- Second pass...
+  for _, row in pairs(infoRows) do
+    if row.visible then
+      row.value:SetPoint("LEFT", longestLabel, "RIGHT", minimumSpacingBetweenItemAndValue, 0)
+      row.value:SetPoint("TOP", row.label, "TOP")
+      if row.tab:getType() == "BALANCE" then
+        row.value:SetScript("OnEnter", function()
+          GameTooltip:SetOwner(infoFrame, "ANCHOR_CURSOR")
+          local balance = MyAccountant:GetRealmBalanceTotalDataTable()
+          MyAccountant:MakeRealmTotalTooltip(balance)
+          GameTooltip:Show()
+        end)
+        row.value:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      else
+        row.value:SetScript("OnEnter", nil)
+        row.value:SetScript("OnLeave", nil)
+      end
+      if not longestValue or row.value:GetWidth() > longestValue:GetWidth() then
+        longestValue = row.value
+      end
+    end
+  end
+
+  -- Third pass...
+  for _, row in pairs(infoRows) do
+    if longestValue and row.value ~= longestValue then
+      row.value:SetWidth(longestValue:GetWidth())
+    end
   end
 end
 
 function MyAccountant:InitializeInfoFrame()
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
   -- Initialize info frame look and feel, draggability
-  infoFrame = CreateFrame("Frame", "MyAccountantInfoFrame", UIParent, "BackdropTemplate")
+  if not infoFrame then
+    infoFrame = CreateFrame("Frame", "MyAccountantInfoFrame", UIParent, "BackdropTemplate")
+  end
   infoFrame:SetPoint("CENTER")
   infoFrame:SetBackdrop({
     bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -42,6 +144,7 @@ function MyAccountant:InitializeInfoFrame()
     insets = { left = 4, right = 4, top = 4, bottom = 4 }
   })
   infoFrame:SetBackdropColor(0, 0, 0, 0.9)
+  infoFrame:SetMovable(not self.db.char.lockInfoFrame)
 
   local allowMovement = function()
     local shiftKeyCondition = true
@@ -61,73 +164,28 @@ function MyAccountant:InitializeInfoFrame()
   end)
   infoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 
-  infoFrame:Hide()
-
-  for key, value in pairs(private.ldb_data) do
-    local itemLabel = infoFrame:CreateFontString(nil, "OVERLAY", "GameTooltipTextSmall")
-    local itemValue = infoFrame:CreateFontString(nil, "OVERLAY", "GameTooltipTextSmall")
-    itemLabel:SetText(value.label)
-
-    if value.tooltip then
-      itemValue:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(itemValue, "ANCHOR_CURSOR")
-        value.tooltip()
-        GameTooltip:Show()
-      end)
-      itemValue:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    end
-
-    frames[key] = { value = itemValue, label = itemLabel }
+  if self.db.char.showInfoFrameV2 then
+    infoFrame:Show()
+  else
+    infoFrame:Hide()
   end
 
-  MyAccountant:UpdateInformationFrameStatus()
-  MyAccountant:UpdateWhichInfoFrameRowsToRender()
-  MyAccountant:UpdateInfoFrameSize()
-end
+  for _, tab in pairs(self.db.char.tabs) do
+    --- @type Tab
+    tab = tab
+    for _, instance in ipairs(tab:getDataInstances()) do
+      if self.db.char.infoFrameDataToShowV2[instance.label] then
+        local rowInstance = infoRows[instance.label]
+        if not rowInstance then
+          local labelFontString = infoFrame:CreateFontString(nil, "OVERLAY", "GameTooltipTextSmall")
+          labelFontString:SetText(instance.label)
 
-function MyAccountant:UpdateWhichInfoFrameRowsToRender()
-  for _, item in pairs(frames) do
-    item.value:Hide()
-    item.label:Hide()
-  end
+          local valueFontString = infoFrame:CreateFontString(nil, "OVERLAY", "GameTooltipTextSmall")
+          valueFontString:SetText(L["ldb_loading"])
 
-  for key, _ in pairs(self.db.char.infoFrameDataToShow) do
-    if self.db.char.infoFrameDataToShow[key] then
-      local framesRow = frames[key]
-
-      local label = framesRow.label
-      local value = framesRow.value
-      label:Show()
-      value:Show()
-
-      local labelWidth, _ = label:GetSize()
-
-      if labelWidth > longestLabelWidth then
-        longestLabelWidth = labelWidth
-        longestLabel = label
+          infoRows[instance.label] = { label = labelFontString, value = valueFontString, tab = tab, visible = true }
+        end
       end
-    end
-  end
-
-  local shownRows = 0
-  local previousLabel
-  -- Second loop to set correct positioning
-  for key, value in pairs(self.db.char.infoFrameDataToShow) do
-    if self.db.char.infoFrameDataToShow[key] then
-      local framesRow = frames[key]
-      local label = framesRow.label
-      local value = framesRow.value
-
-      if shownRows == 0 then
-        label:SetPoint("TOPLEFT", infoFrame, "TOPLEFT", leftRowPadding, -topFramePadding)
-      else
-        label:SetPoint("TOPLEFT", previousLabel, "BOTTOMLEFT", 0, -rowSpacing)
-      end
-
-      value:SetPoint("LEFT", longestLabel, "RIGHT", minimumSpacingBetweenItemAndValue, 0)
-      value:SetPoint("TOP", label, "TOP")
-      previousLabel = label
-      shownRows = shownRows + 1
     end
   end
 end
@@ -135,23 +193,27 @@ end
 function MyAccountant:UpdateInfoFrameSize()
   local minimumHeight = 20
   local minimumWidth = 32
-
   local neededHeight = 0
-
   local amount = 0
 
-  local longestValue
   local longestValueWidth = 0
+  local longestLabelWidth = 0
+  local longestValue = nil
+  local longestLabel = nil
 
-  for _, item in pairs(frames) do
-    local labelFrame = item.label
-    local valueFrame = item.value
-    if labelFrame:IsShown() then
+  for _, item in pairs(infoRows) do
+    if item.visible then
+      local labelFrame = item.label
+      local valueFrame = item.value
       local labelWidth, labelHeight = labelFrame:GetSize()
       local valueWidth, valueHeight = valueFrame:GetSize()
       if valueWidth > longestValueWidth then
         longestValueWidth = valueWidth
         longestValue = valueFrame
+      end
+      if labelWidth > longestLabelWidth then
+        longestLabelWidth = labelWidth
+        longestLabel = labelFrame
       end
       neededHeight = neededHeight + labelHeight
       amount = amount + 1
@@ -164,30 +226,22 @@ function MyAccountant:UpdateInfoFrameSize()
   infoFrame:SetSize(useWidth + minimumSpacingBetweenItemAndValue + leftRowPadding + rightRowPadding,
                     useHeight + topFramePadding + bottomFramePadding)
 
-  -- Second pass to set width of labels to enforce alignment
-  for _, item in pairs(frames) do
-    local valueFrame = item.value
-    if valueFrame:IsShown() then
-      if valueFrame ~= longestValue then
-        valueFrame:SetWidth(longestLabelWidth)
-      end
-    end
-  end
 end
 
 --- Updates the show/hidden and lock status of the information frame
 function MyAccountant:UpdateInformationFrameStatus()
   infoFrame:SetMovable(not self.db.char.lockInfoFrame)
-  if self.db.char.showInfoFrame then
+  if self.db.char.showInfoFrameV2 then
     infoFrame:Show()
   else
     infoFrame:Hide()
   end
-  for _, v in pairs(frames) do
+  for _, row in pairs(infoRows) do
+
     if self.db.char.rightAlignInfoValues then
-      v.value:SetJustifyH("RIGHT")
+      row.value:SetJustifyH("RIGHT")
     else
-      v.value:SetJustifyH("LEFT")
+      row.value:SetJustifyH("LEFT")
     end
   end
 end

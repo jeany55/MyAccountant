@@ -6,12 +6,147 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 ----------------------------------------
+--- VERSION 1.8
+----------------------------------------
+L["ldb_name_income"] = "%s - Income"
+L["ldb_name_profit"] = "%s - Profit"
+L["ldb_name_outcome"] = "%s - Outcome"
+
+L["warband"] = "Warband"
+L["option_show_warband_in_realm_balance"] = "Show Warband balance in realm balance totals"
+L["option_show_warband_in_realm_balance_desc"] =
+    "If enabled, Warband balance will be included in realm balance tooltips. The Warband balance is updated when you open your bank."
+
+L["option_tab_developer_export"] = "Tab libary export"
+L["option_tab_developer_export_desc"] =
+    "[Developer Option]: Shows the LUA code necessary to add this tab to the addon's default tab library."
+
+L["ldb_name_income_character"] = "Income - %s"
+L["ldb_name_outcome_character"] = "Outcome - %s"
+L["ldb_name_profit_character"] = "Profit - %s"
+L["ldb_name_income_realm"] = "Income - %s (Realm)"
+L["ldb_name_outcome_realm"] = "Outcome - %s (Realm)"
+L["ldb_name_profit_realm"] = "Profit - %s (Realm)"
+
+L["option_tab_linebreak"] = "Linebreak after this tab"
+L["option_tab_linebreak_desc"] =
+    "If true, this tab will be the last tab on the current row in the income panel. The next one will be on a new row."
+
+L["option_income_frame_width"] = "Income frame width"
+L["option_income_frame_width_desc"] = "The width of the income frame."
+
+L["version_welcome_message"] =
+    "Welcome to %s! Minimap tooltip settings and info frame settings have been reset to defaults. Please check addon options to customize them and your tabs to your liking."
+L["version_first_install_message"] =
+    "All settings have been set to defaults. Please check addon options to customize your minimap tooltip, info frame data options, as well as your tabs!"
+
+L["random_day"] = "Random Day (Month)"
+L["yesterday"] = "Yesterday"
+L["two_days_ago"] = "Two Days Ago"
+L["three_days_ago"] = "Three Days Ago"
+L["four_days_ago"] = "Four Days Ago"
+L["last_month"] = "Last Month"
+L["last_week"] = "Last Week"
+L["two_weeks_ago"] = "Two Weeks Ago"
+L["last_weekend"] = "Last Weekend"
+L["option_tab_text"] =
+    "Tab configuration allows you to specify which tabs you see and in which order. Select a desired tab on the left to enable or disable."
+
+L["option_tab_advanced"] = "Advanced mode"
+L["option_tab_advanced_desc"] =
+    "Advanced mode allows you to create new tabs, delete existing ones, and allows for advanced configuration. New tabs require some lua knowledge - you may look at existing tabs for examples."
+
+L["option_tabs"] = "Tabs"
+L["option_new_tab"] = "New tab"
+
+L["option_developer_tab_export"] = "Show tab export field"
+L["option_developer_tab_export_desc"] =
+    "Shows an input field under tab options containing the necessary LUA export structure for adding to addon's default tabs"
+
+L["option_reset_tabs"] = "Reset tabs to default"
+L["option_reset_tabs_desc"] = "Reset tab configuration to default tabs. |cffff0000Will erase any custom tabs! Irreversible!|r"
+
+L["option_reset_tabs_confirm"] =
+    "Are you sure you want to reset all tabs to default? This will remove any tab configurations and reset all tabs to default settings. |cffff0000This is irreversible!|r"
+
+L["option_tab_name"] = "Tab label"
+L["option_tab_name_desc"] = "Name of the tab to show on the income panel"
+
+L["option_tab_date_expression"] = "Date expression"
+
+L["option_tab_create"] = "Create tab"
+
+L["option_tab_date_expression_desc"] = "Date expressions allow for advanced configuration with Lua code."
+
+L["option_tab_type"] = "Tab type"
+L["option_tab_type_desc"] =
+    "What kind of data this tab will show (session, realm balance, or date). Date allows specific configuration."
+L["option_tab_type_date"] = "Date"
+L["option_tab_type_session"] = "Session"
+L["option_tab_type_balance"] = "Realm Balance"
+
+L["option_tab_create_fail"] = "A tab with that name already exists!"
+
+L["option_tab_expression_invalid_lua"] = "This lua appears to be invalid"
+L["option_tab_expression_invalid_lua_bad"] = "This lua expression failed to execute - check syntax errors!"
+
+L["option_tab_expression_missing_startDate"] = "You must set a start date by calling Tab:setStartDate()"
+L["option_tab_expression_missing_endDate"] = "You must set a end date by calling Tab:setEndDate()"
+
+L["option_tab_expression_invalid_startDate"] = "Start date must be a valid unix timestamp (number)"
+L["option_tab_expression_invalid_endDate"] = "End date must be a valid unix timestamp (number)"
+
+L["option_tab_expression_invalid_unix_timestamp"] = "This lua express needs to return a valid unix timestamp by setting dateValue"
+
+L["option_tab_visible"] = "Visible"
+L["option_tab_visible_desc"] = "Show this tab on the income frame"
+
+L["option_tab_advanced"] = "Advanced Configuration"
+
+L["option_tab_info_frame"] = "Register data with information frame"
+L["option_tab_info_frame_desc"] =
+    "If selected, data returned from this tab will be available on the Information Frame. Configured in the Information Frame options."
+
+L["option_tab_minimap"] = "Register data with minimap tooltip options"
+L["option_tab_minimap_desc"] =
+    "If true, data from this tab will be available as summary data on the minimap tooltip options page."
+
+L["option_tab_ldb"] = "Register data with LDB"
+L["option_tab_ldb_desc"] =
+    "If selected, data returned from this tab will be registered with LibDataBroker allowing you to see it in other addons like Titan Panel or Bazooka."
+
+L["option_tab_move_left"] = "Move left"
+L["option_tab_move_left_desc"] = "Move this tab left."
+
+L["option_tab_move_right"] = "Move right"
+L["option_tab_move_right_desc"] = "Move this tab right."
+
+L["option_tab_delete"] = "Delete tab"
+L["option_tab_delete_desc"] = "Delete this tab from the income panel"
+L["option_tab_delete_confirm"] = "Deleting this tab will remove it from the income panel. |cffff0000Are you sure?|r"
+
+L["option_minimap_tooltip"] = "Minimap tooltip"
+L["option_income_panel"] = "Income panel"
+L["option_addon_data"] = "Addon data"
+L["options_developer_options"] = "Developer options"
+
+L["about_author"] = "By %s"
+L["about_github"] = "Github"
+L["about_github_desc"] = "Find an bug? Have a suggestion? Create an issue!"
+L["about_languages"] = "Supported languages"
+L["english"] = "English"
+L["russian"] = "Russian (by ZamestoTv)"
+L["simplified_chinese"] = "Simplified Chinese (by cclolz)"
+
+L["about_special_thanks_to"] = "Special thanks to"
+
+----------------------------------------
 --- VERSION 1.7
 ----------------------------------------
 L["character"] = "Character"
 L["balance"] = "Balance"
 
-L["option_info_frame"] = "Information Frame"
+L["option_info_frame"] = "Information frame"
 L["option_info_frame_desc"] =
     "The information frame is a small draggable frame that can show information such as realm balance, session info, or other data."
 
@@ -31,22 +166,12 @@ L["option_info_frame_right_align_desc"] = "If false, data will be left aligned i
 L["option_info_frame_items"] = "Information to show"
 L["option_info_frame_lock_desc"] = "Which information to show on the information frame."
 
-L["option_income_frame_balance_tab"] = "Show balance tab"
-L["option_income_frame_balance_tab_desc"] = "Show balance tab, allowing you to see total realm balance"
+L["option_minimap_data"] = "Show summary data from"
+L["option_minimap_data_desc"] = "What data to show on the minimap tooltip"
 
 ----------------------------------------
 --- VERSION 1.6
 -----------------------------------------
-L["option_minimap_balance_style"] = "Show total balance from"
-L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
-
-L["option_minimap_balance_style_character"] = "This character"
-L["option_minimap_balance_style_realm"] = "Realm"
-
-L["option_ldb"] = "Register and update data with LDB"
-L["option_ldb_desc"] =
-    "If true then 'Session Income, 'Session Profit', 'Todays Income', 'Todays Profit' data from MyAccountant will be available in LDB compatible plugins (eg. Bazooka or Titan Panel). Changing this will require reloading your UI to take effect."
-
 L["ldb_loading"] = "Loading"
 L["ldb_session_income"] = "Session Income"
 L["ldb_session_profit"] = "Session Profit"
@@ -59,6 +184,12 @@ L["ldb_weekly_net_character"] = "Week's Profit (Character)"
 L["ldb_weekly_income_realm"] = "Week's Income (Realm)"
 L["ldb_weekly_net_realm"] = "Week's Profit (Realm)"
 L["ldb_faction_balance"] = "Realm Balance"
+
+L["option_minimap_balance_style"] = "Show total balance from"
+L["option_minimap_balance_style_desc"] = "What the total balance on the tooltip shows"
+
+L["option_minimap_balance_style_character"] = "This character"
+L["option_minimap_balance_style_realm"] = "Realm"
 
 ----------------------------------------
 --- VERSION 1.5
@@ -126,6 +257,7 @@ L["character_selection_all"] = "All characters"
 
 -- /mya
 L["help1"] = "Valid options include"
+L["help_separator"] = "----------------------"
 L["help2"] = "- /mya open - Show/hide income window"
 L["help3"] = "- /mya options - Open options window"
 L["help4"] = "- /mya gph - Reset gold per hour"

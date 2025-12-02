@@ -1,1 +1,7 @@
 .vscode/
+
+# LuaCov coverage files
+luacov.*.out
+
+# Test results
+test-results/
