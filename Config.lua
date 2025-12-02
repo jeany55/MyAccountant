@@ -284,7 +284,6 @@ function MyAccountant:SetupAddonOptions()
       local index = tabOrder
 
       return function()
-        print("moving tab left", index, index - 1)
         private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index - 1)
         makeTabConfig()
         forceConfigRerender()
