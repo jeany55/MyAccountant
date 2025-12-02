@@ -30,9 +30,6 @@ L["income_panel_action_options"] = "Открыть настройки аддон
 L["income_panel_action_session"] = "Очистить данные сессии"
 L["income_panel_action_gph"] = "Сбросить золото в час"
 
-L["income_panel_button_OPTIONS"] = "Настройки"
-L["income_panel_button_CLEAR_SESSION"] = "Очистить сессию"
-L["income_panel_button_RESET_GPH"] = "Сбросить золото/ч"
 
 L["character_selection_all"] = "Все персонажи"
 
@@ -64,13 +61,8 @@ L["option_slash_behav_desc"] = "Указать поведение при вво�
 
 L["option_slash_behav_chat"] = "Показать настройки в чате"
 L["option_slash_behav_open"] = "Открыть окно бухгалтера"
-L["option_slash_behav_report"] = "Вывести отчёт в чат"
 
 -- Options, minimap
-L["option_minimap_style"] = "Отображать информацию о доходах как"
-L["option_minimap_style_desc"] = "Как информация о доходах и расходах должна отображаться во всплывающей подсказке миникарты"
-L["option_minimap_style_income_outcome"] = "Доходы и расходы"
-L["option_minimap_style_net"] = "Чистая прибыль/убыток"
 
 L["option_minimap_left_click"] = "При ЛКМ"
 L["option_minimap_left_click_desc"] = "Какое поведение должно быть при ЛКМ на иконке миникарты"
@@ -84,11 +76,7 @@ L["option_minimap_click_options"] = "Открыть настройки аддо�
 L["option_minimap_click_reset_session"] = "Сбросить доходы/расходы сессии"
 L["option_minimap_click_reset_gold_per_hour"] = "Сбросить золото в час"
 
-L["option_minimap_data_type"] = "Показывать данные из"
-L["option_minimap_data_type_desc"] = "Какой набор данных использовать для отображения информации о доходах на иконке миникарты"
 
-L["option_minimap_data_type_session"] = "Текущей сессии"
-L["option_minimap_data_type_today"] = "Сегодня"
 
 -- Options, income panel
 L["option_close_entering_combat"] = "Закрывать панель при входе в бой"
@@ -171,10 +159,6 @@ L["incoming_header"] = "Входящие"
 L["outcoming_header"] = "Исходящие"
 
 -- General
-L["total_incoming"] = "Всего входящих:"
-L["total_outgoing"] = "Всего исходящих:"
-L["net_gain"] = "Чистая прибыль:"
-L["net_loss"] = "Чистый убыток:"
 
 -- Available sources
 L["TRAINING_COSTS"] = "Затраты на обучение"

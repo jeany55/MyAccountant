@@ -20,7 +20,6 @@ end
 ----------------------------------------
 --- VERSION 1.7
 ----------------------------------------
-L["character"] = "Character"
 L["balance"] = "Balance"
 
 L["option_info_frame"] = "Information Frame"
@@ -60,17 +59,6 @@ L["option_ldb_desc"] =
     "If true then 'Session Income, 'Session Profit', 'Todays Income', 'Todays Profit' data from MyAccountant will be available in LDB compatible plugins (eg. Bazooka or Titan Panel). Changing this will require reloading your UI to take effect."
 
 L["ldb_loading"] = "Loading"
-L["ldb_session_income"] = "Session Income"
-L["ldb_session_profit"] = "Session Profit"
-L["ldb_daily_income_character"] = "Today's Income (Character)"
-L["ldb_daily_net_character"] = "Today's Profit (Character)"
-L["ldb_daily_income_realm"] = "Today's Income (Realm)"
-L["ldb_daily_net_realm"] = "Today's Profit (Realm)"
-L["ldb_weekly_income_character"] = "Week's Income (Character)"
-L["ldb_weekly_net_character"] = "Week's Profit (Character)"
-L["ldb_weekly_income_realm"] = "Week's Income (Realm)"
-L["ldb_weekly_net_realm"] = "Week's Profit (Realm)"
-L["ldb_faction_balance"] = "Realm Balance"
 
 ----------------------------------------
 --- VERSION 1.5
@@ -124,9 +112,6 @@ L["income_panel_action_options"] = "Open addon options"
 L["income_panel_action_session"] = "Clear session data"
 L["income_panel_action_gph"] = "Reset gold per hour"
 
-L["income_panel_button_OPTIONS"] = "Options"
-L["income_panel_button_CLEAR_SESSION"] = "Clear session"
-L["income_panel_button_RESET_GPH"] = "Reset GPH"
 
 L["character_selection_all"] = "All characters"
 
@@ -163,13 +148,8 @@ L["option_slash_behav_desc"] = "Specify the behaviour when entering /mya in chat
 
 L["option_slash_behav_chat"] = "Show options in chat"
 L["option_slash_behav_open"] = "Open accountant window"
-L["option_slash_behav_report"] = "Print report in chat"
 
 -- Options, minimap
-L["option_minimap_style"] = "Display income info as"
-L["option_minimap_style_desc"] = "How income and outcome information should appear on the minimap tooltip"
-L["option_minimap_style_income_outcome"] = "Income and outcome"
-L["option_minimap_style_net"] = "Net gain/loss"
 
 L["option_minimap_left_click"] = "When left clicking"
 L["option_minimap_left_click_desc"] = "What the behaviour should be when left clicking on the minimap icon"
@@ -183,11 +163,7 @@ L["option_minimap_click_options"] = "Open addon options"
 L["option_minimap_click_reset_session"] = "Reset session income/outcome"
 L["option_minimap_click_reset_gold_per_hour"] = "Reset gold per hour"
 
-L["option_minimap_data_type"] = "Show data from"
-L["option_minimap_data_type_desc"] = "What data set to show income information from on the minimap icon"
 
-L["option_minimap_data_type_session"] = "This session"
-L["option_minimap_data_type_today"] = "Today"
 
 -- Options, income panel
 L["option_close_entering_combat"] = "Close panel when entering combat"
@@ -273,10 +249,6 @@ L["incoming_header"] = "Incoming"
 L["outcoming_header"] = "Outgoing"
 
 -- General
-L["total_incoming"] = "Total incoming:"
-L["total_outgoing"] = "Total outgoing:"
-L["net_gain"] = "Net gain:"
-L["net_loss"] = "Net loss:"
 
 -- Available sources
 L["TRAINING_COSTS"] = "Training Costs"
