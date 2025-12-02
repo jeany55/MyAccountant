@@ -28,7 +28,7 @@ local function getLuaInterpreter()
   if handle then
     local result = handle:read("*all")
     handle:close()
-    if result and result ~= "" then
+    if result and result:match("%S") then
       return "lua"
     end
   end
@@ -38,7 +38,7 @@ local function getLuaInterpreter()
   if handle then
     local result = handle:read("*all")
     handle:close()
-    if result and result ~= "" then
+    if result and result:match("%S") then
       return "lua5.1"
     end
   end
