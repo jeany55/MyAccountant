@@ -2,7 +2,8 @@
 -- TestCoverage.lua
 -- Calculates and displays test coverage for MyAccountant
 --
--- Usage: lua5.1 Tests/TestCoverage.lua
+-- Usage: ./Tests/TestCoverage.sh (recommended) or lua5.1 Tests/TestCoverage.lua
+-- Note: For consistent results across timezones, use the TestCoverage.sh wrapper script
 --
 -- This script provides real test coverage analysis using LuaCov,
 -- tracking which lines of code are actually executed during tests.
