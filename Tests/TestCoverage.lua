@@ -86,8 +86,8 @@ local function parseCoverageReport()
       missed = tonumber(missed)
       coverage = tonumber(coverage)
       
-      -- Filter out test files and library files
-      if not filename:match("^Tests/") and not filename:match("^Libs/") then
+      -- Filter out test files, library files, and localization files
+      if not filename:match("^Tests/") and not filename:match("^Libs/") and not filename:match("^Locales/") then
         table.insert(fileStats, {
           filename = filename,
           hits = hits,
