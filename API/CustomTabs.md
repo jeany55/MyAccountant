@@ -90,7 +90,7 @@ Track just Saturday and Sunday of last week:
 local firstDayOfPreviousWeek = DateUtils.getStartOfWeek(DateUtils.subtractDay(DateUtils.getStartOfWeek()))
 local saturday = DateUtils.addDays(firstDayOfPreviousWeek, 5)
 local sunday = DateUtils.addDays(firstDayOfPreviousWeek, 6)
- 
+
 Tab:setStartDate(saturday)
 Tab:setEndDate(sunday)
 Tab:setDateSummaryText(date("%x", saturday) .. " - " .. date("%x", sunday))
