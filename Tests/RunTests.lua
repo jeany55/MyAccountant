@@ -454,6 +454,8 @@ fire("ADDON_LOADED", "WoWUnit")
 import(importPath .. "/" .. Name .. ".toc")
 import("Tests.Tests.IncomeTests")
 import("Tests.Tests.UtilsTests")
+import("Tests.Tests.ApiTabsTests")
+import("Tests.Tests.EventsTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)
