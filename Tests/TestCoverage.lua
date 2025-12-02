@@ -36,14 +36,15 @@ end
 local function runTestsWithCoverage()
   print("Running tests with coverage tracking...")
   local result = os.execute("lua5.1 Tests/RunTests.lua > /dev/null 2>&1")
-  if result ~= 0 then
+  -- Handle both Lua 5.1 (returns exit code) and later versions (returns true/false, string, number)
+  if result ~= true and result ~= 0 then
     print("Error: Tests failed. Cannot calculate coverage.")
     return false
   end
   
   -- Generate coverage report
   result = os.execute("luacov > /dev/null 2>&1")
-  if result ~= 0 then
+  if result ~= true and result ~= 0 then
     print("Error: Failed to generate coverage report.")
     return false
   end
@@ -62,8 +63,8 @@ local function parseCoverageReport()
   local content = reportFile:read("*all")
   reportFile:close()
   
-  -- Find the summary section
-  local summaryStart = content:find("Summary\n==")
+  -- Find the summary section (more flexible pattern)
+  local summaryStart = content:find("Summary%s*\n=+")
   if not summaryStart then
     print("Error: Could not find summary in coverage report.")
     return nil
@@ -77,7 +78,8 @@ local function parseCoverageReport()
   -- Extract the summary lines
   for line in content:sub(summaryStart):gmatch("[^\n]+") do
     -- Match: filename.lua   hits   missed   coverage%
-    local filename, hits, missed, coverage = line:match("^([%w/%.]+%.lua)%s+(%d+)%s+(%d+)%s+([%d%.]+)%%")
+    -- More robust pattern that handles hyphens, underscores, and nested directories
+    local filename, hits, missed, coverage = line:match("^([%w/%._%-]+%.lua)%s+(%d+)%s+(%d+)%s+([%d%.]+)%%")
     if filename and hits and missed and coverage then
       hits = tonumber(hits)
       missed = tonumber(missed)
@@ -168,7 +170,9 @@ local function main()
   -- Check if LuaCov is installed
   if not checkLuaCov() then
     print("\nError: LuaCov is not installed.")
-    print("Please install it with: sudo luarocks install luacov\n")
+    print("Please install it with one of the following commands:")
+    print("  luarocks install --local luacov  (user-local installation)")
+    print("  sudo luarocks install luacov     (system-wide installation)\n")
     os.exit(1)
   end
   
