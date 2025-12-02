@@ -28,7 +28,7 @@ local DateUtils = {
   --- @return integer timestamp Unix timestamp
   getStartOfWeek = function(timestamp)
     timestamp = timestamp or time()
-    local currentDate = date("*t", timestamp)
+    local currentDate = date("!*t", timestamp)
     return timestamp - ((currentDate.wday - 1) * dayInSeconds)
   end,
 
@@ -36,7 +36,7 @@ local DateUtils = {
   --- @return integer timestamp Unix timestamp
   getStartOfMonth = function(timestamp)
     timestamp = timestamp or time()
-    local currentDate = date("*t", timestamp)
+    local currentDate = date("!*t", timestamp)
     return timestamp - ((currentDate.day - 1) * dayInSeconds)
   end,
 
@@ -44,7 +44,7 @@ local DateUtils = {
   --- @return integer timestamp Unix timestamp
   getStartOfYear = function(timestamp)
     timestamp = timestamp or time()
-    local currentDate = date("*t", timestamp)
+    local currentDate = date("!*t", timestamp)
     return timestamp - ((currentDate.yday - 1) * dayInSeconds)
   end,
 
@@ -83,12 +83,23 @@ local DateUtils = {
   --- @return integer timestamp Unix timestamp in the future
   subtractDays = function(time, days) return time - (dayInSeconds * days) end,
 
-  --- Gets the current days in the month from a timestamp
+  --- Gets the number of days in the month from a timestamp
   --- @param timestamp integer Unix timestamp
   --- @return integer days The number of days in the month for the date
   getDaysInMonth = function(timestamp)
-    local currentDate = date("*t", timestamp)
-    return currentDate.day and currentDate.day or 0
+    local currentDate = date("!*t", timestamp)
+    -- Create a date for the first day of the next month
+    local nextMonth = currentDate.month + 1
+    local year = currentDate.year
+    if nextMonth > 12 then
+      nextMonth = 1
+      year = year + 1
+    end
+    -- Get timestamp for first day of next month, then subtract one day to get last day of current month
+    local firstOfNextMonth = time{year=year, month=nextMonth, day=1, hour=0, min=0, sec=0}
+    local lastOfThisMonth = firstOfNextMonth - dayInSeconds
+    local lastDate = date("!*t", lastOfThisMonth)
+    return lastDate.day
   end
 }
 
