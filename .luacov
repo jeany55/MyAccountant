@@ -1,0 +1,27 @@
+------------------------------------------------------------
+-- LuaCov Configuration File
+-- Configures code coverage analysis for MyAccountant
+------------------------------------------------------------
+
+-- Modules to exclude from coverage (patterns are Lua patterns, not regex)
+exclude = {
+  "Tests",            -- Exclude test files
+  "Libs",             -- Exclude library files
+  "WoWUnit",          -- Exclude test framework
+  "luacov",           -- Exclude luacov itself
+}
+
+-- Statistics file
+statsfile = "luacov.stats.out"
+
+-- Report file
+reportfile = "luacov.report.out"
+
+-- Run reporter on completion
+runreport = false
+
+-- Delete stats file after reporting
+deletestats = false
+
+-- Process all files in directory, even if not executed
+tick = false

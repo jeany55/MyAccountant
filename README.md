@@ -130,6 +130,32 @@ Decide which income sources you want to track by disabling ones you aren't inter
 * <B>Russian</B>&nbsp;(by ZamestoTV)
 * <B>Simplified Chinese</B>&nbsp;(by cclolz)
 
+## Development & Testing
+
+### Running Tests
+
+MyAccountant uses [WoWUnit](https://github.com/Munk801/WoWUnit) for unit testing. To run the tests:
+
+```bash
+lua5.1 Tests/RunTests.lua
+```
+
+### Test Coverage
+
+To check real test coverage using LuaCov:
+
+1. Install LuaCov (requires luarocks):
+   ```bash
+   luarocks install luacov
+   ```
+
+2. Run the coverage analysis:
+   ```bash
+   lua5.1 Tests/TestCoverage.lua
+   ```
+
+This will run all tests with coverage tracking enabled and display a detailed report showing line-by-line coverage for each source file. The coverage tool uses LuaCov to track which lines of code are actually executed during test runs, providing accurate coverage metrics.
+
 ## How to contribute
 
 ### Want to add a translation?
