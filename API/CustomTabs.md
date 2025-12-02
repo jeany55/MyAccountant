@@ -2,24 +2,20 @@
 
 ![Custom Tabs](../Docs/customTabs.svg)
 
-## What and Why
+## Overview
 
-### What is This Feature?
+MyAccountant allows you to create fully customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what matters to you.
 
-MyAccountant allows you to create fully customized tabs using Lua code snippets. These custom tabs enable you to define exactly what date range you want to track, customize the display text, and even add your own configuration options.
+With custom tabs, you can:
 
-### Why Does This Feature Exist?
+- **Track Personalized Time Periods**: Create tabs for specific date ranges like "raid week", "farming weekend", or "tournament period"
+- **Use Dynamic Date Calculations**: Build tabs that automatically adjust based on complex date logic
+- **Customize Display**: Format date ranges and labels to match your workflow
+- **Add Configuration Options**: Create custom toggles or settings specific to your tab's needs
 
-While MyAccountant comes with many built-in tabs (Today, This Week, This Month, etc.), every player has unique tracking needs:
+This documentation will guide you through creating your own custom tabs, from simple single-day trackers to advanced date range calculations. You'll learn about the available APIs, see practical examples, and discover how to share your creations with the community.
 
-- **Personalized Time Periods**: Track specific date ranges that matter to you (e.g., "raid week", "farming weekend", "tournament period")
-- **Dynamic Date Calculations**: Create tabs that automatically adjust based on complex date logic
-- **Custom Labels**: Display date ranges with custom formatting that makes sense to your workflow
-- **Flexible Configuration**: Add custom toggles or settings specific to your tab's needs
-
-This feature gives you the power to make MyAccountant work exactly how you want it to.
-
-**Bonus**: You can even share your custom tabs with the community using the built-in developer export feature!
+**Ready to get started?** Jump to the [Examples](#examples) section to see what's possible, or head to the [Setup Guide](#how-to-set-up-your-own-custom-tab) to create your first custom tab!
 
 ## Examples
 
@@ -175,7 +171,7 @@ Tab:setLabelColor("FF69B4")  -- Hot pink for fun!
 
 ### Step 1: Enable Advanced Mode
 
-1. Open the game and type `/myaccountant` or `/ma` to open the addon configuration
+1. Open the game and type `/mya options` to open the addon configuration
 2. Navigate to **Tabs** in the left sidebar
 3. Enable **Advanced mode** checkbox at the top of the tab configuration panel
 
@@ -744,9 +740,7 @@ Double-check your date calculations:
 
 Make sure:
 - The tab is set to visible in the configuration
-- Advanced mode is enabled
 - The tab was successfully created (no error message)
-- You're looking at the income panel (not just the options)
 
 ## Sharing Your Custom Tabs
 
@@ -759,7 +753,7 @@ Once you've created a custom tab you're proud of, you can easily share it with t
 3. Enable **Tab library export** option (this is a developer option)
 4. Select your custom tab
 5. You'll see a **Tab library export** field appear with the complete `Tab:construct()` code
-6. Copy this code and share it on forums, Discord, or wherever the community gathers!
+6. Copy this code and [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new) with your custom tab - if it's useful, it might be added to the default tab library for everyone to enjoy!
 
 ### Example Export
 
@@ -781,6 +775,16 @@ Tab:setEndDate(DateUtils.getToday())]]
 
 Others can use this code as inspiration or add it to their own tab library!
 
+## Advanced Usage Warning
+
+⚠️ **Important**: The `Tab` object passed to your lua expression is the same Tab object used internally by the addon. While this gives you powerful capabilities, it also means you need to be careful:
+
+- **Do not** call methods that execute side effects beyond date/label configuration (like methods that update LDB data or info frames during expression evaluation)
+- **Do not** delete or override Tab object fields
+- **Do not** store references to the Tab object for later use outside your expression
+
+Stick to the documented methods (primarily `setStartDate()`, `setEndDate()`, `setDateSummaryText()`, `setLabelText()`, and `setLabelColor()`) for safe and predictable behavior. Using undocumented or internal methods may cause unexpected side effects or break with future addon updates.
+
 ## Additional Resources
 
 - **Lua Documentation**: [lua.org](https://www.lua.org/manual/5.1/)
@@ -789,4 +793,4 @@ Others can use this code as inspiration or add it to their own tab library!
 
 ---
 
-**Happy customizing! If you create an interesting custom tab, consider sharing it with the community!**
+**Happy customizing! If you create a useful custom tab, [open an issue on GitHub](https://github.com/jeany55/MyAccountant/issues/new) to share it - it might be added to the default tab library!**
