@@ -1,7 +1,8 @@
 -- From https://gitlab.com/shrugal/PersoLootRoll/-/blob/master/Test.lua
 -- Wraps WoWUnit to be used from the terminal, runs all tests in /Tests folder
 
--- Usage: lua Test.lua
+-- Usage: ./Tests/run-tests.sh (recommended) or lua Tests/RunTests.lua
+-- Note: For consistent results across timezones, use the run-tests.sh wrapper script
 
 -- Enable LuaCov code coverage tracking if available
 -- Must be loaded before any other code to track coverage properly
