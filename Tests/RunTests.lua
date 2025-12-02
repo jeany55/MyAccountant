@@ -3,6 +3,13 @@
 
 -- Usage: lua Test.lua
 
+-- Enable LuaCov code coverage tracking if available
+-- Must be loaded before any other code to track coverage properly
+local luacov_loaded = pcall(require, "luacov")
+if luacov_loaded then
+    print("[Coverage] LuaCov enabled - tracking code coverage during test execution")
+end
+
 local Addon = {}
 local Name = "MyAccountant"
 

@@ -4,250 +4,201 @@
 --
 -- Usage: lua5.1 Tests/TestCoverage.lua
 --
--- This script analyzes all non-test Lua files in the repository
--- (excluding Tests/ and Libs/ directories) and calculates what
--- percentage of functions are covered by tests.
+-- This script provides real test coverage analysis using LuaCov,
+-- tracking which lines of code are actually executed during tests.
 --
 -- The coverage calculation works by:
--- 1. Scanning all source files to identify function definitions
--- 2. Reading all test files to see which functions are referenced
--- 3. Computing the percentage of functions that appear in tests
+-- 1. Running tests with LuaCov enabled to track code execution
+-- 2. Reading LuaCov's coverage statistics
+-- 3. Parsing the coverage report to extract per-file metrics
 -- 4. Displaying a detailed report showing per-file coverage
 --
 -- The report shows:
--- - File-by-file coverage breakdown
--- - Total lines of code
--- - Total functions found
--- - Number of functions covered by tests
--- - Overall test coverage percentage
+-- - File-by-file coverage breakdown with hits/misses
+-- - Overall test coverage percentage based on executed lines
+-- - Color-coded status indicators (✓ for >80%, ~ for 50-80%, ✗ for <50%)
+--
+-- Note: This requires LuaCov to be installed (luarocks install luacov)
 ------------------------------------------------------------
 
-local function readFile(path)
-  local file = io.open(path, "r")
-  if not file then
+-- Check if LuaCov is available
+local function checkLuaCov()
+  local handle = io.popen("which luacov 2>/dev/null")
+  if not handle then
+    return false
+  end
+  local result = handle:read("*all")
+  handle:close()
+  return result and result ~= ""
+end
+
+-- Run tests with LuaCov to generate coverage data
+local function runTestsWithCoverage()
+  print("Running tests with coverage tracking...")
+  local result = os.execute("lua5.1 Tests/RunTests.lua > /dev/null 2>&1")
+  -- Handle both Lua 5.1 (returns exit code) and later versions (returns true/false, string, number)
+  if result ~= true and result ~= 0 then
+    print("Error: Tests failed. Cannot calculate coverage.")
+    return false
+  end
+  
+  -- Generate coverage report
+  result = os.execute("luacov > /dev/null 2>&1")
+  if result ~= true and result ~= 0 then
+    print("Error: Failed to generate coverage report.")
+    return false
+  end
+  
+  return true
+end
+
+-- Parse LuaCov report to extract coverage statistics
+local function parseCoverageReport()
+  local reportFile = io.open("luacov.report.out", "r")
+  if not reportFile then
+    print("Error: Coverage report file not found.")
     return nil
   end
-  local content = file:read("*all")
-  file:close()
-  return content
-end
-
--- Scan directory for files matching a pattern
--- Note: This uses shell commands and assumes trusted input
--- Only use with hardcoded paths in a development environment
-local function scanDirectory(dir, pattern, exclude)
-  local files = {}
-  -- Construct find command with proper quoting
-  local cmd = string.format('find "%s" -type f -name "%s" 2>/dev/null', 
-                           dir:gsub('"', '\\"'), 
-                           pattern:gsub('"', '\\"'))
-  local handle = io.popen(cmd)
-  if not handle then
-    return files
+  
+  local content = reportFile:read("*all")
+  reportFile:close()
+  
+  -- Find the summary section (more flexible pattern)
+  local summaryStart = content:find("Summary%s*\n=+")
+  if not summaryStart then
+    print("Error: Could not find summary in coverage report.")
+    return nil
   end
   
-  for line in handle:lines() do
-    local shouldExclude = false
-    for _, excludePattern in ipairs(exclude) do
-      if line:match(excludePattern) then
-        shouldExclude = true
-        break
-      end
-    end
-    
-    if not shouldExclude then
-      table.insert(files, line)
-    end
-  end
-  handle:close()
-  return files
-end
-
--- Extract function names from source files
-local function extractFunctions(content, filepath)
-  local functions = {}
-  
-  -- Pattern 1: function AddonName:FunctionName or function AddonName.FunctionName
-  for funcName in content:gmatch("function%s+[%w_]*[:%.]([%w_]+)%s*%(") do
-    table.insert(functions, funcName)
-  end
-  
-  -- Pattern 2: local function functionName
-  for funcName in content:gmatch("local%s+function%s+([%w_]+)%s*%(") do
-    table.insert(functions, funcName)
-  end
-  
-  -- Pattern 3: FunctionName = function(
-  for funcName in content:gmatch("([%w_]+)%s*=%s*function%s*%(") do
-    table.insert(functions, funcName)
-  end
-  
-  -- Pattern 4: ["FunctionName"] = function(
-  for funcName in content:gmatch('%["([%w_]+)"%]%s*=%s*function%s*%(') do
-    table.insert(functions, funcName)
-  end
-  
-  return functions
-end
-
--- Count total lines of code (excluding comments and blank lines)
-local function countLinesOfCode(content)
-  local count = 0
-  local inMultilineComment = false
-  
-  for line in content:gmatch("[^\r\n]+") do
-    local trimmed = line:match("^%s*(.-)%s*$")
-    
-    -- Check for multiline comment start and end on same line
-    if trimmed:match("^%-%-%[%[.-%]%]$") then
-      -- Single line multiline comment, skip it
-    elseif trimmed:match("^%-%-%[%[") then
-      -- Start of multiline comment
-      inMultilineComment = true
-    elseif trimmed:match("%]%]") and inMultilineComment then
-      -- End of multiline comment
-      inMultilineComment = false
-    elseif not inMultilineComment then
-      -- Skip blank lines and single-line comments
-      if trimmed ~= "" and not trimmed:match("^%-%-") then
-        count = count + 1
-      end
-    end
-  end
-  
-  return count
-end
-
--- Escape special Lua pattern characters
-local function escapePattern(str)
-  return str:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
-end
-
--- Check if a function is covered by tests
-local function isFunctionCovered(funcName, testContent)
-  -- Escape the function name to avoid pattern matching issues
-  local escapedName = escapePattern(funcName)
-  
-  -- Check if function name appears in test content
-  -- This is a simplified coverage check - it looks for references to the function
-  if testContent:match("[:%.]" .. escapedName .. "%s*%(") or
-     testContent:match("['\"]" .. escapedName .. "['\"]") or
-     testContent:match(escapedName .. "%s*%(") then
-    return true
-  end
-  return false
-end
-
--- Main coverage calculation
-local function calculateCoverage()
-  print("\n" .. string.rep("=", 60))
-  print("MyAccountant Test Coverage Report")
-  print(string.rep("=", 60) .. "\n")
-  
-  -- Get current working directory
-  local baseDir = "."
-  
-  -- Find all non-test Lua files (excluding Libs and Tests directories)
-  local sourceFiles = scanDirectory(baseDir, "*.lua", {"/Tests/", "/Libs/", "/%.git/"})
-  
-  -- Read all test files
-  local testFiles = scanDirectory(baseDir .. "/Tests", "*.lua", {"/WoWUnit/"})
-  local allTestContent = ""
-  
-  for _, testFile in ipairs(testFiles) do
-    local content = readFile(testFile)
-    if content then
-      allTestContent = allTestContent .. "\n" .. content
-    end
-  end
-  
-  -- Analyze source files
-  local totalFunctions = 0
-  local coveredFunctions = 0
-  local totalLines = 0
+  -- Parse summary table
   local fileStats = {}
+  local totalHits = 0
+  local totalMissed = 0
   
-  for _, filepath in ipairs(sourceFiles) do
-    local content = readFile(filepath)
-    if content then
-      local functions = extractFunctions(content, filepath)
-      local linesOfCode = countLinesOfCode(content)
+  -- Extract the summary lines
+  for line in content:sub(summaryStart):gmatch("[^\n]+") do
+    -- Match: filename.lua   hits   missed   coverage%
+    -- More robust pattern that handles hyphens, underscores, and nested directories
+    local filename, hits, missed, coverage = line:match("^([%w/%._%-]+%.lua)%s+(%d+)%s+(%d+)%s+([%d%.]+)%%")
+    if filename and hits and missed and coverage then
+      hits = tonumber(hits)
+      missed = tonumber(missed)
+      coverage = tonumber(coverage)
       
-      local fileCovered = 0
-      for _, funcName in ipairs(functions) do
-        if isFunctionCovered(funcName, allTestContent) then
-          fileCovered = fileCovered + 1
-        end
+      -- Filter out test files and library files
+      if not filename:match("^Tests/") and not filename:match("^Libs/") then
+        table.insert(fileStats, {
+          filename = filename,
+          hits = hits,
+          missed = missed,
+          total = hits + missed,
+          coverage = coverage
+        })
+        totalHits = totalHits + hits
+        totalMissed = totalMissed + missed
       end
-      
-      -- Store stats for this file
-      local shortPath = filepath:gsub("^%./", "")
-      table.insert(fileStats, {
-        path = shortPath,
-        totalFuncs = #functions,
-        coveredFuncs = fileCovered,
-        lines = linesOfCode
-      })
-      
-      totalFunctions = totalFunctions + #functions
-      coveredFunctions = coveredFunctions + fileCovered
-      totalLines = totalLines + linesOfCode
+    end
+    
+    -- Match the Total line
+    if line:match("^Total%s+") then
+      local h, m = line:match("^Total%s+(%d+)%s+(%d+)")
+      if h and m then
+        -- We already accumulated from individual files
+        -- This is just for validation
+      end
     end
   end
   
-  -- Calculate coverage percentage
-  local coveragePercent = 0
-  if totalFunctions > 0 then
-    coveragePercent = (coveredFunctions / totalFunctions) * 100
-  end
+  return {
+    files = fileStats,
+    totalHits = totalHits,
+    totalMissed = totalMissed,
+    totalLines = totalHits + totalMissed,
+    overallCoverage = totalHits + totalMissed > 0 and (totalHits / (totalHits + totalMissed) * 100) or 0
+  }
+end
+
+-- Display coverage report
+local function displayCoverageReport(stats)
+  print("\n" .. string.rep("=", 70))
+  print("MyAccountant Test Coverage Report (Real Coverage via LuaCov)")
+  print(string.rep("=", 70) .. "\n")
   
   -- Sort files by coverage (lowest first to highlight what needs work)
-  table.sort(fileStats, function(a, b)
-    local aCov = a.totalFuncs > 0 and (a.coveredFuncs / a.totalFuncs) or 0
-    local bCov = b.totalFuncs > 0 and (b.coveredFuncs / b.totalFuncs) or 0
-    return aCov < bCov
+  table.sort(stats.files, function(a, b)
+    return a.coverage < b.coverage
   end)
   
   -- Print detailed file coverage
   print("File Coverage Details:")
-  print(string.rep("-", 60))
+  print(string.rep("-", 70))
+  print(string.format("%-45s %12s %10s", "File", "Lines Hit", "Coverage"))
+  print(string.rep("-", 70))
   
-  for _, stat in ipairs(fileStats) do
-    if stat.totalFuncs > 0 then
-      local fileCoverage = (stat.coveredFuncs / stat.totalFuncs) * 100
-      local status = fileCoverage == 100 and "✓" or 
-                     fileCoverage >= 50 and "~" or "✗"
-      
-      print(string.format("%s %-45s %3d/%3d (%5.1f%%)",
-        status,
-        stat.path:sub(1, 45),
-        stat.coveredFuncs,
-        stat.totalFuncs,
-        fileCoverage))
-    end
+  for _, stat in ipairs(stats.files) do
+    local status = stat.coverage >= 80 and "✓" or 
+                   stat.coverage >= 50 and "~" or "✗"
+    
+    print(string.format("%s %-43s %5d/%5d %9.2f%%",
+      status,
+      stat.filename:sub(1, 43),
+      stat.hits,
+      stat.total,
+      stat.coverage))
   end
   
   -- Print summary
-  print("\n" .. string.rep("=", 60))
+  print("\n" .. string.rep("=", 70))
   print("Summary:")
-  print(string.rep("-", 60))
-  print(string.format("Total Source Files Analyzed:  %d", #sourceFiles))
-  print(string.format("Total Lines of Code:          %d", totalLines))
-  print(string.format("Total Functions Found:        %d", totalFunctions))
-  print(string.format("Functions Covered by Tests:   %d", coveredFunctions))
-  print(string.format("Functions Not Covered:        %d", totalFunctions - coveredFunctions))
-  print(string.rep("-", 60))
-  print(string.format("Test Coverage:                %.2f%%", coveragePercent))
-  print(string.rep("=", 60) .. "\n")
+  print(string.rep("-", 70))
+  print(string.format("Total Source Files Analyzed:  %d", #stats.files))
+  print(string.format("Total Lines Executed:         %d", stats.totalHits))
+  print(string.format("Total Lines Missed:           %d", stats.totalMissed))
+  print(string.format("Total Executable Lines:       %d", stats.totalLines))
+  print(string.rep("-", 70))
+  print(string.format("Overall Test Coverage:        %.2f%%", stats.overallCoverage))
+  print(string.rep("=", 70))
+  print("\nNote: This is REAL line-by-line coverage based on test execution,")
+  print("not simplified string matching. Coverage tracks which lines of code")
+  print("are actually executed when tests run.\n")
   
-  return coveragePercent
+  return stats.overallCoverage
+end
+
+-- Main function
+local function main()
+  -- Check if LuaCov is installed
+  if not checkLuaCov() then
+    print("\nError: LuaCov is not installed.")
+    print("Please install it with one of the following commands:")
+    print("  luarocks install --local luacov  (user-local installation)")
+    print("  sudo luarocks install luacov     (system-wide installation)\n")
+    os.exit(1)
+  end
+  
+  -- Clean up old coverage files
+  os.execute("rm -f luacov.stats.out luacov.report.out")
+  
+  -- Run tests with coverage
+  if not runTestsWithCoverage() then
+    os.exit(1)
+  end
+  
+  -- Parse coverage report
+  local stats = parseCoverageReport()
+  if not stats then
+    os.exit(1)
+  end
+  
+  -- Display results
+  local coverage = displayCoverageReport(stats)
+  
+  -- Exit with status based on coverage threshold (optional)
+  -- You could set a minimum coverage threshold here
+  -- if coverage < 30 then
+  --   os.exit(1)
+  -- end
 end
 
 -- Run the coverage analysis
-local coverage = calculateCoverage()
-
--- Exit with status based on coverage threshold (optional)
--- You could set a minimum coverage threshold here
--- if coverage < 50 then
---   os.exit(1)
--- end
+main()

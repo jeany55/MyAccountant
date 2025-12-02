@@ -1,1 +1,4 @@
 .vscode/
+
+# LuaCov coverage files
+luacov.*.out
