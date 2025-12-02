@@ -152,7 +152,7 @@ Tab:setDateSummaryText(date("%x", fourDaysAgo))]]
     id = "87bcece6",
     tabName = L["last_weekend"],
     tabType = "DATE",
-    visible = true,
+    visible = false,
     ldbEnabled = false,
     infoFrameEnabled = false,
     minimapSummaryEnabled = false,
