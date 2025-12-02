@@ -136,6 +136,7 @@ L["character_selection_all"] = "All characters"
 
 -- /mya
 L["help1"] = "Valid options include"
+L["help_separator"] = "----------------------"
 L["help2"] = "- /mya open - Show/hide income window"
 L["help3"] = "- /mya options - Open options window"
 L["help4"] = "- /mya gph - Reset gold per hour"

@@ -213,7 +213,7 @@ function MyAccountant:InitializeUI()
   -- Setup Title
   IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
-  IncomeFrame.title:SetText("MyAccountant")
+  IncomeFrame.title:SetText(private.ADDON_NAME)
 
   characterDropdown = LibDD:Create_UIDropDownMenu("CharacterDropDownMenu", IncomeFrame)
   LibDD:UIDropDownMenu_SetWidth(characterDropdown, 107)
