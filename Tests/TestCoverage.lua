@@ -2,7 +2,7 @@
 -- TestCoverage.lua
 -- Calculates and displays test coverage for MyAccountant
 --
--- Usage: lua5.1 Tests/TestCoverage.lua
+-- Usage: lua Tests/TestCoverage.lua
 --
 -- This script provides real test coverage analysis using LuaCov,
 -- tracking which lines of code are actually executed during tests.
@@ -35,7 +35,7 @@ end
 -- Run tests with LuaCov to generate coverage data
 local function runTestsWithCoverage()
   print("Running tests with coverage tracking...")
-  local result = os.execute("lua5.1 Tests/RunTests.lua > /dev/null 2>&1")
+  local result = os.execute("lua Tests/RunTests.lua > /dev/null 2>&1")
   -- Handle both Lua 5.1 (returns exit code) and later versions (returns true/false, string, number)
   if result ~= true and result ~= 0 then
     print("Error: Tests failed. Cannot calculate coverage.")
