@@ -18,8 +18,18 @@ jobs:
       - name: Get source
         uses: actions/checkout@v4
 
-      - name: Install Lua
-        run: sudo apt install lua5.1
+      - name: Install dependencies
+        run: |
+          sudo apt install lua5.1
+          sudo apt install -y luarocks
+          sudo luarocks install luacov
 
       - name: Run tests
-        run: ./Tests/RunTests.sh
+        run: ./Tests/RunTests.sh && ./Tests/TestCoverage.sh
+
+      - name: Summarize test results
+        uses: test-summary/action@v2
+        with:
+          paths: "test-results/junit.xml"
+          show: "all"
+        if: always()
