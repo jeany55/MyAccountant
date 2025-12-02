@@ -99,12 +99,12 @@ local function countLinesOfCode(content)
     local trimmed = line:match("^%s*(.-)%s*$")
     
     -- Check for multiline comment start and end on same line
-    if trimmed:match("^%-%-%[%[.-%]%]") then
+    if trimmed:match("^%-%-%[%[.-%]%]$") then
       -- Single line multiline comment, skip it
     elseif trimmed:match("^%-%-%[%[") then
       -- Start of multiline comment
       inMultilineComment = true
-    elseif trimmed:match("^.*%]%]") and inMultilineComment then
+    elseif trimmed:match("%]%]") and inMultilineComment then
       -- End of multiline comment
       inMultilineComment = false
     elseif not inMultilineComment then
