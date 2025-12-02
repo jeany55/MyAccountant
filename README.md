@@ -140,7 +140,7 @@ Then either open up a PR with your change, or create an issue if you're unsure h
 
 ### Want a new feature?
 
-Have an idea for a new feature? [Create an issue](https://github.com/jeany55/MyAccountant/issues/new) describing what you would like to se!
+Have an idea for a new feature? [Create an issue](https://github.com/jeany55/MyAccountant/issues/new) describing what you would like to see!
 
 Or, if you're feeling brave you can make the change yourself and submit a pull request! Increasing versions in the toc is not necessary, it's done automatically as part of the release Github Action.
 

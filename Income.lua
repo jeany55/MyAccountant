@@ -230,9 +230,6 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
   end
 
   local playerName = characterOverride and characterOverride or UnitName("player")
-  -- Calculate how many days we're from the start of the week
-
-  -- local now = dateOverride and dateOverride or date("*t")
   local data = dataRefOverride and dataRefOverride or {}
 
   local startDate = tab:getStartDate()
