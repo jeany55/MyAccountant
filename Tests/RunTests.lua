@@ -275,6 +275,7 @@ max = math.max
 min = math.min
 ceil = math.ceil
 floor = math.floor
+abs = math.abs
 GetClassInfo = function(i) local c = CLASSES[i] return c, c:upper():gsub(" ", "_"), i end
 GetLocale = Const(LOCALE)
 GetRealmName = Const(REALM)
@@ -290,6 +291,7 @@ GetLootMethod = Const("personalloot")
 GetExpansionLevel = Const(EXPANSION)
 GetMaxPlayerLevel = Const(MAX_LEVEL)
 GetMoney = Fn
+GetMoneyString = function(amount, withColor) return tostring(amount) end
 GetMaximumExpansionLevel = Const(EXPANSION + (PREPATCH and 1 or 0))
 RollOnLoot = Fn
 GroupLootContainer_RemoveFrame = Fn
@@ -461,6 +463,12 @@ fire("ADDON_LOADED", "WoWUnit")
 import(importPath .. "/" .. Name .. ".toc")
 import("Tests.Tests.IncomeTests")
 import("Tests.Tests.UtilsTests")
+import("Tests.Tests.TabsApiTests")
+import("Tests.Tests.IncomeExtendedTests")
+import("Tests.Tests.TabModelTests")
+import("Tests.Tests.IncomeAdvancedTests")
+import("Tests.Tests.TabsApiAdvancedTests")
+import("Tests.Tests.TabModelAdvancedTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)
