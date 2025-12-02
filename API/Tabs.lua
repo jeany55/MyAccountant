@@ -153,12 +153,12 @@ function MyAccountant:validateDateFunction(expression)
   end
 
   -- Check to see if the timestamps are valid
-  local startDateParseCheck, _ = pcall(date, "*t", startDate)
+  local startDateParseCheck, _ = pcall(date, "!*t", startDate)
   if not startDateParseCheck then
     return false, L["option_tab_expression_invalid_startDate"]
   end
 
-  local endDateParseCheck, _ = pcall(date, "*t", endDate)
+  local endDateParseCheck, _ = pcall(date, "!*t", endDate)
   if not endDateParseCheck then
     return false, L["option_tab_expression_invalid_endDate"]
   end
