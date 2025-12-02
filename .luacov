@@ -7,6 +7,7 @@
 exclude = {
   "Tests",            -- Exclude test files
   "Libs",             -- Exclude library files
+  "Locales",          -- Exclude localization files
   "WoWUnit",          -- Exclude test framework
   "luacov",           -- Exclude luacov itself
 }
