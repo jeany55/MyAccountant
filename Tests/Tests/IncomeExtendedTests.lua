@@ -11,6 +11,10 @@ local AssertEqual = WoWUnit.AreEqual
 -- Access private Tab class from addon namespace
 local _, private = ...
 
+-- Test date constants (Unix timestamps)
+local NOV_14_2023 = 1700000000  -- 2023-11-14 22:13:20
+local NOV_15_2023 = 1700086400  -- 2023-11-15 22:13:20
+
 local function setSources()
   MyAccountant.db.char.sources = {
     "TRAINING_COSTS",
@@ -131,7 +135,7 @@ end
 function Tests.TestCheckDatabaseDayConfigured()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   MyAccountant:checkDatabaseDayConfigured(testDate)
   
   local playerName = UnitName("player")
@@ -231,7 +235,7 @@ end
 function Tests.TestFetchDataRow_WithData()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   MyAccountant:AddIncome("LOOT", 100, testDate)
   
   local playerName = UnitName("player")
@@ -312,7 +316,7 @@ function Tests.TestAddIncome_WithDateOverride()
   MyAccountant:ResetAllData()
   
   -- Add income with specific date
-  local pastDate = date("*t", 1700000000)
+  local pastDate = date("*t", NOV_14_2023)
   MyAccountant:AddIncome("LOOT", 500, pastDate)
   
   -- Create tab for that specific day
@@ -322,8 +326,8 @@ function Tests.TestAddIncome_WithDateOverride()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   local table = MyAccountant:GetIncomeOutcomeTable(tab, pastDate, nil, "SOURCE")
   
@@ -335,7 +339,7 @@ function Tests.TestAddOutcome_WithDateOverride()
   MyAccountant:ResetAllData()
   
   -- Add outcome with specific date
-  local pastDate = date("*t", 1700000000)
+  local pastDate = date("*t", NOV_14_2023)
   MyAccountant:AddOutcome("REPAIR", 250, pastDate)
   
   -- Create tab for that specific day
@@ -345,8 +349,8 @@ function Tests.TestAddOutcome_WithDateOverride()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   local table = MyAccountant:GetIncomeOutcomeTable(tab, pastDate, nil, "SOURCE")
   
@@ -357,8 +361,8 @@ function Tests.TestMixedDateIncomeOutcome()
   setSources()
   MyAccountant:ResetAllData()
   
-  local date1 = date("*t", 1700000000)
-  local date2 = date("*t", 1700086400) -- +1 day
+  local date1 = date("*t", NOV_14_2023)
+  local date2 = date("*t", NOV_15_2023) -- +1 day
   
   -- Add data for two different days
   MyAccountant:AddIncome("LOOT", 100, date1)
@@ -373,8 +377,8 @@ function Tests.TestMixedDateIncomeOutcome()
     tabType = "DATE",
     visible = true
   })
-  tab1:setStartDate(1700000000)
-  tab1:setEndDate(1700000000)
+  tab1:setStartDate(NOV_14_2023)
+  tab1:setEndDate(NOV_14_2023)
   
   local table1 = MyAccountant:GetIncomeOutcomeTable(tab1, date1, nil, "SOURCE")
   AssertEqual(100, table1.LOOT.income)
@@ -386,8 +390,8 @@ function Tests.TestMixedDateIncomeOutcome()
     tabType = "DATE",
     visible = true
   })
-  tab2:setStartDate(1700086400)
-  tab2:setEndDate(1700086400)
+  tab2:setStartDate(NOV_15_2023)
+  tab2:setEndDate(NOV_15_2023)
   
   local table2 = MyAccountant:GetIncomeOutcomeTable(tab2, date2, nil, "SOURCE")
   AssertEqual(200, table2.LOOT.income)

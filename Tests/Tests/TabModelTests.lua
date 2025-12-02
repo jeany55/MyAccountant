@@ -9,6 +9,10 @@ local AssertEqual = WoWUnit.AreEqual
 -- Access private namespace
 local _, private = ...
 
+-- Test date constants (Unix timestamps)
+local NOV_14_2023 = 1700000000  -- 2023-11-14 22:13:20
+local NOV_15_2023 = 1700086400  -- 2023-11-15 22:13:20
+
 ----------------------------------------------------------
 -- Tab construction tests
 ----------------------------------------------------------
@@ -186,10 +190,9 @@ function Tests.TestTab_SetGetStartDate()
     visible = true
   })
   
-  local testDate = 1700000000
-  tab:setStartDate(testDate)
+  tab:setStartDate(NOV_14_2023)
   
-  AssertEqual(testDate, tab:getStartDate())
+  AssertEqual(NOV_14_2023, tab:getStartDate())
 end
 
 function Tests.TestTab_SetGetEndDate()
@@ -200,10 +203,9 @@ function Tests.TestTab_SetGetEndDate()
     visible = true
   })
   
-  local testDate = 1700000000
-  tab:setEndDate(testDate)
+  tab:setEndDate(NOV_14_2023)
   
-  AssertEqual(testDate, tab:getEndDate())
+  AssertEqual(NOV_14_2023, tab:getEndDate())
 end
 
 function Tests.TestTab_SetDateRange()
@@ -214,14 +216,11 @@ function Tests.TestTab_SetDateRange()
     visible = true
   })
   
-  local startDate = 1700000000
-  local endDate = 1700086400
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_15_2023)
   
-  tab:setStartDate(startDate)
-  tab:setEndDate(endDate)
-  
-  AssertEqual(startDate, tab:getStartDate())
-  AssertEqual(endDate, tab:getEndDate())
+  AssertEqual(NOV_14_2023, tab:getStartDate())
+  AssertEqual(NOV_15_2023, tab:getEndDate())
 end
 
 ----------------------------------------------------------

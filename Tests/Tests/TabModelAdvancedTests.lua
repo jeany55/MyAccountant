@@ -9,6 +9,11 @@ local AssertEqual = WoWUnit.AreEqual
 -- Access private namespace
 local _, private = ...
 
+-- Test date constants (Unix timestamps)
+local NOV_14_2023 = 1700000000  -- 2023-11-14 22:13:20
+local NOV_15_2023 = 1700086400  -- 2023-11-15 22:13:20
+local JAN_15_2027 = 1800000000  -- 2027-01-15 08:00:00
+
 ----------------------------------------------------------
 -- getLabel tests
 ----------------------------------------------------------
@@ -205,11 +210,8 @@ function Tests.TestTab_DateRange_StartBeforeEnd()
     visible = true
   })
   
-  local startDate = 1700000000
-  local endDate = 1700086400
-  
-  tab:setStartDate(startDate)
-  tab:setEndDate(endDate)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_15_2023)
   
   AssertEqual(true, tab:getStartDate() < tab:getEndDate())
 end
@@ -222,10 +224,8 @@ function Tests.TestTab_DateRange_SameDay()
     visible = true
   })
   
-  local date = 1700000000
-  
-  tab:setStartDate(date)
-  tab:setEndDate(date)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   AssertEqual(tab:getStartDate(), tab:getEndDate())
 end
@@ -238,15 +238,12 @@ function Tests.TestTab_DateRange_EndBeforeStart()
     visible = true
   })
   
-  local startDate = 1700086400
-  local endDate = 1700000000
-  
-  tab:setStartDate(startDate)
-  tab:setEndDate(endDate)
+  tab:setStartDate(NOV_15_2023)
+  tab:setEndDate(NOV_14_2023)
   
   -- Should still set them even if illogical
-  AssertEqual(startDate, tab:getStartDate())
-  AssertEqual(endDate, tab:getEndDate())
+  AssertEqual(NOV_15_2023, tab:getStartDate())
+  AssertEqual(NOV_14_2023, tab:getEndDate())
 end
 
 ----------------------------------------------------------
@@ -315,12 +312,12 @@ function Tests.TestTab_MultipleTabsIndependent()
     visible = true
   })
   
-  tab1:setStartDate(1700000000)
-  tab2:setStartDate(1800000000)
+  tab1:setStartDate(NOV_14_2023)
+  tab2:setStartDate(JAN_15_2027)
   
   -- Should be independent
-  AssertEqual(1700000000, tab1:getStartDate())
-  AssertEqual(1800000000, tab2:getStartDate())
+  AssertEqual(NOV_14_2023, tab1:getStartDate())
+  AssertEqual(JAN_15_2027, tab2:getStartDate())
 end
 
 function Tests.TestTab_MultipleTabsDifferentTypes()

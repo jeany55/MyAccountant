@@ -9,6 +9,13 @@ local AssertEqual = WoWUnit.AreEqual
 -- Access private namespace
 local _, private = ...
 
+-- Test date constants (Unix timestamps)
+local JULY_15_2025 = 1752566400  -- 2025-07-15
+local JULY_1_2025 = 1751328000   -- 2025-07-01
+local JAN_15_2025 = 1736899200   -- 2025-01-15
+local JAN_1_2025 = 1735689600    -- 2025-01-01
+local NOV_14_2023 = 1700000000   -- 2023-11-14 22:13:20
+
 ----------------------------------------------------------
 -- getDaysInMonth tests
 ----------------------------------------------------------
@@ -17,8 +24,7 @@ function Tests.TestDateUtils_GetDaysInMonth()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- Test with a date in July (31 days)
-  local julyDate = 1752566400 -- July 15, 2025
-  local days = DateUtils.getDaysInMonth(julyDate)
+  local days = DateUtils.getDaysInMonth(JULY_15_2025)
   
   AssertEqual("number", type(days))
   AssertEqual(true, days > 0)
@@ -28,8 +34,7 @@ function Tests.TestDateUtils_GetDaysInMonth_January()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- January 15, 2025
-  local janDate = 1736899200
-  local days = DateUtils.getDaysInMonth(janDate)
+  local days = DateUtils.getDaysInMonth(JAN_15_2025)
   
   AssertEqual("number", type(days))
   AssertEqual(true, days > 0)
@@ -157,30 +162,27 @@ end
 function Tests.TestDateUtils_AddDays_Large()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local future = DateUtils.addDays(baseTime, 100)
+  local future = DateUtils.addDays(NOV_14_2023, 100)
   
-  AssertEqual(baseTime + (86400 * 100), future)
+  AssertEqual(NOV_14_2023 + (86400 * 100), future)
 end
 
 function Tests.TestDateUtils_SubtractDays_Large()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local past = DateUtils.subtractDays(baseTime, 50)
+  local past = DateUtils.subtractDays(NOV_14_2023, 50)
   
-  AssertEqual(baseTime - (86400 * 50), past)
+  AssertEqual(NOV_14_2023 - (86400 * 50), past)
 end
 
 function Tests.TestDateUtils_GetStartOfMonth_FirstDay()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- Use a date that's the first of the month
-  local firstOfMonth = 1751328000 -- Approximately July 1, 2025
-  local startOfMonth = DateUtils.getStartOfMonth(firstOfMonth)
+  local startOfMonth = DateUtils.getStartOfMonth(JULY_1_2025)
   
   -- Should be close to the same date
-  local diff = math.abs(firstOfMonth - startOfMonth)
+  local diff = math.abs(JULY_1_2025 - startOfMonth)
   AssertEqual(true, diff < 86400 * 2) -- Within 2 days tolerance
 end
 
@@ -188,11 +190,10 @@ function Tests.TestDateUtils_GetStartOfYear_FirstDay()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- Use a date early in the year
-  local earlyYear = 1735689600 -- Approximately January 1, 2025
-  local startOfYear = DateUtils.getStartOfYear(earlyYear)
+  local startOfYear = DateUtils.getStartOfYear(JAN_1_2025)
   
   -- Should be close to the same date
-  local diff = math.abs(earlyYear - startOfYear)
+  local diff = math.abs(JAN_1_2025 - startOfYear)
   AssertEqual(true, diff < 86400 * 5) -- Within 5 days tolerance
 end
 
@@ -210,24 +211,21 @@ end
 function Tests.TestDateUtils_AddSubtractCancel()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local forward = DateUtils.addDays(baseTime, 10)
+  local forward = DateUtils.addDays(NOV_14_2023, 10)
   local back = DateUtils.subtractDays(forward, 10)
   
   -- Should cancel out
-  AssertEqual(baseTime, back)
+  AssertEqual(NOV_14_2023, back)
 end
 
 function Tests.TestDateUtils_MixedOperations()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  
   -- Add a week, subtract a day, add 2 days
-  local result = DateUtils.addWeek(baseTime)
+  local result = DateUtils.addWeek(NOV_14_2023)
   result = DateUtils.subtractDay(result)
   result = DateUtils.addDays(result, 2)
   
   -- Net: +7 days -1 day +2 days = +8 days
-  AssertEqual(baseTime + (86400 * 8), result)
+  AssertEqual(NOV_14_2023 + (86400 * 8), result)
 end

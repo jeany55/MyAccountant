@@ -11,6 +11,13 @@ local AssertEqual = WoWUnit.AreEqual
 -- Access private Tab class from addon namespace
 local _, private = ...
 
+-- Test date constants (Unix timestamps)
+local NOV_14_2023 = 1700000000  -- 2023-11-14 22:13:20
+local NOV_15_2023 = 1700086400  -- 2023-11-15 22:13:20
+local NOV_16_2023 = 1700172800  -- 2023-11-16 22:13:20
+local NOV_17_2023 = 1700259200  -- 2023-11-17 22:13:20
+local NOV_18_2023 = 1700345600  -- 2023-11-18 22:13:20
+
 local function setSources()
   MyAccountant.db.char.sources = {
     "TRAINING_COSTS",
@@ -36,8 +43,8 @@ function Tests.TestGetAllTime_SingleCharacter()
   MyAccountant:ResetAllData()
   
   -- Add data across multiple days
-  local day1 = date("*t", 1700000000)
-  local day2 = date("*t", 1700086400)
+  local day1 = date("*t", NOV_14_2023)
+  local day2 = date("*t", NOV_15_2023)
   
   MyAccountant:AddIncome("LOOT", 100, day1)
   MyAccountant:AddIncome("LOOT", 200, day2)
@@ -54,7 +61,7 @@ function Tests.TestGetAllTime_MultipleCategories()
   setSources()
   MyAccountant:ResetAllData()
   
-  local day1 = date("*t", 1700000000)
+  local day1 = date("*t", NOV_14_2023)
   
   MyAccountant:AddIncome("LOOT", 100, day1)
   MyAccountant:AddIncome("QUESTS", 200, day1)
@@ -88,7 +95,7 @@ function Tests.TestGetHistoricalData_SingleDay()
   setSources()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   MyAccountant:AddIncome("LOOT", 500, testDate)
   
   local Tab = private.Tab
@@ -97,8 +104,8 @@ function Tests.TestGetHistoricalData_SingleDay()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   local data = MyAccountant:GetHistoricalData(tab)
   
@@ -110,9 +117,9 @@ function Tests.TestGetHistoricalData_MultipleDays()
   MyAccountant:ResetAllData()
   
   -- Add data for 3 consecutive days
-  local day1 = date("*t", 1700000000)
-  local day2 = date("*t", 1700086400)
-  local day3 = date("*t", 1700172800)
+  local day1 = date("*t", NOV_14_2023)
+  local day2 = date("*t", NOV_15_2023)
+  local day3 = date("*t", NOV_16_2023)
   
   MyAccountant:AddIncome("LOOT", 100, day1)
   MyAccountant:AddIncome("LOOT", 200, day2)
@@ -124,8 +131,8 @@ function Tests.TestGetHistoricalData_MultipleDays()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700172800)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_16_2023)
   
   local data = MyAccountant:GetHistoricalData(tab)
   
@@ -138,11 +145,11 @@ function Tests.TestGetHistoricalData_DateRangeFiltering()
   MyAccountant:ResetAllData()
   
   -- Add data for 5 days but query only 3
-  local day1 = date("*t", 1700000000)
-  local day2 = date("*t", 1700086400)
-  local day3 = date("*t", 1700172800)
-  local day4 = date("*t", 1700259200)
-  local day5 = date("*t", 1700345600)
+  local day1 = date("*t", NOV_14_2023)
+  local day2 = date("*t", NOV_15_2023)
+  local day3 = date("*t", NOV_16_2023)
+  local day4 = date("*t", NOV_17_2023)
+  local day5 = date("*t", NOV_18_2023)
   
   MyAccountant:AddIncome("LOOT", 100, day1)
   MyAccountant:AddIncome("LOOT", 100, day2)
@@ -156,8 +163,8 @@ function Tests.TestGetHistoricalData_DateRangeFiltering()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700086400) -- day2
-  tab:setEndDate(1700259200)   -- day4
+  tab:setStartDate(NOV_15_2023) -- day2
+  tab:setEndDate(NOV_17_2023)   -- day4
   
   local data = MyAccountant:GetHistoricalData(tab)
   
@@ -169,7 +176,7 @@ function Tests.TestGetHistoricalData_WithZones()
   setSources()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   MyAccountant:AddIncome("LOOT", 100, testDate)
   MyAccountant:AddIncome("LOOT", 200, testDate)
   
@@ -179,8 +186,8 @@ function Tests.TestGetHistoricalData_WithZones()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   local data = MyAccountant:GetHistoricalData(tab)
   
@@ -252,7 +259,7 @@ function Tests.TestGetIncomeOutcomeTable_SourceView()
   setSources()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   MyAccountant:AddIncome("LOOT", 100, testDate)
   MyAccountant:AddIncome("QUESTS", 200, testDate)
   
@@ -262,8 +269,8 @@ function Tests.TestGetIncomeOutcomeTable_SourceView()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   local table = MyAccountant:GetIncomeOutcomeTable(tab, testDate, nil, "SOURCE")
   
@@ -275,7 +282,7 @@ function Tests.TestGetIncomeOutcomeTable_ZoneView()
   setSources()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   MyAccountant:AddIncome("LOOT", 100, testDate)
   MyAccountant:AddIncome("QUESTS", 200, testDate)
   
@@ -285,8 +292,8 @@ function Tests.TestGetIncomeOutcomeTable_ZoneView()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   -- Zone view aggregates by zone instead of source
   local table = MyAccountant:GetIncomeOutcomeTable(tab, testDate, nil, "ZONE")
@@ -341,7 +348,7 @@ function Tests.TestZoneAggregation_MultipleZoneSessions()
   setSources()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   
   -- Simulate income from multiple zones on same day
   MyAccountant:AddIncome("LOOT", 100, testDate)
@@ -354,8 +361,8 @@ function Tests.TestZoneAggregation_MultipleZoneSessions()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   local data = MyAccountant:GetHistoricalData(tab)
   
@@ -367,7 +374,7 @@ function Tests.TestZoneAggregation_MixedIncomeOutcome()
   setSources()
   MyAccountant:ResetAllData()
   
-  local testDate = date("*t", 1700000000)
+  local testDate = date("*t", NOV_14_2023)
   
   -- Add mixed income and outcome
   MyAccountant:AddIncome("LOOT", 500, testDate)
@@ -381,8 +388,8 @@ function Tests.TestZoneAggregation_MixedIncomeOutcome()
     tabType = "DATE",
     visible = true
   })
-  tab:setStartDate(1700000000)
-  tab:setEndDate(1700000000)
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_14_2023)
   
   local data = MyAccountant:GetHistoricalData(tab)
   

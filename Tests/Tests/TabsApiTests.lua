@@ -9,6 +9,11 @@ local AssertEqual = WoWUnit.AreEqual
 -- Access private namespace
 local _, private = ...
 
+-- Test date constants (Unix timestamps)
+local JULY_8_2025 = 1751960666   -- 2025-07-08 (Tuesday)
+local JULY_15_2025 = 1752566400  -- 2025-07-15
+local NOV_14_2023 = 1700000000   -- 2023-11-14 22:13:20
+
 ----------------------------------------------------------
 -- DateUtils tests
 ----------------------------------------------------------
@@ -26,14 +31,13 @@ function Tests.TestDateUtils_GetStartOfWeek()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- Test with a specific date: Tuesday July 8, 2025
-  local tuesdayJuly8 = 1751960666
-  local startOfWeek = DateUtils.getStartOfWeek(tuesdayJuly8)
+  local startOfWeek = DateUtils.getStartOfWeek(JULY_8_2025)
   
   -- Start of week should be less than the input date
-  AssertEqual(true, startOfWeek <= tuesdayJuly8)
+  AssertEqual(true, startOfWeek <= JULY_8_2025)
   
   -- Difference should be less than 7 days
-  local diff = tuesdayJuly8 - startOfWeek
+  local diff = JULY_8_2025 - startOfWeek
   AssertEqual(true, diff < 7 * 86400)
 end
 
@@ -41,11 +45,10 @@ function Tests.TestDateUtils_GetStartOfWeek_WithTimestamp()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- Test with a specific timestamp
-  local timestamp = 1751960666
-  local startOfWeek = DateUtils.getStartOfWeek(timestamp)
+  local startOfWeek = DateUtils.getStartOfWeek(JULY_8_2025)
   
   -- Start of week should be less than or equal to input
-  AssertEqual(true, startOfWeek <= timestamp)
+  AssertEqual(true, startOfWeek <= JULY_8_2025)
   
   -- Result should be a valid timestamp
   AssertEqual("number", type(startOfWeek))
@@ -55,11 +58,10 @@ function Tests.TestDateUtils_GetStartOfMonth()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- Test with a specific date: July 15, 2025
-  local july15 = 1752566400
-  local startOfMonth = DateUtils.getStartOfMonth(july15)
+  local startOfMonth = DateUtils.getStartOfMonth(JULY_15_2025)
   
   -- Start of month should be less than or equal to the input
-  AssertEqual(true, startOfMonth <= july15)
+  AssertEqual(true, startOfMonth <= JULY_15_2025)
   
   -- Parse the result to check it's the 1st
   local startDate = date("*t", startOfMonth)
@@ -70,11 +72,10 @@ function Tests.TestDateUtils_GetStartOfYear()
   local DateUtils = private.ApiUtils.DateUtils
   
   -- Test with a specific date: July 15, 2025
-  local july15 = 1752566400
-  local startOfYear = DateUtils.getStartOfYear(july15)
+  local startOfYear = DateUtils.getStartOfYear(JULY_15_2025)
   
   -- Start of year should be less than or equal to the input
-  AssertEqual(true, startOfYear <= july15)
+  AssertEqual(true, startOfYear <= JULY_15_2025)
   
   -- Parse the result to check it's January 1st
   local startDate = date("*t", startOfYear)
@@ -85,73 +86,65 @@ end
 function Tests.TestDateUtils_AddDay()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local nextDay = DateUtils.addDay(baseTime)
+  local nextDay = DateUtils.addDay(NOV_14_2023)
   
-  AssertEqual(baseTime + 86400, nextDay)
+  AssertEqual(NOV_14_2023 + 86400, nextDay)
 end
 
 function Tests.TestDateUtils_SubtractDay()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local prevDay = DateUtils.subtractDay(baseTime)
+  local prevDay = DateUtils.subtractDay(NOV_14_2023)
   
-  AssertEqual(baseTime - 86400, prevDay)
+  AssertEqual(NOV_14_2023 - 86400, prevDay)
 end
 
 function Tests.TestDateUtils_AddWeek()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local nextWeek = DateUtils.addWeek(baseTime)
+  local nextWeek = DateUtils.addWeek(NOV_14_2023)
   
-  AssertEqual(baseTime + (86400 * 7), nextWeek)
+  AssertEqual(NOV_14_2023 + (86400 * 7), nextWeek)
 end
 
 function Tests.TestDateUtils_SubtractWeek()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local prevWeek = DateUtils.subtractWeek(baseTime)
+  local prevWeek = DateUtils.subtractWeek(NOV_14_2023)
   
-  AssertEqual(baseTime - (86400 * 7), prevWeek)
+  AssertEqual(NOV_14_2023 - (86400 * 7), prevWeek)
 end
 
 function Tests.TestDateUtils_AddDays()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local future = DateUtils.addDays(baseTime, 5)
+  local future = DateUtils.addDays(NOV_14_2023, 5)
   
-  AssertEqual(baseTime + (86400 * 5), future)
+  AssertEqual(NOV_14_2023 + (86400 * 5), future)
 end
 
 function Tests.TestDateUtils_AddDays_Zero()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local same = DateUtils.addDays(baseTime, 0)
+  local same = DateUtils.addDays(NOV_14_2023, 0)
   
-  AssertEqual(baseTime, same)
+  AssertEqual(NOV_14_2023, same)
 end
 
 function Tests.TestDateUtils_SubtractDays()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local past = DateUtils.subtractDays(baseTime, 3)
+  local past = DateUtils.subtractDays(NOV_14_2023, 3)
   
-  AssertEqual(baseTime - (86400 * 3), past)
+  AssertEqual(NOV_14_2023 - (86400 * 3), past)
 end
 
 function Tests.TestDateUtils_SubtractDays_Zero()
   local DateUtils = private.ApiUtils.DateUtils
   
-  local baseTime = 1700000000
-  local same = DateUtils.subtractDays(baseTime, 0)
+  local same = DateUtils.subtractDays(NOV_14_2023, 0)
   
-  AssertEqual(baseTime, same)
+  AssertEqual(NOV_14_2023, same)
 end
 
 function Tests.TestDateUtils_DayInSeconds_Constant()
