@@ -456,6 +456,8 @@ import("Tests.Tests.IncomeTests")
 import("Tests.Tests.UtilsTests")
 import("Tests.Tests.ApiTabsTests")
 import("Tests.Tests.EventsTests")
+import("Tests.Tests.CoreTests")
+import("Tests.Tests.ConfigTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)

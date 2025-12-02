@@ -390,3 +390,117 @@ function Tests.TestRegisterAllEvents()
   -- Restore
   MyAccountant.RegisterEvent = originalRegisterEvent
 end
+
+----------------------------------------------------------
+-- Additional event handler tests
+----------------------------------------------------------
+
+function Tests.TestHandleGameEvent_AuctionHouseShow()
+  MyAccountant:ResetSession()
+  
+  local moneyValue = 1000
+  GetMoney = function()
+    return moneyValue
+  end
+  
+  MyAccountant:RegisterAllEvents()
+  
+  -- Fire AUCTION_HOUSE_SHOW event
+  MyAccountant:HandleGameEvent("AUCTION_HOUSE_SHOW")
+  
+  -- Increase money
+  moneyValue = 1700
+  MyAccountant:HandlePlayerMoneyChange()
+  
+  -- Should track income under AUCTIONS
+  local income = MyAccountant:GetSessionIncome("AUCTIONS")
+  AssertEqual(700, income)
+end
+
+function Tests.TestHandleGameEvent_TaxiOpened()
+  MyAccountant:ResetSession()
+  
+  local moneyValue = 1000
+  GetMoney = function()
+    return moneyValue
+  end
+  
+  MyAccountant:RegisterAllEvents()
+  
+  -- Fire TAXIMAP_OPENED event
+  MyAccountant:HandleGameEvent("TAXIMAP_OPENED")
+  
+  -- Decrease money (taxi fare)
+  moneyValue = 800
+  MyAccountant:HandlePlayerMoneyChange()
+  
+  -- Should track outcome under TAXI_FARES
+  local outcome = MyAccountant:GetSessionOutcome("TAXI_FARES")
+  AssertEqual(200, outcome)
+end
+
+function Tests.TestHandleGameEvent_TrainingCosts()
+  MyAccountant:ResetSession()
+  
+  local moneyValue = 1000
+  GetMoney = function()
+    return moneyValue
+  end
+  
+  MyAccountant:RegisterAllEvents()
+  
+  -- Fire TRAINER_SHOW event
+  MyAccountant:HandleGameEvent("TRAINER_SHOW")
+  
+  -- Decrease money (training cost)
+  moneyValue = 600
+  MyAccountant:HandlePlayerMoneyChange()
+  
+  -- Should track outcome under TRAINING_COSTS
+  local outcome = MyAccountant:GetSessionOutcome("TRAINING_COSTS")
+  AssertEqual(400, outcome)
+end
+
+function Tests.TestHandleGameEvent_GuildBank()
+  MyAccountant:ResetSession()
+  
+  local moneyValue = 1000
+  GetMoney = function()
+    return moneyValue
+  end
+  
+  MyAccountant:RegisterAllEvents()
+  
+  -- Fire GUILDBANKFRAME_OPENED event
+  MyAccountant:HandleGameEvent("GUILDBANKFRAME_OPENED")
+  
+  -- Decrease money (guild bank deposit)
+  moneyValue = 500
+  MyAccountant:HandlePlayerMoneyChange()
+  
+  -- Should track outcome under GUILD
+  local outcome = MyAccountant:GetSessionOutcome("GUILD")
+  AssertEqual(500, outcome)
+end
+
+function Tests.TestHandleGameEvent_LfgReward()
+  MyAccountant:ResetSession()
+  
+  local moneyValue = 1000
+  GetMoney = function()
+    return moneyValue
+  end
+  
+  MyAccountant:RegisterAllEvents()
+  
+  -- Fire LFG_COMPLETION_REWARD event
+  MyAccountant:HandleGameEvent("LFG_COMPLETION_REWARD")
+  
+  -- Increase money (LFG reward)
+  moneyValue = 1250
+  MyAccountant:HandlePlayerMoneyChange()
+  
+  -- Should track income under LFG
+  local income = MyAccountant:GetSessionIncome("LFG")
+  AssertEqual(250, income)
+end

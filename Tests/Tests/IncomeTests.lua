@@ -1036,3 +1036,160 @@ function Tests.TestAddOutcomeWithDateOverride()
   -- Today should have no outcome
   AssertEqual(0, todaySummary.outcome)
 end
+
+-- Test complex scenario: Multiple sources and dates
+function Tests.TestComplexIncomeOutcomeScenario()
+  setSources()
+  MyAccountant:ResetAllData()
+  MyAccountant:ResetSession()
+  
+  -- Day 1: Questing and looting
+  local day1 = date("*t", time() - (2 * 86400))
+  MyAccountant:AddIncome("QUESTS", 1000, day1)
+  MyAccountant:AddIncome("LOOT", 500, day1)
+  MyAccountant:AddOutcome("REPAIR", 100, day1)
+  
+  -- Day 2: Trading and merchants
+  local day2 = date("*t", time() - 86400)
+  MyAccountant:AddIncome("TRADE", 2000, day2)
+  MyAccountant:AddOutcome("MERCHANTS", 800, day2)
+  
+  -- Day 3 (today): Auction house
+  local day3 = date("*t", time())
+  MyAccountant:AddIncome("AUCTIONS", 3000, day3)
+  MyAccountant:AddIncome("LOOT", 200, day3)
+  
+  -- Verify today's data
+  local todayTab = createTodayTab()
+  local todayTable = MyAccountant:GetIncomeOutcomeTable(todayTab, nil, nil, "SOURCE")
+  AssertEqual(3000, todayTable.AUCTIONS.income)
+  AssertEqual(200, todayTable.LOOT.income)
+  
+  -- Verify total for 3 days
+  local Tab = private.Tab
+  local threeDayTab = Tab:construct({
+    tabName = "ThreeDays",
+    tabType = "DATE",
+    visible = true
+  })
+  threeDayTab:setStartDate(time() - (2 * 86400))
+  threeDayTab:setEndDate(time())
+  
+  local threeDayData = MyAccountant:GetHistoricalData(threeDayTab)
+  AssertEqual(700, threeDayData.LOOT.income)
+  AssertEqual(1000, threeDayData.QUESTS.income)
+  AssertEqual(2000, threeDayData.TRADE.income)
+  AssertEqual(3000, threeDayData.AUCTIONS.income)
+end
+
+-- Test GetIncomeOutcomeTable with ZONE view type
+function Tests.TestGetIncomeOutcomeTable_ZoneView()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add income (zones not fully supported in test environment, but function should work)
+  MyAccountant:AddIncome("LOOT", 1000)
+  
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "ZONE")
+  
+  -- Should return a table (even if empty due to no zone tracking)
+  AssertEqual("table", type(table))
+end
+
+-- Test empty data scenario
+function Tests.TestEmptyDataScenario()
+  setSources()
+  MyAccountant:ResetAllData()
+  MyAccountant:ResetSession()
+  
+  -- Get data with no transactions
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
+  local summary = MyAccountant:SummarizeData(table)
+  
+  AssertEqual(0, summary.income)
+  AssertEqual(0, summary.outcome)
+end
+
+-- Test profit calculations
+function Tests.TestProfitCalculations()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add mixed income and outcome
+  MyAccountant:AddIncome("LOOT", 5000)
+  MyAccountant:AddIncome("QUESTS", 3000)
+  MyAccountant:AddOutcome("REPAIR", 500)
+  MyAccountant:AddOutcome("MERCHANTS", 1500)
+  
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
+  local summary = MyAccountant:SummarizeData(table)
+  
+  AssertEqual(8000, summary.income)
+  AssertEqual(2000, summary.outcome)
+  -- Profit = income - outcome = 6000
+  local profit = summary.income - summary.outcome
+  AssertEqual(6000, profit)
+end
+
+-- Test large numbers
+function Tests.TestLargeNumbers()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add very large amounts
+  MyAccountant:AddIncome("AUCTIONS", 99999999)
+  MyAccountant:AddOutcome("MERCHANTS", 50000000)
+  
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
+  
+  AssertEqual(99999999, table.AUCTIONS.income)
+  AssertEqual(50000000, table.MERCHANTS.outcome)
+end
+
+-- Test multiple character support
+function Tests.TestMultipleCharacters()
+  setSources()
+  MyAccountant:ResetAllData()
+  
+  -- Add data for current character
+  MyAccountant:AddIncome("LOOT", 1000)
+  
+  -- Get realm balance data (includes all characters)
+  local realmData = MyAccountant:GetRealmBalanceTotalDataTable()
+  
+  -- Should have at least one character
+  AssertEqual(true, #realmData >= 1)
+  AssertEqual("table", type(realmData))
+end
+
+-- Test session vs persistent data
+function Tests.TestSessionVsPersistentData()
+  setSources()
+  MyAccountant:ResetAllData()
+  MyAccountant:ResetSession()
+  
+  -- Add to session
+  MyAccountant:AddIncome("LOOT", 500)
+  
+  -- Check session data
+  AssertEqual(500, MyAccountant:GetSessionIncome("LOOT"))
+  
+  -- Check persistent data
+  local tab = createTodayTab()
+  local table = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
+  AssertEqual(500, table.LOOT.income)
+  
+  -- Reset session
+  MyAccountant:ResetSession()
+  
+  -- Session should be clear
+  AssertEqual(0, MyAccountant:GetSessionIncome("LOOT"))
+  
+  -- But persistent data should remain
+  local table2 = MyAccountant:GetIncomeOutcomeTable(tab, nil, nil, "SOURCE")
+  AssertEqual(500, table2.LOOT.income)
+end

@@ -372,3 +372,30 @@ function Tests.TestGenerateUuid_Format()
   local matches = uuid:match(pattern) ~= nil
   AssertEqual(true, matches)
 end
+
+----------------------------------------------------------
+-- GetHeaderMoneyString tests
+----------------------------------------------------------
+
+function Tests.TestGetHeaderMoneyString_WithZeroHidden()
+  MyAccountant.db.char.hideZero = true
+  
+  local result = MyAccountant:GetHeaderMoneyString(0)
+  AssertEqual("", result)
+end
+
+function Tests.TestGetHeaderMoneyString_WithZeroShown()
+  MyAccountant.db.char.hideZero = false
+  
+  local result = MyAccountant:GetHeaderMoneyString(0)
+  -- GetMoneyString should return something for 0
+  AssertEqual(true, result ~= "")
+end
+
+function Tests.TestGetHeaderMoneyString_NonZero()
+  MyAccountant.db.char.hideZero = true
+  
+  local result = MyAccountant:GetHeaderMoneyString(1000)
+  -- Should return the money string for 1000
+  AssertEqual(true, result ~= "")
+end
