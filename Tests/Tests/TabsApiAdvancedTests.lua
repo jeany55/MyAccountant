@@ -1,5 +1,5 @@
 --------------------
--- Advanced API/Tabs.lua tests - parseDateFunction, validateDateFunction, getDaysInMonth
+-- Advanced API/Tabs.lua tests - parseDateFunction, validateDateFunction, getDayInMonth
 --------------------
 
 local Name = ...
@@ -17,27 +17,37 @@ local JAN_1_2025 = 1735689600    -- 2025-01-01
 local NOV_14_2023 = 1700000000   -- 2023-11-14 22:13:20
 
 ----------------------------------------------------------
--- getDaysInMonth tests
+-- getDayInMonth tests
 ----------------------------------------------------------
 
-function Tests.TestDateUtils_GetDaysInMonth()
+function Tests.TestDateUtils_GetDayInMonth()
   local DateUtils = private.ApiUtils.DateUtils
   
-  -- Test with a date in July (31 days)
-  local days = DateUtils.getDaysInMonth(JULY_15_2025)
+  -- Test with July 15, 2025 - should return 15
+  local day = DateUtils.getDayInMonth(JULY_15_2025)
   
-  AssertEqual("number", type(days))
-  AssertEqual(true, days > 0)
+  AssertEqual("number", type(day))
+  AssertEqual(15, day)
 end
 
-function Tests.TestDateUtils_GetDaysInMonth_January()
+function Tests.TestDateUtils_GetDayInMonth_January()
   local DateUtils = private.ApiUtils.DateUtils
   
-  -- January 15, 2025
-  local days = DateUtils.getDaysInMonth(JAN_15_2025)
+  -- Test with January 15, 2025 - should return 15
+  local day = DateUtils.getDayInMonth(JAN_15_2025)
   
-  AssertEqual("number", type(days))
-  AssertEqual(true, days > 0)
+  AssertEqual("number", type(day))
+  AssertEqual(15, day)
+end
+
+function Tests.TestDateUtils_GetDayInMonth_FirstDay()
+  local DateUtils = private.ApiUtils.DateUtils
+  
+  -- Test with January 1, 2025 - should return 1
+  local day = DateUtils.getDayInMonth(JAN_1_2025)
+  
+  AssertEqual("number", type(day))
+  AssertEqual(1, day)
 end
 
 ----------------------------------------------------------

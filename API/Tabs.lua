@@ -83,24 +83,12 @@ local DateUtils = {
   --- @return integer timestamp Unix timestamp in the future
   subtractDays = function(time, days) return time - (dayInSeconds * days) end,
 
-  --- Gets the total number of days in the month containing the given timestamp
+  --- Gets the day of the month from a timestamp
   --- @param timestamp integer Unix timestamp
-  --- @return integer days The total number of days in the month (e.g., 31 for July)
-  getDaysInMonth = function(timestamp)
+  --- @return integer day The day of the month (1-31)
+  getDayInMonth = function(timestamp)
     local currentDate = date("!*t", timestamp)
-    local month = currentDate.month
-    local year = currentDate.year
-    
-    -- Days per month lookup table
-    local daysPerMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
-    
-    -- Check for leap year if February
-    if month == 2 then
-      local isLeapYear = (year % 4 == 0 and year % 100 ~= 0) or (year % 400 == 0)
-      return isLeapYear and 29 or 28
-    end
-    
-    return daysPerMonth[month]
+    return currentDate.day and currentDate.day or 0
   end
 }
 
