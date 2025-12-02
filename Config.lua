@@ -648,7 +648,13 @@ function MyAccountant:SetupAddonOptions()
             width = "full",
             disabled = function() return private.wowVersion ~= GameTypes.RETAIL end,
             set = function(info, val) self.db.char.showWarbandInRealmBalance = val end,
-            get = function(info) return self.db.char.showWarbandInRealmBalance end
+            get = function(info)
+              if private.wowVersion ~= GameTypes.RETAIL then
+                return false
+              end
+
+              return self.db.char.showWarbandInRealmBalance
+            end
           },
           slash_behav = {
             order = 4,
