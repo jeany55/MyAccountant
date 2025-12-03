@@ -7,6 +7,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("MyAccountant")
 --- @enum TabType
 local TabType = { DATE = "DATE", SESSION = "SESSION", BALANCE = "BALANCE" }
 
+local initializedLdb = {}
+
 --- @class TabDataInstance
 --- @field label string Visible name of the data
 --- @field ldbDataObject LibDataBroker.DataObject? LibDataBroker data object
@@ -63,6 +65,21 @@ local TabConstructOptionsDefault = {
   customOptionFields = {},
   customOptionValues = {}
 }
+
+local registerLdbData = function(name, tooltip)
+  local ldb = LibStub("LibDataBroker-1.1")
+
+  --- @type LibDataBroker.DataObject
+  local dataConfig = {
+    type = "data source",
+    text = L["ldb_loading"],
+    icon = "Interface\\Addons\\MyAccountant\\Images\\addonIcon",
+    label = name,
+    OnTooltipShow = tooltip
+  }
+
+  return ldb:NewDataObject(name, dataConfig)
+end
 
 --- Makes a new tab instance
 --- @param options TabConstructOptions
@@ -144,7 +161,6 @@ function Tab:construct(options)
   end
 
   tab:setLdbEnabled(tab._ldbEnabled)
-  tab.initializedLdb = false
 
   if (tab._luaExpression and tab._luaExpression ~= "") then
     tab:setLuaExpression(tab._luaExpression)
@@ -253,30 +269,16 @@ function Tab:getMinimapSummaryEnabled() return self._minimapSummaryEnabled end
 --- Will register to LDB as needed.
 --- @param enabled boolean
 function Tab:setLdbEnabled(enabled)
-  local ldb = LibStub("LibDataBroker-1.1")
 
   self._ldbEnabled = enabled
 
-  if enabled and (not self.initializedLdb) then
-    local registerLdbData = function(name, tooltip)
-      --- @type LibDataBroker.DataObject
-      local dataConfig = {
-        type = "data source",
-        text = L["ldb_loading"],
-        icon = "Interface\\Addons\\MyAccountant\\Images\\addonIcon",
-        label = name
-      }
-      if tooltip then
-        dataConfig.OnTooltipShow = tooltip
+  if enabled then
+    for key, v in pairs(self._dataInstances) do
+      if not initializedLdb[key] then
+        local ldbObject = registerLdbData(v.label, v.tooltip)
+        initializedLdb[key] = ldbObject
       end
-      return ldb:NewDataObject(name, dataConfig)
     end
-
-    for _, v in pairs(self._dataInstances) do
-      v.ldbDataObject = registerLdbData(v.label, v.tooltip)
-    end
-
-    self.initializedLdb = true
   end
 end
 
@@ -347,10 +349,10 @@ function Tab:updateSummaryDataIfNeeded()
     MyAccountant:InformInfoFrameOfDataChange(sessionOutcomeInstance.label, sessionOutcomeInstance.value)
     MyAccountant:InformInfoFrameOfDataChange(sessionProfitInstance.label, sessionProfitInstance.value)
 
-    if sessionIncomeInstance.ldbDataObject then
-      sessionIncomeInstance.ldbDataObject.text = GetMoneyString(sessionIncome, true)
-      sessionOutcomeInstance.ldbDataObject.text = GetMoneyString(sessionOutcome, true)
-      sessionProfitInstance.ldbDataObject.text = sessionNetString
+    if self._ldbEnabled then
+      initializedLdb[sessionIncomeInstance.label].text = GetMoneyString(sessionIncome, true)
+      initializedLdb[sessionOutcomeInstance.label].text = GetMoneyString(sessionOutcome, true)
+      initializedLdb[sessionProfitInstance.label].text = sessionNetString
     end
   elseif type == TabType.BALANCE then
     local balanceInstance = self._dataInstances[self:getLabel()]
@@ -359,8 +361,8 @@ function Tab:updateSummaryDataIfNeeded()
     balanceInstance.value = GetMoneyString(factionBalance[1].gold, true)
     MyAccountant:InformInfoFrameOfDataChange(balanceInstance.label, balanceInstance.value)
 
-    if balanceInstance.ldbDataObject then
-      balanceInstance.ldbDataObject.text = GetMoneyString(factionBalance[1].gold, true)
+    if self._ldbEnabled then
+      initializedLdb[balanceInstance.label].text = GetMoneyString(factionBalance[1].gold, true)
     end
   else
     local incomeCharacterInstance = self._dataInstances[format(L["ldb_name_income_character"], self:getLabel())]
@@ -400,13 +402,13 @@ function Tab:updateSummaryDataIfNeeded()
     MyAccountant:InformInfoFrameOfDataChange(realmOutcomeInstance.label, realmOutcomeInstance.value)
     MyAccountant:InformInfoFrameOfDataChange(realmProfitInstance.label, realmProfitInstance.value)
 
-    if incomeCharacterInstance.ldbDataObject then
-      incomeCharacterInstance.ldbDataObject.text = incomeCharacterValue
-      outcomeCharacterInstance.ldbDataObject.text = outcomeCharacterValue
-      profitCharacterInstance.ldbDataObject.text = profitCharacterValue
-      realmIncomeInstance.ldbDataObject.text = realmIncomeValue
-      realmOutcomeInstance.ldbDataObject.text = realmOutcomeValue
-      realmProfitInstance.ldbDataObject.text = realmProfitValue
+    if self._ldbEnabled then
+      initializedLdb[incomeCharacterInstance.label].text = incomeCharacterValue
+      initializedLdb[outcomeCharacterInstance.label].text = outcomeCharacterValue
+      initializedLdb[profitCharacterInstance.label].text = profitCharacterValue
+      initializedLdb[realmIncomeInstance.label].text = realmIncomeValue
+      initializedLdb[realmOutcomeInstance.label].text = realmOutcomeValue
+      initializedLdb[realmProfitInstance.label].text = realmProfitValue
     end
   end
 end
