@@ -382,7 +382,7 @@ Sets LibDataBroker data enabled status for this tab.
 
 ##### `Tab:addCustomOptionField(fieldName, fieldType, fieldLabel, fieldDescription)`
 
-Adds a custom configuration option for this tab to the tab options panel. This is an advanced feature that allows users to toggle settings specific to your tab.
+Adds a custom configuration option for this tab to the tab options panel. This is an advanced feature that allows users to toggle settings specific to your tab. Use `Tab:getCustomOptionData(fieldName)` to retrieve the value of the custom option.
 
 - **Parameters:**
   - `fieldName` (string): Internal name for the field
