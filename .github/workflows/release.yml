@@ -72,9 +72,9 @@ jobs:
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Mists.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-WOTLK.toc
 
-          # Use a delimiter that is extremely unlikely to appear in the changelog text
-          del=$'\x81'
-          sed -i -e "s${del}${CHANGELOG_TARGET}${del}${CHANGELOG_REPLACE}${del}g" CHANGELOG.md
+          # # Use a delimiter that is extremely unlikely to appear in the changelog text
+          # del=$'\x1F'
+          # sed -i -e "s${del}${CHANGELOG_TARGET}${del}${CHANGELOG_REPLACE}${del}g" CHANGELOG.md
 
           echo "VERSION=$newVersion" >> $GITHUB_ENV
 
@@ -92,7 +92,7 @@ jobs:
           git add MyAccountant-Classic.toc
           git add MyAccountant-Mists.toc
           git add MyAccountant-WOTLK.toc
-          git add CHANGELOG.md
+          # git add CHANGELOG.md
           
           git commit -m "Update to version $VERSION"
           git push
