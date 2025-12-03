@@ -61,14 +61,7 @@ end
 --- Makes tabs and positions them
 function MyAccountant:SetupTabs()
   --- @type table<string, IncomeFrameTab>
-  local newTabs = {}
   local tabIndex = 1
-  local previousTab = nil
-  local firstItemInRow = nil
-  local row = 1
-  local tabIndex = 1
-  local lineBreak = false
-  local numTabs = 0
 
   for _, tabFrame in ipairs(tabFrames) do
     tabFrame:ClearAllPoints()
@@ -80,14 +73,15 @@ function MyAccountant:SetupTabs()
     tab = tab
 
     if tab:getVisible() then
+      tab:runLoadedFunction()
       local tabframe = getTabFrame(tabIndex)
       tabframe:SetText(tab:getLabel())
       tabframe:Show()
       tabframe:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
       if tabIndex == 1 then
-        -- Load this data immediately
-        ActiveTab = tab
-        MyAccountant:updateFrame()
+        if not ActiveTab then
+          ActiveTab = tab
+        end
       end
       tabIndex = tabIndex + 1
     end
@@ -464,8 +458,9 @@ end
 
 local function rerenderTabs()
   -- Prepare some variables to allow settings easier to configure
-
+  print("sup")
   for _, tab in ipairs(incomeFrameTabs) do
+    print("woo")
     tab.tabObject:runLoadedFunction()
     tab.frame:SetText(tab.tabObject:getLabel())
   end
@@ -854,7 +849,6 @@ end
 --- @param tabCreationId integer Id assigned when creating the tab frame
 function MyAccountant:TabClick(tab, tabCreationId)
   PanelTemplates_SetTab(IncomeFrame, tabCreationId);
-  tab:runLoadedFunction()
   ActiveTab = tab
   MyAccountant:updateFrame()
 end
@@ -874,7 +868,7 @@ function MyAccountant:ShowPanel()
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
     UserSetSort = self.db.char.defaultIncomePanelSort
-    rerenderTabs()
+    MyAccountant:SetupTabs()
     MyAccountant:updateFrame()
     IncomeFrame:Show()
   end

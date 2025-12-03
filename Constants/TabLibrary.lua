@@ -228,5 +228,30 @@ local day = DateUtils.addDays(startOfMonth, dayOffset)
 Tab:setStartDate(day)
 Tab:setEndDate(day)
 Tab:setDateSummaryText(date("%x", day))]]
+  }),
+  Tab:construct({
+    id = "905818b8",
+    tabName = "Tab With Boolean Field",
+    tabType = "DATE",
+    visible = false,
+    ldbEnabled = false,
+    infoFrameEnabled = false,
+    minimapSummaryEnabled = false,
+    luaExpression = [[-- Declare a boolean option
+Tab:addCustomOptionField("exampleOption", FieldType.CHECKBOX, "Colour this tab red", "Example: Colour this tab red")
+
+local toggled = Tab:getCustomOptionData("exampleOption")
+
+if toggled then
+  Tab:setLabelColor("ff0000")
+else
+  -- Reset to default
+  Tab:setLabelColor(nil)
+end
+
+Tab:setLabelText(date("%x"))
+Tab:setStartDate(DateUtils.getToday())
+Tab:setEndDate(DateUtils.getToday())
+Tab:setDateSummaryText(date("%x"))]]
   })
 }

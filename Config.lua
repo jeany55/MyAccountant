@@ -60,6 +60,7 @@ function MyAccountant:SetupAddonOptions()
         luaExpression = tab._luaExpression,
         lineBreak = tab._lineBreak,
         id = tab._id,
+        customOptionValues = tab._customOptionValues,
         visible = tab._visible
       }))
     end
@@ -265,7 +266,8 @@ function MyAccountant:SetupAddonOptions()
                 visible = visible,
                 minimapSummaryEnabled = minimapShow,
                 infoFrameEnabled = infoFrameShow,
-                ldbEnabled = ldb
+                ldbEnabled = ldb,
+                customOptionFields = {}
               }))
 
               makeTabConfig()
@@ -317,11 +319,27 @@ function MyAccountant:SetupAddonOptions()
     infoFrameOptionsTabMap = {}
 
     for _, tab in ipairs(self.db.char.tabs) do
+      -- Make available info frame options from tab data
       if (tab:getInfoFrameEnabled()) then
         for _, dataInstance in ipairs(tab:getDataInstances()) do
           infoFrameOptions[dataInstance.label] = dataInstance.label
           infoFrameOptionsTabMap[dataInstance.label] = tab
         end
+      end
+
+      local extraOptions = {}
+      local optionOrder = 0
+
+      for tabName, option in pairs(tab._customOptionFields) do
+        extraOptions[tabName] = {
+          type = option.fieldType,
+          name = option.label,
+          desc = option.desc,
+          order = optionOrder,
+          get = function() return tab:getCustomOptionData(tabName) end,
+          set = function(_, val) tab:setCustomOptionData(tabName, val) end
+        }
+        optionOrder = optionOrder + 1
       end
 
       tabConfig[tab:getId()] = {
@@ -440,6 +458,14 @@ function MyAccountant:SetupAddonOptions()
               tab:updateSummaryDataIfNeeded()
             end
           },
+          additionalTabOptions = {
+            type = "group",
+            inline = true,
+            name = L["option_tab_additional_options"],
+            order = 1.25,
+            args = extraOptions,
+            hidden = function() return optionOrder == 0 end
+          },
           break3 = {
             type = "header",
             order = 2,
@@ -486,7 +512,10 @@ function MyAccountant:SetupAddonOptions()
             end,
             get = function() return tab:getLuaExpression() end,
             set = function(_, val)
+              tab._customOptionFields = {}
               tab:setLuaExpression(val)
+              makeTabConfig()
+              forceConfigRerender()
               MyAccountant:SetupTabs()
             end
           },
@@ -494,7 +523,7 @@ function MyAccountant:SetupAddonOptions()
             order = 4,
             name = L["option_tab_developer_export"],
             desc = L["option_tab_developer_export_desc"],
-            hidden = function() return not self.db.char.showTabExport end,
+            hidden = function() return (not self.db.char.tabAdvancedMode) or (not self.db.char.showTabExport) end,
             type = "input",
             multiline = 9,
             width = "full",

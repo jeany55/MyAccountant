@@ -85,8 +85,8 @@ local DateUtils = {
 
   --- Gets the current days in the month from a timestamp
   --- @param timestamp integer Unix timestamp
-  --- @return integer days The number of days in the month for the date
-  getDaysInMonth = function(timestamp)
+  --- @return integer|string days The number of days in the month for the date
+  getCurrentDayInMonth = function(timestamp)
     local currentDate = date("*t", timestamp)
     return currentDate.day and currentDate.day or 0
   end

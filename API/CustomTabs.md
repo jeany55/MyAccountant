@@ -575,18 +575,16 @@ Subtracts a specified number of days from the given timestamp.
   local tenDaysAgo = DateUtils.subtractDays(DateUtils.getToday(), 10)
   ```
 
-##### `DateUtils.getDaysInMonth(timestamp)`
+##### `DateUtils.getCurrentDayInMonth(timestamp)`
 
-Returns the current day of the month for the given timestamp (1-31).
-
-**Note**: Despite the name, this function returns the current **day number** of the month, not the total number of days in the month.
+Returns the current day number of the month for the given timestamp (1-31).
 
 - **Parameters:**
   - `timestamp` (number): Unix timestamp
 - **Returns:** (number) Current day of the month (1-31)
 - **Example:**
   ```lua
-  local currentDay = DateUtils.getDaysInMonth(DateUtils.getToday())
+  local currentDay = DateUtils.getCurrentDayInMonth(DateUtils.getToday())
   -- If today is January 15th, currentDay will be 15
   ```
 

@@ -15,7 +15,7 @@ local TabType = { DATE = "DATE", SESSION = "SESSION", BALANCE = "BALANCE" }
 
 -- Tab API Object
 --- @class Tab
---- @field private _customOptionFields table
+--- @field _customOptionFields table<string, ExtraTabOptionField>
 --- @field _tabName string
 --- @field _luaExpression string
 --- @field _ldbEnabled boolean
@@ -34,6 +34,11 @@ local TabType = { DATE = "DATE", SESSION = "SESSION", BALANCE = "BALANCE" }
 local Tab = {}
 Tab.__index = Tab
 
+--- @class ExtraTabOptionField
+--- @field fieldType FieldType
+--- @field label string
+--- @field desc string?
+
 --- @class TabConstructOptions
 --- @field tabType TabType?
 --- @field tabName string
@@ -44,6 +49,8 @@ Tab.__index = Tab
 --- @field lineBreak boolean?
 --- @field id string?
 --- @field visible boolean
+--- @field customOptionFields table<string, ExtraTabOptionField>?
+--- @field customOptionValues table<string, any>?
 local TabConstructOptionsDefault = {
   tabType = TabType.DATE,
   tabName = "",
@@ -52,7 +59,9 @@ local TabConstructOptionsDefault = {
   minimapSummaryEnabled = false,
   lineBreak = false,
   luaExpression = "",
-  id = nil
+  id = nil,
+  customOptionFields = {},
+  customOptionValues = {}
 }
 
 --- Makes a new tab instance
@@ -85,8 +94,10 @@ function Tab:construct(options)
   tab._endDate = -1
   --- @type boolean
   tab._lineBreak = options.lineBreak or TabConstructOptionsDefault.lineBreak
-  --- @type table
-  tab._customOptionFields = {}
+  --- @type table<string, ExtraTabOptionField>
+  tab._customOptionFields = options.customOptionFields or {}
+  --- @type table<string, any>
+  tab._customOptionValues = options.customOptionValues or {}
   --- @type string Lua expression for date setup
   if (options.luaExpression) then
     tab._luaExpression = options.luaExpression
@@ -415,22 +426,27 @@ end
 --- @return string dateSummaryLabel
 function Tab:getDateSummaryText() return self._dateSummaryLabel end
 
---- Adds a new option for this tab to the tab options
---- @param fieldName string
---- @param fieldType FieldType
---- @param fieldLabel string
---- @param fieldDescription string
+--- Returns custom option data for a field created byaddCustomOptionField
+--- @param fieldName string Internal field name
+--- @return any data value
+function Tab:getCustomOptionData(fieldName) return self._customOptionValues[fieldName] end
+
+--- Sets the value of a particular custom option field created by addCustomOptionField. Intended for use by the config system, not the Tab.
+--- @param fieldName string Internal field name
+--- @param data any Data value to set
+function Tab:setCustomOptionData(fieldName, data) self._customOptionValues[fieldName] = data end
+
+--- Registers a new option for this tab to the tab options. Will not overwrite existing custom fields.
+--- @param fieldName string Internal field name. Used as the name when calling getCustomOptionData().
+--- @param fieldType FieldType Type of field
+--- @param fieldLabel string User facing label to show in the options
+--- @param fieldDescription string? Option description, shows as a tooltip when hovering over the option
 function Tab:addCustomOptionField(fieldName, fieldType, fieldLabel, fieldDescription)
-  local field = {
-    name = fieldName,
-    type = fieldType,
-    label = fieldLabel,
-    desc = fieldDescription,
-    value = false,
-    get = function() return self._customOptionFields[fieldName].value end,
-    set = function(_, val) self._customOptionFields[fieldName].value = val end
-  }
-  self._customOptionFields[fieldName] = field
+  if self._customOptionFields[fieldName] then
+    return
+  end
+
+  self._customOptionFields[fieldName] = { fieldType = fieldType, label = fieldLabel, desc = fieldDescription }
 end
 
 private.Tab = Tab

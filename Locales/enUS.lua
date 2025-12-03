@@ -12,6 +12,8 @@ L["ldb_name_income"] = "%s - Income"
 L["ldb_name_profit"] = "%s - Profit"
 L["ldb_name_outcome"] = "%s - Outcome"
 
+L["option_tab_additional_options"] = "Additional options"
+
 L["warband"] = "Warband"
 L["option_show_warband_in_realm_balance"] = "Show Warband balance in realm balance totals"
 L["option_show_warband_in_realm_balance_desc"] =
