@@ -229,5 +229,4 @@ Tab:setStartDate(day)
 Tab:setEndDate(day)
 Tab:setDateSummaryText(date("%x", day))]]
   })
-  })
 }
