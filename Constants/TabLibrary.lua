@@ -367,7 +367,7 @@ if not includeWeekends and (currentDayOfWeek == 0 or currentDayOfWeek == 6) then
   if currentDayOfWeek == 0 then
     today = DateUtils.subtractDays(today, 2) -- Go back to Friday
   else
-    today = DateUtils.subtractDay(today) -- Go back to Friday
+    today = DateUtils.subtractDays(today, 1) -- Go back to Friday
   end
 end
 
