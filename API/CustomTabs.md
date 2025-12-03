@@ -174,6 +174,40 @@ Tab:setLabelText("Random Day")
 Tab:setLabelColor("FF69B4")  -- Hot pink for fun!
 ```
 
+### Example 12: Using Custom Option Fields (Advanced)
+
+Create a tab with user-configurable options that affect the tab's behavior. This example adds a checkbox that allows users to toggle whether the tab label should be colored red:
+
+```lua
+-- Declare a custom option field
+Tab:addCustomOptionField("exampleOption", FieldType.CHECKBOX, "Colour this tab red", "Example: Colour this tab red")
+
+-- Get the value of the custom option
+local toggled = Tab:getCustomOptionData("exampleOption")
+
+-- Apply conditional logic based on the option value
+if toggled then
+  Tab:setLabelColor("ff0000")  -- Red color
+else
+  -- Reset to default (no color)
+  Tab:setLabelColor(nil)
+end
+
+-- Set the tab's date range
+Tab:setLabelText(date("%x"))
+Tab:setStartDate(DateUtils.getToday())
+Tab:setEndDate(DateUtils.getToday())
+Tab:setDateSummaryText(date("%x"))
+```
+
+This example demonstrates how to:
+- Create a custom option field that appears in the tab's configuration panel
+- Retrieve the user's selection using `getCustomOptionData()`
+- Use conditional logic to change the tab's appearance based on the option value
+- Apply different behaviors depending on whether the option is enabled or disabled
+
+Custom option fields allow you to create highly interactive and configurable tabs that users can customize to their preferences without modifying the lua code.
+
 ## How to Set Up Your Own Custom Tab
 
 ### Step 1: Enable Advanced Mode
@@ -348,7 +382,7 @@ Sets LibDataBroker data enabled status for this tab.
 
 ##### `Tab:addCustomOptionField(fieldName, fieldType, fieldLabel, fieldDescription)`
 
-Adds a custom configuration option for this tab to the tab options panel. This is an advanced feature that allows users to toggle settings specific to your tab.
+Adds a custom configuration option for this tab to the tab options panel. This is an advanced feature that allows users to toggle settings specific to your tab. Use `Tab:getCustomOptionData(fieldName)` to retrieve the value of the custom option.
 
 - **Parameters:**
   - `fieldName` (string): Internal name for the field
@@ -433,6 +467,26 @@ Returns the date summary text.
 - **Example:**
   ```lua
   local summary = Tab:getDateSummaryText()
+  ```
+
+##### `Tab:getCustomOptionData(fieldName)`
+
+Gets the value of a custom option field that was created with `Tab:addCustomOptionField()`. This allows you to retrieve user-configured values for your custom tab options.
+
+- **Parameters:**
+  - `fieldName` (string): The internal field name that was used when calling `addCustomOptionField()`
+- **Returns:** (any) The value of the custom option field. For `FieldType.CHECKBOX` fields, returns a boolean. For `FieldType.INPUT` fields, returns a string.
+- **Example:**
+  ```lua
+  -- First, add the custom option field
+  Tab:addCustomOptionField("includeWeekends", FieldType.CHECKBOX, "Include Weekends", "Whether to include weekend days")
+  
+  -- Then, get the value
+  local includeWeekends = Tab:getCustomOptionData("includeWeekends")
+  
+  if includeWeekends then
+    -- Do something when the option is enabled
+  end
   ```
 
 ### DateUtils Object
