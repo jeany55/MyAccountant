@@ -50,6 +50,10 @@ Set which tabs you want to see and in which order.
 
 ![](Docs/incomePanelConfig.png)
 
+Set where you want your tabs to linebreak.
+
+![](Docs/incomeFrameTabRows.png)
+
 Advanced mode allows you to add your own tabs and configure them with lua snippets, specifying the exact date range you want to see.
 
 ![](Docs/incomePanelConfigAdvanced.png)
