@@ -327,6 +327,8 @@ TOOLTIP_DEFAULT_BACKGROUND_COLOR = "|cFFFFFFFF"
 L_DropDownList1Button1NormalText = CreateFrame()
 CreateFromMixins = function() return CreateFrame() end
 GetZoneText = Const(ZONE)
+UnitAffectingCombat = Const(false)
+IsResting = Const(false)
 
 -- Constants
 TRADE = "Trade"
@@ -470,6 +472,7 @@ import("Tests.Tests.TabModelTests")
 import("Tests.Tests.IncomeAdvancedTests")
 import("Tests.Tests.TabsApiAdvancedTests")
 import("Tests.Tests.TabModelAdvancedTests")
+import("Tests.Tests.TabLibraryTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)
