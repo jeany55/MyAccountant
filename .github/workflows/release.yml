@@ -113,6 +113,7 @@ jobs:
           rm CHANGELOG.md
           rm -rf Docs
           rm -rf Tests
+          rm API/CustomTabs.md
 
       # Minify Lua files to remove comments and whitespace
       - name: Minify Lua files
