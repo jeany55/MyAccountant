@@ -44,10 +44,17 @@ function MyAccountant:SetupAddonOptions()
 
   if not self.db.char.tabs then
     self.db.char.tabs = private.tabLibrary
-    self.db.char.knownTabs = private.utils.transformArray(private.tabLibrary, --
+    self.db.char.knownTabsv2 = private.utils.transformArray(private.tabLibrary, --
     --- @param tab Tab
-    function(tab) return tab:getName() end)
+    function(tab) return tab:getId() end)
   else
+
+    if not self.db.char.knownTabsv2 then
+      self.db.char.knownTabsv2 = private.utils.transformArray(private.tabLibrary, --
+      --- @param tab Tab
+      function(tab) return tab:getId() end)
+    end
+
     -- Need to deserialize saved data back into Tab objects
     local instantiatedTabs = {}
     for _, tab in ipairs(self.db.char.tabs) do
@@ -67,13 +74,13 @@ function MyAccountant:SetupAddonOptions()
     self.db.char.tabs = instantiatedTabs
 
     -- Check for new tabs in the default library the user hasn't seen
-    for _, defaultTab in ipairs(private.tabLibrary) do
-      if not private.utils.arrayHas(self.db.char.knownTabs, function(tabName) return tabName == defaultTab:getName() end) then
-        MyAccountant:PrintDebugMessage("Found new unknown default tab '" .. defaultTab:getName() .. "', adding to user tabs")
-        table.insert(self.db.char.tabs, defaultTab)
-        table.insert(self.db.char.knownTabs, defaultTab:getName())
-      end
-    end
+    -- for _, defaultTab in ipairs(private.tabLibrary) do
+    --   if not private.utils.arrayHas(self.db.char.knownTabs, function(tabName) return tabName == defaultTab:getName() end) then
+    --     MyAccountant:PrintDebugMessage("Found new unknown default tab '" .. defaultTab:getName() .. "', adding to user tabs")
+    --     table.insert(self.db.char.tabs, defaultTab)
+    --     table.insert(self.db.char.knownTabs, defaultTab:getName())
+    --   end
+    -- end
   end
 
   if not self.db.char.seenVersionMessage1p8 then
