@@ -49,6 +49,7 @@ Tab.__index = Tab
 --- @field minimapSummaryEnabled boolean?
 --- @field luaExpression string?
 --- @field lineBreak boolean?
+--- @field individualDays table<number>?
 --- @field id string?
 --- @field visible boolean
 --- @field customOptionFields table<string, ExtraTabOptionField>?
@@ -81,6 +82,19 @@ local registerLdbData = function(name, tooltip)
   return ldb:NewDataObject(name, dataConfig)
 end
 
+--- Makes a new, empty tab instance. Primarily for internal use, make sure all required fields are set after. Only sets as default type.
+--- @return Tab
+function Tab:constructEmpty()
+  --- @class Tab
+  local tab = {}
+  setmetatable(tab, self)
+  tab._id = private.utils.generateUuid()
+  tab._individualDays = {}
+  tab._dateSummaryLabel = ""
+  tab._tabType = TabConstructOptionsDefault.tabType
+  return tab
+end
+
 --- Makes a new tab instance, simplified for date tabs. Intended use by calendar.
 --- @param unixTime integer Unix timestamp representing the date
 --- @return Tab
@@ -91,8 +105,7 @@ function Tab:constructDateDaySimple(unixTime)
 
   tab._tabType = TabConstructOptionsDefault.tabType
   tab._tabName = "Tab"
-  tab._startDate = unixTime
-  tab._endDate = unixTime
+  tab._individualDays = {}
   tab._dateSummaryLabel = date("%x", unixTime)
   tab._id = private.utils.generateUuid()
   return tab
@@ -112,6 +125,7 @@ function Tab:construct(options)
   tab._tabLabel = options.tabName or TabConstructOptionsDefault.tabName
   --- @type string
   tab._dateSummaryLabel = ""
+  tab._individualDays = options.individualDays or {}
   --- @type boolean
   tab._ldbEnabled = options.ldbEnabled or TabConstructOptionsDefault.ldbEnabled
   --- @type boolean
@@ -212,6 +226,29 @@ function Tab:getVisible() return self._visible end
 --- Sets whether or not this tab is visible
 --- @param visible boolean
 function Tab:setVisible(visible) self._visible = visible end
+
+--- Adds a specific day (not a range) to this tab's date list
+--- @param unixTime number Unix timestamp representing the date
+function Tab:addToSpecificDays(unixTime)
+  if not private.utils.arrayHas(self._individualDays, function(day) return day == unixTime end) then
+    table.insert(self._individualDays, unixTime)
+  end
+end
+
+--- Removes a specific day (not a range) from this tab's date list if it exists
+function Tab:removeFromSpecificDays(unixTime)
+  for i = 1, #self._individualDays do
+    local day = self._individualDays[i]
+    if day == unixTime then
+      table.remove(self._individualDays, i)
+      break
+    end
+  end
+end
+
+--- Returns the specific days set for this tab
+--- @return table<number> individualDays Specific days set for this tab as unix timestamps
+function Tab:getSpecificDays() return self._individualDays end
 
 --- Sets the start date for this tab
 --- @param unixTime number
@@ -443,7 +480,12 @@ end
 
 --- Returns the date summary text label
 --- @return string dateSummaryLabel
-function Tab:getDateSummaryText() return self._dateSummaryLabel end
+function Tab:getDateSummaryText()
+  if self._dateSummaryLabel == "" and #self._individualDays > 0 then
+    return string.format(L["report_date_info"], #self._individualDays)
+  end
+  return self._dateSummaryLabel
+end
 
 --- Returns custom option data for a field created byaddCustomOptionField
 --- @param fieldName string Internal field name

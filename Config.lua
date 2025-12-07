@@ -68,6 +68,7 @@ function MyAccountant:SetupAddonOptions()
         lineBreak = tab._lineBreak,
         id = tab._id,
         customOptionValues = tab._customOptionValues,
+        individualDays = tab._individualDays,
         visible = tab._visible
       }))
     end
@@ -717,6 +718,16 @@ function MyAccountant:SetupAddonOptions()
             width = "full",
             set = function(info, val) self.db.char.showCalendarSummary = val end,
             get = function(info) return self.db.char.showCalendarSummary end
+          },
+          calendar_data = {
+            order = 2,
+            name = L["option_calendar_source"],
+            desc = L["option_calendar_source_desc"],
+            type = "select",
+            set = function(info, val) self.db.char.calendarDataSource = val end,
+            disabled = function() return not self.db.char.showCalendarSummary end,
+            get = function(info) return self.db.char.calendarDataSource end,
+            values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] }
           }
         }
       },

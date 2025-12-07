@@ -466,6 +466,12 @@ function MyAccountant:showIncomeFrameTemporaryTab(tempTab)
   end
   ActiveTab = tempTab
   ActiveTabIndex = 0
+  if self.db.char.calendarDataSource == "REALM" then
+    selectedCharacter = "ALL_CHARACTERS"
+  else
+    selectedCharacter = UnitName("player")
+  end
+  LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, selectedCharacter)
   MyAccountant:updateFrame()
 end
 

@@ -21,6 +21,7 @@ private.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MyAccountant", "Version")
 --- @field TabType TabType Enum for tab types
 --- @field utils UtilFunctions Utility functions used throughout the addon
 --- @field ApiUtils ApiUtils API utility functions used by luaExpressions in tabs
+--- @field reportTab Tab? The current report tab being generated if any
 private = private or {}
 
 --- @enum ViewType
@@ -35,6 +36,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
 -- Slash commands
 MyAccountant:RegisterChatCommand("mya", "HandleSlashCommand")
+
+-- Tab generated for report data
+private.reportTab = nil
 
 function MyAccountant:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("MyAccountantDB")
@@ -134,6 +138,7 @@ local function printHelpMessage()
   print(string.format(L["mya_lock_info_frame"], bullet))
   print(string.format(L["mya_report_start"], bullet))
   print(string.format(L["mya_report_add"], bullet))
+  print(string.format(L["mya_report_info"], bullet))
   print(string.format(L["mya_report_show"], bullet))
   -- MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
   -- MyAccountant:Print(L["help1"])
@@ -145,21 +150,61 @@ local function printHelpMessage()
 end
 
 function MyAccountant:HandleSlashCommand(input)
-  if input == "options" then
+  -- TODO: Refactor this
+  local splitInput = private.utils.splitString(input)
+
+  local command = string.lower(splitInput[1] or "")
+
+  if command == "options" then
     Settings.OpenToCategory(private.ADDON_NAME)
-  elseif input == "open" or input == "o" or input == "show" then
+  elseif command == "open" or command == "o" or command == "show" then
     MyAccountant:ShowPanel()
-  elseif input == "gph" then
+  elseif command == "gph" then
     StaticPopup_Show("MYACCOUNTANT_RESET_GPH")
-  elseif input == "reset_session" or input == "reset" then
+  elseif command == "reset_session" or command == "reset" then
     StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
-  elseif input == "info" then
+  elseif command == "info" then
     self.db.char.showInfoFrameV2 = not self.db.char.showInfoFrameV2
     MyAccountant:UpdateInformationFrameStatus()
-  elseif input == "lock" then
+  elseif command == "lock" then
     self.db.char.lockInfoFrame = not self.db.char.lockInfoFrame
     MyAccountant:UpdateInformationFrameStatus()
-  elseif input == "" then
+  elseif command == "report" then
+    local subCommand = string.lower(splitInput[2] or "")
+    local subSubCommand = string.lower(splitInput[3] or "")
+    if subCommand == "start" then
+      MyAccountant:StartReport()
+      MyAccountant:Print(L["report_started"])
+    elseif subCommand == "add" then
+      local dateString = subSubCommand
+      MyAccountant:AddDayToReport(dateString)
+    elseif subCommand == "show" then
+      if not private.reportTab then
+        MyAccountant:Print(L["report_no_active"])
+      elseif #private.reportTab:getSpecificDays() == 0 then
+        MyAccountant:Print(L["report_empty"])
+      else
+        MyAccountant:Print(string.format(L["report_showing"], #private.reportTab:getSpecificDays()))
+        MyAccountant:showIncomeFrameTemporaryTab(private.reportTab)
+        private.reportTab = nil
+      end
+    elseif subCommand == "info" then
+      if not private.reportTab then
+        MyAccountant:Print(L["report_no_active"])
+      else
+        local days = private.reportTab:getSpecificDays()
+        if #days == 0 then
+          MyAccountant:Print(L["report_empty"])
+        else
+          MyAccountant:Print(string.format(L["report_info"], #days))
+          local bullet = "|T" .. private.constants.CALENDAR_NO_CHANGE .. ":0|t "
+          for _, day in ipairs(days) do
+            MyAccountant:Print(bullet .. date("%Y-%m-%d", day))
+          end
+        end
+      end
+    end
+  elseif command == "" then
     if self.db.char.slashBehaviour == "OPEN_WINDOW" then
       MyAccountant:ShowPanel()
     elseif self.db.char.slashBehaviour == "SHOW_OPTIONS" then
@@ -282,3 +327,58 @@ function MyAccountant:UpdateAllTabSummaryData()
   end
 end
 
+--- Starts a new report, overwrites existing one if any.
+function MyAccountant:StartReport() private.reportTab = private.Tab:constructEmpty() end
+
+--- Returns if a specific day is included in the current report being created by StartReport().
+--- @param unixTime number The unix timestamp of the day to check
+--- @return boolean isInReport If the day is included in the report
+function MyAccountant:IsDayInReport(unixTime)
+  if not private.reportTab then
+    return false
+  end
+
+  return private.utils.arrayHas(private.reportTab._individualDays, function(day) return day == unixTime end)
+end
+
+function MyAccountant:RemoveDayFromReport(unixTime)
+  if not private.reportTab then
+    return
+  end
+
+  private.reportTab:removeFromSpecificDays(unixTime)
+end
+
+--- Adds a specific day to the current report being created by StartReport().
+--- @param date string|number Either a date string in YYYY-MM-DD format or a unix timestamp
+--- @param startIfInactive boolean? If true, will start a new report if none is active
+function MyAccountant:AddDayToReport(date, startIfInactive)
+  if not private.reportTab then
+    if not startIfInactive then
+      MyAccountant:Print(L["report_no_active"])
+      return
+    end
+    MyAccountant:StartReport()
+  end
+
+  --- @type number
+  local unixTime = date
+
+  if type(unixTime) ~= "number" then
+    --- Convert date string (YYYY-MM-DD) to unix time. Wrap in a pcall to catch errors.
+    local success, year, month, day = pcall(function()
+      local y, m, d = string.match(date, "(%d%d%d%d)%-(%d%d)%-(%d%d)")
+      return tonumber(y), tonumber(m), tonumber(d)
+    end)
+    if not success or not year or not month or not day then
+      MyAccountant:Print(string.format(L["invalid_report_date"], date))
+      return
+    end
+    unixTime = time({ year = year, month = month, day = day, hour = 12, min = 0, sec = 0 })
+  end
+
+  private.reportTab:addToSpecificDays(unixTime)
+  if not startIfInactive then
+    MyAccountant:Print(string.format(L["report_day_added"], date))
+  end
+end

@@ -259,6 +259,7 @@ private.default_settings = {
   showTabExport = false,
   incomeFrameWidth = 532,
   showWarbandInRealmBalance = true,
-  showCalendarSummary = true
+  showCalendarSummary = true,
+  calendarDataSource = "REALM"
 }
 

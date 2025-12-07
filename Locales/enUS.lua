@@ -12,9 +12,28 @@ L["option_calendar_summary"] = "Show data on calendar"
 L["option_calendar_summary_desc"] =
     "If enabled, MyAccountant will add an icon to days with data on the WoW calendar. Highlight over it to see more information."
 
+L["option_calendar_source"] = "Show data from"
+L["option_calendar_source_desc"] = "Where to source calendar data from"
+
 L["option_calendar_click"] = "<Left click to view day in income panel>"
+L["option_calendar_click_right_add"] = "<Right click to add day to report>"
+L["option_calendar_click_right_remove"] = "<Right click to remove day from report>"
+L["option_calendar_show_report"] = "<Shift + right click to show report>"
 
 L["option_calendar"] = "Calendar"
+
+L["report_started"] = "Started new report. Use |cffffff00/mya report add <date>|r to add days to the report (YYYY-MM-DD)."
+L["report_no_active"] = "No active report. Use |cffffff00/mya report start|r to start a new report."
+L["report_day_added"] = "Added %s to report."
+L["report_showing"] = "Showing report with %d day(s). Use |cffffff00/mya report start|r to start a new report."
+
+L["report_date_info"] = "%d day(s)"
+
+L["report_info"] = " |cffff9300%d day(s) in current report:|r"
+
+L["report_empty"] = "Report is empty. Use |cffffff00/mya report add <date>|r to add days to the report (YYYY-MM-DD)."
+
+L["invalid_report_date"] = "Invalid date format '%s'. Please use YYYY-MM-DD."
 
 -- /mya
 -- L["help1"] = "MyAccountant Valid options include"
@@ -28,6 +47,7 @@ L["mya_info_frame_toggle"] = "%s |cffffff00/mya info|r - Show/hide information f
 L["mya_lock_info_frame"] = "%s |cffffff00/mya lock|r - Lock/unlock information frame position"
 L["mya_report_start"] = "%s |cffffff00/mya report start|r - Start a new report (removes any existing)"
 L["mya_report_add"] = "%s |cffffff00/mya report add <date>|r - Add a day to the report (date format: YYYY-MM-DD)"
+L["mya_report_info"] = "%s |cffffff00/mya report info|r - Show current days in the report"
 L["mya_report_show"] = "%s |cffffff00/mya report show|r - Finalizes and shows the current report in the income panel"
 
 L["help2"] = "%s %s/mya open%s - Show/hide income window"

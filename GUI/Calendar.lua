@@ -44,11 +44,22 @@ function MyAccountant:UpdateCalendar()
 
     local unixTimeRepresentation = time({ year = year, month = month, day = dayFrame.day, hour = 12, min = 0, sec = 0 })
     local tempTab = private.Tab:constructDateDaySimple(unixTimeRepresentation)
+    tempTab:addToSpecificDays(unixTimeRepresentation)
 
-    local incomeData = MyAccountant:GetIncomeOutcomeTable(tempTab, nil, nil, viewType)
+    local characterData = self.db.char.calendarDataSource == "REALM" and "ALL_CHARACTERS" or nil
+
+    local incomeData = MyAccountant:GetIncomeOutcomeTable(tempTab, nil, characterData, viewType)
     local dataSummary = MyAccountant:SummarizeData(incomeData)
 
     if (dataSummary.income > 0 or dataSummary.outcome > 0) then
+      local updateGlow = function()
+        if MyAccountant:IsDayInReport(unixTimeRepresentation) then
+          dayFrame.accountantTexture:SetBlendMode("ADD")
+        else
+          dayFrame.accountantTexture:SetBlendMode("BLEND")
+        end
+      end
+
       if not dayFrame.accountantButton then
         dayFrame.accountantButton = CreateFrame('Button', nil, dayFrame)
         dayFrame.accountantButton:SetSize(20, 20)
@@ -61,21 +72,10 @@ function MyAccountant:UpdateCalendar()
         dayFrame.accountantButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
         dayFrame.accountantButton:SetPoint("BOTTOMRIGHT", dayFrame, "BOTTOMRIGHT", -7, 4)
       end
-      dayFrame.accountantButton:Show()
-      dayFrame.accountantButton:SetScript("OnClick", function() MyAccountant:showIncomeFrameTemporaryTab(tempTab) end)
 
       local profit = dataSummary.income - dataSummary.outcome
 
-      if profit < 0 then
-        dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_DECREASE)
-      elseif profit > 0 then
-        dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_INCREASE)
-      else
-        dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_NO_CHANGE)
-      end
-
-      dayFrame.accountantButton:SetScript("OnEnter", function()
-
+      local makeTooltip = function()
         local profitColor = private.utils.getProfitColor(profit)
         GameTooltip:SetOwner(dayFrame, "ANCHOR_CURSOR")
         GameTooltip:AddDoubleLine(L["header_total_net"],
@@ -86,9 +86,50 @@ function MyAccountant:UpdateCalendar()
         GameTooltip:AddDoubleLine(L["header_total_outcome"],
                                   "|cffff0000" .. MyAccountant:GetHeaderMoneyString(dataSummary.outcome) .. "|r")
         GameTooltip:AddLine("|cff898989" .. L["option_calendar_click"] .. "|r")
-
+        if MyAccountant:IsDayInReport(unixTimeRepresentation) then
+          GameTooltip:AddLine("|cff898989" .. L["option_calendar_click_right_remove"] .. "|r")
+        else
+          GameTooltip:AddLine("|cff898989" .. L["option_calendar_click_right_add"] .. "|r")
+        end
+        if private.reportTab and #private.reportTab:getSpecificDays() > 0 then
+          GameTooltip:AddLine("|cff898989" .. L["option_calendar_show_report"] .. "|r")
+        end
         GameTooltip:Show()
+      end
+
+      dayFrame.accountantButton:Show()
+      dayFrame.accountantButton:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+      dayFrame.accountantButton:SetScript("OnClick", function(self, button)
+        if button == "LeftButton" then
+          MyAccountant:showIncomeFrameTemporaryTab(tempTab)
+        elseif button == "RightButton" and IsShiftKeyDown() then
+          if private.reportTab and #private.reportTab:getSpecificDays() > 0 then
+            MyAccountant:showIncomeFrameTemporaryTab(private.reportTab)
+            private.reportTab = nil
+            CalendarFrame:Hide()
+          end
+        elseif button == "RightButton" then
+          if MyAccountant:IsDayInReport(unixTimeRepresentation) then
+            private.reportTab:removeFromSpecificDays(unixTimeRepresentation)
+            updateGlow()
+          else
+            MyAccountant:AddDayToReport(unixTimeRepresentation, true)
+            updateGlow()
+          end
+          makeTooltip()
+        end
       end)
+
+      if profit < 0 then
+        dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_DECREASE)
+      elseif profit > 0 then
+        dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_INCREASE)
+      else
+        dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_NO_CHANGE)
+      end
+      updateGlow()
+
+      dayFrame.accountantButton:SetScript("OnEnter", function() makeTooltip() end)
     end
   end
 end

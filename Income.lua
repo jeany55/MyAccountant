@@ -214,6 +214,32 @@ function MyAccountant:FetchDataRow(playerName, year, month, day)
   return private.utils.copy(self.db.factionrealm[playerName][year][month][day])
 end
 
+local function formatDataRow(dataRow, overallDataRef)
+  for k, v in pairs(dataRow) do
+    if not overallDataRef[k] then
+      overallDataRef[k] = { income = 0, outcome = 0 }
+    end
+
+    if not overallDataRef[k].zones then
+      overallDataRef[k].zones = v.zones and v.zones or {}
+    else
+      if v.zones then
+        for zoneName, zoneData in pairs(v.zones) do
+          if not overallDataRef[k].zones[zoneName] then
+            overallDataRef[k].zones[zoneName] = zoneData
+          else
+            overallDataRef[k].zones[zoneName].income = overallDataRef[k].zones[zoneName].income + zoneData.income
+            overallDataRef[k].zones[zoneName].outcome = overallDataRef[k].zones[zoneName].outcome + zoneData.outcome
+          end
+        end
+      end
+    end
+
+    overallDataRef[k].income = overallDataRef[k].income + v.income
+    overallDataRef[k].outcome = overallDataRef[k].outcome + v.outcome
+  end
+end
+
 ---Gets historical data
 ---@param tab Tab
 ---@param dateOverride any
@@ -232,45 +258,40 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
   local playerName = characterOverride and characterOverride or UnitName("player")
   local data = dataRefOverride and dataRefOverride or {}
 
+  local specificDays = tab:getSpecificDays()
+  local specificDayNumber = #specificDays
   local startDate = tab:getStartDate()
   local endDate = tab:getEndDate()
 
-  if (startDate > endDate) then
+  --- @enum DataStyle
+  --- |'RANGE'
+  --- |'SPECIFIC_DAYS'
+  local dataStyle = "RANGE"
+
+  if specificDayNumber > 0 then
+    dataStyle = "SPECIFIC_DAYS"
+  end
+
+  if (dataStyle == "RANGE" and startDate > endDate) then
     return data
   end
 
-  local unixTime = endDate
+  if dataStyle == "RANGE" then
+    local unixTime = endDate
+    while unixTime >= startDate do
+      local currentDay = date("*t", unixTime)
+      local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
+      formatDataRow(currentData, data)
 
-  while unixTime >= startDate do
-    local currentDay = date("*t", unixTime)
-    local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
-
-    for k, v in pairs(currentData) do
-      if not data[k] then
-        data[k] = { income = 0, outcome = 0 }
-      end
-
-      if not data[k].zones then
-        data[k].zones = v.zones and v.zones or {}
-      else
-        if v.zones then
-          for zoneName, zoneData in pairs(v.zones) do
-            if not data[k].zones[zoneName] then
-              data[k].zones[zoneName] = zoneData
-            else
-              data[k].zones[zoneName].income = data[k].zones[zoneName].income + zoneData.income
-              data[k].zones[zoneName].outcome = data[k].zones[zoneName].outcome + zoneData.outcome
-            end
-          end
-        end
-      end
-
-      data[k].income = data[k].income + v.income
-      data[k].outcome = data[k].outcome + v.outcome
+      -- Back up one day
+      unixTime = unixTime - 86400
     end
-
-    -- Back up one day
-    unixTime = unixTime - 86400
+  else
+    for _, specificDay in ipairs(specificDays) do
+      local specificDayInfo = date("*t", specificDay)
+      local specificData = MyAccountant:FetchDataRow(playerName, specificDayInfo.year, specificDayInfo.month, specificDayInfo.day)
+      formatDataRow(specificData, data)
+    end
   end
 
   return data

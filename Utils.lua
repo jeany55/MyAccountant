@@ -94,7 +94,20 @@ local Utils = {
 
   --- Generate a short 8 digit UUID.
   --- @return string uuid
-  generateUuid = function() return format("%04x%04x", random(0, 0xFFFF), random(0, 0xFFFF)) end
+  generateUuid = function() return format("%04x%04x", random(0, 0xFFFF), random(0, 0xFFFF)) end,
+
+  --- Splits a string into an array based on a delimiter
+  --- @param inputstr string Input string
+  --- @param delimiter string? Optional delimiter, defaults to whitespace
+  --- @return string[] reuslt Split array
+  splitString = function(inputstr, delimiter)
+    local sep = delimiter or "%s"
+    local result = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+      table.insert(result, str)
+    end
+    return result
+  end
 }
 
 private.utils = Utils
