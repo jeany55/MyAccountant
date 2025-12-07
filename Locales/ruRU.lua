@@ -170,7 +170,7 @@ L["reset_gph_confirm_no"] = "Нет"
 
 L["header_total_income"] = "Общий доход"
 L["header_total_outcome"] = "Общий расход"
-L["header_total_net"] = "Чистая прибыль/убыток"
+L["header_total_net"] = "Итог"
 
 -- Income panel tabs
 L["session"] = "Сессия"
