@@ -12,7 +12,7 @@ L["option_calendar_summary"] = "Show data on calendar"
 L["option_calendar_summary_desc"] =
     "If enabled, MyAccountant will add an icon to days with data on the WoW calendar. Highlight over it to see more information."
 
-L["option_calendar_click"] = "<Click to view day in income panel>"
+L["option_calendar_click"] = "<Left click to view day in income panel>"
 
 L["option_calendar"] = "Calendar"
 
