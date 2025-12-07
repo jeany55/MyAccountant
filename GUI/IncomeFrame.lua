@@ -10,6 +10,7 @@ local selectedCharacter = UnitName("player")
 -- Which tab is current selected?
 --- @type Tab
 local ActiveTab = nil
+local ActiveTabIndex = 1
 
 -- Holds whether viewing by source or by zone 
 local ViewType
@@ -20,19 +21,7 @@ RenderedLines = {}
 -- If the user sorts manually (ie: clicking on table header) this will hold the overriding sort
 UserSetSort = nil
 
---- @class CharacterFrameTabTemplate: Frame
---- @field SetText fun(self: CharacterFrameTabTemplate, text: string): nil Sets the tab text
-
---- @class FrameRefInfo
---- @field id integer Id used when creating the tab
---- @field frame CharacterFrameTabTemplate
-
 local tabFrames = {}
-
---- @class IncomeFrameTab
---- @field frame FrameRefInfo WoW tab frame info
---- @field tab Tab Tab object reference
---- @field tabIndex integer Index of the tab
 
 --- @type table<string, IncomeFrameTab>
 local incomeFrameTabs = {}
@@ -81,6 +70,7 @@ function MyAccountant:SetupTabs()
       if tabIndex == 1 then
         if not ActiveTab then
           ActiveTab = tab
+          ActiveTabIndex = 1
         end
       end
       tabIndex = tabIndex + 1
@@ -88,7 +78,7 @@ function MyAccountant:SetupTabs()
   end
 
   PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)
-  PanelTemplates_SetTab(IncomeFrame, 1)
+  PanelTemplates_SetTab(IncomeFrame, ActiveTabIndex)
 
   -- On retail, it rerenders all the tabs (breaking linebreaks) so we need to reposition them after creating them
   local previousTab = nil
@@ -385,11 +375,14 @@ function MyAccountant:InitializeUI()
   totalProfitText:SetText(L["header_total_net"])
 
   -- Find first active tab
+  local tabIndex = 1
   for _, tab in ipairs(self.db.char.tabs) do
     if tab:getVisible() then
       ActiveTab = tab
+      ActiveTabIndex = tabIndex
       break
     end
+    tabIndex = tabIndex + 1
   end
 
   -- Tab config
@@ -850,6 +843,7 @@ end
 function MyAccountant:TabClick(tab, tabCreationId)
   PanelTemplates_SetTab(IncomeFrame, tabCreationId);
   ActiveTab = tab
+  ActiveTabIndex = tabCreationId
   MyAccountant:updateFrame()
 end
 
