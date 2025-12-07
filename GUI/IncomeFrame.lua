@@ -47,9 +47,12 @@ local function getTabFrame(index)
   end
 end
 
+-- Holds a tab instance that is invisible for when no tab is selected
+local unselectedTab
+
 --- Makes tabs and positions them
 function MyAccountant:SetupTabs()
-  --- @type table<string, IncomeFrameTab>
+  --- @type number
   local tabIndex = 1
 
   for _, tabFrame in ipairs(tabFrames) do
@@ -62,22 +65,28 @@ function MyAccountant:SetupTabs()
     tab = tab
 
     if tab:getVisible() then
+
+      if not ActiveTab or ActiveTabIndex == 0 then
+        ActiveTab = tab
+        ActiveTabIndex = tabIndex
+      end
+
       tab:runLoadedFunction()
       local tabframe = getTabFrame(tabIndex)
       tabframe:SetText(tab:getLabel())
       tabframe:Show()
       tabframe:SetPoint("TOPLEFT", IncomeFrame, "BOTTOMLEFT", 0, 2)
-      if tabIndex == 1 then
-        if not ActiveTab then
-          ActiveTab = tab
-          ActiveTabIndex = 1
-        end
-      end
       tabIndex = tabIndex + 1
     end
   end
 
-  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)
+  if not unselectedTab then
+    unselectedTab = CreateFrame("Button", "$parentTab0", IncomeFrame, "MyAccountantTabTemplate")
+    unselectedTab:SetWidth(0)
+    unselectedTab:Hide()
+  end
+
+  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex)
   PanelTemplates_SetTab(IncomeFrame, ActiveTabIndex)
 
   -- On retail, it rerenders all the tabs (breaking linebreaks) so we need to reposition them after creating them
@@ -449,14 +458,17 @@ function MyAccountant:updateFrameIfOpen()
   end
 end
 
-local function rerenderTabs()
-  -- Prepare some variables to allow settings easier to configure
-  print("sup")
-  for _, tab in ipairs(incomeFrameTabs) do
-    print("woo")
-    tab.tabObject:runLoadedFunction()
-    tab.frame:SetText(tab.tabObject:getLabel())
+-- Creates a one time data show
+--- @param tempTab Tab Tab to show temporarily
+function MyAccountant:showIncomeFrameTemporaryTab(tempTab)
+  PanelTemplates_SetTab(IncomeFrame, 0)
+  if not private.panelOpen then
+    IncomeFrame:Show()
+    private.panelOpen = true
   end
+  ActiveTab = tempTab
+  ActiveTabIndex = 0
+  MyAccountant:updateFrame()
 end
 
 function MyAccountant:updateFrame()

@@ -703,6 +703,23 @@ function MyAccountant:SetupAddonOptions()
           }
         }
       },
+      calendar = {
+        type = "group",
+        inline = true,
+        name = L["option_calendar"],
+        order = 5,
+        args = {
+          calendar = {
+            order = 1,
+            name = L["option_calendar_summary"],
+            desc = L["option_calendar_summary_desc"],
+            type = "toggle",
+            width = "full",
+            set = function(info, val) self.db.char.showCalendarSummary = val end,
+            get = function(info) return self.db.char.showCalendarSummary end
+          }
+        }
+      },
       developer_options = {
         type = "group",
         inline = true,

@@ -59,7 +59,6 @@ function MyAccountant:OnInitialize()
   MyAccountant:SetupAddonOptions()
   MyAccountant:InitializeInfoFrame()
   MyAccountant:InitializeUI()
-
   MyAccountant:RegisterAllEvents()
 
   -- Register global confirmations
@@ -258,5 +257,102 @@ end
 function MyAccountant:UpdateAllTabSummaryData()
   for _, tab in ipairs(self.db.char.tabs) do
     tab:updateSummaryDataIfNeeded()
+  end
+end
+
+--- Update calendar days to show income/outcome
+function MyAccountant:UpdateCalendar()
+  -- Force day property on each calendar day to initialize
+  CalendarFrame_Update()
+
+  -- If disabled go through all 42 day buttons and hide any info if we're showing it
+  if not self.db.char.showCalendarSummary then
+    for dateIndex = 1, 42 do
+      local dayFrame = _G["CalendarDayButton" .. dateIndex]
+
+      if dayFrame.accountantButton then
+        dayFrame.accountantButton:Hide()
+      end
+    end
+    return
+  end
+
+  --- @type ViewType
+  local viewType = 'SOURCE'
+
+  local monthData = C_Calendar.GetMonthInfo()
+  local start = 0
+
+  for dateIndex = 1, 42 do
+    local dayFrame = _G["CalendarDayButton" .. dateIndex]
+
+    if dayFrame.accountantButton then
+      dayFrame.accountantButton:Hide()
+    end
+
+    -- Find start of month
+    if start == 0 and dayFrame.day == 1 then
+      start = 1
+    end
+
+    if start > 0 and start <= monthData.numDays then
+      local unixTimeRepresentation = time({
+        year = monthData.year,
+        month = monthData.month,
+        day = start,
+        hour = 12,
+        min = 0,
+        sec = 0
+      })
+      local tempTab = private.Tab:constructDateDaySimple(unixTimeRepresentation)
+
+      local incomeData = MyAccountant:GetIncomeOutcomeTable(tempTab, nil, nil, viewType)
+      local dataSummary = MyAccountant:SummarizeData(incomeData)
+
+      if (dataSummary.income > 0 or dataSummary.outcome > 0) then
+        if not dayFrame.accountantButton then
+          dayFrame.accountantButton = CreateFrame('Button', nil, dayFrame)
+          dayFrame.accountantButton:SetSize(20, 20)
+
+          local accountantTexture = dayFrame.accountantButton:CreateTexture(nil, "OVERLAY")
+          accountantTexture:SetSize(20, 20)
+          accountantTexture:SetPoint("CENTER")
+
+          dayFrame.accountantTexture = accountantTexture
+          dayFrame.accountantButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+          dayFrame.accountantButton:SetPoint("BOTTOMRIGHT", dayFrame, "BOTTOMRIGHT", -7, 4)
+        end
+        dayFrame.accountantButton:Show()
+        dayFrame.accountantButton:SetScript("OnClick", function() MyAccountant:showIncomeFrameTemporaryTab(tempTab) end)
+
+        local profit = dataSummary.income - dataSummary.outcome
+
+        if profit < 0 then
+          dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_DECREASE)
+        elseif profit > 0 then
+          dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_INCREASE)
+        else
+          dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_NO_CHANGE)
+        end
+
+        dayFrame.accountantButton:SetScript("OnEnter", function()
+
+          local profitColor = private.utils.getProfitColor(profit)
+          GameTooltip:SetOwner(dayFrame, "ANCHOR_CURSOR")
+          GameTooltip:AddDoubleLine(L["header_total_net"],
+                                    "|cff" .. profitColor .. MyAccountant:GetHeaderMoneyString(abs(profit)) .. "|r", 1, 1, 1)
+
+          GameTooltip:AddDoubleLine(L["header_total_income"],
+                                    "|cff00ff00" .. MyAccountant:GetHeaderMoneyString(dataSummary.income) .. "|r")
+          GameTooltip:AddDoubleLine(L["header_total_outcome"],
+                                    "|cffff0000" .. MyAccountant:GetHeaderMoneyString(dataSummary.outcome) .. "|r")
+          GameTooltip:AddLine("|cff898989" .. L["option_calendar_click"] .. "|r")
+
+          GameTooltip:Show()
+        end)
+
+      end
+      start = start + 1
+    end
   end
 end

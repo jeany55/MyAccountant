@@ -6,6 +6,17 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 ----------------------------------------
+--- VERSION 1.9
+----------------------------------------
+L["option_calendar_summary"] = "Show data on calendar"
+L["option_calendar_summary_desc"] =
+    "If enabled, MyAccountant will add an icon to days with data on the WoW calendar. Highlight over it to see more information."
+
+L["option_calendar_click"] = "<Click to view day in income panel>"
+
+L["option_calendar"] = "Calendar"
+
+----------------------------------------
 --- VERSION 1.8
 ----------------------------------------
 L["ldb_name_income"] = "%s - Income"

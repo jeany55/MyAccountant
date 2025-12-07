@@ -34,6 +34,9 @@ private.constants = {
   AUTHOR = "Jeany (Nazgrim)",
   GITHUB = "https://github.com/jeany55/MyAccountant",
   BULLET_POINT = "Interface\\Addons\\MyAccountant\\Images\\bulletPoint.tga",
+  CALENDAR_INCREASE = "Interface\\Addons\\MyAccountant\\Images\\calendarIncome.tga",
+  CALENDAR_DECREASE = "Interface\\Addons\\MyAccountant\\Images\\calendarOutcome.tga",
+  CALENDAR_NO_CHANGE = "Interface\\Addons\\MyAccountant\\Images\\calendarNoChange.tga",
   FLAGS = {
     ENGLISH = "Interface\\Addons\\MyAccountant\\Images\\Flags\\en.tga",
     RUSSIAN = "Interface\\Addons\\MyAccountant\\Images\\Flags\\ru.tga",
@@ -255,6 +258,7 @@ private.default_settings = {
   tabAdvancedMode = false,
   showTabExport = false,
   incomeFrameWidth = 532,
-  showWarbandInRealmBalance = true
+  showWarbandInRealmBalance = true,
+  showCalendarSummary = true
 }
 

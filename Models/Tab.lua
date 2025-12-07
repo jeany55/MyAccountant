@@ -81,6 +81,23 @@ local registerLdbData = function(name, tooltip)
   return ldb:NewDataObject(name, dataConfig)
 end
 
+--- Makes a new tab instance, simplified for date tabs. Intended use by calendar.
+--- @param unixTime integer Unix timestamp representing the date
+--- @return Tab
+function Tab:constructDateDaySimple(unixTime)
+  --- @class Tab
+  local tab = {}
+  setmetatable(tab, self)
+
+  tab._tabType = TabConstructOptionsDefault.tabType
+  tab._tabName = "Tab"
+  tab._startDate = unixTime
+  tab._endDate = unixTime
+  tab._dateSummaryLabel = date("%x", unixTime)
+  tab._id = private.utils.generateUuid()
+  return tab
+end
+
 --- Makes a new tab instance
 --- @param options TabConstructOptions
 --- @return Tab

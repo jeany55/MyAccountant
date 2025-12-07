@@ -132,6 +132,13 @@ local events = {
         MyAccountant:HidePanel()
       end
     end
+  },
+  {
+    EVENT = "CALENDAR_UPDATE_EVENT_LIST",
+    EXEC = function()
+      -- Fires when the calendar is opened
+      MyAccountant:UpdateCalendar()
+    end
   }
 }
 

@@ -19,6 +19,16 @@ end
 
 -- Localization definitions
 ----------------------------------------
+--- VERSION 1.9
+----------------------------------------
+L["option_calendar_summary"] = "Show data on WoW calendar"
+L["option_calendar_summary_desc"] = "If enabled, MyAccountant will add an event to days with data on the WoW calendar."
+
+L["option_calendar_click"] = "<Click to view day in income panel>"
+
+L["option_calendar"] = "Calendar"
+
+----------------------------------------
 --- VERSION 1.8
 ----------------------------------------
 L["ldb_name_income"] = "%s - Income"
