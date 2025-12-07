@@ -119,13 +119,29 @@ function MyAccountant:OnDisable()
 end
 
 local function printHelpMessage()
-  MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
-  MyAccountant:Print(L["help1"])
-  MyAccountant:Print(L["help_separator"])
-  MyAccountant:Print(L["help2"])
-  MyAccountant:Print(L["help3"])
-  MyAccountant:Print(L["help4"])
-  MyAccountant:Print(L["help5"])
+
+  print("|T" .. private.constants.ADDON_ICON .. ":0|t |cffff9300" .. private.ADDON_NAME .. "|r|cffffffff" .. " v" ..
+            private.ADDON_VERSION .. "|r")
+  print(L["help_separator"])
+
+  local bullet = "|T" .. private.constants.CALENDAR_NO_CHANGE .. ":0|t"
+
+  print(string.format(L["mya_open"], bullet))
+  print(string.format(L["mya_options"], bullet))
+  print(string.format(L["mya_gph"], bullet))
+  print(string.format(L["mya_reset_session"], bullet))
+  print(string.format(L["mya_info_frame_toggle"], bullet))
+  print(string.format(L["mya_lock_info_frame"], bullet))
+  print(string.format(L["mya_report_start"], bullet))
+  print(string.format(L["mya_report_add"], bullet))
+  print(string.format(L["mya_report_show"], bullet))
+  -- MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
+  -- MyAccountant:Print(L["help1"])
+  -- MyAccountant:Print(L["help_separator"])
+  -- MyAccountant:Print(L["help2"])
+  -- MyAccountant:Print(L["help3"])
+  -- MyAccountant:Print(L["help4"])
+  -- MyAccountant:Print(L["help5"])
 end
 
 function MyAccountant:HandleSlashCommand(input)
@@ -137,6 +153,12 @@ function MyAccountant:HandleSlashCommand(input)
     StaticPopup_Show("MYACCOUNTANT_RESET_GPH")
   elseif input == "reset_session" or input == "reset" then
     StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
+  elseif input == "info" then
+    self.db.char.showInfoFrameV2 = not self.db.char.showInfoFrameV2
+    MyAccountant:UpdateInformationFrameStatus()
+  elseif input == "lock" then
+    self.db.char.lockInfoFrame = not self.db.char.lockInfoFrame
+    MyAccountant:UpdateInformationFrameStatus()
   elseif input == "" then
     if self.db.char.slashBehaviour == "OPEN_WINDOW" then
       MyAccountant:ShowPanel()
@@ -260,99 +282,3 @@ function MyAccountant:UpdateAllTabSummaryData()
   end
 end
 
---- Update calendar days to show income/outcome
-function MyAccountant:UpdateCalendar()
-  -- Force day property on each calendar day to initialize
-  CalendarFrame_Update()
-
-  -- If disabled go through all 42 day buttons and hide any info if we're showing it
-  if not self.db.char.showCalendarSummary then
-    for dateIndex = 1, 42 do
-      local dayFrame = _G["CalendarDayButton" .. dateIndex]
-
-      if dayFrame.accountantButton then
-        dayFrame.accountantButton:Hide()
-      end
-    end
-    return
-  end
-
-  --- @type ViewType
-  local viewType = 'SOURCE'
-
-  local monthData = C_Calendar.GetMonthInfo()
-  local start = 0
-
-  for dateIndex = 1, 42 do
-    local dayFrame = _G["CalendarDayButton" .. dateIndex]
-
-    if dayFrame.accountantButton then
-      dayFrame.accountantButton:Hide()
-    end
-
-    -- Find start of month
-    if start == 0 and dayFrame.day == 1 then
-      start = 1
-    end
-
-    if start > 0 and start <= monthData.numDays then
-      local unixTimeRepresentation = time({
-        year = monthData.year,
-        month = monthData.month,
-        day = start,
-        hour = 12,
-        min = 0,
-        sec = 0
-      })
-      local tempTab = private.Tab:constructDateDaySimple(unixTimeRepresentation)
-
-      local incomeData = MyAccountant:GetIncomeOutcomeTable(tempTab, nil, nil, viewType)
-      local dataSummary = MyAccountant:SummarizeData(incomeData)
-
-      if (dataSummary.income > 0 or dataSummary.outcome > 0) then
-        if not dayFrame.accountantButton then
-          dayFrame.accountantButton = CreateFrame('Button', nil, dayFrame)
-          dayFrame.accountantButton:SetSize(20, 20)
-
-          local accountantTexture = dayFrame.accountantButton:CreateTexture(nil, "OVERLAY")
-          accountantTexture:SetSize(20, 20)
-          accountantTexture:SetPoint("CENTER")
-
-          dayFrame.accountantTexture = accountantTexture
-          dayFrame.accountantButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
-          dayFrame.accountantButton:SetPoint("BOTTOMRIGHT", dayFrame, "BOTTOMRIGHT", -7, 4)
-        end
-        dayFrame.accountantButton:Show()
-        dayFrame.accountantButton:SetScript("OnClick", function() MyAccountant:showIncomeFrameTemporaryTab(tempTab) end)
-
-        local profit = dataSummary.income - dataSummary.outcome
-
-        if profit < 0 then
-          dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_DECREASE)
-        elseif profit > 0 then
-          dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_INCREASE)
-        else
-          dayFrame.accountantTexture:SetTexture(private.constants.CALENDAR_NO_CHANGE)
-        end
-
-        dayFrame.accountantButton:SetScript("OnEnter", function()
-
-          local profitColor = private.utils.getProfitColor(profit)
-          GameTooltip:SetOwner(dayFrame, "ANCHOR_CURSOR")
-          GameTooltip:AddDoubleLine(L["header_total_net"],
-                                    "|cff" .. profitColor .. MyAccountant:GetHeaderMoneyString(abs(profit)) .. "|r", 1, 1, 1)
-
-          GameTooltip:AddDoubleLine(L["header_total_income"],
-                                    "|cff00ff00" .. MyAccountant:GetHeaderMoneyString(dataSummary.income) .. "|r")
-          GameTooltip:AddDoubleLine(L["header_total_outcome"],
-                                    "|cffff0000" .. MyAccountant:GetHeaderMoneyString(dataSummary.outcome) .. "|r")
-          GameTooltip:AddLine("|cff898989" .. L["option_calendar_click"] .. "|r")
-
-          GameTooltip:Show()
-        end)
-
-      end
-      start = start + 1
-    end
-  end
-end

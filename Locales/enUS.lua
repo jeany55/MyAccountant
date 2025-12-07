@@ -16,6 +16,25 @@ L["option_calendar_click"] = "<Left click to view day in income panel>"
 
 L["option_calendar"] = "Calendar"
 
+-- /mya
+-- L["help1"] = "MyAccountant Valid options include"
+L["help_separator"] = "----------------------"
+
+L["mya_open"] = "%s |cffffff00/mya open|r - Show/hide income window"
+L["mya_options"] = "%s |cffffff00/mya options|r - Open options window"
+L["mya_gph"] = "%s |cffffff00/mya gph|r - Reset gold per hour"
+L["mya_reset_session"] = "%s |cffffff00/mya reset_session|r - Reset session info"
+L["mya_info_frame_toggle"] = "%s |cffffff00/mya info|r - Show/hide information frame"
+L["mya_lock_info_frame"] = "%s |cffffff00/mya lock|r - Lock/unlock information frame position"
+L["mya_report_start"] = "%s |cffffff00/mya report start|r - Start a new report (removes any existing)"
+L["mya_report_add"] = "%s |cffffff00/mya report add <date>|r - Add a day to the report (date format: YYYY-MM-DD)"
+L["mya_report_show"] = "%s |cffffff00/mya report show|r - Finalizes and shows the current report in the income panel"
+
+L["help2"] = "%s %s/mya open%s - Show/hide income window"
+L["help3"] = "- /mya options - Open options window"
+L["help4"] = "- /mya gph - Reset gold per hour"
+L["help5"] = "- /mya reset_session - Reset session info"
+
 ----------------------------------------
 --- VERSION 1.8
 ----------------------------------------
@@ -250,14 +269,6 @@ L["income_panel_button_CLEAR_SESSION"] = "Clear session"
 L["income_panel_button_RESET_GPH"] = "Reset GPH"
 
 L["character_selection_all"] = "All characters"
-
--- /mya
-L["help1"] = "Valid options include"
-L["help_separator"] = "----------------------"
-L["help2"] = "- /mya open - Show/hide income window"
-L["help3"] = "- /mya options - Open options window"
-L["help4"] = "- /mya gph - Reset gold per hour"
-L["help5"] = "- /mya reset_session - Reset session info"
 
 -- Options, general header
 L["option_general"] = "General"
