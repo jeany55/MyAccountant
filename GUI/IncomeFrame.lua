@@ -65,12 +65,10 @@ function MyAccountant:SetupTabs()
     tab = tab
 
     if tab:getVisible() then
-
       if not ActiveTab or ActiveTabIndex == 0 then
         ActiveTab = tab
         ActiveTabIndex = tabIndex
       end
-
       tab:runLoadedFunction()
       local tabframe = getTabFrame(tabIndex)
       tabframe:SetText(tab:getLabel())
@@ -81,12 +79,12 @@ function MyAccountant:SetupTabs()
   end
 
   if not unselectedTab then
-    unselectedTab = CreateFrame("Button", "$parentTab0", IncomeFrame, "MyAccountantTabTemplate")
+    unselectedTab = CreateFrame("Button", "$parentTab0", IncomeFrame, "MyAccountantTabTemplate", 0)
     unselectedTab:SetWidth(0)
     unselectedTab:Hide()
   end
 
-  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex)
+  PanelTemplates_SetNumTabs(IncomeFrame, tabIndex - 1)
   PanelTemplates_SetTab(IncomeFrame, ActiveTabIndex)
 
   -- On retail, it rerenders all the tabs (breaking linebreaks) so we need to reposition them after creating them
