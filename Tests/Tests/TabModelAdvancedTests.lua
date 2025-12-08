@@ -386,3 +386,165 @@ function Tests.TestTab_SetName_UpdatesLabel()
   
   AssertEqual("Updated", tab:getName())
 end
+
+----------------------------------------------------------
+-- Individual days tests
+----------------------------------------------------------
+
+function Tests.TestTab_AddToSpecificDays_Single()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  tab:addToSpecificDays(NOV_14_2023)
+  
+  local days = tab:getSpecificDays()
+  AssertEqual(1, #days)
+  AssertEqual(NOV_14_2023, days[1])
+end
+
+function Tests.TestTab_AddToSpecificDays_Multiple()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  tab:addToSpecificDays(NOV_14_2023)
+  tab:addToSpecificDays(NOV_15_2023)
+  tab:addToSpecificDays(JAN_15_2027)
+  
+  local days = tab:getSpecificDays()
+  AssertEqual(3, #days)
+end
+
+function Tests.TestTab_AddToSpecificDays_NoDuplicates()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  -- Add the same day twice
+  tab:addToSpecificDays(NOV_14_2023)
+  tab:addToSpecificDays(NOV_14_2023)
+  
+  local days = tab:getSpecificDays()
+  -- Should only have one entry
+  AssertEqual(1, #days)
+  AssertEqual(NOV_14_2023, days[1])
+end
+
+function Tests.TestTab_RemoveFromSpecificDays()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  tab:addToSpecificDays(NOV_14_2023)
+  tab:addToSpecificDays(NOV_15_2023)
+  
+  local days = tab:getSpecificDays()
+  AssertEqual(2, #days)
+  
+  tab:removeFromSpecificDays(NOV_14_2023)
+  
+  days = tab:getSpecificDays()
+  AssertEqual(1, #days)
+  AssertEqual(NOV_15_2023, days[1])
+end
+
+function Tests.TestTab_RemoveFromSpecificDays_NotExist()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  tab:addToSpecificDays(NOV_14_2023)
+  
+  -- Try to remove a day that doesn't exist
+  tab:removeFromSpecificDays(JAN_15_2027)
+  
+  local days = tab:getSpecificDays()
+  -- Should still have the original day
+  AssertEqual(1, #days)
+  AssertEqual(NOV_14_2023, days[1])
+end
+
+function Tests.TestTab_GetSpecificDays_Empty()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  local days = tab:getSpecificDays()
+  AssertEqual(0, #days)
+  AssertEqual("table", type(days))
+end
+
+function Tests.TestTab_ConstructWithIndividualDays()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true,
+    individualDays = {NOV_14_2023, NOV_15_2023}
+  })
+  
+  local days = tab:getSpecificDays()
+  AssertEqual(2, #days)
+end
+
+function Tests.TestTab_GetDateSummaryText_WithIndividualDays()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  tab:addToSpecificDays(NOV_14_2023)
+  tab:addToSpecificDays(NOV_15_2023)
+  tab:addToSpecificDays(JAN_15_2027)
+  
+  -- When no custom summary text is set and individual days exist,
+  -- it should return a summary like "Tracking 3 days"
+  local summary = tab:getDateSummaryText()
+  AssertEqual("string", type(summary))
+  AssertEqual(true, #summary > 0)
+end
+
+function Tests.TestTab_IndividualDays_WithDateRange()
+  local Tab = private.Tab
+  
+  local tab = Tab:construct({
+    tabName = "Test",
+    visible = true
+  })
+  
+  -- Set a date range
+  tab:setStartDate(NOV_14_2023)
+  tab:setEndDate(NOV_15_2023)
+  
+  -- Also add individual days
+  tab:addToSpecificDays(JAN_15_2027)
+  
+  -- Both should be set (priority is handled by Income.lua)
+  AssertEqual(NOV_14_2023, tab:getStartDate())
+  AssertEqual(NOV_15_2023, tab:getEndDate())
+  
+  local days = tab:getSpecificDays()
+  AssertEqual(1, #days)
+  AssertEqual(JAN_15_2027, days[1])
+end

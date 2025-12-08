@@ -2,11 +2,11 @@
 
 ## Overview
 
-MyAccountant allows you to create fully customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what timeframes you want.
+MyAccountant allows you to create customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what timeframes you want.
 
 With custom tabs, you can:
 
-- **Track Personalized Time Periods**: Create tabs for specific date ranges (eg. "raid days", "farming weekend", "first weekend of the month")
+- **Track Personalized Time Periods**: Create tabs for specific date ranges or individual days (eg. "raid days", "farming weekend", "first weekend of the month")
 - **Use Dynamic Date Calculations**: Build tabs that automatically adjust based on complex logic. You have access to the WoW API - you can make a tab show different data depending on where your character is, if they're in combat, or whatever you can imagine.
 - **Customize Display**: Format date ranges and labels to whatever you like
 - **Add Configuration Options**: Create custom toggles or settings specific to your tab's needs, allowing for user input!
@@ -17,16 +17,26 @@ This documentation is intended to help show you how to create your own custom ta
 
 ## Requirements
 
-Creating custom tabs requires a small amount of lua knowledge. The general idea is
+Creating custom tabs requires a small amount of lua knowledge. The general idea is:
 1. Advanced configuration is only allowed for Date tab types
-2. The date type needs to, at the bare minimum, set the start and end date in unix time (the number of seconds since 1970). Several utility functions are provided to help with date calculations.
+2. The date type needs to configure dates in one of two ways:
+   - **Date Range**: Set both a start date and end date using `setStartDate()` and `setEndDate()` in unix time (seconds since 1970)
+   - **Individual Days**: Add specific days using `addToSpecificDays()` for tracking non-contiguous days
+   - **Priority**: If both are set, individual days take priority over the date range
 
+Several utility functions are provided to help with date calculations.
 
 ![Tab Configuration](../Docs/incomePanelConfigAdvanced.png)
 
 ## Examples
 
-### Example 1: Today
+This section provides examples organized by date tracking method. Choose the approach that best fits your needs.
+
+### Date Range Examples
+
+These examples use `setStartDate()` and `setEndDate()` to track continuous date ranges.
+
+#### Example 1: Today
 
 Track a single day such as today - the simplest possible custom tab:
 
@@ -36,7 +46,7 @@ Tab:setEndDate(DateUtils.getToday())
 Tab:setDateSummaryText(date("%x"))
 ```
 
-### Example 2: Yesterday
+#### Example 2: Yesterday
 
 Track yesterday's income and expenses:
 
@@ -48,7 +58,7 @@ Tab:setEndDate(yesterday)
 Tab:setDateSummaryText(date("%x", yesterday))
 ```
 
-### Example 3: Current Week with Date Range Label
+#### Example 3: Current Week with Date Range Label
 
 Show the current week with a formatted date range:
 
@@ -63,7 +73,7 @@ local lastDayOfWeek = DateUtils.addDays(startOfWeek, 6)
 Tab:setDateSummaryText(date("%x", startOfWeek) .. " - " .. date("%x", lastDayOfWeek))
 ```
 
-### Example 4: Last Week (Complete Week)
+#### Example 4: Last Week (Complete Week)
 
 Track last week from Monday to Sunday:
 
@@ -76,7 +86,7 @@ Tab:setEndDate(lastDayOfPreviousWeek)
 Tab:setDateSummaryText(date("%x", firstDayOfPreviousWeek) .. " - " .. date("%x", lastDayOfPreviousWeek))
 ```
 
-### Example 5: Last Month
+#### Example 5: Last Month
 
 Track the previous month completely:
 
@@ -89,7 +99,7 @@ Tab:setEndDate(lastDayOfPreviousMonth)
 Tab:setDateSummaryText(date("%x", firstDayOfPreviousMonth) .. " - " .. date("%x", lastDayOfPreviousMonth))
 ```
 
-### Example 6: Last Weekend Only
+#### Example 6: Last Weekend Only
 
 Track just Saturday and Sunday of last week:
 
@@ -103,7 +113,7 @@ Tab:setEndDate(sunday)
 Tab:setDateSummaryText(date("%x", saturday) .. " - " .. date("%x", sunday))
 ```
 
-### Example 7: Custom Fixed Date Range
+#### Example 7: Custom Fixed Date Range
 
 Track from a specific date to today:
 
@@ -113,7 +123,7 @@ Tab:setStartDate(1735689600)
 Tab:setEndDate(DateUtils.getToday())
 ```
 
-### Example 8: Last N Days
+#### Example 8: Last N Days
 
 Track the last 7 days:
 
@@ -126,7 +136,7 @@ Tab:setEndDate(today)
 Tab:setDateSummaryText(date("%x", sevenDaysAgo) .. " - " .. date("%x", today))
 ```
 
-### Example 9: With Custom Tab Label Color
+#### Example 9: With Custom Tab Label Color
 
 Add a colored label to your tab:
 
@@ -140,7 +150,7 @@ Tab:setLabelColor("00FF00")  -- Green color (RGB hex: RRGGBB format)
 Tab:setDateSummaryText(date("%x", today))
 ```
 
-### Example 10: Using Locale for Internationalization
+#### Example 10: Using Locale for Internationalization
 
 Use localized strings in your tab. Currently you may only fetch existing localized keys (not set any).
 
@@ -154,7 +164,7 @@ Tab:setLabelText(Locale.get("today"))
 Tab:setDateSummaryText(date("%x", today))
 ```
 
-### Example 11: Random Date Range (Advanced)
+#### Example 11: Random Date Range (Advanced)
 
 Create a tab that tracks a random day from the current month - showing that you can use any Lua logic:
 
@@ -174,7 +184,7 @@ Tab:setLabelText("Random Day")
 Tab:setLabelColor("FF69B4")  -- Hot pink for fun!
 ```
 
-### Example 12: Using Custom Option Fields (Advanced)
+#### Example 12: Using Custom Option Fields (Advanced)
 
 Create a tab with user-configurable options that affect the tab's behavior. This example adds a checkbox that allows users to toggle whether the tab label should be colored red:
 
@@ -208,6 +218,36 @@ This example demonstrates how to:
 
 Custom option fields allow you to create highly interactive and configurable tabs that users can customize to their preferences without modifying the lua code.
 
+### Individual Days Examples
+
+These examples use `addToSpecificDays()` to track specific, non-contiguous days instead of continuous date ranges.
+
+#### Example 13: Tracking Specific Non-Contiguous Days
+
+Track only specific days instead of a continuous range. This is useful for tracking raid days, farming sessions, or any non-consecutive days:
+
+```lua
+-- Track last Monday, Wednesday, and Friday
+local today = DateUtils.getToday()
+local currentDayOfWeek = date("*t", today).wday
+
+-- Calculate days back to Monday (wday: 1=Sunday, 2=Monday, ..., 7=Saturday)
+local daysBackToMonday = (currentDayOfWeek - 2 + 7) % 7
+local lastMonday = DateUtils.subtractDays(today, daysBackToMonday)
+local lastWednesday = DateUtils.addDays(lastMonday, 2)
+local lastFriday = DateUtils.addDays(lastMonday, 4)
+
+-- Add the specific days
+Tab:addToSpecificDays(lastMonday)
+Tab:addToSpecificDays(lastWednesday)
+Tab:addToSpecificDays(lastFriday)
+
+Tab:setDateSummaryText("Mon/Wed/Fri")
+Tab:setLabelText("Raid Days")
+```
+
+**Note**: When using individual days, you don't need to call `setStartDate()` and `setEndDate()`. However, if you do set both, the individual days will take priority and the date range will be ignored.
+
 ## How to Set Up Your Own Custom Tab
 
 ### Step 1: Enable Advanced Mode
@@ -225,9 +265,10 @@ Custom option fields allow you to create highly interactive and configurable tab
 ### Step 3: Write Your Lua Expression
 
 1. In the **Date expression** text field, enter your lua code
-2. At minimum, your code must call:
-   - `Tab:setStartDate(timestamp)` - Set the start date as a Unix timestamp
-   - `Tab:setEndDate(timestamp)` - Set the end date as a Unix timestamp
+2. At minimum, your code must configure dates using **one of these approaches**:
+   - **Date Range**: Call both `Tab:setStartDate(timestamp)` and `Tab:setEndDate(timestamp)` to set a continuous date range
+   - **Individual Days**: Call `Tab:addToSpecificDays(timestamp)` one or more times to track specific, non-contiguous days
+   - **Note**: If both are set, individual days take priority over the date range
 3. Optionally, you can also:
    - Call `Tab:setDateSummaryText(text)` to set the date range display text
    - Call `Tab:setLabelText(text)` to change the tab's display name
@@ -240,7 +281,7 @@ Custom option fields allow you to create highly interactive and configurable tab
 The addon will automatically validate your lua expression. If there are errors, you'll see an error message. Common issues:
 
 - **Syntax errors**: Check for missing parentheses, quotes, or keywords
-- **Missing start/end date**: You must call both `setStartDate()` and `setEndDate()`
+- **Missing date configuration**: You must either set a date range with `setStartDate()` and `setEndDate()`, or add individual days with `addToSpecificDays()`
 - **Invalid timestamps**: Make sure your date calculations result in valid Unix timestamps
 
 ### Step 5: Configure Additional Options
@@ -263,9 +304,17 @@ Your lua snippet has access to four parameters: `Tab`, `Locale`, `DateUtils`, an
 
 The `Tab` object represents your custom tab and provides methods to configure it.
 
+#### Date Configuration
+
+Tabs can track data in two ways:
+1. **Date Range**: Set a start and end date using `setStartDate()` and `setEndDate()`
+2. **Individual Days**: Add specific days using `addToSpecificDays()`
+
+**Important**: If both are configured, individual days take **priority** over the date range. You must use one approach or the other, not both.
+
 #### Required Methods
 
-These methods **must** be called in your lua snippet:
+These methods **must** be called in your lua snippet to set up a date range:
 
 ##### `Tab:setStartDate(unixTime)`
 
@@ -289,6 +338,49 @@ Sets the end date for the tab's data range.
 - **Example:**
   ```lua
   Tab:setEndDate(DateUtils.getToday())
+  ```
+
+#### Individual Days Methods
+
+These methods allow you to track specific, non-contiguous days instead of a date range:
+
+##### `Tab:addToSpecificDays(unixTime)`
+
+Adds a specific day to this tab's list of tracked days. When individual days are set, they take priority over any date range (start/end dates).
+
+- **Parameters:**
+  - `unixTime` (number): Unix timestamp representing the date to add
+- **Returns:** None
+- **Example:**
+  ```lua
+  -- Track only Mondays and Fridays this week
+  local startOfWeek = DateUtils.getStartOfWeek()
+  Tab:addToSpecificDays(startOfWeek)  -- Monday
+  Tab:addToSpecificDays(DateUtils.addDays(startOfWeek, 4))  -- Friday
+  ```
+
+##### `Tab:removeFromSpecificDays(unixTime)`
+
+Removes a specific day from this tab's list of tracked days if it exists.
+
+- **Parameters:**
+  - `unixTime` (number): Unix timestamp representing the date to remove
+- **Returns:** None
+- **Example:**
+  ```lua
+  local today = DateUtils.getToday()
+  Tab:removeFromSpecificDays(today)
+  ```
+
+##### `Tab:getSpecificDays()`
+
+Returns the array of specific days set for this tab.
+
+- **Returns:** (table) Array of Unix timestamps representing the tracked days
+- **Example:**
+  ```lua
+  local days = Tab:getSpecificDays()
+  -- days is an array like {1700000000, 1700086400, 1700172800}
   ```
 
 #### Optional Methods
