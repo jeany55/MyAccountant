@@ -372,3 +372,85 @@ function Tests.TestGenerateUuid_Format()
   local matches = uuid:match(pattern) ~= nil
   AssertEqual(true, matches)
 end
+
+----------------------------------------------------------
+-- splitString tests
+----------------------------------------------------------
+
+function Tests.TestSplitString_WithSpaces()
+  local input = "hello world test"
+  local result = private.utils.splitString(input)
+  
+  AssertEqual(3, #result)
+  AssertEqual("hello", result[1])
+  AssertEqual("world", result[2])
+  AssertEqual("test", result[3])
+end
+
+function Tests.TestSplitString_WithComma()
+  local input = "apple,banana,cherry"
+  local result = private.utils.splitString(input, ",")
+  
+  AssertEqual(3, #result)
+  AssertEqual("apple", result[1])
+  AssertEqual("banana", result[2])
+  AssertEqual("cherry", result[3])
+end
+
+function Tests.TestSplitString_WithPipe()
+  local input = "one|two|three|four"
+  local result = private.utils.splitString(input, "|")
+  
+  AssertEqual(4, #result)
+  AssertEqual("one", result[1])
+  AssertEqual("two", result[2])
+  AssertEqual("three", result[3])
+  AssertEqual("four", result[4])
+end
+
+function Tests.TestSplitString_EmptyString()
+  local input = ""
+  local result = private.utils.splitString(input)
+  
+  AssertEqual(0, #result)
+end
+
+function Tests.TestSplitString_SingleWord()
+  local input = "hello"
+  local result = private.utils.splitString(input)
+  
+  AssertEqual(1, #result)
+  AssertEqual("hello", result[1])
+end
+
+function Tests.TestSplitString_MultipleSpaces()
+  local input = "hello  world   test"
+  local result = private.utils.splitString(input)
+  
+  -- Multiple spaces should still split correctly
+  AssertEqual(3, #result)
+  AssertEqual("hello", result[1])
+  AssertEqual("world", result[2])
+  AssertEqual("test", result[3])
+end
+
+function Tests.TestSplitString_WithDash()
+  local input = "first-second-third"
+  local result = private.utils.splitString(input, "-")
+  
+  AssertEqual(3, #result)
+  AssertEqual("first", result[1])
+  AssertEqual("second", result[2])
+  AssertEqual("third", result[3])
+end
+
+function Tests.TestSplitString_TrailingDelimiter()
+  local input = "one,two,three,"
+  local result = private.utils.splitString(input, ",")
+  
+  -- Trailing delimiter should not create empty element
+  AssertEqual(3, #result)
+  AssertEqual("one", result[1])
+  AssertEqual("two", result[2])
+  AssertEqual("three", result[3])
+end
