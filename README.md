@@ -45,14 +45,16 @@ Mouse over an income or outcome to see a breakdown. Configurable in options.
 ![](Docs/zoneBreakdown.png)
 
 ### **Calendar integration**
-See your income/outcome on the Calendar frame (not available in Classic WoW). Configurable in options.
+
+For days with data, MyAccountant will add icons to the Calendar (if your WoW version has one). See at a glance if you've made or lost money. Highlight over it for more info.
 
 ![](Docs/calendar.png)
 
-Visualize your data easily. Right click on the days you want, and then shift + right click to see it.
+Visualize your data easily. Left click on a day to see it in the income panel or right click to add multiple days and shift + right click to see a report.
 
 ![](Docs/calendarReport.png)
 
+![](Docs/calendarReportFrame.png)
 
 ### **Configure your tabs**
 
