@@ -56,6 +56,8 @@ Visualize your data easily. Left click on a day to see it in the income panel or
 
 ![](Docs/calendarReportFrame.png)
 
+Also available through the `/mya report` commands.
+
 ### **Configure your tabs**
 
 Set which tabs you want to see and in which order.
