@@ -17,9 +17,13 @@ This documentation is intended to help show you how to create your own custom ta
 
 ## Requirements
 
-Creating custom tabs requires a small amount of lua knowledge. The general idea is
+Creating custom tabs requires a small amount of lua knowledge. The general idea is:
 1. Advanced configuration is only allowed for Date tab types
-2. The date type needs to, at the bare minimum, set the start and end date in unix time (the number of seconds since 1970). Several utility functions are provided to help with date calculations.
+2. The date type needs to configure dates in one of two ways:
+   - **Date Range**: Set both a start date and end date using `setStartDate()` and `setEndDate()` in unix time (seconds since 1970)
+   - **Individual Days**: Add specific days using `addToSpecificDays()` for tracking non-contiguous days
+   - **Priority**: If both are set, individual days take priority over the date range
+3. Several utility functions are provided to help with date calculations.
 
 
 ![Tab Configuration](../Docs/incomePanelConfigAdvanced.png)
@@ -208,6 +212,51 @@ This example demonstrates how to:
 
 Custom option fields allow you to create highly interactive and configurable tabs that users can customize to their preferences without modifying the lua code.
 
+### Example 13: Tracking Specific Non-Contiguous Days
+
+Track only specific days instead of a continuous range. This is useful for tracking raid days, farming sessions, or any non-consecutive days:
+
+```lua
+-- Track last Monday, Wednesday, and Friday
+local today = DateUtils.getToday()
+local currentDayOfWeek = date("*t", today).wday
+
+-- Calculate days back to Monday (wday: 1=Sunday, 2=Monday, ..., 7=Saturday)
+local daysBackToMonday = (currentDayOfWeek - 2 + 7) % 7
+local lastMonday = DateUtils.subtractDays(today, daysBackToMonday)
+local lastWednesday = DateUtils.addDays(lastMonday, 2)
+local lastFriday = DateUtils.addDays(lastMonday, 4)
+
+-- Add the specific days
+Tab:addToSpecificDays(lastMonday)
+Tab:addToSpecificDays(lastWednesday)
+Tab:addToSpecificDays(lastFriday)
+
+Tab:setDateSummaryText("Mon/Wed/Fri")
+Tab:setLabelText("Raid Days")
+```
+
+### Example 14: Combining Individual Days (Priority System)
+
+This example shows how individual days take priority over date ranges when both are set:
+
+```lua
+-- Set a date range (will be ignored if individual days are added)
+Tab:setStartDate(DateUtils.getStartOfWeek())
+Tab:setEndDate(DateUtils.getToday())
+
+-- Add specific individual days (these will take priority)
+local today = DateUtils.getToday()
+Tab:addToSpecificDays(today)
+Tab:addToSpecificDays(DateUtils.subtractDay(today))
+
+-- The tab will ONLY track the two specific days added above,
+-- NOT the entire week range set by setStartDate/setEndDate
+Tab:setDateSummaryText("Last 2 Days")
+```
+
+**Note**: When using individual days, you don't need to call `setStartDate()` and `setEndDate()`. However, if you do set both, the individual days will take priority and the date range will be ignored.
+
 ## How to Set Up Your Own Custom Tab
 
 ### Step 1: Enable Advanced Mode
@@ -225,9 +274,10 @@ Custom option fields allow you to create highly interactive and configurable tab
 ### Step 3: Write Your Lua Expression
 
 1. In the **Date expression** text field, enter your lua code
-2. At minimum, your code must call:
-   - `Tab:setStartDate(timestamp)` - Set the start date as a Unix timestamp
-   - `Tab:setEndDate(timestamp)` - Set the end date as a Unix timestamp
+2. At minimum, your code must configure dates using **one of these approaches**:
+   - **Date Range**: Call both `Tab:setStartDate(timestamp)` and `Tab:setEndDate(timestamp)` to set a continuous date range
+   - **Individual Days**: Call `Tab:addToSpecificDays(timestamp)` one or more times to track specific, non-contiguous days
+   - **Note**: If both are set, individual days take priority over the date range
 3. Optionally, you can also:
    - Call `Tab:setDateSummaryText(text)` to set the date range display text
    - Call `Tab:setLabelText(text)` to change the tab's display name
@@ -240,7 +290,7 @@ Custom option fields allow you to create highly interactive and configurable tab
 The addon will automatically validate your lua expression. If there are errors, you'll see an error message. Common issues:
 
 - **Syntax errors**: Check for missing parentheses, quotes, or keywords
-- **Missing start/end date**: You must call both `setStartDate()` and `setEndDate()`
+- **Missing date configuration**: You must either set a date range with `setStartDate()` and `setEndDate()`, or add individual days with `addToSpecificDays()`
 - **Invalid timestamps**: Make sure your date calculations result in valid Unix timestamps
 
 ### Step 5: Configure Additional Options
@@ -263,9 +313,17 @@ Your lua snippet has access to four parameters: `Tab`, `Locale`, `DateUtils`, an
 
 The `Tab` object represents your custom tab and provides methods to configure it.
 
+#### Date Configuration
+
+Tabs can track data in two ways:
+1. **Date Range**: Set a start and end date using `setStartDate()` and `setEndDate()`
+2. **Individual Days**: Add specific days using `addToSpecificDays()`
+
+**Important**: If both are configured, individual days take **priority** over the date range. You must use one approach or the other, not both.
+
 #### Required Methods
 
-These methods **must** be called in your lua snippet:
+These methods **must** be called in your lua snippet to set up a date range:
 
 ##### `Tab:setStartDate(unixTime)`
 
@@ -289,6 +347,49 @@ Sets the end date for the tab's data range.
 - **Example:**
   ```lua
   Tab:setEndDate(DateUtils.getToday())
+  ```
+
+#### Individual Days Methods
+
+These methods allow you to track specific, non-contiguous days instead of a date range:
+
+##### `Tab:addToSpecificDays(unixTime)`
+
+Adds a specific day to this tab's list of tracked days. When individual days are set, they take priority over any date range (start/end dates).
+
+- **Parameters:**
+  - `unixTime` (number): Unix timestamp representing the date to add
+- **Returns:** None
+- **Example:**
+  ```lua
+  -- Track only Mondays and Fridays this week
+  local startOfWeek = DateUtils.getStartOfWeek()
+  Tab:addToSpecificDays(startOfWeek)  -- Monday
+  Tab:addToSpecificDays(DateUtils.addDays(startOfWeek, 4))  -- Friday
+  ```
+
+##### `Tab:removeFromSpecificDays(unixTime)`
+
+Removes a specific day from this tab's list of tracked days if it exists.
+
+- **Parameters:**
+  - `unixTime` (number): Unix timestamp representing the date to remove
+- **Returns:** None
+- **Example:**
+  ```lua
+  local today = DateUtils.getToday()
+  Tab:removeFromSpecificDays(today)
+  ```
+
+##### `Tab:getSpecificDays()`
+
+Returns the array of specific days set for this tab.
+
+- **Returns:** (table) Array of Unix timestamps representing the tracked days
+- **Example:**
+  ```lua
+  local days = Tab:getSpecificDays()
+  -- days is an array like {1700000000, 1700086400, 1700172800}
   ```
 
 #### Optional Methods
