@@ -8,8 +8,7 @@ end
 
 
 -- ========================================
--- MISSING TRANSLATIONS - English defaults
--- Please translate the following keys:
+-- 1.9
 -- ========================================
 L["invalid_report_date"] = "Invalid date format '%s'. Please use YYYY-MM-DD."
 L["mya_gph"] = "%s |cffffff00/mya gph|r - Reset gold per hour"

@@ -140,13 +140,6 @@ local function printHelpMessage()
   print(string.format(L["mya_report_add"], bullet))
   print(string.format(L["mya_report_info"], bullet))
   print(string.format(L["mya_report_show"], bullet))
-  -- MyAccountant:Print("|cffff9300" .. private.ADDON_NAME .. " v" .. private.ADDON_VERSION .. "|r")
-  -- MyAccountant:Print(L["help1"])
-  -- MyAccountant:Print(L["help_separator"])
-  -- MyAccountant:Print(L["help2"])
-  -- MyAccountant:Print(L["help3"])
-  -- MyAccountant:Print(L["help4"])
-  -- MyAccountant:Print(L["help5"])
 end
 
 function MyAccountant:HandleSlashCommand(input)
@@ -203,6 +196,8 @@ function MyAccountant:HandleSlashCommand(input)
           end
         end
       end
+    else
+      printHelpMessage()
     end
   elseif command == "" then
     if self.db.char.slashBehaviour == "OPEN_WINDOW" then
