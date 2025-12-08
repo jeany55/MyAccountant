@@ -18,10 +18,10 @@ on:
       branch:
         description: Which branch to build from
         default: "main"
-      minify:
-        description: "Minify release"
-        default: true
-        type: boolean
+      # minify:
+      #   description: "Minify release"
+      #   default: true
+      #   type: boolean
       suffix:
         description: Suffix to end build with
         default: ""
@@ -95,28 +95,28 @@ jobs:
           rm -rf Tests
           rm API/CustomTabs.md
 
-      # Minify Lua files to remove comments and whitespace (safe for WoW addons)
-      - name: Minify Lua files
-        if: ${{ inputs.minify }}
-        run: |
-          set -e
+      # # Minify Lua files to remove comments and whitespace (safe for WoW addons)
+      # - name: Minify Lua files
+      #   if: ${{ inputs.minify }}
+      #   run: |
+      #     set -e
 
-          # Install LuaSrcDiet via LuaRocks
-          sudo apt-get update
-          sudo apt-get install -y lua5.1 luarocks
-          sudo luarocks install luasrcdiet
+      #     # Install LuaSrcDiet via LuaRocks
+      #     sudo apt-get update
+      #     sudo apt-get install -y lua5.1 luarocks
+      #     sudo luarocks install luasrcdiet
 
-          # Minify all addon Lua files (excluding Libs/ which are third-party)
-          find . -name "*.lua" -type f ! -path "*/Libs/*" -print0 | while IFS= read -r -d '' file; do
-            echo "Minifying: $file"
-            luasrcdiet "$file" -o "$file.min" \
-              --noopt-binequiv \
-              --noopt-locals \
-              --noopt-strings \
-              --noopt-numbers \
-              --noopt-srcequiv
-            mv "$file.min" "$file"
-          done
+      #     # Minify all addon Lua files (excluding Libs/ which are third-party)
+      #     find . -name "*.lua" -type f ! -path "*/Libs/*" -print0 | while IFS= read -r -d '' file; do
+      #       echo "Minifying: $file"
+      #       luasrcdiet "$file" -o "$file.min" \
+      #         --noopt-binequiv \
+      #         --noopt-locals \
+      #         --noopt-strings \
+      #         --noopt-numbers \
+      #         --noopt-srcequiv
+      #       mv "$file.min" "$file"
+      #     done
 
       # Put it into all into a nested folder and zip it
       - name: Generate zip

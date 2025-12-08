@@ -18,10 +18,10 @@ on:
       changeNotes:
         description: Change notes to attach to release
         default: ""
-      minify:
-        description: "Minify release"
-        default: true
-        type: boolean
+      # minify:
+      #   description: "Minify release"
+      #   default: true
+      #   type: boolean
       deployToCurse:
         description: "Deploy to Curse"
         default: true
@@ -116,27 +116,27 @@ jobs:
           rm API/CustomTabs.md
 
       # Minify Lua files to remove comments and whitespace
-      - name: Minify Lua files
-        if: ${{ inputs.minify }}
-        run: |
-          set -e
+      # - name: Minify Lua files
+      #   if: ${{ inputs.minify }}
+      #   run: |
+      #     set -e
 
-          # Install LuaSrcDiet via LuaRocks
-          sudo apt-get update
-          sudo apt-get install -y lua5.1 luarocks
-          sudo luarocks install luasrcdiet
+      #     # Install LuaSrcDiet via LuaRocks
+      #     sudo apt-get update
+      #     sudo apt-get install -y lua5.1 luarocks
+      #     sudo luarocks install luasrcdiet
 
-          # Minify all addon Lua files (excluding Libs/ which are third-party). TODO: Make this better
-          find . -name "*.lua" -type f ! -path "*/Libs/*" -print0 | while IFS= read -r -d '' file; do
-            echo "Minifying: $file"
-            luasrcdiet "$file" -o "$file.min" \
-              --noopt-binequiv \
-              --noopt-locals \
-              --noopt-strings \
-              --noopt-numbers \
-              --noopt-srcequiv
-            mv "$file.min" "$file"
-          done
+      #     # Minify all addon Lua files (excluding Libs/ which are third-party). TODO: Make this better
+      #     find . -name "*.lua" -type f ! -path "*/Libs/*" -print0 | while IFS= read -r -d '' file; do
+      #       echo "Minifying: $file"
+      #       luasrcdiet "$file" -o "$file.min" \
+      #         --noopt-binequiv \
+      #         --noopt-locals \
+      #         --noopt-strings \
+      #         --noopt-numbers \
+      #         --noopt-srcequiv
+      #       mv "$file.min" "$file"
+      #     done
 
       # Put it into all into a nested folder and zip it
       - name: Generate zip
