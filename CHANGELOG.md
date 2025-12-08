@@ -13,6 +13,10 @@
   * `/mya report info` - Show current days in the report
   * `/mya report show` - Finalize and show the current report in the income panel
 
+### Bugfixes
+* Fixed horizontal line positioning in income frame when scrollbar is shown
+* Improved help message display for unrecognized `/mya report` commands
+
 ## [v1.8.1](https://github.com/jeany55/MyAccountant/releases/tag/v1.8.1)
 
 * Updates **Simplified Chinese** localization
