@@ -2,7 +2,7 @@
 ## Title: MyAccountant
 ## Notes: Track where your gold is going or coming from!
 ## Author: Jeany
-## Version: 1.8.1
+## Version: 1.9.0
 ## IconTexture: Interface\Addons\MyAccountant\Images\addonIcon
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1299016
