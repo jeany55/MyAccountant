@@ -35,8 +35,6 @@ L["report_empty"] = "Report is empty. Use |cffffff00/mya report add <date>|r to 
 
 L["invalid_report_date"] = "Invalid date format '%s'. Please use YYYY-MM-DD."
 
--- /mya
--- L["help1"] = "MyAccountant Valid options include"
 L["help_separator"] = "----------------------"
 
 L["mya_open"] = "%s |cffffff00/mya open|r - Show/hide income window"
