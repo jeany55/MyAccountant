@@ -6,6 +6,43 @@ if not L then
   return
 end
 
+
+-- ========================================
+-- MISSING TRANSLATIONS - English defaults
+-- Please translate the following keys:
+-- ========================================
+L["invalid_report_date"] = "Invalid date format '%s'. Please use YYYY-MM-DD."
+L["mya_gph"] = "%s |cffffff00/mya gph|r - Reset gold per hour"
+L["mya_info_frame_toggle"] = "%s |cffffff00/mya info|r - Show/hide information frame"
+L["mya_lock_info_frame"] = "%s |cffffff00/mya lock|r - Lock/unlock information frame position"
+L["mya_open"] = "%s |cffffff00/mya open|r - Show/hide income window"
+L["mya_options"] = "%s |cffffff00/mya options|r - Open options window"
+L["mya_report_add"] = "%s |cffffff00/mya report add <date>|r - Add a day to the report (date format: YYYY-MM-DD)"
+L["mya_report_info"] = "%s |cffffff00/mya report info|r - Show current days in the report"
+L["mya_report_show"] = "%s |cffffff00/mya report show|r - Finalizes and shows the current report in the income panel"
+L["mya_report_start"] = "%s |cffffff00/mya report start|r - Start a new report (removes any existing)"
+L["mya_reset_session"] = "%s |cffffff00/mya reset_session|r - Reset session info"
+L["option_calendar"] = "Calendar"
+L["option_calendar_click"] = "<Left click to view day in income panel>"
+L["option_calendar_click_right_add"] = "<Right click to add day to report>"
+L["option_calendar_click_right_remove"] = "<Right click to remove day from report>"
+L["option_calendar_show_report"] = "<Shift + right click to show report>"
+L["option_calendar_source"] = "Show data from"
+L["option_calendar_source_desc"] = "Where to source calendar data from"
+L["option_calendar_summary"] = "Show data on calendar"
+L["option_calendar_summary_desc"] =
+    "If enabled, MyAccountant will add an icon to days with data on the WoW calendar. Highlight over it to see more information."
+L["report_date_info"] = "%d day(s)"
+L["report_day_added"] = "Added %s to report."
+L["report_empty"] = "Report is empty. Use |cffffff00/mya report add <date>|r to add days to the report (YYYY-MM-DD)."
+L["report_info"] = " |cffff9300%d day(s) in current report:|r"
+L["report_no_active"] = "No active report. Use |cffffff00/mya report start|r to start a new report."
+L["report_showing"] = "Showing report with %d day(s). Use |cffffff00/mya report start|r to start a new report."
+L["report_started"] = "Started new report. Use |cffffff00/mya report add <date>|r to add days to the report (YYYY-MM-DD)."
+
+-- ========================================
+-- Existing translations
+-- ========================================
 L["ldb_name_income"]="%s - 收入"
 L["ldb_name_profit"]="%s - 利润"
 L["ldb_name_outcome"]="%s - 支出"
@@ -37,7 +74,7 @@ L["last_week"]="上周"
 L["two_weeks_ago"]="两周前"
 L["last_weekend"]="上周末"
 L["option_tab_text"]="标签配置允许你指定你看到哪些标签以及它们的顺序。在左侧选择所需的标签以启用或禁用。"
-L["option_tab_advanced"]="高级模式"
+L["option_tab_advanced"]="高级配置"
 L["option_tab_advanced_desc"]="高级模式允许你创建新标签、删除现有标签，并允许高级配置。新标签需要一些 Lua 知识 - 你可以查看现有标签作为示例。"
 L["option_tabs"]="标签"
 L["option_new_tab"]="新建标签"
@@ -63,7 +100,6 @@ L["option_tab_expression_invalid_startDate"]="开始日期必须是有效的 Uni
 L["option_tab_expression_invalid_endDate"]="结束日期必须是有效的 Unix 时间戳（数字）"
 L["option_tab_visible"]="可见"
 L["option_tab_visible_desc"]="在收入框架上显示此标签"
-L["option_tab_advanced"]="高级配置"
 L["option_tab_info_frame"]="向信息框架注册数据"
 L["option_tab_info_frame_desc"]="如果选中，此标签返回的数据将在信息框架上可用。在信息框架选项中配置。"
 L["option_tab_minimap"]="向小地图提示选项注册数据"
@@ -98,11 +134,10 @@ L["option_info_frame_show_desc"]="是否显示信息框架。"
 L["option_info_frame_drag_shift"]="需要按住 Shift 键才能移动"
 L["option_info_frame_drag_shift_desc"]="是否需要按住 Shift 键才能拖动信息框架。需要解锁后才能移动。"
 L["option_info_frame_lock"]="锁定框架位置"
-L["option_info_frame_lock_desc"]="如果为真，则防止信息框架被移动。"
+L["option_info_frame_lock_desc"]="在信息框架上显示哪些信息。"
 L["option_info_frame_right_align"]="数据文本右对齐"
 L["option_info_frame_right_align_desc"]="如果为假，数据将左对齐而不是右对齐。"
 L["option_info_frame_items"]="要显示的信息"
-L["option_info_frame_lock_desc"]="在信息框架上显示哪些信息。"
 L["option_minimap_data"]="显示摘要数据来自"
 L["option_minimap_data_desc"]="在小地图提示上显示什么数据"
 L["option_minimap_balance_style"]="显示来自的总余额"
@@ -252,4 +287,3 @@ L["TALENTS"]="天赋"
 L["BARBER"]="理发师"
 L["LFG"]="副本查找器"
 L["OTHER"]="其他"
-
