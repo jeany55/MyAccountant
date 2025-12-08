@@ -2,7 +2,7 @@
 
 ## Overview
 
-MyAccountant allows you to create fully customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what timeframes you want.
+MyAccountant allows you to create customized tabs using Lua code snippets. While the addon comes with many built-in tabs (Today, This Week, This Month, etc.), custom tabs give you the power to track exactly what timeframes you want.
 
 With custom tabs, you can:
 
@@ -25,7 +25,6 @@ Creating custom tabs requires a small amount of lua knowledge. The general idea 
    - **Priority**: If both are set, individual days take priority over the date range
 
 Several utility functions are provided to help with date calculations.
-
 
 ![Tab Configuration](../Docs/incomePanelConfigAdvanced.png)
 
@@ -245,25 +244,6 @@ Tab:addToSpecificDays(lastFriday)
 
 Tab:setDateSummaryText("Mon/Wed/Fri")
 Tab:setLabelText("Raid Days")
-```
-
-#### Example 14: Combining Individual Days (Priority System)
-
-This example shows how individual days take priority over date ranges when both are set:
-
-```lua
--- Set a date range (will be ignored if individual days are added)
-Tab:setStartDate(DateUtils.getStartOfWeek())
-Tab:setEndDate(DateUtils.getToday())
-
--- Add specific individual days (these will take priority)
-local today = DateUtils.getToday()
-Tab:addToSpecificDays(today)
-Tab:addToSpecificDays(DateUtils.subtractDay(today))
-
--- The tab will ONLY track the two specific days added above,
--- NOT the entire week range set by setStartDate/setEndDate
-Tab:setDateSummaryText("Last 2 Days")
 ```
 
 **Note**: When using individual days, you don't need to call `setStartDate()` and `setEndDate()`. However, if you do set both, the individual days will take priority and the date range will be ignored.
