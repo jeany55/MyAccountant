@@ -7,6 +7,11 @@
 ### New Features
 * **Calendar integration**: MyAccountant now adds icons to days with data on the WoW calendar (not available in Classic WoW). You can hover over days to see income/outcome information, and interact with the calendar to create custom reports.
 * **Report functionality**: Create custom reports by selecting specific days. Right-click on calendar days to add them to a report, or use `/mya report` commands to build reports programmatically. Shift + right click on the calendar to view your report.
+* **New chat commands**: Added `/mya report` commands for managing custom reports:
+  * `/mya report start` - Start a new report (removes any existing)
+  * `/mya report add <date>` - Add a day to the report (date format: YYYY-MM-DD)
+  * `/mya report info` - Show current days in the report
+  * `/mya report show` - Finalize and show the current report in the income panel
 
 ### Other
 * Removed minify from build process
