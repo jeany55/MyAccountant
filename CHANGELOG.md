@@ -13,9 +13,6 @@
   * `/mya report info` - Show current days in the report
   * `/mya report show` - Finalize and show the current report in the income panel
 
-### Other
-* Removed minify from build process
-
 ## [v1.8.1](https://github.com/jeany55/MyAccountant/releases/tag/v1.8.1)
 
 * Updates **Simplified Chinese** localization
