@@ -203,7 +203,12 @@ function MyAccountant:InitializeUI()
 
   -- Setup Title
   IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
+  if private.wowVersion == GameTypes.RETAIL then
+    -- Todo: Adjust for retail title bg
+    IncomeFrame.title:SetPoint("TOP", IncomeFrame, "TOP", 3, -9)
+  else
+    IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
+  end
   IncomeFrame.title:SetText(private.ADDON_NAME)
 
   characterDropdown = LibDD:Create_UIDropDownMenu("CharacterDropDownMenu", IncomeFrame)
@@ -757,6 +762,10 @@ function MyAccountant:DrawRows()
     scrollBar:Hide()
   end
 
+  -- Start at 3 because first two lines are column dividers
+  local lineIndex = 3
+  local startingRowHeight = -17
+
   local scrollBarUpdateFunction = function()
     if (#incomeTable > 12) then
       FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20);
@@ -850,6 +859,19 @@ function MyAccountant:DrawRows()
       _G[incoming]:SetText("")
       _G[outgoing]:SetText("")
     end
+
+    -- Update grid line positioning to handle the scrollbar showing/hiding
+    local line = RenderedLines[lineIndex]
+    if line then
+      local xPadding = -3
+      if showScrollbar then
+        xPadding = -25
+      end
+
+      line:SetEndPoint("RIGHT", IncomeFrame, xPadding, startingRowHeight + 80)
+    end
+    startingRowHeight = startingRowHeight - 20
+    lineIndex = lineIndex + 1
   end
 end
 
