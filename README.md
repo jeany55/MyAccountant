@@ -44,6 +44,16 @@ Mouse over an income or outcome to see a breakdown. Configurable in options.
 
 ![](Docs/zoneBreakdown.png)
 
+### **Calendar integration**
+See your income/outcome on the Calendar frame (not available in Classic WoW). Configurable in options.
+
+![](Docs/calendar.png)
+
+Visualize your data easily. Right click on the days you want, and then shift + right click to see it.
+
+![](Docs/calendarReport.png)
+
+
 ### **Configure your tabs**
 
 Set which tabs you want to see and in which order.
