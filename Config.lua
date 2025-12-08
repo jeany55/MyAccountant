@@ -714,6 +714,7 @@ function MyAccountant:SetupAddonOptions()
             order = 1,
             name = L["option_calendar_summary"],
             desc = L["option_calendar_summary_desc"],
+            disabled = function() return private.wowVersion == GameTypes.CLASSIC_ERA end,
             type = "toggle",
             width = "full",
             set = function(info, val) self.db.char.showCalendarSummary = val end,
@@ -725,7 +726,9 @@ function MyAccountant:SetupAddonOptions()
             desc = L["option_calendar_source_desc"],
             type = "select",
             set = function(info, val) self.db.char.calendarDataSource = val end,
-            disabled = function() return not self.db.char.showCalendarSummary end,
+            disabled = function()
+              return private.wowVersion == GameTypes.CLASSIC_ERA or not self.db.char.showCalendarSummary
+            end,
             get = function(info) return self.db.char.calendarDataSource end,
             values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] }
           }
