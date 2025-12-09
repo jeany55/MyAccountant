@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.9.1](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.1)
+
+### Bugfixes
+* Added calendar check to make sure it's initialized first
+  
+### Other
+* Updated **Russian** localization
+* Updated **Simplified Chinese** localization
+  
 ## [v1.9.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.0)
 
 ### New Features
