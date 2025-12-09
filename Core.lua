@@ -22,6 +22,7 @@ private.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MyAccountant", "Version")
 --- @field utils UtilFunctions Utility functions used throughout the addon
 --- @field ApiUtils ApiUtils API utility functions used by luaExpressions in tabs
 --- @field reportTab Tab? The current report tab being generated if any
+--- @field ConfigHelpers ConfigHelpers Configuration helper functions
 private = private or {}
 
 --- @enum ViewType

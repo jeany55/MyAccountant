@@ -18,6 +18,15 @@ Models\Tab.lua
 API\Tabs.lua
 Constants\TabLibrary.lua
 Constants\Constants.lua
+Config\ConfigHelpers.lua
+Config\AboutConfig.lua
+Config\GeneralConfig.lua
+Config\MinimapConfig.lua
+Config\SourcesConfig.lua
+Config\IncomePanelConfig.lua
+Config\TabsConfig.lua
+Config\InfoFrameConfig.lua
+Config\DataManagementConfig.lua
 Config.lua
 GUI\Templates.xml
 GUI\IncomeFrame.lua
