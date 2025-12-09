@@ -2,9 +2,9 @@
 ## Title: MyAccountant
 ## Notes: Track where your gold is going or coming from!
 ## Author: Jeany
-## Version: 1.9.0
+## Version: 1.9.1
 ## RequiredDeps:
-## X-Curse-Project-ID: 1299016
+## X-Curse-Project-ID: 1.9.116
 ## SavedVariables: MyAccountantDB
 ## SavedVariablesPerCharacter:
 
