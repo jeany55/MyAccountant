@@ -3,6 +3,12 @@ local _, private = ...
 
 --- Update calendar days to show income/outcome
 function MyAccountant:UpdateCalendar()
+  -- CalendarFrame and CalendarFrame_Update only exist after Blizzard_Calendar is loaded
+  -- This happens when the user opens calendar for the first time
+  if not CalendarFrame or not CalendarFrame_Update then
+    return
+  end
+
   -- Force day property on each calendar day to initialize
   CalendarFrame_Update()
 
