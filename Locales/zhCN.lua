@@ -8,137 +8,212 @@ end
 
 
 -- ========================================
--- 1.9
--- ========================================
-L["invalid_report_date"] = "Invalid date format '%s'. Please use YYYY-MM-DD."
-L["mya_gph"] = "%s |cffffff00/mya gph|r - Reset gold per hour"
-L["mya_info_frame_toggle"] = "%s |cffffff00/mya info|r - Show/hide information frame"
-L["mya_lock_info_frame"] = "%s |cffffff00/mya lock|r - Lock/unlock information frame position"
-L["mya_open"] = "%s |cffffff00/mya open|r - Show/hide income window"
-L["mya_options"] = "%s |cffffff00/mya options|r - Open options window"
-L["mya_report_add"] = "%s |cffffff00/mya report add <date>|r - Add a day to the report (date format: YYYY-MM-DD)"
-L["mya_report_info"] = "%s |cffffff00/mya report info|r - Show current days in the report"
-L["mya_report_show"] = "%s |cffffff00/mya report show|r - Finalizes and shows the current report in the income panel"
-L["mya_report_start"] = "%s |cffffff00/mya report start|r - Start a new report (removes any existing)"
-L["mya_reset_session"] = "%s |cffffff00/mya reset_session|r - Reset session info"
-L["option_calendar"] = "Calendar"
-L["option_calendar_click"] = "<Left click to view day in income panel>"
-L["option_calendar_click_right_add"] = "<Right click to add day to report>"
-L["option_calendar_click_right_remove"] = "<Right click to remove day from report>"
-L["option_calendar_show_report"] = "<Shift + right click to show report>"
-L["option_calendar_source"] = "Show data from"
-L["option_calendar_source_desc"] = "Where to source calendar data from"
-L["option_calendar_summary"] = "Show data on calendar"
+--- VERSION 1.9
+----------------------------------------
+L["option_calendar_summary"] = "在日历上显示数据"
 L["option_calendar_summary_desc"] =
-    "If enabled, MyAccountant will add an icon to days with data on the WoW calendar. Highlight over it to see more information."
-L["report_date_info"] = "%d day(s)"
-L["report_day_added"] = "Added %s to report."
-L["report_empty"] = "Report is empty. Use |cffffff00/mya report add <date>|r to add days to the report (YYYY-MM-DD)."
-L["report_info"] = " |cffff9300%d day(s) in current report:|r"
-L["report_no_active"] = "No active report. Use |cffffff00/mya report start|r to start a new report."
-L["report_showing"] = "Showing report with %d day(s). Use |cffffff00/mya report start|r to start a new report."
-L["report_started"] = "Started new report. Use |cffffff00/mya report add <date>|r to add days to the report (YYYY-MM-DD)."
+    "如果启用，MyAccountant 将在魔兽世界日历上有数据的日期添加一个图标。悬停在上面可查看更多信息。"
 
--- ========================================
--- Existing translations
--- ========================================
-L["ldb_name_income"]="%s - 收入"
-L["ldb_name_profit"]="%s - 利润"
-L["ldb_name_outcome"]="%s - 支出"
-L["option_tab_additional_options"]="附加选项"
-L["warband"]="战团"
-L["option_show_warband_in_realm_balance"]="在服务器余额总计中显示战团余额"
-L["option_show_warband_in_realm_balance_desc"]="如果启用，战团余额将包含在服务器余额提示中。战团余额会在你打开银行时更新。"
-L["option_tab_developer_export"]="标签库导出"
-L["option_tab_developer_export_desc"]="[开发者选项]：显示将此标签添加到插件默认标签库所需的 LUA 代码。"
-L["ldb_name_income_character"]="收入 - %s"
-L["ldb_name_outcome_character"]="支出 - %s"
-L["ldb_name_profit_character"]="利润 - %s"
-L["ldb_name_income_realm"]="收入 - %s（服务器）"
-L["ldb_name_outcome_realm"]="支出 - %s（服务器）"
-L["ldb_name_profit_realm"]="利润 - %s（服务器）"
-L["option_tab_linebreak"]="在此标签后换行"
-L["option_tab_linebreak_desc"]="如果为真，此标签将是当前行的最后一个标签。下一个标签将在新行显示。"
-L["option_income_frame_width"]="收入框架宽度"
-L["option_income_frame_width_desc"]="收入框架的宽度。"
-L["version_welcome_message"]="欢迎使用 %s！小地图提示设置和信息框架设置已重置为默认值。请检查插件选项以自定义它们和你的标签。"
-L["version_first_install_message"]="所有设置已设置为默认值。请检查插件选项以自定义你的小地图提示、信息框架数据选项以及你的标签！"
-L["random_day"]="随机日期（月）"
-L["yesterday"]="昨天"
-L["two_days_ago"]="两天前"
-L["three_days_ago"]="三天前"
-L["four_days_ago"]="四天前"
-L["last_month"]="上个月"
-L["last_week"]="上周"
-L["two_weeks_ago"]="两周前"
-L["last_weekend"]="上周末"
-L["option_tab_text"]="标签配置允许你指定你看到哪些标签以及它们的顺序。在左侧选择所需的标签以启用或禁用。"
-L["option_tab_advanced"]="高级配置"
-L["option_tab_advanced_desc"]="高级模式允许你创建新标签、删除现有标签，并允许高级配置。新标签需要一些 Lua 知识 - 你可以查看现有标签作为示例。"
-L["option_tabs"]="标签"
-L["option_new_tab"]="新建标签"
-L["option_reset_tabs"]="重置标签为默认"
-L["option_reset_tabs_desc"]="将标签配置重置为默认标签。|cffff0000将删除所有自定义标签！不可逆！|r"
-L["option_reset_tabs_confirm"]="你确定要将所有标签重置为默认吗？这将删除所有标签配置并将所有标签重置为默认设置。|cffff0000这是不可逆的！|r"
-L["option_tab_name"]="标签标签"
-L["option_tab_name_desc"]="在收入面板上显示的标签名称"
-L["option_tab_date_expression"]="日期表达式"
-L["option_tab_create"]="创建标签"
-L["option_tab_date_expression_desc"]="日期表达式允许使用 Lua 代码进行高级配置。"
-L["option_tab_type"]="标签类型"
-L["option_tab_type_desc"]="此标签将显示什么类型的数据（会话、服务器余额或日期）。日期允许特定配置。"
-L["option_tab_type_date"]="日期"
-L["option_tab_type_session"]="会话"
-L["option_tab_type_balance"]="服务器余额"
-L["option_tab_create_fail"]="已存在同名标签！"
-L["option_tab_expression_invalid_lua"]="此 Lua 似乎无效"
-L["option_tab_expression_invalid_lua_bad"]="此 Lua 表达式执行失败 - 检查语法错误！"
-L["option_tab_expression_missing_startDate"]="你必须通过调用 Tab:setStartDate() 设置开始日期"
-L["option_tab_expression_missing_endDate"]="你必须通过调用 Tab:setEndDate() 设置结束日期"
-L["option_tab_expression_invalid_startDate"]="开始日期必须是有效的 Unix 时间戳（数字）"
-L["option_tab_expression_invalid_endDate"]="结束日期必须是有效的 Unix 时间戳（数字）"
-L["option_tab_visible"]="可见"
-L["option_tab_visible_desc"]="在收入框架上显示此标签"
-L["option_tab_info_frame"]="向信息框架注册数据"
-L["option_tab_info_frame_desc"]="如果选中，此标签返回的数据将在信息框架上可用。在信息框架选项中配置。"
-L["option_tab_minimap"]="向小地图提示选项注册数据"
-L["option_tab_minimap_desc"]="如果为真，来自此标签的数据将作为摘要数据在小地图提示选项页面上可用。"
-L["option_tab_ldb"]="向 LDB 注册数据"
-L["option_tab_ldb_desc"]="如果选中，此标签返回的数据将注册到 LibDataBroker，允许你在其他插件（如 Titan Panel 或 Bazooka）中查看它。"
-L["option_tab_move_left"]="向左移动"
-L["option_tab_move_left_desc"]="将此标签向左移动。"
-L["option_tab_move_right"]="向右移动"
-L["option_tab_move_right_desc"]="将此标签向右移动。"
-L["option_tab_delete"]="删除标签"
-L["option_tab_delete_desc"]="从收入面板中删除此标签"
-L["option_tab_delete_confirm"]="删除此标签将从收入面板中删除它。|cffff0000你确定吗？|r"
-L["option_minimap_tooltip"]="小地图提示"
-L["option_income_panel"]="收入面板"
-L["option_addon_data"]="插件数据"
-L["options_developer_options"]="开发者选项"
-L["about_author"]="作者 %s"
-L["about_github"]="Github"
-L["about_github_desc"]="发现错误？有建议？创建一个问题！"
-L["about_languages"]="支持的语言"
-L["english"]="英语"
-L["russian"]="俄语（由 ZamestoTv 翻译）"
-L["simplified_chinese"]="简体中文（由 cclolz 翻译）"
-L["about_special_thanks_to"]="特别感谢"
-L["balance"]="余额"
-L["option_info_frame"]="信息框架"
-L["option_info_frame_desc"]=
-"信息框架是一个可拖动的小框架，可以显示服务器余额、会话信息或其他数据等信息。"
-L["option_info_frame_show"]="显示信息框架"
-L["option_info_frame_show_desc"]="是否显示信息框架。"
-L["option_info_frame_drag_shift"]="需要按住 Shift 键才能移动"
-L["option_info_frame_drag_shift_desc"]="是否需要按住 Shift 键才能拖动信息框架。需要解锁后才能移动。"
-L["option_info_frame_lock"]="锁定框架位置"
-L["option_info_frame_lock_desc"]="在信息框架上显示哪些信息。"
-L["option_info_frame_right_align"]="数据文本右对齐"
-L["option_info_frame_right_align_desc"]="如果为假，数据将左对齐而不是右对齐。"
-L["option_info_frame_items"]="要显示的信息"
-L["option_minimap_data"]="显示摘要数据来自"
-L["option_minimap_data_desc"]="在小地图提示上显示什么数据"
+L["option_calendar_source"] = "显示数据来自"
+L["option_calendar_source_desc"] = "日历数据的来源位置"
+
+L["option_calendar_click"] = "<左键点击在收入面板中查看当天>"
+L["option_calendar_click_right_add"] = "<右键点击添加当天到报告>"
+L["option_calendar_click_right_remove"] = "<右键点击从报告中删除当天>"
+L["option_calendar_show_report"] = "<Shift + 右键点击显示报告>"
+
+L["option_calendar"] = "日历"
+
+L["report_started"] = "已开始新报告。使用 |cffffff00/mya report add <日期>|r 向报告添加日期（YYYY-MM-DD）。"
+L["report_no_active"] = "没有活动报告。使用 |cffffff00/mya report start|r 开始新报告。"
+L["report_day_added"] = "已将 %s 添加到报告。"
+L["report_showing"] = "显示包含 %d 天的报告。使用 |cffffff00/mya report start|r 开始新报告。"
+
+L["report_date_info"] = "%d 天"
+
+L["report_info"] = " |cffff9300当前报告中有 %d 天：|r"
+
+L["report_empty"] = "报告为空。使用 |cffffff00/mya report add <日期>|r 向报告添加日期（YYYY-MM-DD）。"
+
+L["invalid_report_date"] = "无效的日期格式 '%s'。请使用 YYYY-MM-DD 格式。"
+
+L["help_separator"] = "----------------------"
+
+L["mya_open"] = "%s |cffffff00/mya open|r - 显示/隐藏收入窗口"
+L["mya_options"] = "%s |cffffff00/mya options|r - 打开选项窗口"
+L["mya_gph"] = "%s |cffffff00/mya gph|r - 重置每小时金币数"
+L["mya_reset_session"] = "%s |cffffff00/mya reset_session|r - 重置会话信息"
+L["mya_info_frame_toggle"] = "%s |cffffff00/mya info|r - 显示/隐藏信息框架"
+L["mya_lock_info_frame"] = "%s |cffffff00/mya lock|r - 锁定/解锁信息框架位置"
+L["mya_report_start"] = "%s |cffffff00/mya report start|r - 开始新报告（删除任何现有报告）"
+L["mya_report_add"] = "%s |cffffff00/mya report add <日期>|r - 向报告添加一天（日期格式：YYYY-MM-DD）"
+L["mya_report_info"] = "%s |cffffff00/mya report info|r - 显示报告中的当前日期"
+L["mya_report_show"] = "%s |cffffff00/mya report show|r - 完成并在收入面板中显示当前报告"
+
+L["help2"] = "%s %s/mya open%s - 显示/隐藏收入窗口"
+L["help3"] = "- /mya options - 打开选项窗口"
+L["help4"] = "- /mya gph - 重置每小时金币数"
+L["help5"] = "- /mya reset_session - 重置会话信息"
+
+----------------------------------------
+--- VERSION 1.8
+----------------------------------------
+L["ldb_name_income"] = "%s - 收入"
+L["ldb_name_profit"] = "%s - 利润"
+L["ldb_name_outcome"] = "%s - 支出"
+
+L["option_tab_additional_options"] = "附加选项"
+
+L["warband"] = "战团"
+L["option_show_warband_in_realm_balance"] = "在服务器余额总计中显示战团余额"
+L["option_show_warband_in_realm_balance_desc"] =
+    "如果启用，战团余额将包含在服务器余额提示中。战团余额会在你打开银行时更新。"
+
+L["option_tab_developer_export"] = "标签库导出"
+L["option_tab_developer_export_desc"] =
+    "[开发者选项]：显示将此标签添加到插件默认标签库所需的 LUA 代码。"
+
+L["ldb_name_income_character"] = "收入 - %s"
+L["ldb_name_outcome_character"] = "支出 - %s"
+L["ldb_name_profit_character"] = "利润 - %s"
+L["ldb_name_income_realm"] = "收入 - %s（服务器）"
+L["ldb_name_outcome_realm"] = "支出 - %s（服务器）"
+L["ldb_name_profit_realm"] = "利润 - %s（服务器）"
+
+L["option_tab_linebreak"] = "在此标签后换行"
+L["option_tab_linebreak_desc"] =
+    "如果为真，此标签将是当前行的最后一个标签。下一个标签将在新行显示。"
+
+L["option_income_frame_width"] = "收入框架宽度"
+L["option_income_frame_width_desc"] = "收入框架的宽度。"
+
+L["version_welcome_message"] =
+    "欢迎使用 %s！小地图提示设置和信息框架设置已重置为默认值。请检查插件选项以自定义它们和你的标签。"
+L["version_first_install_message"] =
+    "所有设置已设置为默认值。请检查插件选项以自定义你的小地图提示、信息框架数据选项以及你的标签！"
+
+L["random_day"] = "随机日期（月）"
+L["yesterday"] = "昨天"
+L["two_days_ago"] = "两天前"
+L["three_days_ago"] = "三天前"
+L["four_days_ago"] = "四天前"
+L["last_month"] = "上个月"
+L["last_week"] = "上周"
+L["two_weeks_ago"] = "两周前"
+L["last_weekend"] = "上周末"
+L["option_tab_text"] =
+    "标签配置允许你指定你看到哪些标签以及它们的顺序。在左侧选择所需的标签以启用或禁用。"
+
+L["option_tab_advanced"] = "高级模式"
+L["option_tab_advanced_desc"] =
+    "高级模式允许你创建新标签、删除现有标签，并允许高级配置。新标签需要一些 Lua 知识 - 你可以查看现有标签作为示例。"
+
+L["option_tabs"] = "标签"
+L["option_new_tab"] = "新建标签"
+
+L["option_reset_tabs"] = "重置标签为默认"
+L["option_reset_tabs_desc"] = "将标签配置重置为默认标签。|cffff0000将删除所有自定义标签！不可逆！|r"
+
+L["option_reset_tabs_confirm"] =
+    "你确定要将所有标签重置为默认吗？这将删除所有标签配置并将所有标签重置为默认设置。|cffff0000这是不可逆的！|r"
+
+L["option_tab_name"] = "标签标签"
+L["option_tab_name_desc"] = "在收入面板上显示的标签名称"
+
+L["option_tab_date_expression"] = "日期表达式"
+
+L["option_tab_create"] = "创建标签"
+
+L["option_tab_date_expression_desc"] = "日期表达式允许使用 Lua 代码进行高级配置。"
+
+L["option_tab_type"] = "标签类型"
+L["option_tab_type_desc"] =
+    "此标签将显示什么类型的数据（会话、服务器余额或日期）。日期允许特定配置。"
+L["option_tab_type_date"] = "日期"
+L["option_tab_type_session"] = "会话"
+L["option_tab_type_balance"] = "服务器余额"
+
+L["option_tab_create_fail"] = "已存在同名标签！"
+
+L["option_tab_expression_invalid_lua"] = "此 Lua 似乎无效"
+L["option_tab_expression_invalid_lua_bad"] = "此 Lua 表达式执行失败 - 检查语法错误！"
+
+L["option_tab_expression_missing_startDate"] = "你必须通过调用 Tab:setStartDate() 设置开始日期"
+L["option_tab_expression_missing_endDate"] = "你必须通过调用 Tab:setEndDate() 设置结束日期"
+
+L["option_tab_expression_invalid_startDate"] = "开始日期必须是有效的 Unix 时间戳（数字）"
+L["option_tab_expression_invalid_endDate"] = "结束日期必须是有效的 Unix 时间戳（数字）"
+
+L["option_tab_visible"] = "可见"
+L["option_tab_visible_desc"] = "在收入框架上显示此标签"
+
+L["option_tab_advanced"] = "高级配置"
+
+L["option_tab_info_frame"] = "向信息框架注册数据"
+L["option_tab_info_frame_desc"] =
+    "如果选中，此标签返回的数据将在信息框架上可用。在信息框架选项中配置。"
+
+L["option_tab_minimap"] = "向小地图提示选项注册数据"
+L["option_tab_minimap_desc"] =
+    "如果为真，来自此标签的数据将作为摘要数据在小地图提示选项页面上可用。"
+
+L["option_tab_ldb"] = "向 LDB 注册数据"
+L["option_tab_ldb_desc"] =
+    "如果选中，此标签返回的数据将注册到 LibDataBroker，允许你在其他插件（如 Titan Panel 或 Bazooka）中查看它。"
+
+L["option_tab_move_left"] = "向左移动"
+L["option_tab_move_left_desc"] = "将此标签向左移动。"
+
+L["option_tab_move_right"] = "向右移动"
+L["option_tab_move_right_desc"] = "将此标签向右移动。"
+
+L["option_tab_delete"] = "删除标签"
+L["option_tab_delete_desc"] = "从收入面板中删除此标签"
+L["option_tab_delete_confirm"] = "删除此标签将从收入面板中删除它。|cffff0000你确定吗？|r"
+
+L["option_minimap_tooltip"] = "小地图提示"
+L["option_income_panel"] = "收入面板"
+L["option_addon_data"] = "插件数据"
+L["options_developer_options"] = "开发者选项"
+
+L["about_author"] = "作者 %s"
+L["about_github"] = "Github"
+L["about_github_desc"] = "发现错误？有建议？创建一个问题！"
+L["about_languages"] = "支持的语言"
+L["english"] = "英语"
+L["russian"] = "俄语（由 ZamestoTv 翻译）"
+L["simplified_chinese"] = "简体中文（由 cclolz 翻译）"
+
+L["about_special_thanks_to"] = "特别感谢"
+
+----------------------------------------
+--- VERSION 1.7
+----------------------------------------
+
+L["balance"] = "余额"
+
+L["option_info_frame"] = "信息框架"
+L["option_info_frame_desc"] =
+    "信息框架是一个可拖动的小框架，可以显示服务器余额、会话信息或其他数据等信息。"
+
+L["option_info_frame_show"] = "显示信息框架"
+L["option_info_frame_show_desc"] = "是否显示信息框架。"
+
+L["option_info_frame_drag_shift"] = "需要按住 Shift 键才能移动"
+L["option_info_frame_drag_shift_desc"] =
+    "是否需要按住 Shift 键才能拖动信息框架。需要解锁后才能移动。"
+
+L["option_info_frame_lock"] = "锁定框架位置"
+L["option_info_frame_lock_desc"] = "如果为真，则防止信息框架被移动。"
+
+L["option_info_frame_right_align"] = "数据文本右对齐"
+L["option_info_frame_right_align_desc"] = "如果为假，数据将左对齐而不是右对齐。"
+
+L["option_info_frame_items"] = "要显示的信息"
+L["option_info_frame_lock_desc"] = "在信息框架上显示哪些信息。"
+
+L["option_minimap_data"] = "显示摘要数据来自"
+L["option_minimap_data_desc"] = "在小地图提示上显示什么数据"
 L["option_minimap_balance_style"]="显示来自的总余额"
 L["option_minimap_balance_style_desc"]="提示中显示的总余额"
 L["option_minimap_balance_style_character"]="此角色"
