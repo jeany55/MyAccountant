@@ -5,7 +5,7 @@
 ## Version: 1.9.1
 ## IconTexture: Interface\Addons\MyAccountant\Images\addonIcon
 ## RequiredDeps:
-## X-Curse-Project-ID: 1.9.116
+## X-Curse-Project-ID: 1299016
 ## SavedVariables: MyAccountantDB
 ## SavedVariablesPerCharacter:
 

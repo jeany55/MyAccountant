@@ -40,7 +40,7 @@ jobs:
       # Increment version and replace in the toc files
       - name: Update version
         run: |
-          VERSION=$(grep -o '[0-9]*\.[0-9]*\.[0-9]*' MyAccountant.toc)
+          VERSION=$(grep '^## Version:' MyAccountant.toc | grep -o '[0-9]*\.[0-9]*\.[0-9]*')
           
           arrIN=(${VERSION//./ })
           
