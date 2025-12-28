@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.9.2](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.2)
+
+* Updates toc version for Mists
+
 ## [v1.9.1](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.1)
 
 ### Bugfixes
