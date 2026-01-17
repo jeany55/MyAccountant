@@ -1,4 +1,4 @@
-name: 🛡️ Tests
+name: 🤖 Check Toc Versions
 # Controls when the workflow will run
 on:
   # Run tests daily
@@ -16,5 +16,5 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Check toc file versions and update if needed
+      - name: Autoversioner
         uses: jeany55/WowAddonVersioner@v0.0.1
