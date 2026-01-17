@@ -1,0 +1,20 @@
+name: 🛡️ Tests
+# Controls when the workflow will run
+on:
+  # Run tests daily
+  schedule:
+    - cron: "0 7 * * *"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    branches:
+    - main
+
+jobs:
+  updater:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Check toc file versions and update if needed
+        uses: jeany55/WowAddonVersioner@v0.0.1
