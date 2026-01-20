@@ -7,7 +7,7 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     branches:
-    - main
+      - main
 
 jobs:
   updater:
@@ -16,4 +16,4 @@ jobs:
 
     steps:
       - name: Autoversioner
-        uses: jeany55/WowAddonVersioner@v0.0.4
+        uses: jeany55/WowAddonVersioner@v0.0.5
