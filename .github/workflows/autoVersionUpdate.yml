@@ -16,4 +16,4 @@ jobs:
 
     steps:
       - name: Autoversioner
-        uses: jeany55/WowAddonVersioner@v0.0.18
+        uses: jeany55/WowAddonVersioner@v0.0.19
