@@ -107,6 +107,22 @@ local Utils = {
       table.insert(result, str)
     end
     return result
+  end,
+
+  --- Opens the addon settings panel in a way compatible with ElvUI and other addons
+  --- that may modify the Settings API to require category objects instead of string names
+  --- @param categoryName string The name of the category to open
+  openSettingsPanel = function(categoryName)
+    if Settings and Settings.OpenToCategory then
+      -- Try to get the category object first (required by ElvUI's modified Settings API)
+      local category = Settings.GetCategory and Settings.GetCategory(categoryName)
+      if category then
+        Settings.OpenToCategory(category:GetID())
+      else
+        -- Fallback to using the string name directly for vanilla WoW
+        Settings.OpenToCategory(categoryName)
+      end
+    end
   end
 }
 

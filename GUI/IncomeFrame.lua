@@ -447,7 +447,7 @@ end
 
 local function bottomButtonClickHandler(action)
   if action == "OPTIONS" then
-    Settings.OpenToCategory(private.ADDON_NAME)
+    private.utils.openSettingsPanel(private.ADDON_NAME)
   elseif action == "CLEAR_SESSION" then
     StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
   elseif action == "RESET_GPH" then
