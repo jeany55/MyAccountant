@@ -149,7 +149,7 @@ function MyAccountant:HandleSlashCommand(input)
   local command = string.lower(splitInput[1] or "")
 
   if command == "options" then
-    Settings.OpenToCategory(private.ADDON_NAME)
+    private.utils.openSettingsPanel(private.ADDON_NAME)
   elseif command == "open" or command == "o" or command == "show" then
     MyAccountant:ShowPanel()
   elseif command == "gph" then
@@ -299,7 +299,7 @@ function MyAccountant:HandleMinimapClick(button)
   end
 
   if config == "OPEN_OPTIONS" then
-    Settings.OpenToCategory(private.ADDON_NAME)
+    private.utils.openSettingsPanel(private.ADDON_NAME)
   elseif config == "OPEN_INCOME_PANEL" then
     MyAccountant:ShowPanel()
   elseif config == "RESET_GOLD_PER_HOUR" then

@@ -99,7 +99,7 @@ local Utils = {
   --- Splits a string into an array based on a delimiter
   --- @param inputstr string Input string
   --- @param delimiter string? Optional delimiter, defaults to whitespace
-  --- @return string[] reuslt Split array
+  --- @return string[] result Split array
   splitString = function(inputstr, delimiter)
     local sep = delimiter or "%s"
     local result = {}
@@ -107,6 +107,22 @@ local Utils = {
       table.insert(result, str)
     end
     return result
+  end,
+
+  --- Opens the addon settings panel in a way compatible with ElvUI and other addons
+  --- that may modify the Settings API to require category objects instead of string names
+  --- @param categoryName string The name of the category to open
+  openSettingsPanel = function(categoryName)
+    if Settings and Settings.OpenToCategory then
+      -- Try to get the category object first (required by ElvUI's modified Settings API)
+      local category = Settings.GetCategory and Settings.GetCategory(categoryName)
+      if category then
+        Settings.OpenToCategory(category:GetID())
+      else
+        -- Fallback to using the string name directly for vanilla WoW
+        Settings.OpenToCategory(categoryName)
+      end
+    end
   end
 }
 
