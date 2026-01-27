@@ -99,7 +99,7 @@ local Utils = {
   --- Splits a string into an array based on a delimiter
   --- @param inputstr string Input string
   --- @param delimiter string? Optional delimiter, defaults to whitespace
-  --- @return string[] reuslt Split array
+  --- @return string[] result Split array
   splitString = function(inputstr, delimiter)
     local sep = delimiter or "%s"
     local result = {}
