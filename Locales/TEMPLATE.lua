@@ -18,6 +18,20 @@ end
 -- eg. L["option_general"] = "Général"
 
 -- Localization definitions
+-----------------------------------------
+--- VERSION 1.10
+-----------------------------------------
+L["option_starting_day_of_week_offset"] = "Week start"
+L["option_starting_day_of_week_offset_desc"] = "Which day is considered the start of the week (for tabs)"
+
+L["option_starting_day_of_week_monday"] = "Monday"
+L["option_starting_day_of_week_tuesday"] = "Tuesday"
+L["option_starting_day_of_week_wednesday"] = "Wednesday"
+L["option_starting_day_of_week_thursday"] = "Thursday"
+L["option_starting_day_of_week_friday"] = "Friday"
+L["option_starting_day_of_week_saturday"] = "Saturday"
+L["option_starting_day_of_week_sunday"] = "Sunday"
+
 ----------------------------------------
 --- VERSION 1.9
 ----------------------------------------

@@ -27,9 +27,14 @@ local DateUtils = {
   --- Returns the start of the week for a timestamp
   --- @return integer timestamp Unix timestamp
   getStartOfWeek = function(timestamp)
+    local startOfWeekOffset = 0
+    if MyAccountant ~= nil and MyAccountant.db ~= nil then
+      startOfWeekOffset = MyAccountant.db.char.startingDayOfWeekOffset or 0
+    end
+
     timestamp = timestamp or time()
     local currentDate = date("*t", timestamp)
-    return timestamp - ((currentDate.wday - 1) * dayInSeconds)
+    return timestamp - ((currentDate.wday - 1 - startOfWeekOffset) * dayInSeconds)
   end,
 
   --- Returns the start of the month for a timestamp

@@ -659,6 +659,23 @@ function MyAccountant:SetupAddonOptions()
             end,
             get = function(info) return self.db.char.showMinimap end
           },
+          starting_day_of_week_offset = {
+            order = 1.5,
+            name = L["option_starting_day_of_week_offset"],
+            desc = L["option_starting_day_of_week_offset_desc"],
+            type = "select",
+            values = {
+              [0] = L["option_starting_day_of_week_sunday"],
+              [1] = L["option_starting_day_of_week_monday"],
+              [2] = L["option_starting_day_of_week_tuesday"],
+              [3] = L["option_starting_day_of_week_wednesday"],
+              [4] = L["option_starting_day_of_week_thursday"],
+              [5] = L["option_starting_day_of_week_friday"],
+              [6] = L["option_starting_day_of_week_saturday"]
+            },
+            set = function(info, val) self.db.char.startingDayOfWeekOffset = val end,
+            get = function(info) return self.db.char.startingDayOfWeekOffset end
+          },
           hide_zero = {
             order = 2,
             name = L["option_hide_zero"],
@@ -1247,7 +1264,7 @@ function MyAccountant:SetupAddonOptions()
 
   -- Main entry
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME, launchOptionsConfig)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME, private.ADDON_NAME)
+  _, private.optionsCategory = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME, private.ADDON_NAME)
 
   -- General
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. '-General', generalOptions)

@@ -22,6 +22,7 @@ private.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MyAccountant", "Version")
 --- @field utils UtilFunctions Utility functions used throughout the addon
 --- @field ApiUtils ApiUtils API utility functions used by luaExpressions in tabs
 --- @field reportTab Tab? The current report tab being generated if any
+--- @field optionsCategory number The blizz options category id for the addon's options, used for navigating to the options from slash commands and minimap tooltip
 private = private or {}
 
 --- @enum ViewType
@@ -149,7 +150,7 @@ function MyAccountant:HandleSlashCommand(input)
   local command = string.lower(splitInput[1] or "")
 
   if command == "options" then
-    Settings.OpenToCategory(private.ADDON_NAME)
+    Settings.OpenToCategory(private.optionsCategory)
   elseif command == "open" or command == "o" or command == "show" then
     MyAccountant:ShowPanel()
   elseif command == "gph" then
@@ -299,7 +300,7 @@ function MyAccountant:HandleMinimapClick(button)
   end
 
   if config == "OPEN_OPTIONS" then
-    Settings.OpenToCategory(private.ADDON_NAME)
+    Settings.OpenToCategory(private.optionsCategory)
   elseif config == "OPEN_INCOME_PANEL" then
     MyAccountant:ShowPanel()
   elseif config == "RESET_GOLD_PER_HOUR" then

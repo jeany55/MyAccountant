@@ -260,6 +260,7 @@ private.default_settings = {
   incomeFrameWidth = 532,
   showWarbandInRealmBalance = true,
   showCalendarSummary = true,
-  calendarDataSource = "REALM"
+  calendarDataSource = "REALM",
+  startingDayOfWeekOffset = 0
 }
 
