@@ -22,7 +22,7 @@ end
 --- VERSION 1.10
 -----------------------------------------
 L["option_starting_day_of_week_offset"] = "Week start"
-L["option_starting_day_of_week_offset_desc"] = "Which day is considered the start of the week (for tabs)"
+L["option_starting_day_of_week_offset_desc"] = "Which day is considered the start of the week (for tabs, LDB, and info frame)"
 
 L["option_starting_day_of_week_monday"] = "Monday"
 L["option_starting_day_of_week_tuesday"] = "Tuesday"
