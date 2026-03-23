@@ -665,18 +665,6 @@ function MyAccountant:SetupAddonOptions()
             end,
             get = function(info) return self.db.char.showMinimap end
           },
-          session_storage_type = {
-            order = 1.4,
-            name = L["option_session_storage"],
-            desc = L["option_session_storage_desc"],
-            type = "select",
-            values = {
-              SESSION = L["option_session_storage_logout"],
-              INDEFINITE = L["option_session_storage_indefinite"]
-            },
-            set = function(info, val) self.db.char.sessionStorageType = val end,
-            get = function(info) return self.db.char.sessionStorageType end
-          },
           starting_day_of_week_offset = {
             order = 1.5,
             name = L["option_starting_day_of_week_offset"],
@@ -693,6 +681,23 @@ function MyAccountant:SetupAddonOptions()
             },
             set = function(info, val) self.db.char.startingDayOfWeekOffset = val end,
             get = function(info) return self.db.char.startingDayOfWeekOffset end
+          },
+          general_linebreak = {
+            type = "description",
+            order = 1.55,
+            name = ""
+          },
+          session_storage_type = {
+            order = 1.65,
+            name = L["option_session_storage"],
+            desc = L["option_session_storage_desc"],
+            type = "select",
+            values = {
+              SESSION = L["option_session_storage_logout"],
+              INDEFINITE = L["option_session_storage_indefinite"]
+            },
+            set = function(info, val) self.db.char.sessionStorageType = val end,
+            get = function(info) return self.db.char.sessionStorageType end
           },
           hide_zero = {
             order = 2,

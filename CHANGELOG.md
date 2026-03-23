@@ -1,5 +1,42 @@
 # Changelog
 
+## [v1.11.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.11.0)
+
+### New Features
+* Added ability to configure when session storage resets
+
+### Bugfixes
+* Improved repair cost not being calculated properly
+
+## [v1.10.1](https://github.com/jeany55/MyAccountant/releases/tag/v1.10.1)
+
+### Bugfixes
+* Corrected start of week tooltip
+
+## [v1.10.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.10.0)
+
+### New Features
+* You can now configure your preferred starting day of the week via the General settings tab
+
+### Bugfixes
+* Resolved an issue where addon options weren't launching correctly
+
+## [v1.9.6](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.6)
+
+* Updated version compatibility for the latest retail game version
+
+## [v1.9.5](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.5)
+
+* Updated **Russian** localization
+
+## [v1.9.4](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.4)
+
+* Updated version compatibility for Midnight
+
+## [v1.9.3](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.3)
+
+* Updated version compatibility for The Burning Crusade Classic anniversary update
+
 ## [v1.9.2](https://github.com/jeany55/MyAccountant/releases/tag/v1.9.2)
 
 * Updates toc version for Mists

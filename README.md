@@ -126,9 +126,15 @@ Configure the income panel to either sort when opening, or click on a table head
 
 ![](Docs/sorting.png)
 
+### **Configure your week**
+
+Set which day of the week your weekly data starts from in the General settings tab.
+
+![](Docs/optionWeekStart.png)
+
 ### **Supports all WoW versions**
 
-MyAccountant knows which sources are unavailable in each version of WoW. This lets this addon work on Mists Classic, Vanilla, or Retail.
+MyAccountant knows which sources are unavailable in each version of WoW. This lets this addon work on Mists Classic, Vanilla, TBC, or Retail.
 
 ### **Configure your income sources**
 
@@ -137,18 +143,22 @@ Decide which income sources you want to track by disabling ones you aren't inter
 ![](Docs/incomesources.png)
 
 ## How to install
+
 ### Curseforge (Recommended)
+
 1. Search for "MyAccountant" in the CurseForge App
 2. Click Install
 
 ### Manual
+
 1. Download the [latest release](https://github.com/jeany55/MyAccountant/releases/latest) from the releases page.
 2. Extract the zip file into your `Interface/Addons` folder (eg. `World of Warcraft/_retail/Interface/Addons/`)
 
 ## Supported languages
-* <B>English</B>
-* <B>Russian</B>&nbsp;(by ZamestoTV)
-* <B>Simplified Chinese</B>&nbsp;(by cclolz)
+
+- <B>English</B>
+- <B>Russian</B>&nbsp;(by ZamestoTV)
+- <B>Simplified Chinese</B>&nbsp;(by cclolz)
 
 ## How to contribute
 
@@ -169,12 +179,15 @@ Or, if you're feeling brave you can make the change yourself and submit a pull r
 Please [open a issue](https://github.com/jeany55/MyAccountant/issues/new) on the issues page!
 
 ## Special thanks
-* Quetz
+
+- Quetz
 
 ## License
+
 MIT, see the [License](LICENSE) file.
 
 ---
+
 <div align="center">
   
 **Made with ❤️ for the World of Warcraft community**
