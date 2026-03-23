@@ -74,6 +74,12 @@ function MyAccountant:SetupAddonOptions()
     end
     self.db.char.tabs = instantiatedTabs
 
+    if self.db.char.sessionStorageType == "SESSION" then
+      self.db.char.addonStartTime = time()
+      self.db.char.totalGoldMade = 0
+      self.db.char.sessionDb = {}
+    end
+
     -- Check for new tabs in the default library the user hasn't seen
     -- for _, defaultTab in ipairs(private.tabLibrary) do
     --   if not private.utils.arrayHas(self.db.char.knownTabs, function(tabName) return tabName == defaultTab:getName() end) then
@@ -658,6 +664,18 @@ function MyAccountant:SetupAddonOptions()
               end
             end,
             get = function(info) return self.db.char.showMinimap end
+          },
+          session_storage_type = {
+            order = 1.4,
+            name = L["option_session_storage"],
+            desc = L["option_session_storage_desc"],
+            type = "select",
+            values = {
+              SESSION = L["option_session_storage_logout"],
+              INDEFINITE = L["option_session_storage_indefinite"]
+            },
+            set = function(info, val) self.db.char.sessionStorageType = val end,
+            get = function(info) return self.db.char.sessionStorageType end
           },
           starting_day_of_week_offset = {
             order = 1.5,

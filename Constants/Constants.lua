@@ -261,6 +261,10 @@ private.default_settings = {
   showWarbandInRealmBalance = true,
   showCalendarSummary = true,
   calendarDataSource = "REALM",
-  startingDayOfWeekOffset = 0
+  startingDayOfWeekOffset = 0,
+  sessionDb = {},
+  sessionStorageType = "SESSION",
+  addonStartTime = time(),
+  totalGoldMade = 0,
 }
 

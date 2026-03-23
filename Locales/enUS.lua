@@ -6,6 +6,15 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 -----------------------------------------
+--- VERSION 1.11
+-----------------------------------------
+L["option_session_storage"] = "Store session until"
+L["option_session_storage_desc"] =
+    "When to clear session data. By default (Logout/Reload), session data is cleared when you log out or reload your UI. If you set this to 'Until User Resets', session data will never be cleared and will be kept indefinitely until you manually clear it in the options, use the console command, clear it via the minimap button, or the button in the income panel."
+L["option_session_storage_logout"] = "Logout/Reload"
+L["option_session_storage_indefinite"] = "Until User Resets"
+
+-----------------------------------------
 --- VERSION 1.10
 -----------------------------------------
 L["option_starting_day_of_week_offset"] = "Week start"

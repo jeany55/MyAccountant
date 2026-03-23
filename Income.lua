@@ -1,21 +1,15 @@
 -- Addon namespace
 --- @type nil, MyAccountantPrivate
 local _, private = ...
-local AddonStartTime = time()
-
-local GoldMade = 0
 
 --- @class MyAccountant
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
--- Used for session data and calculating gold per hour
-local totalGoldSession = {}
-
 --- Resets all function data
 function MyAccountant:ResetSession()
-  totalGoldSession = {}
-  GoldMade = 0
-  AddonStartTime = time()
+  self.db.char.sessionDb = {}
+  self.db.char.addonStartTime = time()
+  self.db.char.totalGoldMade = 0
   MyAccountant:PrintDebugMessage("Reset session")
 end
 
@@ -60,18 +54,18 @@ end
 --- Returns the current gold per hour value for the session
 --- @return integer moneyPerHour Money per hour
 function MyAccountant:GetGoldPerHour()
-  local totalRunTime = time() - AddonStartTime
+  local totalRunTime = time() - self.db.char.addonStartTime
   if totalRunTime == 0 then
     return 0
   end
   -- Use proportion to calculate gold per hour
-  local goldMadePerHour = math.floor((3600 * GoldMade) / totalRunTime)
+  local goldMadePerHour = math.floor((3600 * self.db.char.totalGoldMade) / totalRunTime)
   return goldMadePerHour
 end
 
 function MyAccountant:ResetGoldPerHour()
-  AddonStartTime = time()
-  GoldMadePerHour = 0
+  self.db.char.addonStartTime = time()
+  self.db.char.totalGoldMade = 0
   MyAccountant:PrintDebugMessage("Reset gold per hour")
 end
 
@@ -82,17 +76,17 @@ end
 function MyAccountant:AddIncome(category, amount, dateOverride)
   MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
-  GoldMade = GoldMade + amount
+  self.db.char.totalGoldMade = self.db.char.totalGoldMade + amount
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
   local zone = GetZoneText()
   local total
 
-  if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0, zones = {} }
+  if not self.db.char.sessionDb[category] then
+    self.db.char.sessionDb[category] = { income = 0, outcome = 0, zones = {} }
   end
-  if not totalGoldSession[category].zones[zone] then
-    totalGoldSession[category].zones[zone] = { income = 0, outcome = 0 }
+  if not self.db.char.sessionDb[category].zones[zone] then
+    self.db.char.sessionDb[category].zones[zone] = { income = 0, outcome = 0 }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
@@ -118,8 +112,8 @@ function MyAccountant:AddIncome(category, amount, dateOverride)
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].income = totalCategory
 
   -- Save to current session info
-  totalGoldSession[category].income = totalGoldSession[category].income + amount
-  totalGoldSession[category].zones[zone].income = totalGoldSession[category].zones[zone].income + amount
+  self.db.char.sessionDb[category].income = self.db.char.sessionDb[category].income + amount
+  self.db.char.sessionDb[category].zones[zone].income = self.db.char.sessionDb[category].zones[zone].income + amount
 end
 
 --- Main function to add outcome - added to correct day automatically unless third optional param used
@@ -134,11 +128,11 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
   local zone = GetZoneText()
   local total
 
-  if not totalGoldSession[category] then
-    totalGoldSession[category] = { income = 0, outcome = 0, zones = {} }
+  if not self.db.char.sessionDb[category] then
+    self.db.char.sessionDb[category] = { income = 0, outcome = 0, zones = {} }
   end
-  if not totalGoldSession[category].zones[zone] then
-    totalGoldSession[category].zones[zone] = { income = 0, outcome = 0 }
+  if not self.db.char.sessionDb[category].zones[zone] then
+    self.db.char.sessionDb[category].zones[zone] = { income = 0, outcome = 0 }
   end
 
   if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
@@ -164,8 +158,8 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
   self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].outcome = totalCategory
 
   -- Save to current session info
-  totalGoldSession[category].outcome = totalGoldSession[category].outcome + amount
-  totalGoldSession[category].zones[zone].outcome = totalGoldSession[category].zones[zone].outcome + amount
+  self.db.char.sessionDb[category].outcome = self.db.char.sessionDb[category].outcome + amount
+  self.db.char.sessionDb[category].zones[zone].outcome = self.db.char.sessionDb[category].zones[zone].outcome + amount
 end
 
 --- Sums day
@@ -355,10 +349,10 @@ function MyAccountant:SummarizeData(data)
 end
 
 -- Gets total session income, if no category is passed a total sum will be returned
-function MyAccountant:GetSessionIncome(category) return sumDay(totalGoldSession, category, "income") end
+function MyAccountant:GetSessionIncome(category) return sumDay(self.db.char.sessionDb, category, "income") end
 
 -- Gets total session outcome, if no category is passed a total sum will be returned
-function MyAccountant:GetSessionOutcome(category) return sumDay(totalGoldSession, category, "outcome") end
+function MyAccountant:GetSessionOutcome(category) return sumDay(self.db.char.sessionDb, category, "outcome") end
 
 function MyAccountant:IsSourceActive(source)
   for _, v in ipairs(self.db.char.sources) do
@@ -381,7 +375,7 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   if tab:getType() == "SESSION" then
-    table = private.utils.copy(totalGoldSession)
+    table = private.utils.copy(self.db.char.sessionDb)
   elseif tab:getType() == "ALL_TIME" then
     table = MyAccountant:GetAllTime(playerName)
   else
@@ -461,9 +455,9 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride
 end
 
 function MyAccountant:ResetZoneData()
-  for k, v in pairs(totalGoldSession) do
+  for k, v in pairs(self.db.char.sessionDb) do
     if v.zones then
-      totalGoldSession[k].zones = {}
+      self.db.char.sessionDb[k].zones = {}
     end
   end
 
