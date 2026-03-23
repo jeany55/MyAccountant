@@ -6,6 +6,7 @@ MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 local activeSource = nil
 
 local currentMoney = GetMoney()
+local repairCost = 0
 
 -- Tracking if mail is from the AH is difficult - not a great event to track it.
 -- Best we can do is check to see if any of the mail is from AH.
@@ -49,8 +50,16 @@ local events = {
   { EVENT = "MAIL_SHOW", SOURCE = "MAIL" },
   { EVENT = "MAIL_CLOSED", SOURCE = "MAIL", RESET = true },
   -- Merchants
-  { EVENT = "MERCHANT_SHOW", SOURCE = "MERCHANTS" },
-  { EVENT = "MERCHANT_CLOSED", SOURCE = "MERCHANTS", RESET = true },
+  { 
+    EVENT = "MERCHANT_SHOW", SOURCE = "MERCHANTS", EXEC = function()
+      local cost, canRepair = GetRepairAllCost()
+      
+      if canRepair and cost > 0 then
+          repairCost = cost
+      end
+    end
+  },
+  { EVENT = "MERCHANT_CLOSED", SOURCE = "MERCHANTS", RESET = true,  EXEC = function() repairCost = 0 end },
   {
     EVENT = "MERCHANT_UPDATE",
     SOURCE = "MERCHANTS",
@@ -149,6 +158,10 @@ function MyAccountant:HandlePlayerMoneyChange()
 
   --- @type Source
   local source = activeSource and activeSource or "OTHER"
+  if activeSource == "MERCHANTS" and repairCost == abs(moneyChange) then
+    source = "REPAIR"
+    repairCost = 0
+  end
 
   if moneyChange > 0 then
     MyAccountant:AddIncome(source, moneyChange)
