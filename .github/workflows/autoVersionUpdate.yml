@@ -19,3 +19,4 @@ jobs:
         uses: jeany55/WowAddonVersioner@v1-beta
         with:
           update-action-versions: true
+          github-token: ${{ secrets.ACCESS_TOKEN_GIT }}
