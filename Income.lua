@@ -167,8 +167,7 @@ end
 --- @param category Source? Category to sum, nil for all
 --- @param type string? "income"/"outcome", nil for net
 local function sumDay(dayData, category, type)
-
-  if (category == nil) then
+  if category == nil then
     local total = 0
 
     for _, v in pairs(dayData) do
@@ -200,8 +199,12 @@ local function sumDay(dayData, category, type)
 end
 
 function MyAccountant:FetchDataRow(playerName, year, month, day)
-  if not self.db.factionrealm[playerName] or not self.db.factionrealm[playerName][year] or
-      not self.db.factionrealm[playerName][year][month] or not self.db.factionrealm[playerName][year][month][day] then
+  if
+    not self.db.factionrealm[playerName]
+    or not self.db.factionrealm[playerName][year]
+    or not self.db.factionrealm[playerName][year][month]
+    or not self.db.factionrealm[playerName][year][month][day]
+  then
     return {}
   end
 
@@ -266,7 +269,7 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
     dataStyle = "SPECIFIC_DAYS"
   end
 
-  if (dataStyle == "RANGE" and startDate > endDate) then
+  if dataStyle == "RANGE" and startDate > endDate then
     return data
   end
 
@@ -349,10 +352,14 @@ function MyAccountant:SummarizeData(data)
 end
 
 -- Gets total session income, if no category is passed a total sum will be returned
-function MyAccountant:GetSessionIncome(category) return sumDay(self.db.char.sessionDb, category, "income") end
+function MyAccountant:GetSessionIncome(category)
+  return sumDay(self.db.char.sessionDb, category, "income")
+end
 
 -- Gets total session outcome, if no category is passed a total sum will be returned
-function MyAccountant:GetSessionOutcome(category) return sumDay(self.db.char.sessionDb, category, "outcome") end
+function MyAccountant:GetSessionOutcome(category)
+  return sumDay(self.db.char.sessionDb, category, "outcome")
+end
 
 function MyAccountant:IsSourceActive(source)
   for _, v in ipairs(self.db.char.sources) do
@@ -417,7 +424,7 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride
   if viewType == "SOURCE" then
     -- Recreate table to keep original order intact
     for _, v in ipairs(self.db.char.sources) do
-      if (not talliedTable[v]) then
+      if not talliedTable[v] then
         reorderedTable[v] = { income = 0, outcome = 0, zones = {} }
       else
         reorderedTable[v] = talliedTable[v]
@@ -441,10 +448,10 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride
           if not reorderedTable[zoneName].zones[localizedSource] then
             reorderedTable[zoneName].zones[localizedSource] = { income = zoneData.income, outcome = zoneData.outcome }
           else
-            reorderedTable[zoneName].zones[localizedSource].income =
-                reorderedTable[zoneName].zones[localizedSource].income + zoneData.income
-            reorderedTable[zoneName].zones[localizedSource].outcome =
-                reorderedTable[zoneName].zones[localizedSource].outcome + zoneData.outcome
+            reorderedTable[zoneName].zones[localizedSource].income = reorderedTable[zoneName].zones[localizedSource].income
+              + zoneData.income
+            reorderedTable[zoneName].zones[localizedSource].outcome = reorderedTable[zoneName].zones[localizedSource].outcome
+              + zoneData.outcome
           end
         end
       end
@@ -485,25 +492,27 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local numberOfCharacters = 0
 
   for characterName, characterData in pairs(self.db.factionrealm) do
-    if (characterData and characterData.config and characterData.config.gold) then
+    if characterData and characterData.config and characterData.config.gold then
       goldTotal = goldTotal + characterData.config.gold
       table.insert(data, {
         name = characterName,
         gold = characterData.config.gold,
         classColor = characterData.config.classColor,
-        faction = characterData.config.faction
+        faction = characterData.config.faction,
       })
       numberOfCharacters = numberOfCharacters + 1
     end
   end
 
   local warbandGold = self.db.realm.warBandGold or 0
-  if (self.db.char.showWarbandInRealmBalance and self.db.realm.seenWarband) then
+  if self.db.char.showWarbandInRealmBalance and self.db.realm.seenWarband then
     goldTotal = goldTotal + warbandGold
     table.insert(data, { name = "|T939375:0|t " .. L["warband"], gold = warbandGold })
   end
 
-  table.sort(data, function(a, b) return a.gold > b.gold end)
+  table.sort(data, function(a, b)
+    return a.gold > b.gold
+  end)
   table.insert(data, 1, { name = L["income_panel_hover_realm_total"], gold = goldTotal })
 
   return data

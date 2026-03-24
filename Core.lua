@@ -57,7 +57,7 @@ function MyAccountant:OnInitialize()
   self.db.factionrealm[UnitName("player")].config = {
     classColor = colorCode,
     faction = UnitFactionGroup("player"),
-    gold = GetMoney()
+    gold = GetMoney(),
   }
 
   MyAccountant:checkDatabaseDayConfigured()
@@ -71,21 +71,25 @@ function MyAccountant:OnInitialize()
     text = L["reset_gph_confirm"],
     button1 = L["reset_gph_confirm_yes"],
     button2 = L["reset_gph_confirm_no"],
-    OnAccept = function() MyAccountant:ResetGoldPerHour() end,
+    OnAccept = function()
+      MyAccountant:ResetGoldPerHour()
+    end,
     timeout = 0,
     whileDead = true,
     hideOnEscape = true,
-    preferredIndex = 3
+    preferredIndex = 3,
   }
   StaticPopupDialogs["MYACCOUNTANT_RESET_SESSION"] = {
     text = L["option_clear_session_data_confirm"],
     button1 = L["reset_gph_confirm_yes"],
     button2 = L["reset_gph_confirm_no"],
-    OnAccept = function() MyAccountant:ResetSession() end,
+    OnAccept = function()
+      MyAccountant:ResetSession()
+    end,
     timeout = 0,
     whileDead = true,
     hideOnEscape = true,
-    preferredIndex = 3
+    preferredIndex = 3,
   }
 end
 
@@ -101,7 +105,9 @@ function MyAccountant:RegisterMinimapIcon()
     type = "data source",
     text = private.ADDON_NAME,
     icon = private.constants.MINIMAP_ICON,
-    OnClick = function(self, btn) MyAccountant:HandleMinimapClick(btn) end,
+    OnClick = function(self, btn)
+      MyAccountant:HandleMinimapClick(btn)
+    end,
 
     OnTooltipShow = function(tooltip)
       if not tooltip or not tooltip.AddLine then
@@ -109,7 +115,7 @@ function MyAccountant:RegisterMinimapIcon()
       end
 
       MyAccountant:MakeMinimapTooltip(tooltip)
-    end
+    end,
   })
 
   libIcon:Register(private.ADDON_NAME, miniButton, self.db.char.minimapIconOptions)
@@ -124,9 +130,16 @@ function MyAccountant:OnDisable()
 end
 
 local function printHelpMessage()
-
-  print("|T" .. private.constants.ADDON_ICON .. ":0|t |cffff9300" .. private.ADDON_NAME .. "|r|cffffffff" .. " v" ..
-            private.ADDON_VERSION .. "|r")
+  print(
+    "|T"
+      .. private.constants.ADDON_ICON
+      .. ":0|t |cffff9300"
+      .. private.ADDON_NAME
+      .. "|r|cffffffff"
+      .. " v"
+      .. private.ADDON_VERSION
+      .. "|r"
+  )
   print(L["help_separator"])
 
   local bullet = "|T" .. private.constants.CALENDAR_NO_CHANGE .. ":0|t"
@@ -324,7 +337,9 @@ function MyAccountant:UpdateAllTabSummaryData()
 end
 
 --- Starts a new report, overwrites existing one if any.
-function MyAccountant:StartReport() private.reportTab = private.Tab:constructEmpty() end
+function MyAccountant:StartReport()
+  private.reportTab = private.Tab:constructEmpty()
+end
 
 --- Returns if a specific day is included in the current report being created by StartReport().
 --- @param unixTime number The unix timestamp of the day to check
@@ -334,7 +349,9 @@ function MyAccountant:IsDayInReport(unixTime)
     return false
   end
 
-  return private.utils.arrayHas(private.reportTab._individualDays, function(day) return day == unixTime end)
+  return private.utils.arrayHas(private.reportTab._individualDays, function(day)
+    return day == unixTime
+  end)
 end
 
 function MyAccountant:RemoveDayFromReport(unixTime)

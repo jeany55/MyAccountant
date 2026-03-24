@@ -17,7 +17,7 @@ GameTypes = {
   WOTLK = "WOTLK",
   CATA = "CATA",
   MISTS_CLASSIC = "MISTS_CLASSIC",
-  RETAIL = "RETAIL"
+  RETAIL = "RETAIL",
 }
 
 private.GameTypes = GameTypes
@@ -40,8 +40,8 @@ private.constants = {
   FLAGS = {
     ENGLISH = "Interface\\Addons\\MyAccountant\\Images\\Flags\\en.tga",
     RUSSIAN = "Interface\\Addons\\MyAccountant\\Images\\Flags\\ru.tga",
-    SIMPLIFIED_CHINESE = "Interface\\Addons\\MyAccountant\\Images\\Flags\\cn.tga"
-  }
+    SIMPLIFIED_CHINESE = "Interface\\Addons\\MyAccountant\\Images\\Flags\\cn.tga",
+  },
 }
 
 --- @enum Source
@@ -68,47 +68,117 @@ private.constants = {
 local sources = {
   TRAINING_COSTS = {
     title = L["TRAINING_COSTS"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL },
   },
   TAXI_FARES = {
     title = L["TAXI_FARES"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   LOOT = {
     title = L["LOOT"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   GUILD = {
     title = L["GUILD"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   TRADE = {
     title = L["TRADE"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   MERCHANTS = {
     title = L["MERCHANTS"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   MAIL = {
     title = L["MAIL"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   REPAIR = {
     title = L["REPAIR"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   AUCTIONS = {
     title = L["AUCTIONS"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   QUESTS = {
     title = L["QUESTS"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   TALENTS = {
     title = L["TALENTS"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
   },
   LFG = { title = L["LFG"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL } },
   BARBER = { title = L["BARBER"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL } },
@@ -116,9 +186,16 @@ local sources = {
   GARRISONS = { title = L["GARRISONS"], versions = { GameTypes.RETAIL } },
   OTHER = {
     title = L["OTHER"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL },
-    required = true
-  }
+    versions = {
+      GameTypes.CLASSIC_ERA,
+      GameTypes.BCC,
+      GameTypes.WOTLK,
+      GameTypes.CATA,
+      GameTypes.MISTS_CLASSIC,
+      GameTypes.RETAIL,
+    },
+    required = true,
+  },
 }
 
 private.sources = sources
@@ -136,7 +213,7 @@ local DEFAULT_SOURCES_MISTS_CLASSIC = {
   "AUCTIONS",
   "QUESTS",
   "TRANSMOGRIFY",
-  "OTHER"
+  "OTHER",
 }
 
 --- @type Source[]
@@ -153,7 +230,7 @@ local DEFAULT_SOURCES_WOTLK = {
   "QUESTS",
   "BARBER",
   "TRANSMOGRIFY",
-  "OTHER"
+  "OTHER",
 }
 
 --- @type Source[]
@@ -170,7 +247,7 @@ local DEFAULT_SOURCES_RETAIL = {
   "QUESTS",
   "TRANSMOGRIFY",
   "GARRISONS",
-  "OTHER"
+  "OTHER",
 }
 
 --- @type Source[]
@@ -185,7 +262,7 @@ local DEFAULT_SOURCES_CLASSIC_ERA = {
   "REPAIR",
   "AUCTIONS",
   "QUESTS",
-  "OTHER"
+  "OTHER",
 }
 
 -- Determine WoW version to set default and available sources
@@ -267,4 +344,3 @@ private.default_settings = {
   addonStartTime = time(),
   totalGoldMade = 0,
 }
-

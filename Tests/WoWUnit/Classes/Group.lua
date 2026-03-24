@@ -2,43 +2,43 @@ local Group = {}
 WoWUnit.Group = Group
 Group.__index = Group
 
-
---[[ API ]]--
+--[[ API ]]
+--
 
 function Group:New(name)
-	return setmetatable({name = name, children = {}}, self)
+  return setmetatable({ name = name, children = {} }, self)
 end
 
 function Group:Status()
-	local status, count = 1, 0
+  local status, count = 1, 0
 
-	for _, test in pairs(self.children) do
-		local s, c = test:Status()
-		if s > status then
-			status, count = s, c
-		elseif s == status then
-			count = count + c
-		end
-	end
+  for _, test in pairs(self.children) do
+    local s, c = test:Status()
+    if s > status then
+      status, count = s, c
+    elseif s == status then
+      count = count + c
+    end
+  end
 
-	return status, count
+  return status, count
 end
 
-
---[[ Operators ]]--
+--[[ Operators ]]
+--
 
 function Group:__call()
-	for _, test in pairs(self.children) do
-		test()
-	end
+  for _, test in pairs(self.children) do
+    test()
+  end
 end
 
 function Group:__newindex(key, value)
-	if type(value) == 'function' then
-		tinsert(self.children, WoWUnit.Test:New(key, value))
-	end
+  if type(value) == "function" then
+    tinsert(self.children, WoWUnit.Test:New(key, value))
+  end
 end
 
 function Group:__lt(other)
-	return self.name < other.name
+  return self.name < other.name
 end

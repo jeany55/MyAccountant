@@ -15,7 +15,7 @@ private.tabLibrary = {
     ldbEnabled = true,
     infoFrameEnabled = false,
     minimapSummaryEnabled = true,
-    visible = true
+    visible = true,
   }),
   Tab:construct({
     id = "c905d2d2",
@@ -27,7 +27,7 @@ Tab:setDateSummaryText(date("%x"))]],
     infoFrameEnabled = true,
     ldbEnabled = true,
     minimapSummaryEnabled = true,
-    visible = true
+    visible = true,
   }),
   Tab:construct({
     id = "393c3bcf",
@@ -44,7 +44,7 @@ Tab:setDateSummaryText(date("%x"))]],
   local startOfWeek = DateUtils.getStartOfWeek()
   local lastDayOfWeek = DateUtils.addWeek(startOfWeek)
 
-  Tab:setDateSummaryText(date("%x", startOfWeek) .. " - " .. date("%x", lastDayOfWeek))]]
+  Tab:setDateSummaryText(date("%x", startOfWeek) .. " - " .. date("%x", lastDayOfWeek))]],
   }),
   Tab:construct({
     id = "e1f4b6a1",
@@ -56,7 +56,7 @@ Tab:setDateSummaryText(date("%x"))]],
     infoFrameEnabled = false,
     luaExpression = [[Tab:setStartDate(DateUtils.getStartOfMonth())
 Tab:setEndDate(DateUtils.getToday())
-Tab:setDateSummaryText(date("%B"))]]
+Tab:setDateSummaryText(date("%B"))]],
   }),
   Tab:construct({
     id = "9023f690",
@@ -68,7 +68,7 @@ Tab:setDateSummaryText(date("%B"))]]
     infoFrameEnabled = false,
     luaExpression = [[Tab:setStartDate(DateUtils.getStartOfYear())
 Tab:setEndDate(DateUtils.getToday())
-Tab:setDateSummaryText(date("%Y"))]]
+Tab:setDateSummaryText(date("%Y"))]],
   }),
   Tab:construct({
     id = "9554cec7",
@@ -80,7 +80,7 @@ Tab:setDateSummaryText(date("%Y"))]]
     minimapSummaryEnabled = false,
     luaExpression = [[-- 1735689600 is the start of 2025 when this addon came out
 Tab:setStartDate(1735689600)
-Tab:setEndDate(DateUtils.getToday())]]
+Tab:setEndDate(DateUtils.getToday())]],
   }),
   Tab:construct({
     id = "bdc6f79c",
@@ -90,7 +90,7 @@ Tab:setEndDate(DateUtils.getToday())]]
     ldbEnabled = true,
     infoFrameEnabled = true,
     minimapSummaryEnabled = false,
-    lineBreak = true
+    lineBreak = true,
   }),
   Tab:construct({
     id = "dae4c72b",
@@ -104,7 +104,7 @@ Tab:setEndDate(DateUtils.getToday())]]
 
 Tab:setStartDate(yesterday)
 Tab:setEndDate(yesterday)
-Tab:setDateSummaryText(date("%x", yesterday))]]
+Tab:setDateSummaryText(date("%x", yesterday))]],
   }),
   Tab:construct({
     id = "8f3bb7b4",
@@ -118,7 +118,7 @@ Tab:setDateSummaryText(date("%x", yesterday))]]
 
 Tab:setStartDate(twoDaysAgo)
 Tab:setEndDate(twoDaysAgo)
-Tab:setDateSummaryText(date("%x", twoDaysAgo))]]
+Tab:setDateSummaryText(date("%x", twoDaysAgo))]],
   }),
   Tab:construct({
     id = "3eb7b32b",
@@ -132,7 +132,7 @@ Tab:setDateSummaryText(date("%x", twoDaysAgo))]]
     
 Tab:setStartDate(threeDaysAgo)
 Tab:setEndDate(threeDaysAgo)
-Tab:setDateSummaryText(date("%x", threeDaysAgo))]]
+Tab:setDateSummaryText(date("%x", threeDaysAgo))]],
   }),
   Tab:construct({
     id = "4ab152ea",
@@ -146,7 +146,7 @@ Tab:setDateSummaryText(date("%x", threeDaysAgo))]]
     
 Tab:setStartDate(fourDaysAgo)
 Tab:setEndDate(fourDaysAgo)
-Tab:setDateSummaryText(date("%x", fourDaysAgo))]]
+Tab:setDateSummaryText(date("%x", fourDaysAgo))]],
   }),
   Tab:construct({
     id = "87bcece6",
@@ -162,7 +162,7 @@ local sunday = DateUtils.addDays(firstDayOfPreviousWeek, 6)
  
 Tab:setStartDate(saturday)
 Tab:setEndDate(sunday)
-Tab:setDateSummaryText(date("%x", saturday) .. " - " .. date("%x", sunday))]]
+Tab:setDateSummaryText(date("%x", saturday) .. " - " .. date("%x", sunday))]],
   }),
   Tab:construct({
     id = "52afc54c",
@@ -177,7 +177,7 @@ local firstDayOfPreviousMonth = DateUtils.getStartOfMonth(lastDayOfPreviousMonth
 
 Tab:setStartDate(firstDayOfPreviousMonth)
 Tab:setEndDate(lastDayOfPreviousMonth)
-Tab:setDateSummaryText(date("%x", firstDayOfPreviousMonth) .. " - " .. date("%x", lastDayOfPreviousMonth))]]
+Tab:setDateSummaryText(date("%x", firstDayOfPreviousMonth) .. " - " .. date("%x", lastDayOfPreviousMonth))]],
   }),
   Tab:construct({
     id = "c87d65b3",
@@ -193,7 +193,7 @@ local lastDayOfPreviousWeek = DateUtils.addDays(firstDayOfPreviousWeek, 6)
 
 Tab:setStartDate(firstDayOfPreviousWeek)
 Tab:setEndDate(lastDayOfPreviousWeek)
-Tab:setDateSummaryText(date("%x", firstDayOfPreviousWeek) .. " - " .. date("%x", lastDayOfPreviousWeek))]]
+Tab:setDateSummaryText(date("%x", firstDayOfPreviousWeek) .. " - " .. date("%x", lastDayOfPreviousWeek))]],
   }),
   Tab:construct({
     id = "4f2a5043",
@@ -208,7 +208,7 @@ local lastDayOfTwoWeeksAgo = DateUtils.addDays(firstDayOfTwoWeeksAgo, 6)
 
 Tab:setStartDate(firstDayOfTwoWeeksAgo)
 Tab:setEndDate(lastDayOfTwoWeeksAgo)
-Tab:setDateSummaryText(date("%x", firstDayOfTwoWeeksAgo) .. " - " .. date("%x", lastDayOfTwoWeeksAgo))]]
+Tab:setDateSummaryText(date("%x", firstDayOfTwoWeeksAgo) .. " - " .. date("%x", lastDayOfTwoWeeksAgo))]],
   }),
   Tab:construct({
     id = "cbbaac91",
@@ -227,6 +227,6 @@ local day = DateUtils.addDays(startOfMonth, dayOffset)
 
 Tab:setStartDate(day)
 Tab:setEndDate(day)
-Tab:setDateSummaryText(date("%x", day))]]
-  })
+Tab:setDateSummaryText(date("%x", day))]],
+  }),
 }

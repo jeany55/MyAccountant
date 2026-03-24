@@ -64,7 +64,7 @@ local TabConstructOptionsDefault = {
   luaExpression = "",
   id = nil,
   customOptionFields = {},
-  customOptionValues = {}
+  customOptionValues = {},
 }
 
 local registerLdbData = function(name, tooltip)
@@ -76,7 +76,7 @@ local registerLdbData = function(name, tooltip)
     text = L["ldb_loading"],
     icon = "Interface\\Addons\\MyAccountant\\Images\\addonIcon",
     label = name,
-    OnTooltipShow = tooltip
+    OnTooltipShow = tooltip,
   }
 
   return ldb:NewDataObject(name, dataConfig)
@@ -147,7 +147,7 @@ function Tab:construct(options)
   --- @type table<string, any>
   tab._customOptionValues = options.customOptionValues or {}
   --- @type string Lua expression for date setup
-  if (options.luaExpression) then
+  if options.luaExpression then
     tab._luaExpression = options.luaExpression
   end
   --- @type string Unique tab ID
@@ -163,7 +163,7 @@ function Tab:construct(options)
     tab._dataInstances = {
       [sessionIncome] = { label = sessionIncome, ldbDataObject = nil, value = "" },
       [sessionOutcome] = { label = sessionOutcome, ldbDataObject = nil, value = "" },
-      [sessionProfit] = { label = sessionProfit, ldbDataObject = nil, value = "" }
+      [sessionProfit] = { label = sessionProfit, ldbDataObject = nil, value = "" },
     }
   elseif tab._tabType == TabType.BALANCE then
     tab._dataInstances = {
@@ -171,8 +171,10 @@ function Tab:construct(options)
         label = tab._tabLabel,
         ldbDataObject = nil,
         value = "",
-        tooltip = function() MyAccountant:MakeRealmTotalTooltip(nil) end
-      }
+        tooltip = function()
+          MyAccountant:MakeRealmTotalTooltip(nil)
+        end,
+      },
     }
   else
     local incomeCharacter = format(L["ldb_name_income_character"], tab._tabLabel)
@@ -187,13 +189,13 @@ function Tab:construct(options)
       [profitCharacter] = { label = profitCharacter, ldbDataObject = nil, value = "" },
       [incomeRealm] = { label = incomeRealm, ldbDataObject = nil, value = "" },
       [outcomeRealm] = { label = outcomeRealm, ldbDataObject = nil, value = "" },
-      [profitRealm] = { label = profitRealm, ldbDataObject = nil, value = "" }
+      [profitRealm] = { label = profitRealm, ldbDataObject = nil, value = "" },
     }
   end
 
   tab:setLdbEnabled(tab._ldbEnabled)
 
-  if (tab._luaExpression and tab._luaExpression ~= "") then
+  if tab._luaExpression and tab._luaExpression ~= "" then
     tab:setLuaExpression(tab._luaExpression)
   end
 
@@ -213,24 +215,34 @@ end
 --- Returns a specific data instance by name
 --- @param name string
 --- @return TabDataInstance?
-function Tab:getDataInstance(name) return self._dataInstances[name] end
+function Tab:getDataInstance(name)
+  return self._dataInstances[name]
+end
 
 --- Returns the unique ID of the tab
 --- @return string id
-function Tab:getId() return self._id end
+function Tab:getId()
+  return self._id
+end
 
 --- Returns whether or not this tab is visible
 --- @return boolean visible
-function Tab:getVisible() return self._visible end
+function Tab:getVisible()
+  return self._visible
+end
 
 --- Sets whether or not this tab is visible
 --- @param visible boolean
-function Tab:setVisible(visible) self._visible = visible end
+function Tab:setVisible(visible)
+  self._visible = visible
+end
 
 --- Adds a specific day (not a range) to this tab's date list
 --- @param unixTime number Unix timestamp representing the date
 function Tab:addToSpecificDays(unixTime)
-  if not private.utils.arrayHas(self._individualDays, function(day) return day == unixTime end) then
+  if not private.utils.arrayHas(self._individualDays, function(day)
+    return day == unixTime
+  end) then
     table.insert(self._individualDays, unixTime)
   end
 end
@@ -248,15 +260,21 @@ end
 
 --- Returns the specific days set for this tab
 --- @return table<number> individualDays Specific days set for this tab as unix timestamps
-function Tab:getSpecificDays() return self._individualDays end
+function Tab:getSpecificDays()
+  return self._individualDays
+end
 
 --- Sets the start date for this tab
 --- @param unixTime number
-function Tab:setStartDate(unixTime) self._startDate = unixTime end
+function Tab:setStartDate(unixTime)
+  self._startDate = unixTime
+end
 
 --- Gets the set name (not label) of the tab
 --- @return string tabName
-function Tab:getName() return self._tabName end
+function Tab:getName()
+  return self._tabName
+end
 
 --- Sets the tab name, resets tab label to match
 --- @param name string
@@ -267,35 +285,51 @@ end
 
 --- Returns the type of the tab
 --- @return TabType tabType
-function Tab:getType() return self._tabType end
+function Tab:getType()
+  return self._tabType
+end
 
 --- Sets the start date for this tab
 --- @param unixTime number
-function Tab:setEndDate(unixTime) self._endDate = unixTime end
+function Tab:setEndDate(unixTime)
+  self._endDate = unixTime
+end
 
 --- Sets the label color of the tab label, argb hex string. Set to nil to reset.
 --- @param argb string
-function Tab:setLabelColor(argb) self._labelColor = argb end
+function Tab:setLabelColor(argb)
+  self._labelColor = argb
+end
 
 --- Sets the tab text label
 --- @param text string
-function Tab:setLabelText(text) self._tabLabel = text end
+function Tab:setLabelText(text)
+  self._tabLabel = text
+end
 
 --- Sets the date summary text label, under the character dropdown.
 --- @param text string
-function Tab:setDateSummaryText(text) self._dateSummaryLabel = text end
+function Tab:setDateSummaryText(text)
+  self._dateSummaryLabel = text
+end
 
 --- Gets whether or not this tab is eligible to show on the info frame
 --- @return boolean infoFrameStatus
-function Tab:getInfoFrameEnabled() return self._infoFrameEnabled end
+function Tab:getInfoFrameEnabled()
+  return self._infoFrameEnabled
+end
 
 --- Returns whether or not this tab has a line break after it in the income frame
 --- @return boolean lineBreak
-function Tab:getLineBreak() return self._lineBreak end
+function Tab:getLineBreak()
+  return self._lineBreak
+end
 
 --- Sets whether or not this tab has a line break after it in the income frame
 --- @param lineBreak boolean
-function Tab:setLineBreak(lineBreak) self._lineBreak = lineBreak end
+function Tab:setLineBreak(lineBreak)
+  self._lineBreak = lineBreak
+end
 
 --- Sets whether or not this tab is eligible to show on the info frame
 --- @param enabled boolean
@@ -317,13 +351,14 @@ end
 
 --- Returns whether the minimap summary is enabled for this tab
 --- @return boolean minimapSummaryStatus
-function Tab:getMinimapSummaryEnabled() return self._minimapSummaryEnabled end
+function Tab:getMinimapSummaryEnabled()
+  return self._minimapSummaryEnabled
+end
 
 --- Sets LibDataBroker data enabled status for this tab.
 --- Will register to LDB as needed.
 --- @param enabled boolean
 function Tab:setLdbEnabled(enabled)
-
   self._ldbEnabled = enabled
 
   if enabled then
@@ -337,15 +372,21 @@ function Tab:setLdbEnabled(enabled)
 end
 
 --- Returns whether LibDataBroker data is enabled for this tab
-function Tab:getLdbEnabled() return self._ldbEnabled end
+function Tab:getLdbEnabled()
+  return self._ldbEnabled
+end
 
 --- Returns the set start time of the tab
 --- @return integer unixTime
-function Tab:getStartDate() return self._startDate end
+function Tab:getStartDate()
+  return self._startDate
+end
 
 --- Returns the lua expression for this tab
 --- @return string luaExpression
-function Tab:getLuaExpression() return self._luaExpression end
+function Tab:getLuaExpression()
+  return self._luaExpression
+end
 
 --- Sets the lua expression for this tab and attempts to parse it into a function
 --- @param expression string
@@ -354,7 +395,7 @@ function Tab:setLuaExpression(expression)
   local MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
   local success, result = MyAccountant:parseDateFunction(expression)
-  if (success) then
+  if success then
     self._loadedFunction = result
     self._luaExpression = expression
   end
@@ -364,7 +405,7 @@ end
 
 --- Runs the loaded function loaded in by using setLuaExpression
 function Tab:runLoadedFunction()
-  if (self._loadedFunction) then
+  if self._loadedFunction then
     self._loadedFunction(self, private.ApiUtils.Locale, private.ApiUtils.DateUtils, private.ApiUtils.FieldType)
   end
 end
@@ -469,13 +510,15 @@ end
 
 --- Returns the set end time of the tab
 --- @return integer unixTime
-function Tab:getEndDate() return self._endDate end
+function Tab:getEndDate()
+  return self._endDate
+end
 
 --- Returns the label of the text, including color code
 --- @return string tabLabel
 function Tab:getLabel()
-  return (self._labelColor and self._labelColor ~= "") and ("|cff" .. self._labelColor .. self._tabLabel .. "|r") or
-             self._tabLabel
+  return (self._labelColor and self._labelColor ~= "") and ("|cff" .. self._labelColor .. self._tabLabel .. "|r")
+    or self._tabLabel
 end
 
 --- Returns the date summary text label
@@ -490,12 +533,16 @@ end
 --- Returns custom option data for a field created byaddCustomOptionField
 --- @param fieldName string Internal field name
 --- @return any data value
-function Tab:getCustomOptionData(fieldName) return self._customOptionValues[fieldName] end
+function Tab:getCustomOptionData(fieldName)
+  return self._customOptionValues[fieldName]
+end
 
 --- Sets the value of a particular custom option field created by addCustomOptionField. Intended for use by the config system, not the Tab.
 --- @param fieldName string Internal field name
 --- @param data any Data value to set
-function Tab:setCustomOptionData(fieldName, data) self._customOptionValues[fieldName] = data end
+function Tab:setCustomOptionData(fieldName, data)
+  self._customOptionValues[fieldName] = data
+end
 
 --- Registers a new option for this tab to the tab options. Will not overwrite existing custom fields.
 --- @param fieldName string Internal field name. Used as the name when calling getCustomOptionData().

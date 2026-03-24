@@ -10,7 +10,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 -----------------------------------------
 L["option_session_storage"] = "Store session until"
 L["option_session_storage_desc"] =
-    "When to clear session data. By default (Logout/Reload), session data is cleared when you log out or reload your UI. If you set this to 'Until User Resets', session data will never be cleared and will be kept indefinitely until you manually clear it in the options, use the console command, clear it via the minimap button, or the button in the income panel."
+  "When to clear session data. By default (Logout/Reload), session data is cleared when you log out or reload your UI. If you set this to 'Until User Resets', session data will never be cleared and will be kept indefinitely until you manually clear it in the options, use the console command, clear it via the minimap button, or the button in the income panel."
 L["option_session_storage_logout"] = "Logout/Reload"
 L["option_session_storage_indefinite"] = "Until User Resets"
 
@@ -33,7 +33,7 @@ L["option_starting_day_of_week_sunday"] = "Sunday"
 ----------------------------------------
 L["option_calendar_summary"] = "Show data on calendar"
 L["option_calendar_summary_desc"] =
-    "If enabled, MyAccountant will add an icon to days with data on the WoW calendar. Highlight over it to see more information."
+  "If enabled, MyAccountant will add an icon to days with data on the WoW calendar. Highlight over it to see more information."
 
 L["option_calendar_source"] = "Show data from"
 L["option_calendar_source_desc"] = "Where to source calendar data from"
@@ -88,11 +88,11 @@ L["option_tab_additional_options"] = "Additional options"
 L["warband"] = "Warband"
 L["option_show_warband_in_realm_balance"] = "Show Warband balance in realm balance totals"
 L["option_show_warband_in_realm_balance_desc"] =
-    "If enabled, Warband balance will be included in realm balance tooltips. The Warband balance is updated when you open your bank."
+  "If enabled, Warband balance will be included in realm balance tooltips. The Warband balance is updated when you open your bank."
 
 L["option_tab_developer_export"] = "Tab libary export"
 L["option_tab_developer_export_desc"] =
-    "[Developer Option]: Shows the LUA code necessary to add this tab to the addon's default tab library."
+  "[Developer Option]: Shows the LUA code necessary to add this tab to the addon's default tab library."
 
 L["ldb_name_income_character"] = "Income - %s"
 L["ldb_name_outcome_character"] = "Outcome - %s"
@@ -103,15 +103,15 @@ L["ldb_name_profit_realm"] = "Profit - %s (Realm)"
 
 L["option_tab_linebreak"] = "Linebreak after this tab"
 L["option_tab_linebreak_desc"] =
-    "If true, this tab will be the last tab on the current row in the income panel. The next one will be on a new row."
+  "If true, this tab will be the last tab on the current row in the income panel. The next one will be on a new row."
 
 L["option_income_frame_width"] = "Income frame width"
 L["option_income_frame_width_desc"] = "The width of the income frame."
 
 L["version_welcome_message"] =
-    "Welcome to %s! Minimap tooltip settings and info frame settings have been reset to defaults. Please check addon options to customize them and your tabs to your liking."
+  "Welcome to %s! Minimap tooltip settings and info frame settings have been reset to defaults. Please check addon options to customize them and your tabs to your liking."
 L["version_first_install_message"] =
-    "All settings have been set to defaults. Please check addon options to customize your minimap tooltip, info frame data options, as well as your tabs!"
+  "All settings have been set to defaults. Please check addon options to customize your minimap tooltip, info frame data options, as well as your tabs!"
 
 L["random_day"] = "Random Day (Month)"
 L["yesterday"] = "Yesterday"
@@ -123,11 +123,11 @@ L["last_week"] = "Last Week"
 L["two_weeks_ago"] = "Two Weeks Ago"
 L["last_weekend"] = "Last Weekend"
 L["option_tab_text"] =
-    "Tab configuration allows you to specify which tabs you see and in which order. Select a desired tab on the left to enable or disable."
+  "Tab configuration allows you to specify which tabs you see and in which order. Select a desired tab on the left to enable or disable."
 
 L["option_tab_advanced"] = "Advanced mode"
 L["option_tab_advanced_desc"] =
-    "Advanced mode allows you to create new tabs, delete existing ones, and allows for advanced configuration. New tabs require some lua knowledge - you may look at existing tabs for examples."
+  "Advanced mode allows you to create new tabs, delete existing ones, and allows for advanced configuration. New tabs require some lua knowledge - you may look at existing tabs for examples."
 
 L["option_tabs"] = "Tabs"
 L["option_new_tab"] = "New tab"
@@ -136,7 +136,7 @@ L["option_reset_tabs"] = "Reset tabs to default"
 L["option_reset_tabs_desc"] = "Reset tab configuration to default tabs. |cffff0000Will erase any custom tabs! Irreversible!|r"
 
 L["option_reset_tabs_confirm"] =
-    "Are you sure you want to reset all tabs to default? This will remove any tab configurations and reset all tabs to default settings. |cffff0000This is irreversible!|r"
+  "Are you sure you want to reset all tabs to default? This will remove any tab configurations and reset all tabs to default settings. |cffff0000This is irreversible!|r"
 
 L["option_tab_name"] = "Tab label"
 L["option_tab_name_desc"] = "Name of the tab to show on the income panel"
@@ -149,7 +149,7 @@ L["option_tab_date_expression_desc"] = "Date expressions allow for advanced conf
 
 L["option_tab_type"] = "Tab type"
 L["option_tab_type_desc"] =
-    "What kind of data this tab will show (session, realm balance, or date). Date allows specific configuration."
+  "What kind of data this tab will show (session, realm balance, or date). Date allows specific configuration."
 L["option_tab_type_date"] = "Date"
 L["option_tab_type_session"] = "Session"
 L["option_tab_type_balance"] = "Realm Balance"
@@ -172,15 +172,15 @@ L["option_tab_advanced"] = "Advanced Configuration"
 
 L["option_tab_info_frame"] = "Register data with information frame"
 L["option_tab_info_frame_desc"] =
-    "If selected, data returned from this tab will be available on the Information Frame. Configured in the Information Frame options."
+  "If selected, data returned from this tab will be available on the Information Frame. Configured in the Information Frame options."
 
 L["option_tab_minimap"] = "Register data with minimap tooltip options"
 L["option_tab_minimap_desc"] =
-    "If true, data from this tab will be available as summary data on the minimap tooltip options page."
+  "If true, data from this tab will be available as summary data on the minimap tooltip options page."
 
 L["option_tab_ldb"] = "Register data with LDB"
 L["option_tab_ldb_desc"] =
-    "If selected, data returned from this tab will be registered with LibDataBroker allowing you to see it in other addons like Titan Panel or Bazooka."
+  "If selected, data returned from this tab will be registered with LibDataBroker allowing you to see it in other addons like Titan Panel or Bazooka."
 
 L["option_tab_move_left"] = "Move left"
 L["option_tab_move_left_desc"] = "Move this tab left."
@@ -215,14 +215,14 @@ L["balance"] = "Balance"
 
 L["option_info_frame"] = "Information frame"
 L["option_info_frame_desc"] =
-    "The information frame is a small draggable frame that can show information such as realm balance, session info, or other data."
+  "The information frame is a small draggable frame that can show information such as realm balance, session info, or other data."
 
 L["option_info_frame_show"] = "Show information frame"
 L["option_info_frame_show_desc"] = "Whether or not to show the information frame."
 
 L["option_info_frame_drag_shift"] = "Requires shift to be held to be moved"
 L["option_info_frame_drag_shift_desc"] =
-    "Whether or not shift needs to be held to drag the information frame. Required to be unlocked."
+  "Whether or not shift needs to be held to drag the information frame. Required to be unlocked."
 
 L["option_info_frame_lock"] = "Lock frame position"
 L["option_info_frame_lock_desc"] = "If true, prevents the information frame from being moved."
@@ -254,7 +254,7 @@ L["income_panel_hover_realm_total"] = "Realm balance"
 
 L["option_show_realm_total_tooltip"] = "Show faction icon (hover to see realm balance)"
 L["option_show_realm_total_tooltip_desc"] =
-    "If true, hovering over the faction icon at the the bottom of the income panel will show you your total gold across your realm. Only shows if the addon knows about more than one character, log into them to update."
+  "If true, hovering over the faction icon at the the bottom of the income panel will show you your total gold across your realm. Only shows if the addon knows about more than one character, log into them to update."
 
 -----------------------------------------
 --- VERSION 1.4
@@ -265,7 +265,7 @@ L["income_panel_other_sources"] = "Other sources"
 
 L["option_income_panel_default_show"] = "Default view to show when opening"
 L["option_income_panel_default_show_desc"] =
-    "Whether to show your income broken down mainly by source or by zone when opening the panel"
+  "Whether to show your income broken down mainly by source or by zone when opening the panel"
 L["option_income_panel_default_show_source"] = "Source"
 L["option_income_panel_default_show_zone"] = "Zone"
 
@@ -280,9 +280,9 @@ L["option_income_panel_hover_max"] = "Max number of items to show on hover toolt
 L["option_reset_zone_data"] = "Clear zone data for all characters"
 L["option_reset_zone_data_desc"] = "Clears zone data for all characters, keeping source data intact"
 L["option_reset_zone_data_confirm"] =
-    "This will |cffff0000permanently clear all zone info for all your characters|r. This can't be undone. Are sure you want to do this?"
+  "This will |cffff0000permanently clear all zone info for all your characters|r. This can't be undone. Are sure you want to do this?"
 L["option_income_panel_hover_max_desc"] =
-    "How many zones/sources to show when hovering over the income or outcome. The rest will be summed. Set to zero to disable hover tooltips"
+  "How many zones/sources to show when hovering over the income or outcome. The rest will be summed. Set to zero to disable hover tooltips"
 L["income_panel_other_zones"] = "Other zones"
 
 -----------------------------------------
@@ -385,14 +385,14 @@ L["option_clear_session_data_confirm"] = "This will clear all data for your sess
 
 L["option_clear_character_data"] = "Clear all data for this character"
 L["option_clear_character_data_desc"] =
-    "Delete all income/outcome data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
+  "Delete all income/outcome data for this character only. Other character's data will remain intact. |cffff0000This is irreversible!|r"
 L["option_clear_character_data_confirm"] =
-    "This will |cffff0000permanently clear all data for your character|r. This can't be undone. Are sure you want to do this?"
+  "This will |cffff0000permanently clear all data for your character|r. This can't be undone. Are sure you want to do this?"
 
 L["option_clear_all_data"] = "Clear all data"
 L["option_clear_all_data_desc"] = "Delete all income/outcome data for this addon. |cffff0000This is irreversible!|r"
 L["option_clear_all_data_confirm"] =
-    "This will |cffff0000permanently clear all data for all your characters, starting over from scratch|r. This can't be undone. Are sure you want to do this?"
+  "This will |cffff0000permanently clear all data for all your characters, starting over from scratch|r. This can't be undone. Are sure you want to do this?"
 
 -- Options, developer options
 L["option_debug_messages"] = "Show debug messages"

@@ -45,21 +45,30 @@ local events = {
       else
         activeSource = "MAIL"
       end
-    end
+    end,
   },
   { EVENT = "MAIL_SHOW", SOURCE = "MAIL" },
   { EVENT = "MAIL_CLOSED", SOURCE = "MAIL", RESET = true },
   -- Merchants
-  { 
-    EVENT = "MERCHANT_SHOW", SOURCE = "MERCHANTS", EXEC = function()
+  {
+    EVENT = "MERCHANT_SHOW",
+    SOURCE = "MERCHANTS",
+    EXEC = function()
       local cost, canRepair = GetRepairAllCost()
-      
+
       if canRepair and cost > 0 then
-          repairCost = cost
+        repairCost = cost
       end
-    end
+    end,
   },
-  { EVENT = "MERCHANT_CLOSED", SOURCE = "MERCHANTS", RESET = true,  EXEC = function() repairCost = 0 end },
+  {
+    EVENT = "MERCHANT_CLOSED",
+    SOURCE = "MERCHANTS",
+    RESET = true,
+    EXEC = function()
+      repairCost = 0
+    end,
+  },
   {
     EVENT = "MERCHANT_UPDATE",
     SOURCE = "MERCHANTS",
@@ -68,7 +77,7 @@ local events = {
       if InRepairMode() == true then
         activeSource = "REPAIR"
       end
-    end
+    end,
   },
   -- Quests
   { EVENT = "QUEST_COMPLETE", SOURCE = "QUESTS" },
@@ -113,7 +122,12 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
   -- Bank (Warband)
-  { EVENT = "BANKFRAME_OPENED", EXEC = function() MyAccountant:UpdateWarbandBalance() end },
+  {
+    EVENT = "BANKFRAME_OPENED",
+    EXEC = function()
+      MyAccountant:UpdateWarbandBalance()
+    end,
+  },
   -- Main
   {
     EVENT = "PLAYER_MONEY",
@@ -122,7 +136,7 @@ local events = {
       MyAccountant:UpdatePlayerBalance()
       MyAccountant:UpdateAllTabSummaryData()
       MyAccountant:UpdateInfoFrameSize()
-    end
+    end,
   },
   {
     EVENT = "PLAYER_ENTERING_WORLD",
@@ -132,7 +146,7 @@ local events = {
       MyAccountant:UpdateAllTabSummaryData()
       MyAccountant:UpdateInfoFrameSize()
       MyAccountant:RerenderInfoFrame()
-    end
+    end,
   },
   {
     EVENT = "PLAYER_REGEN_DISABLED",
@@ -140,15 +154,15 @@ local events = {
       if config.closeWhenEnteringCombat then
         MyAccountant:HidePanel()
       end
-    end
+    end,
   },
   {
     EVENT = "CALENDAR_UPDATE_EVENT_LIST",
     EXEC = function()
       -- Fires when the calendar is opened
       MyAccountant:UpdateCalendar()
-    end
-  }
+    end,
+  },
 }
 
 -- Main money handler
@@ -174,7 +188,9 @@ function MyAccountant:HandlePlayerMoneyChange()
   MyAccountant:updateFrameIfOpen()
 end
 
-function MyAccountant:UpdatePlayerBalance() self.db.factionrealm[UnitName("player")].config.gold = GetMoney() end
+function MyAccountant:UpdatePlayerBalance()
+  self.db.factionrealm[UnitName("player")].config.gold = GetMoney()
+end
 
 --- Updates the Warband balance from the bank (Retail only)
 function MyAccountant:UpdateWarbandBalance()
@@ -215,7 +231,7 @@ function MyAccountant:HandleGameEvent(event, ...)
   if eventInfo.EXEC then
     eventInfo.EXEC(self.db.char, ...)
   end
-  if (eventInfo.RESET == true) then
+  if eventInfo.RESET == true then
     activeSource = nil
   end
 end

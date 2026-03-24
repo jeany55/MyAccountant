@@ -44,14 +44,18 @@ end
 
 function Tests.TestTransformArray_EmptyArray()
   local input = {}
-  local result = private.utils.transformArray(input, function(v) return v * 2 end)
+  local result = private.utils.transformArray(input, function(v)
+    return v * 2
+  end)
   AssertEqual(0, #result)
 end
 
 function Tests.TestTransformArray_Numbers()
-  local input = {1, 2, 3, 4, 5}
-  local result = private.utils.transformArray(input, function(v) return v * 2 end)
-  
+  local input = { 1, 2, 3, 4, 5 }
+  local result = private.utils.transformArray(input, function(v)
+    return v * 2
+  end)
+
   AssertEqual(5, #result)
   AssertEqual(2, result[1])
   AssertEqual(4, result[2])
@@ -61,9 +65,11 @@ function Tests.TestTransformArray_Numbers()
 end
 
 function Tests.TestTransformArray_Strings()
-  local input = {"a", "b", "c"}
-  local result = private.utils.transformArray(input, function(v) return v .. "x" end)
-  
+  local input = { "a", "b", "c" }
+  local result = private.utils.transformArray(input, function(v)
+    return v .. "x"
+  end)
+
   AssertEqual(3, #result)
   AssertEqual("ax", result[1])
   AssertEqual("bx", result[2])
@@ -71,9 +77,11 @@ function Tests.TestTransformArray_Strings()
 end
 
 function Tests.TestTransformArray_Objects()
-  local input = {{val = 1}, {val = 2}, {val = 3}}
-  local result = private.utils.transformArray(input, function(v) return v.val * 10 end)
-  
+  local input = { { val = 1 }, { val = 2 }, { val = 3 } }
+  local result = private.utils.transformArray(input, function(v)
+    return v.val * 10
+  end)
+
   AssertEqual(3, #result)
   AssertEqual(10, result[1])
   AssertEqual(20, result[2])
@@ -97,13 +105,13 @@ function Tests.TestCopy_String()
 end
 
 function Tests.TestCopy_SimpleTable()
-  local original = {a = 1, b = 2, c = 3}
+  local original = { a = 1, b = 2, c = 3 }
   local copy = private.utils.copy(original)
-  
+
   AssertEqual(1, copy.a)
   AssertEqual(2, copy.b)
   AssertEqual(3, copy.c)
-  
+
   -- Verify it's a different table
   copy.a = 999
   AssertEqual(1, original.a)
@@ -115,43 +123,43 @@ function Tests.TestCopy_NestedTable()
     b = {
       c = 2,
       d = {
-        e = 3
-      }
-    }
+        e = 3,
+      },
+    },
   }
   local copy = private.utils.copy(original)
-  
+
   AssertEqual(1, copy.a)
   AssertEqual(2, copy.b.c)
   AssertEqual(3, copy.b.d.e)
-  
+
   -- Verify nested tables are different
   copy.b.d.e = 999
   AssertEqual(3, original.b.d.e)
 end
 
 function Tests.TestCopy_Array()
-  local original = {10, 20, 30, 40}
+  local original = { 10, 20, 30, 40 }
   local copy = private.utils.copy(original)
-  
+
   AssertEqual(4, #copy)
   AssertEqual(10, copy[1])
   AssertEqual(20, copy[2])
   AssertEqual(30, copy[3])
   AssertEqual(40, copy[4])
-  
+
   -- Verify it's a different table
   copy[1] = 999
   AssertEqual(10, original[1])
 end
 
 function Tests.TestCopy_CircularReference()
-  local original = {a = 1, b = 2}
+  local original = { a = 1, b = 2 }
   original.self = original
-  
+
   -- Test that the copy function doesn't crash with circular references
   local copy = private.utils.copy(original)
-  
+
   AssertEqual(1, copy.a)
   AssertEqual(2, copy.b)
   -- Verify it's a different table than original
@@ -163,11 +171,11 @@ function Tests.TestCopy_WithMetatable()
   local mt = {
     __index = function(t, k)
       return "meta_" .. k
-    end
+    end,
   }
-  local original = setmetatable({a = 1}, mt)
+  local original = setmetatable({ a = 1 }, mt)
   local copy = private.utils.copy(original)
-  
+
   AssertEqual(1, copy.a)
   -- Verify metatable is copied
   AssertEqual(getmetatable(original), getmetatable(copy))
@@ -181,10 +189,10 @@ function Tests.TestSupportsWoWVersions_SingleMatch()
   -- Set a test version
   local originalVersion = private.wowVersion
   private.wowVersion = "RETAIL"
-  
-  local result = private.utils.supportsWoWVersions({"RETAIL"})
+
+  local result = private.utils.supportsWoWVersions({ "RETAIL" })
   AssertEqual(true, result)
-  
+
   -- Restore
   private.wowVersion = originalVersion
 end
@@ -192,30 +200,30 @@ end
 function Tests.TestSupportsWoWVersions_SingleNoMatch()
   local originalVersion = private.wowVersion
   private.wowVersion = "RETAIL"
-  
-  local result = private.utils.supportsWoWVersions({"CLASSIC"})
+
+  local result = private.utils.supportsWoWVersions({ "CLASSIC" })
   AssertEqual(false, result)
-  
+
   private.wowVersion = originalVersion
 end
 
 function Tests.TestSupportsWoWVersions_MultipleWithMatch()
   local originalVersion = private.wowVersion
   private.wowVersion = "WOTLK"
-  
-  local result = private.utils.supportsWoWVersions({"RETAIL", "CLASSIC", "WOTLK", "CATA"})
+
+  local result = private.utils.supportsWoWVersions({ "RETAIL", "CLASSIC", "WOTLK", "CATA" })
   AssertEqual(true, result)
-  
+
   private.wowVersion = originalVersion
 end
 
 function Tests.TestSupportsWoWVersions_MultipleNoMatch()
   local originalVersion = private.wowVersion
   private.wowVersion = "RETAIL"
-  
-  local result = private.utils.supportsWoWVersions({"CLASSIC", "WOTLK", "CATA"})
+
+  local result = private.utils.supportsWoWVersions({ "CLASSIC", "WOTLK", "CATA" })
   AssertEqual(false, result)
-  
+
   private.wowVersion = originalVersion
 end
 
@@ -229,54 +237,70 @@ end
 ----------------------------------------------------------
 
 function Tests.TestArrayHas_Found()
-  local array = {1, 2, 3, 4, 5}
-  local result = private.utils.arrayHas(array, function(v) return v == 3 end)
+  local array = { 1, 2, 3, 4, 5 }
+  local result = private.utils.arrayHas(array, function(v)
+    return v == 3
+  end)
   AssertEqual(true, result)
 end
 
 function Tests.TestArrayHas_NotFound()
-  local array = {1, 2, 3, 4, 5}
-  local result = private.utils.arrayHas(array, function(v) return v == 10 end)
+  local array = { 1, 2, 3, 4, 5 }
+  local result = private.utils.arrayHas(array, function(v)
+    return v == 10
+  end)
   AssertEqual(false, result)
 end
 
 function Tests.TestArrayHas_EmptyArray()
   local array = {}
-  local result = private.utils.arrayHas(array, function(v) return v == 1 end)
+  local result = private.utils.arrayHas(array, function(v)
+    return v == 1
+  end)
   AssertEqual(false, result)
 end
 
 function Tests.TestArrayHas_ComplexPredicate()
-  local array = {10, 20, 30, 40, 50}
-  local result = private.utils.arrayHas(array, function(v) return v > 25 and v < 35 end)
+  local array = { 10, 20, 30, 40, 50 }
+  local result = private.utils.arrayHas(array, function(v)
+    return v > 25 and v < 35
+  end)
   AssertEqual(true, result)
 end
 
 function Tests.TestArrayHas_StringArray()
-  local array = {"apple", "banana", "cherry"}
-  local result = private.utils.arrayHas(array, function(v) return v == "banana" end)
+  local array = { "apple", "banana", "cherry" }
+  local result = private.utils.arrayHas(array, function(v)
+    return v == "banana"
+  end)
   AssertEqual(true, result)
 end
 
 function Tests.TestArrayHas_ObjectArray()
   local array = {
-    {id = 1, name = "Alice"},
-    {id = 2, name = "Bob"},
-    {id = 3, name = "Charlie"}
+    { id = 1, name = "Alice" },
+    { id = 2, name = "Bob" },
+    { id = 3, name = "Charlie" },
   }
-  local result = private.utils.arrayHas(array, function(v) return v.name == "Bob" end)
+  local result = private.utils.arrayHas(array, function(v)
+    return v.name == "Bob"
+  end)
   AssertEqual(true, result)
 end
 
 function Tests.TestArrayHas_FirstElement()
-  local array = {100, 200, 300}
-  local result = private.utils.arrayHas(array, function(v) return v == 100 end)
+  local array = { 100, 200, 300 }
+  local result = private.utils.arrayHas(array, function(v)
+    return v == 100
+  end)
   AssertEqual(true, result)
 end
 
 function Tests.TestArrayHas_LastElement()
-  local array = {100, 200, 300}
-  local result = private.utils.arrayHas(array, function(v) return v == 300 end)
+  local array = { 100, 200, 300 }
+  local result = private.utils.arrayHas(array, function(v)
+    return v == 300
+  end)
   AssertEqual(true, result)
 end
 
@@ -285,9 +309,9 @@ end
 ----------------------------------------------------------
 
 function Tests.TestSwapItemInArray_BasicSwap()
-  local array = {1, 2, 3, 4, 5}
+  local array = { 1, 2, 3, 4, 5 }
   private.utils.swapItemInArray(array, 1, 5)
-  
+
   AssertEqual(5, array[1])
   AssertEqual(2, array[2])
   AssertEqual(3, array[3])
@@ -296,18 +320,18 @@ function Tests.TestSwapItemInArray_BasicSwap()
 end
 
 function Tests.TestSwapItemInArray_AdjacentSwap()
-  local array = {10, 20, 30}
+  local array = { 10, 20, 30 }
   private.utils.swapItemInArray(array, 1, 2)
-  
+
   AssertEqual(20, array[1])
   AssertEqual(10, array[2])
   AssertEqual(30, array[3])
 end
 
 function Tests.TestSwapItemInArray_MiddleSwap()
-  local array = {"a", "b", "c", "d", "e"}
+  local array = { "a", "b", "c", "d", "e" }
   private.utils.swapItemInArray(array, 2, 4)
-  
+
   AssertEqual("a", array[1])
   AssertEqual("d", array[2])
   AssertEqual("c", array[3])
@@ -316,9 +340,9 @@ function Tests.TestSwapItemInArray_MiddleSwap()
 end
 
 function Tests.TestSwapItemInArray_SameIndex()
-  local array = {1, 2, 3}
+  local array = { 1, 2, 3 }
   private.utils.swapItemInArray(array, 2, 2)
-  
+
   AssertEqual(1, array[1])
   AssertEqual(2, array[2])
   AssertEqual(3, array[3])
@@ -326,12 +350,12 @@ end
 
 function Tests.TestSwapItemInArray_Objects()
   local array = {
-    {id = 1},
-    {id = 2},
-    {id = 3}
+    { id = 1 },
+    { id = 2 },
+    { id = 3 },
   }
   private.utils.swapItemInArray(array, 1, 3)
-  
+
   AssertEqual(3, array[1].id)
   AssertEqual(2, array[2].id)
   AssertEqual(1, array[3].id)
@@ -356,11 +380,11 @@ end
 function Tests.TestGenerateUuid_Uniqueness()
   local uuid1 = private.utils.generateUuid()
   local uuid2 = private.utils.generateUuid()
-  
+
   -- They should be different (not guaranteed but highly likely)
   -- We'll generate a few and check they're not all the same
   local uuid3 = private.utils.generateUuid()
-  
+
   local allSame = (uuid1 == uuid2) and (uuid2 == uuid3)
   AssertEqual(false, allSame)
 end
@@ -380,7 +404,7 @@ end
 function Tests.TestSplitString_WithSpaces()
   local input = "hello world test"
   local result = private.utils.splitString(input)
-  
+
   AssertEqual(3, #result)
   AssertEqual("hello", result[1])
   AssertEqual("world", result[2])
@@ -390,7 +414,7 @@ end
 function Tests.TestSplitString_WithComma()
   local input = "apple,banana,cherry"
   local result = private.utils.splitString(input, ",")
-  
+
   AssertEqual(3, #result)
   AssertEqual("apple", result[1])
   AssertEqual("banana", result[2])
@@ -400,7 +424,7 @@ end
 function Tests.TestSplitString_WithPipe()
   local input = "one|two|three|four"
   local result = private.utils.splitString(input, "|")
-  
+
   AssertEqual(4, #result)
   AssertEqual("one", result[1])
   AssertEqual("two", result[2])
@@ -411,14 +435,14 @@ end
 function Tests.TestSplitString_EmptyString()
   local input = ""
   local result = private.utils.splitString(input)
-  
+
   AssertEqual(0, #result)
 end
 
 function Tests.TestSplitString_SingleWord()
   local input = "hello"
   local result = private.utils.splitString(input)
-  
+
   AssertEqual(1, #result)
   AssertEqual("hello", result[1])
 end
@@ -426,7 +450,7 @@ end
 function Tests.TestSplitString_MultipleSpaces()
   local input = "hello  world   test"
   local result = private.utils.splitString(input)
-  
+
   -- Multiple spaces should still split correctly
   AssertEqual(3, #result)
   AssertEqual("hello", result[1])
@@ -437,7 +461,7 @@ end
 function Tests.TestSplitString_WithDash()
   local input = "first-second-third"
   local result = private.utils.splitString(input, "-")
-  
+
   AssertEqual(3, #result)
   AssertEqual("first", result[1])
   AssertEqual("second", result[2])
@@ -447,7 +471,7 @@ end
 function Tests.TestSplitString_TrailingDelimiter()
   local input = "one,two,three,"
   local result = private.utils.splitString(input, ",")
-  
+
   -- Trailing delimiter should not create empty element
   AssertEqual(3, #result)
   AssertEqual("one", result[1])

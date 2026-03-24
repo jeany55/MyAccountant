@@ -36,7 +36,7 @@ local Utils = {
   --- @param seen table|nil
   --- @return table
   copy = function(obj, seen)
-    if type(obj) ~= 'table' then
+    if type(obj) ~= "table" then
       return obj
     end
     if seen and seen[obj] then
@@ -94,7 +94,9 @@ local Utils = {
 
   --- Generate a short 8 digit UUID.
   --- @return string uuid
-  generateUuid = function() return format("%04x%04x", random(0, 0xFFFF), random(0, 0xFFFF)) end,
+  generateUuid = function()
+    return format("%04x%04x", random(0, 0xFFFF), random(0, 0xFFFF))
+  end,
 
   --- Splits a string into an array based on a delimiter
   --- @param inputstr string Input string
@@ -107,17 +109,16 @@ local Utils = {
       table.insert(result, str)
     end
     return result
-  end
+  end,
 }
 
 private.utils = Utils
 
 -- Function to get a header money string. Takes into account if the user doesn't want to see zeros - if so return empty string
 function MyAccountant:GetHeaderMoneyString(money)
-  if (self.db.char.hideZero and money == 0) then
+  if self.db.char.hideZero and money == 0 then
     return ""
   else
     return GetMoneyString(money, true)
   end
 end
-

@@ -108,7 +108,9 @@ function MyAccountant:RerenderInfoFrame()
           MyAccountant:MakeRealmTotalTooltip(balance)
           GameTooltip:Show()
         end)
-        row.value:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        row.value:SetScript("OnLeave", function()
+          GameTooltip:Hide()
+        end)
       else
         row.value:SetScript("OnEnter", nil)
         row.value:SetScript("OnLeave", nil)
@@ -141,7 +143,7 @@ function MyAccountant:InitializeInfoFrame()
     tile = true,
     tileSize = 16,
     edgeSize = 16,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 }
+    insets = { left = 4, right = 4, top = 4, bottom = 4 },
   })
   infoFrame:SetBackdropColor(0, 0, 0, 0.9)
   infoFrame:SetMovable(not self.db.char.lockInfoFrame)
@@ -162,7 +164,9 @@ function MyAccountant:InitializeInfoFrame()
       self:StartMoving()
     end
   end)
-  infoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
+  infoFrame:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+  end)
 
   if self.db.char.showInfoFrameV2 then
     infoFrame:Show()
@@ -223,9 +227,10 @@ function MyAccountant:UpdateInfoFrameSize()
   local useHeight = (amount == 0) and minimumHeight or (neededHeight + ((amount - 1) * rowSpacing))
   local useWidth = (amount == 0) and minimumWidth or (longestValueWidth + longestLabelWidth)
 
-  infoFrame:SetSize(useWidth + minimumSpacingBetweenItemAndValue + leftRowPadding + rightRowPadding,
-                    useHeight + topFramePadding + bottomFramePadding)
-
+  infoFrame:SetSize(
+    useWidth + minimumSpacingBetweenItemAndValue + leftRowPadding + rightRowPadding,
+    useHeight + topFramePadding + bottomFramePadding
+  )
 end
 
 --- Updates the show/hidden and lock status of the information frame
@@ -237,7 +242,6 @@ function MyAccountant:UpdateInformationFrameStatus()
     infoFrame:Hide()
   end
   for _, row in pairs(infoRows) do
-
     if self.db.char.rightAlignInfoValues then
       row.value:SetJustifyH("RIGHT")
     else

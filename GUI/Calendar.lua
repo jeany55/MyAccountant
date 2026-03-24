@@ -27,7 +27,7 @@ function MyAccountant:UpdateCalendar()
   end
 
   --- @type ViewType
-  local viewType = 'SOURCE'
+  local viewType = "SOURCE"
 
   local monthData = C_Calendar.GetMonthInfo()
 
@@ -57,7 +57,7 @@ function MyAccountant:UpdateCalendar()
     local incomeData = MyAccountant:GetIncomeOutcomeTable(tempTab, nil, characterData, viewType)
     local dataSummary = MyAccountant:SummarizeData(incomeData)
 
-    if (dataSummary.income > 0 or dataSummary.outcome > 0) then
+    if dataSummary.income > 0 or dataSummary.outcome > 0 then
       local updateGlow = function()
         if MyAccountant:IsDayInReport(unixTimeRepresentation) then
           dayFrame.accountantTexture:SetBlendMode("ADD")
@@ -67,7 +67,7 @@ function MyAccountant:UpdateCalendar()
       end
 
       if not dayFrame.accountantButton then
-        dayFrame.accountantButton = CreateFrame('Button', nil, dayFrame)
+        dayFrame.accountantButton = CreateFrame("Button", nil, dayFrame)
         dayFrame.accountantButton:SetSize(20, 20)
 
         local accountantTexture = dayFrame.accountantButton:CreateTexture(nil, "OVERLAY")
@@ -75,7 +75,9 @@ function MyAccountant:UpdateCalendar()
         accountantTexture:SetPoint("CENTER")
 
         dayFrame.accountantTexture = accountantTexture
-        dayFrame.accountantButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        dayFrame.accountantButton:SetScript("OnLeave", function()
+          GameTooltip:Hide()
+        end)
         dayFrame.accountantButton:SetPoint("BOTTOMRIGHT", dayFrame, "BOTTOMRIGHT", -7, 4)
       end
 
@@ -84,13 +86,22 @@ function MyAccountant:UpdateCalendar()
       local makeTooltip = function()
         local profitColor = private.utils.getProfitColor(profit)
         GameTooltip:SetOwner(dayFrame, "ANCHOR_CURSOR")
-        GameTooltip:AddDoubleLine(L["header_total_net"],
-                                  "|cff" .. profitColor .. MyAccountant:GetHeaderMoneyString(abs(profit)) .. "|r", 1, 1, 1)
+        GameTooltip:AddDoubleLine(
+          L["header_total_net"],
+          "|cff" .. profitColor .. MyAccountant:GetHeaderMoneyString(abs(profit)) .. "|r",
+          1,
+          1,
+          1
+        )
 
-        GameTooltip:AddDoubleLine(L["header_total_income"],
-                                  "|cff00ff00" .. MyAccountant:GetHeaderMoneyString(dataSummary.income) .. "|r")
-        GameTooltip:AddDoubleLine(L["header_total_outcome"],
-                                  "|cffff0000" .. MyAccountant:GetHeaderMoneyString(dataSummary.outcome) .. "|r")
+        GameTooltip:AddDoubleLine(
+          L["header_total_income"],
+          "|cff00ff00" .. MyAccountant:GetHeaderMoneyString(dataSummary.income) .. "|r"
+        )
+        GameTooltip:AddDoubleLine(
+          L["header_total_outcome"],
+          "|cffff0000" .. MyAccountant:GetHeaderMoneyString(dataSummary.outcome) .. "|r"
+        )
         GameTooltip:AddLine("|cff898989" .. L["option_calendar_click"] .. "|r")
         if MyAccountant:IsDayInReport(unixTimeRepresentation) then
           GameTooltip:AddLine("|cff898989" .. L["option_calendar_click_right_remove"] .. "|r")
@@ -135,7 +146,9 @@ function MyAccountant:UpdateCalendar()
       end
       updateGlow()
 
-      dayFrame.accountantButton:SetScript("OnEnter", function() makeTooltip() end)
+      dayFrame.accountantButton:SetScript("OnEnter", function()
+        makeTooltip()
+      end)
     end
   end
 end

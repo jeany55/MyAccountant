@@ -13,7 +13,11 @@ local FieldType = { CHECKBOX = "toggle", INPUT = "input" }
 -- Locale API wrapper object
 --- @class Locale
 --- @field get fun(key: string): string
-local Locale = { get = function(key) return L[key] end }
+local Locale = {
+  get = function(key)
+    return L[key]
+  end,
+}
 
 --- DateUtils
 local dayInSeconds = 86400
@@ -22,7 +26,9 @@ local dayInSeconds = 86400
 local DateUtils = {
   --- Returns the unix time for today
   --- @return integer timestamp Unix timestamp
-  getToday = function() return time() end,
+  getToday = function()
+    return time()
+  end,
 
   --- Returns the start of the week for a timestamp
   --- @return integer timestamp Unix timestamp
@@ -59,34 +65,46 @@ local DateUtils = {
   --- Adds a day to a timestamp
   --- @param time integer Unix timestamp
   --- @return integer timestamp Unix timestamp, one day in the future
-  addDay = function(time) return time + dayInSeconds end,
+  addDay = function(time)
+    return time + dayInSeconds
+  end,
 
   --- Subtracts a day from a timestamp
   --- @param time integer Unix timestamp
   --- @return integer timestamp Unix timestamp, one day in the past
-  subtractDay = function(time) return time - dayInSeconds end,
+  subtractDay = function(time)
+    return time - dayInSeconds
+  end,
 
   --- Adds a week to a timestamp
   --- @param time integer Unix timestamp
   --- @return integer timestamp Unix timestamp, one week in the future
-  addWeek = function(time) return time + (dayInSeconds * 7) end,
+  addWeek = function(time)
+    return time + (dayInSeconds * 7)
+  end,
 
   --- Subtracts a week from a timestamp
   --- @param time integer Unix timestamp
   --- @return integer timestamp Unix timestamp, one week in the past
-  subtractWeek = function(time) return time - (dayInSeconds * 7) end,
+  subtractWeek = function(time)
+    return time - (dayInSeconds * 7)
+  end,
 
   --- Adds days to a timestamp
   --- @param time integer Unix timestamp
   --- @param days integer Number of days to add
   --- @return integer timestamp Unix timestamp in the future
-  addDays = function(time, days) return time + (dayInSeconds * days) end,
+  addDays = function(time, days)
+    return time + (dayInSeconds * days)
+  end,
 
   --- Subtracts days to a timestamp
   --- @param time integer Unix timestamp
   --- @param days integer Number of days to add
   --- @return integer timestamp Unix timestamp in the future
-  subtractDays = function(time, days) return time - (dayInSeconds * days) end,
+  subtractDays = function(time, days)
+    return time - (dayInSeconds * days)
+  end,
 
   --- Gets the current days in the month from a timestamp
   --- @param timestamp integer Unix timestamp
@@ -94,7 +112,7 @@ local DateUtils = {
   getCurrentDayInMonth = function(timestamp)
     local currentDate = date("*t", timestamp)
     return currentDate.day and currentDate.day or 0
-  end
+  end,
 }
 
 local apiWrapperFunction = [[
@@ -128,9 +146,9 @@ function MyAccountant:validateDateFunction(expression)
     return false, (data and data or L["option_tab_expression_invalid_lua"])
   end
 
-  --- @type boolean, Tab|string 
-  local successCall, tab = pcall(data, private.Tab:construct({ tabName = "ValidationTab", visible = false }), Locale, DateUtils,
-                                 FieldType)
+  --- @type boolean, Tab|string
+  local successCall, tab =
+    pcall(data, private.Tab:construct({ tabName = "ValidationTab", visible = false }), Locale, DateUtils, FieldType)
   if not successCall then
     return false, (tab and tab or L["option_tab_expression_invalid_lua_bad"])
   end

@@ -7,9 +7,9 @@ on:
       - main
     inputs:
       versionType:
-        description: 'Type of change'
+        description: "Type of change"
         required: true
-        default: 'patch'
+        default: "patch"
         type: choice
         options:
           - patch
@@ -41,9 +41,9 @@ jobs:
       - name: Update version
         run: |
           VERSION=$(grep '^## Version:' MyAccountant.toc | grep -o '[0-9]*\.[0-9]*\.[0-9]*')
-          
+
           arrIN=(${VERSION//./ })
-          
+
           MAJOR_VERSION=${arrIN[0]}
           MINOR_VERSION=${arrIN[1]}
           PATCH_VERSION=${arrIN[2]}
@@ -68,10 +68,18 @@ jobs:
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Classic.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Mists.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-WOTLK.toc
-          
+
           echo "VERSION=$newVersion" >> $GITHUB_ENV
 
-      # Commit the change made in the previous step (and tag the version)
+      # Format Lua files with StyLua (excluding third-party libs)
+      - name: Format Lua files
+        uses: JohnnyMorganz/stylua-action@v4
+        with:
+          token: ${{ secrets.ACCESS_TOKEN_GIT }}
+          version: latest
+          args: --glob '**/*.lua' --glob '!Libs/**' .
+
+      # Commit the change made in the previous steps (and tag the version)
       - name: Commit and tag
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN_GIT }}
@@ -85,8 +93,8 @@ jobs:
           git add MyAccountant-Classic.toc
           git add MyAccountant-Mists.toc
           git add MyAccountant-WOTLK.toc
-          # git add CHANGELOG.md
-          
+          git add '*.lua' ':!Libs/'
+
           git commit -m "Update to version $VERSION"
           git push
 
@@ -99,7 +107,7 @@ jobs:
           rm -rf ./.git
           rm -rf ./.github
           rm .gitignore
-          rm .lua-style
+          rm .stylua.toml
           rm .luacov
           rm LICENSE
           rm README.md
@@ -133,14 +141,14 @@ jobs:
 
       # Put it into all into a nested folder and zip it
       - name: Generate zip
-        run : |
+        run: |
           echo "Making zip for version $VERSION"
 
           mkdir MyAccountant
           mv * MyAccountant || true
 
-          zip -r "MyAccountant-${VERSION}.zip" ./ 
-      
+          zip -r "MyAccountant-${VERSION}.zip" ./
+
       # Upload zip made in previous step as a github release and attach to version tag
       - name: Create release
         uses: ncipollo/release-action@v1.12.0
@@ -149,7 +157,7 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN_GIT }}
           tag: "v${{ env.VERSION }}"
           body: ${{ inputs.changeNotes }}
-      
+
       # Upload built zip to Curse
       - name: Upload to CurseForge
         if: ${{ inputs.deployToCurse }}

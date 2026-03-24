@@ -12,7 +12,7 @@ local selectedCharacter = UnitName("player")
 local ActiveTab = nil
 local ActiveTabIndex = 1
 
--- Holds whether viewing by source or by zone 
+-- Holds whether viewing by source or by zone
 local ViewType
 
 -- Hold grid lines to show/hide if user doesn't want to see them
@@ -38,8 +38,8 @@ local function getTabFrame(index)
   if tabFrames[index] then
     return tabFrames[index]
   else
-    local frame = CreateFrame("Button", "$parentTab" .. frameCreationIndex, IncomeFrame, "MyAccountantTabTemplate",
-                              frameCreationIndex)
+    local frame =
+      CreateFrame("Button", "$parentTab" .. frameCreationIndex, IncomeFrame, "MyAccountantTabTemplate", frameCreationIndex)
 
     table.insert(tabFrames, frame)
     frameCreationIndex = frameCreationIndex + 1
@@ -275,14 +275,18 @@ function MyAccountant:InitializeUI()
   end)
 
   -- Set width on income label
-  totalProfit:SetPoint("LEFT", totalProfitText, totalProfitText:GetSize() + 20, 0);
+  totalProfit:SetPoint("LEFT", totalProfitText, totalProfitText:GetSize() + 20, 0)
 
   -- Drag support
   IncomeFrame:EnableMouse(true)
   IncomeFrame:SetMovable(true)
   IncomeFrame:RegisterForDrag("LeftButton")
-  IncomeFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
-  IncomeFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
+  IncomeFrame:SetScript("OnDragStart", function(self)
+    self:StartMoving()
+  end)
+  IncomeFrame:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+  end)
 
   IncomeFrame:SetFrameLevel(100)
 
@@ -294,7 +298,7 @@ function MyAccountant:InitializeUI()
     -- edgeSize = 16,
     insets = { left = 7, right = 5, top = 4, bottom = 4 },
     tile = true,
-    tileSize = 100
+    tileSize = 100,
   })
   legendFrame:SetBackdropColor(0.8, 1, 1, 1)
 
@@ -337,7 +341,9 @@ function MyAccountant:InitializeUI()
   -- Close on ESC
   table.insert(UISpecialFrames, IncomeFrame:GetName())
 
-  IncomeFrame:SetScript("OnHide", function() private.panelOpen = false end)
+  IncomeFrame:SetScript("OnHide", function()
+    private.panelOpen = false
+  end)
   IncomeFrame:Hide()
 
   -- Header click handlers for sorting
@@ -554,7 +560,9 @@ function MyAccountant:updateFrame()
       bottomButton2:Hide()
       bottomButton3:Show()
       bottomButton3:SetText(L["income_panel_button_" .. button1])
-      bottomButton3:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
+      bottomButton3:SetScript("OnClick", function()
+        bottomButtonClickHandler(button1)
+      end)
 
       bottomButton2:SetSize(60, 0)
     elseif button3 == nil then
@@ -565,8 +573,12 @@ function MyAccountant:updateFrame()
       bottomButton2:SetText(L["income_panel_button_" .. button1])
       bottomButton3:SetText(L["income_panel_button_" .. button2])
 
-      bottomButton2:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
-      bottomButton3:SetScript("OnClick", function() bottomButtonClickHandler(button2) end)
+      bottomButton2:SetScript("OnClick", function()
+        bottomButtonClickHandler(button1)
+      end)
+      bottomButton3:SetScript("OnClick", function()
+        bottomButtonClickHandler(button2)
+      end)
 
       bottomButton1:SetSize(60, 0)
       bottomButton2:SetSize(120, 0)
@@ -577,9 +589,15 @@ function MyAccountant:updateFrame()
       bottomButton1:SetSize(100, 0)
       bottomButton2:SetSize(100, 0)
 
-      bottomButton1:SetScript("OnClick", function() bottomButtonClickHandler(button1) end)
-      bottomButton2:SetScript("OnClick", function() bottomButtonClickHandler(button2) end)
-      bottomButton3:SetScript("OnClick", function() bottomButtonClickHandler(button3) end)
+      bottomButton1:SetScript("OnClick", function()
+        bottomButtonClickHandler(button1)
+      end)
+      bottomButton2:SetScript("OnClick", function()
+        bottomButtonClickHandler(button2)
+      end)
+      bottomButton3:SetScript("OnClick", function()
+        bottomButtonClickHandler(button3)
+      end)
 
       bottomButton1:SetText(L["income_panel_button_" .. button1])
       bottomButton2:SetText(L["income_panel_button_" .. button2])
@@ -628,7 +646,7 @@ function MyAccountant:updateFrame()
 
   totalProfit:SetText(MyAccountant:GetHeaderMoneyString(abs(profit)))
 
-  if (profit > 0) then
+  if profit > 0 then
     totalProfit:SetTextColor(0, 255, 0)
   elseif profit < 0 then
     totalProfit:SetTextColor(255, 0, 0)
@@ -651,8 +669,12 @@ function MyAccountant:updateFrame()
   MyAccountant:DrawRows()
 end
 
-local sortZoneIncome = function(source1, source2) return source1.income > source2.income end
-local sortZoneOutcome = function(source1, source2) return source1.outcome > source2.outcome end
+local sortZoneIncome = function(source1, source2)
+  return source1.income > source2.income
+end
+local sortZoneOutcome = function(source1, source2)
+  return source1.outcome > source2.outcome
+end
 
 local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
@@ -719,7 +741,6 @@ local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
       GameTooltip:Show()
     end
   end
-
 end
 
 function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
@@ -754,7 +775,7 @@ function MyAccountant:DrawRows()
   local maxHoverLines = self.db.char.maxZonesIncomePanel
   local colorIncome = self.db.char.colorGoldInIncomePanel
 
-  local showScrollbar = #(incomeTable) > 12
+  local showScrollbar = #incomeTable > 12
   if showScrollbar then
     scrollBar:Show()
   else
@@ -767,17 +788,18 @@ function MyAccountant:DrawRows()
   local startingRowHeight = -17
 
   local scrollBarUpdateFunction = function()
-    if (#incomeTable > 12) then
-      FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20);
+    if #incomeTable > 12 then
+      FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20)
     end
 
     MyAccountant:DrawRows()
   end
 
   -- Setup scrollbar
-  scrollFrame:SetScript("OnVerticalScroll",
-                        function(self, offset) FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction) end)
-  FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20);
+  scrollFrame:SetScript("OnVerticalScroll", function(self, offset)
+    FauxScrollFrame_OnVerticalScroll(self, offset, 20, scrollBarUpdateFunction)
+  end)
+  FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20)
 
   local realmBalanceInfo = MyAccountant:GetRealmBalanceTotalDataTable()
   local showRealmBalanceTooltip = self.db.char.showRealmGoldTotals and (#realmBalanceInfo > 2)
@@ -789,14 +811,16 @@ function MyAccountant:DrawRows()
     factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
   end
   -- Setup realm balance totals when hovering over bottom character balance
-  if (showRealmBalanceTooltip) then
+  if showRealmBalanceTooltip then
     realmInfo:SetText("|T" .. factionIcon .. ":18:18|t")
     realmInfo:SetScript("OnEnter", function()
       GameTooltip:SetOwner(realmInfo, "ANCHOR_CURSOR")
       MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
       GameTooltip:Show()
     end)
-    realmInfo:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    realmInfo:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+    end)
   else
     realmInfo:SetText("")
     realmInfo:SetScript("OnEnter", function() end)
@@ -848,12 +872,18 @@ function MyAccountant:DrawRows()
       _G[incoming]:SetText(incomeText)
       _G[outgoing]:SetText(outcomeText)
 
-      _G[outgoing]:SetScript("OnEnter",
-                             function(self) addHoverTooltip(self, "OUTCOME", currentRow.zones, maxHoverLines, colorIncome) end)
-      _G[outgoing]:SetScript("OnLeave", function() GameTooltip:Hide() end)
-      _G[incoming]:SetScript("OnEnter",
-                             function(self) addHoverTooltip(self, "INCOME", currentRow.zones, maxHoverLines, colorIncome) end)
-      _G[incoming]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      _G[outgoing]:SetScript("OnEnter", function(self)
+        addHoverTooltip(self, "OUTCOME", currentRow.zones, maxHoverLines, colorIncome)
+      end)
+      _G[outgoing]:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+      end)
+      _G[incoming]:SetScript("OnEnter", function(self)
+        addHoverTooltip(self, "INCOME", currentRow.zones, maxHoverLines, colorIncome)
+      end)
+      _G[incoming]:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+      end)
     else
       _G[title]:SetText("")
       _G[incoming]:SetText("")
@@ -875,11 +905,11 @@ function MyAccountant:DrawRows()
   end
 end
 
---- Handles tab click 
+--- Handles tab click
 --- @param tab Tab
 --- @param tabCreationId integer Id assigned when creating the tab frame
 function MyAccountant:TabClick(tab, tabCreationId)
-  PanelTemplates_SetTab(IncomeFrame, tabCreationId);
+  PanelTemplates_SetTab(IncomeFrame, tabCreationId)
   ActiveTab = tab
   ActiveTabIndex = tabCreationId
   MyAccountant:updateFrame()
