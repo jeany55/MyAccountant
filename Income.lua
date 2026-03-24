@@ -54,6 +54,9 @@ end
 --- Returns the current gold per hour value for the session
 --- @return integer moneyPerHour Money per hour
 function MyAccountant:GetGoldPerHour()
+  if not self.db.char.addonStartTime or not self.db.char.totalGoldMade then
+    return 0
+  end
   local totalRunTime = time() - self.db.char.addonStartTime
   if totalRunTime == 0 then
     return 0
@@ -76,6 +79,12 @@ end
 function MyAccountant:AddIncome(category, amount, dateOverride)
   MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
+  if not self.db.char.sessionDb then
+    self.db.char.sessionDb = {}
+  end
+  if not self.db.char.totalGoldMade then
+    self.db.char.totalGoldMade = 0
+  end
   self.db.char.totalGoldMade = self.db.char.totalGoldMade + amount
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
@@ -123,6 +132,9 @@ end
 function MyAccountant:AddOutcome(category, amount, dateOverride)
   MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
+  if not self.db.char.sessionDb then
+    self.db.char.sessionDb = {}
+  end
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
   local zone = GetZoneText()
@@ -353,11 +365,17 @@ end
 
 -- Gets total session income, if no category is passed a total sum will be returned
 function MyAccountant:GetSessionIncome(category)
+  if not self.db.char.sessionDb then
+    return 0
+  end
   return sumDay(self.db.char.sessionDb, category, "income")
 end
 
 -- Gets total session outcome, if no category is passed a total sum will be returned
 function MyAccountant:GetSessionOutcome(category)
+  if not self.db.char.sessionDb then
+    return 0
+  end
   return sumDay(self.db.char.sessionDb, category, "outcome")
 end
 
@@ -382,7 +400,7 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   if tab:getType() == "SESSION" then
-    table = private.utils.copy(self.db.char.sessionDb)
+    table = private.utils.copy(self.db.char.sessionDb or {})
   elseif tab:getType() == "ALL_TIME" then
     table = MyAccountant:GetAllTime(playerName)
   else
@@ -462,7 +480,7 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride
 end
 
 function MyAccountant:ResetZoneData()
-  for k, v in pairs(self.db.char.sessionDb) do
+  for k, v in pairs(self.db.char.sessionDb or {}) do
     if v.zones then
       self.db.char.sessionDb[k].zones = {}
     end
