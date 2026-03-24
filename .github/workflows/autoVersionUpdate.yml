@@ -17,3 +17,5 @@ jobs:
     steps:
       - name: Autoversioner
         uses: jeany55/WowAddonVersioner@v1-beta
+        with:
+          update-action-versions: true
