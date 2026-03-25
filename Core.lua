@@ -65,6 +65,7 @@ function MyAccountant:OnInitialize()
   MyAccountant:InitializeInfoFrame()
   MyAccountant:InitializeUI()
   MyAccountant:RegisterAllEvents()
+  MyAccountant:UpdateAllTabSummaryData()
 
   -- Register global confirmations
   StaticPopupDialogs["MYACCOUNTANT_RESET_GPH"] = {
