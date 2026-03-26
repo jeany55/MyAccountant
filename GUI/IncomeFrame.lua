@@ -266,7 +266,8 @@ function MyAccountant:InitializeUI()
       MyAccountant:updateFrame()
     end
     LibDD:UIDropDownMenu_AddButton(all)
-    LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, selectedCharacter.guid)
+    local dropdownValue = selectedCharacter == "ALL_CHARACTERS" and "ALL_CHARACTERS" or selectedCharacter.guid
+    LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, dropdownValue)
   end)
 
   -- Set width on income label
@@ -477,7 +478,8 @@ function MyAccountant:showIncomeFrameTemporaryTab(tempTab)
   else
     selectedCharacter = MyAccountant:GetCharacterDatabaseReference()
   end
-  LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, selectedCharacter.guid)
+  local dropdownValue = selectedCharacter == "ALL_CHARACTERS" and "ALL_CHARACTERS" or selectedCharacter.guid
+  LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, dropdownValue)
   MyAccountant:updateFrame()
 end
 

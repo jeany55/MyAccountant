@@ -1006,8 +1006,6 @@ function MyAccountant:SetupAddonOptions()
       if type(data) == "table" and data.name then
         local classtexture = GetClassAtlas(data.class)
 
-        local checked = getCheckedState(characterGuid)
-
         local icon
         if data.faction == "Horde" then
           icon = "Interface\\PVPFrame\\PVP-Currency-Horde"
@@ -1807,11 +1805,16 @@ function MyAccountant:MigrateLegacyData()
         migrated = true,
       }
 
-      data.config = nil
-      self.db.global[playerName .. "-" .. realm].db = data
+      local db = {}
+      for k, v in pairs(data) do
+        if k ~= "config" then
+          db[k] = v
+        end
+      end
+
+      self.db.global[playerName .. "-" .. realm].db = db
     end
   end
 
-  self.db.factionrealm = nil
   MyAccountant:PrintDebugMessage("Migrated legacy data for " .. realm)
 end

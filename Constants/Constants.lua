@@ -344,5 +344,7 @@ private.default_settings = {
   addonStartTime = time(),
   totalGoldMade = 0,
   characterPresetTrack = "CURRENT_REALM",
-  customCharacterTracking = {},
+  customCharacterTracking = {
+    [UnitGUID("player")] = true,
+  },
 }
