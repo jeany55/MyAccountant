@@ -110,6 +110,29 @@ local Utils = {
     end
     return result
   end,
+
+  --- Checks if a character should be tracked based on current preset settings
+  --- @param characterGuid string The GUID of the character to check
+  --- @param characterData table The global db entry for the character
+  --- @param preset string The current characterPresetTrack value
+  --- @param customTracking table The customCharacterTracking table from db.char
+  --- @return boolean
+  isCharacterTracked = function(characterGuid, characterData, preset, customTracking)
+    if preset == "ALL" then
+      return true
+    elseif preset == "CURRENT_REALM" then
+      return characterData.realm == GetRealmName()
+    elseif preset == "CURRENT_REALM_FACTION" then
+      return characterData.realm == GetRealmName() and characterData.faction == UnitFactionGroup("player")
+    elseif preset == "ALLIANCE" then
+      return characterData.faction == "Alliance"
+    elseif preset == "HORDE" then
+      return characterData.faction == "Horde"
+    elseif preset == "CUSTOM" then
+      return customTracking[characterGuid] == true
+    end
+    return false
+  end,
 }
 
 private.utils = Utils

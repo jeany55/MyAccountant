@@ -7,6 +7,8 @@ local incomePanelOptions
 
 local infoFrameConfig
 local infoFrameOptionsTabMap = {}
+local charactersOptions
+
 --- Shows minimap icon and registers if it doesn't exist
 local function showMinimap()
   local libIcon = LibStub("LibDBIcon-1.0", true)
@@ -986,6 +988,125 @@ function MyAccountant:SetupAddonOptions()
     },
   }
 
+  local function getCheckedState(characterGuid)
+    return private.utils.isCharacterTracked(
+      characterGuid,
+      self.db.global[characterGuid],
+      self.db.char.characterPresetTrack,
+      self.db.char.customCharacterTracking
+    )
+  end
+
+  local function makeCharactersRows()
+    local character_rows = {}
+    local order = 1
+    local disabled = self.db.char.characterPresetTrack ~= "CUSTOM"
+
+    for characterGuid, data in pairs(self.db.global) do
+      if type(data) == "table" and data.name then
+        local classtexture = GetClassAtlas(data.class)
+
+        local checked = getCheckedState(characterGuid)
+
+        local icon
+        if data.faction == "Horde" then
+          icon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+        else
+          icon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+        end
+
+        character_rows[data.name .. "_name"] = {
+          type = "toggle",
+          order = order,
+          disabled = disabled,
+          width = 2.8,
+          name = "|T"
+            .. icon
+            .. ":18:18|t ("
+            .. data.realm
+            .. ") - "
+            .. "|A:"
+            .. classtexture
+            .. ":14:14|a  |c"
+            .. data.classColor
+            .. data.name
+            .. "|r",
+          desc = "",
+          get = function()
+            return getCheckedState(characterGuid)
+          end,
+          set = function(_, val)
+            self.db.char.customCharacterTracking[characterGuid] = val
+          end,
+        }
+        character_rows[data.name .. "_delete"] = {
+          name = L["option_tab_characters_delete_character"],
+          type = "execute",
+          width = 0.8,
+          order = order + 1,
+          disabled = data.name == UnitName("player"),
+          desc = L["option_tab_characters_delete_character_desc"],
+          confirm = true,
+          confirmText = L["option_tab_characters_delete_confirm"],
+          func = function()
+            self.db.global[characterGuid] = nil
+            self.db.char.customCharacterTracking[characterGuid] = nil
+            makeCharactersRows()
+            forceConfigRerender()
+          end,
+        }
+
+        order = order + 2
+      end
+    end
+    charactersOptions.args.characters.args = character_rows
+  end
+
+  --- @type AceConfig.OptionsTable
+  charactersOptions = {
+    type = "group",
+    name = L["option_tab_characters"],
+    args = {
+      info = {
+        order = 0,
+        type = "description",
+        name = L["option_tab_characters_desc"],
+      },
+      preset_track = {
+        order = 1,
+        type = "select",
+        width = 1.5,
+        name = L["option_tab_characters_preset"],
+        desc = L["option_tab_characters_preset_desc"],
+        values = {
+          ALL = L["option_tab_characters_preset_all"],
+          CURRENT_REALM = L["option_tab_characters_preset_current_realm"],
+          CURRENT_REALM_FACTION = L["option_tab_characters_preset_current_realm_faction"],
+          ALLIANCE = L["option_tab_characters_preset_alliance"],
+          HORDE = L["option_tab_characters_preset_horde"],
+          CUSTOM = L["option_tab_characters_preset_custom"],
+        },
+        set = function(info, val)
+          self.db.char.characterPresetTrack = val
+          makeCharactersRows()
+          forceConfigRerender()
+        end,
+        get = function(info)
+          return self.db.char.characterPresetTrack
+        end,
+      },
+      characters = {
+        order = 2,
+        type = "group",
+        inline = true,
+        name = L["option_tab_characters"],
+        args = {},
+      },
+    },
+  }
+
+  makeCharactersRows()
+
   --- @type AceConfig.OptionsTable
   local minimapIconOptions = {
     type = "group",
@@ -1601,6 +1722,10 @@ function MyAccountant:SetupAddonOptions()
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-General", generalOptions)
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-General", generalOptions.name, private.ADDON_NAME)
 
+  -- Characters
+  LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Characters", charactersOptions)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Characters", charactersOptions.name, private.ADDON_NAME)
+
   -- Minimap Icon Options
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-MinimapIcon", minimapIconOptions)
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
@@ -1632,4 +1757,61 @@ function MyAccountant:SetupAddonOptions()
   if self.db.char.showMinimap == true then
     showMinimap()
   end
+end
+
+local function getClassFromColor(hex)
+  -- if it's AARRGGBB, strip alpha
+  if #hex == 8 then
+    hex = hex:sub(3)
+  end
+
+  if #hex ~= 6 then
+    return nil
+  end
+
+  local r = tonumber(hex:sub(1, 2), 16)
+  local g = tonumber(hex:sub(3, 4), 16)
+  local b = tonumber(hex:sub(5, 6), 16)
+
+  if not r or not g or not b then
+    return nil
+  end
+
+  r = r / 255
+  g = g / 255
+  b = b / 255
+
+  for classToken, colorTable in pairs(RAID_CLASS_COLORS) do
+    -- Comparing with a small margin for rounding errors is often safer
+    if math.abs(colorTable.r - r) < 0.01 and math.abs(colorTable.g - g) < 0.01 and math.abs(colorTable.b - b) < 0.01 then
+      return classToken
+    end
+  end
+  return nil
+end
+
+function MyAccountant:MigrateLegacyData()
+  local realm = GetRealmName()
+  for playerName, data in pairs(self.db.factionrealm) do
+    if playerName ~= "config" and type(data) == "table" and data.config then
+      local matchedClass = getClassFromColor(data.config.classColor) or "UNKNOWN"
+
+      self.db.global[playerName .. "-" .. realm] = {
+        guid = playerName .. "-" .. realm,
+        faction = data.config.faction,
+        class = matchedClass,
+        classColor = data.config.classColor,
+        realm = realm,
+        name = playerName,
+        gold = data.config.gold,
+        migrated = true,
+      }
+
+      data.config = nil
+      self.db.global[playerName .. "-" .. realm].db = data
+    end
+  end
+
+  self.db.factionrealm = nil
+  MyAccountant:PrintDebugMessage("Migrated legacy data for " .. realm)
 end

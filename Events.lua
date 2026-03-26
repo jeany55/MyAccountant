@@ -189,7 +189,8 @@ function MyAccountant:HandlePlayerMoneyChange()
 end
 
 function MyAccountant:UpdatePlayerBalance()
-  self.db.factionrealm[UnitName("player")].config.gold = GetMoney()
+  local ref = MyAccountant:GetCharacterDatabaseReference()
+  ref.gold = GetMoney()
 end
 
 --- Updates the Warband balance from the bank (Retail only)

@@ -343,4 +343,6 @@ private.default_settings = {
   sessionStorageType = "SESSION",
   addonStartTime = time(),
   totalGoldMade = 0,
+  characterPresetTrack = "CURRENT_REALM",
+  customCharacterTracking = {},
 }

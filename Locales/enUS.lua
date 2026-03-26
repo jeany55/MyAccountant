@@ -6,6 +6,26 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 -----------------------------------------
+--- VERSION 1.12
+-----------------------------------------
+L["option_tab_characters"] = "Characters"
+L["option_tab_characters_desc"] =
+  "Which characters to track. Use the dropdown to select presets or select 'Custom' to select specific characters to track"
+L["option_tab_characters_preset"] = "Which characters to track"
+L["option_tab_characters_preset_desc"] =
+  "Select a preset for which characters to track. Selecting 'Custom' will allow you to select specific characters to track."
+L["option_tab_characters_preset_all"] = "All characters"
+L["option_tab_characters_preset_current_realm"] = "Current realm (both factions)"
+L["option_tab_characters_preset_current_realm_faction"] = "Current realm (current faction)"
+L["option_tab_characters_preset_alliance"] = "All Alliance characters"
+L["option_tab_characters_preset_horde"] = "All Horde characters"
+L["option_tab_characters_preset_custom"] = "Custom"
+L["option_tab_characters_delete_character"] = "Delete"
+L["option_tab_characters_delete_character_desc"] = "Delete this character from the database entirely. Unreversible!"
+L["option_tab_characters_delete_confirm"] =
+  "Are you sure you want to delete this character's data? |cffff0000This is irreversible!|r"
+
+-----------------------------------------
 --- VERSION 1.11
 -----------------------------------------
 L["option_session_storage"] = "Store session until"
