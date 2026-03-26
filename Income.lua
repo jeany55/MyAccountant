@@ -520,7 +520,7 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local goldTotal = 0
   local numberOfCharacters = 0
 
-  for _, characterData in ipairs(MyAccountant:GetListOfTrackableCharacters()) do
+  for _, characterData in pairs(self.db.global) do
     if characterData and characterData.gold and characterData.realm == GetRealmName() then
       goldTotal = goldTotal + characterData.gold
       table.insert(data, {

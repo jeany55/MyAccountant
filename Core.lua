@@ -52,7 +52,7 @@ function MyAccountant:OnInitialize()
   if not self.db.global.migratedRealms then
     self.db.global.migratedRealms = {}
   end
-  local migrationKey = UnitFactionGroup("player") .. "-" .. realName
+  local migrationKey = UnitFactionGroup("player") .. "-" .. realmName
   if self.db.factionrealm[UnitName("player")] and not self.db.global.migratedRealms[migrationKey] then
     -- User has data from an old version of MyAccountant
     MyAccountant:MigrateLegacyData()
