@@ -1,9 +1,6 @@
 ------------------------------------------------------------
 -- Migration tests: MigrateLegacyData & GetCharacterDatabaseReference
 ------------------------------------------------------------
-date = os.date
-time = os.time
-
 local Name = ...
 local Tests = WoWUnit(Name .. ".MigrationTests")
 local AssertEqual = WoWUnit.AreEqual
@@ -27,7 +24,7 @@ local function makeLegacyCharacter(opts)
       gold = opts.gold or 0,
     },
   }
-  -- Copy income data keys
+  -- Copy any non-config data keys (income/outcome records)
   if opts.db then
     for k, v in pairs(opts.db) do
       entry[k] = v
@@ -724,7 +721,7 @@ function Tests.EndToEnd_OnlyCurrentRealmInBalance()
     realm = "Stormrage",
     faction = "Alliance",
     class = "WARRIOR",
-    classColor = "ffffffc6",
+    classColor = "c6ffffff",
     gold = 9000,
     db = {},
   }
