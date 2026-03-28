@@ -218,7 +218,11 @@ local function sumDay(dayData, category, type)
 end
 
 function MyAccountant:FetchDataRow(playerName, playerGuid, realm, year, month, day)
-  local ref = MyAccountant:GetCharacterDatabaseReference(playerGuid, playerName, realm).db
+  local charRef = MyAccountant:GetCharacterDatabaseReference(playerGuid, playerName, realm)
+  if not charRef then
+    return {}
+  end
+  local ref = charRef.db
   if not ref or not ref[year] or not ref[year][month] or not ref[year][month][day] then
     return {}
   end
@@ -576,12 +580,13 @@ function MyAccountant:GetCharacterDatabaseReference(characterGUID, characterName
   characterGUID = characterGUID or UnitGUID("player")
   characterName = characterName or UnitName("player")
   realm = realm or GetRealmName()
-  if self.db.global[characterName .. "-" .. realm] and self.db.global[characterName .. "-" .. realm].migrated == true then
+  local legacyKey = characterName .. "-" .. realm
+  if self.db.global[legacyKey] and self.db.global[legacyKey].migrated == true and characterGUID ~= legacyKey then
     -- Re-key legacy entry from name-realm to proper GUID
-    local legacyData = self.db.global[characterName .. "-" .. realm]
+    local legacyData = self.db.global[legacyKey]
     legacyData.guid = characterGUID
     self.db.global[characterGUID] = legacyData
-    self.db.global[characterName .. "-" .. realm] = nil
+    self.db.global[legacyKey] = nil
     return self.db.global[characterGUID]
   end
   if not self.db.global[characterGUID] then
