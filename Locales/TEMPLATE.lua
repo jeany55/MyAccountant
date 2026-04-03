@@ -18,7 +18,35 @@ end
 -- eg. L["option_general"] = "Général"
 
 -- Localization definitions
+-- Localization definitions
 -----------------------------------------
+--- VERSION 1.12
+-----------------------------------------
+L["option_tab_characters"] = "Characters"
+L["option_tab_characters_desc"] =
+  "Which characters to track. Use the dropdown to select presets or select 'Custom' to select specific characters to track"
+L["option_tab_characters_preset"] = "Which characters to track"
+L["option_tab_characters_preset_desc"] =
+  "Select a preset for which characters to track. Selecting 'Custom' will allow you to select specific characters to track."
+L["option_tab_characters_preset_all"] = "All characters"
+L["option_tab_characters_preset_current_realm"] = "Current realm (both factions)"
+L["option_tab_characters_preset_current_realm_faction"] = "Current realm (current faction)"
+L["option_tab_characters_preset_alliance"] = "All Alliance characters"
+L["option_tab_characters_preset_horde"] = "All Horde characters"
+L["option_tab_characters_preset_custom"] = "Custom"
+L["option_tab_characters_delete_character"] = "Delete"
+L["option_tab_characters_delete_character_desc"] = "Delete this character from the database entirely. Irreversible!"
+L["option_tab_characters_delete_confirm"] =
+  "Are you sure you want to delete this character's data? |cffff0000This is irreversible!|r"
+L["migrate_start"] = "Migrating data from legacy MyAccountant version..."
+L["migrate_complete"] = "Migration complete."
+L["option_realm_characters_option"] = "Which characters to show for realm balance"
+L["option_realm_characters_option_desc"] =
+  "Select which characters to include when showing realm balance. This only affects realm balance summary and does not affect which characters are tracked by the addon in general."
+L["option_realm_characters_all"] = "All characters on realm"
+L["option_realm_characters_selected"] = "Only tracked characters on realm"
+L["option_realm_characters_current_faction"] = "All characters of current faction on realm"
+
 --- VERSION 1.11
 -----------------------------------------
 L["option_session_storage"] = "Store session until"

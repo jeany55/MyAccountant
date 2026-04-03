@@ -143,7 +143,28 @@ function MyAccountant:GetSortedTable(tab, viewType)
 
     for _, value in ipairs(data) do
       if index > 1 then
-        table.insert(incomeTable, { titleColor = value.classColor, title = value.name, outcome = value.gold, income = 0 })
+        local classColor = value.classColor
+        local factionIcon
+        if value.faction == "Horde" then
+          factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+        else
+          factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+        end
+
+        if classColor then
+          table.insert(incomeTable, {
+            titleColor = value.classColor,
+            title = "|T" .. factionIcon .. ":0|t " .. value.name,
+            outcome = value.gold,
+            income = 0,
+          })
+        else
+          table.insert(incomeTable, {
+            title = value.name,
+            outcome = value.gold,
+            income = 0,
+          })
+        end
       end
       index = index + 1
     end
@@ -743,15 +764,14 @@ end
 function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
   realmBalanceInfo = realmBalanceInfo and realmBalanceInfo or MyAccountant:GetRealmBalanceTotalDataTable()
 
-  local factionIcon
-  if UnitFactionGroup("player") == "Horde" then
-    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
-  else
-    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
-  end
-
   for _, data in ipairs(realmBalanceInfo) do
     local classColor = data.classColor
+    local factionIcon
+    if data.faction == "Horde" then
+      factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+    else
+      factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+    end
 
     if classColor then
       local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"

@@ -1,5 +1,15 @@
 # Changelog
 
+## [v1.12.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.12.0)
+
+### New Features
+* **Character tracking**: New Characters options tab lets you configure which characters to track. Choose from presets (all characters, current realm, current faction, Alliance, Horde) or build a custom selection of specific characters.
+* **Character deletion**: You can now delete characters from the database entirely via the Characters options tab.
+* **Realm balance filtering**: New option to control which characters are included in realm balance — all characters on realm, only tracked characters, or current faction only.
+
+### Other
+* Data migration from legacy storage format is performed automatically on first login. You will need to log in on each faction on each realm to migrate all your data.
+
 ## [v1.11.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.11.0)
 
 ### New Features

@@ -80,6 +80,10 @@ Track your income as a whole or by each of your characters.
 
 ![](Docs/incomeFrameAllCharacters.png)
 
+Configure which characters to track in the Characters options tab. Choose from presets like all characters, current realm, current faction, or build a custom selection. You can also delete characters you no longer need from the database.
+
+![](Docs/optionsCharacters.png)
+
 ### **See what you want on the information frame**
 
 MyAccountant can display a small information frame containing income data. Configure it in Addon options to show what you want to see.

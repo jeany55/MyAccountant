@@ -55,10 +55,10 @@ function MyAccountant:OnInitialize()
   local migrationKey = UnitFactionGroup("player") .. "-" .. realmName
   if self.db.factionrealm[UnitName("player")] and not self.db.global.migratedRealms[migrationKey] then
     -- User has data from an old version of MyAccountant
-    MyAccountant:Print("Migrating data from legacy MyAccountant version...")
+    MyAccountant:Print(L["migrate_start"])
     MyAccountant:MigrateLegacyData()
     self.db.global.migratedRealms[migrationKey] = true
-    MyAccountant:Print("Migration complete.")
+    MyAccountant:Print(L["migrate_complete"])
   end
 
   -- Update character data

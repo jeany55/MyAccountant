@@ -1070,8 +1070,31 @@ function MyAccountant:SetupAddonOptions()
         type = "description",
         name = L["option_tab_characters_desc"],
       },
-      preset_track = {
+      realm_characters = {
         order = 1,
+        type = "select",
+        width = 1.5,
+        name = L["option_realm_characters_option"],
+        desc = L["option_realm_characters_option_desc"],
+        values = {
+          ALL = L["option_realm_characters_all"],
+          SELECTED = L["option_realm_characters_selected"],
+          CURRENT_FACTION = L["option_realm_characters_current_faction"],
+        },
+        set = function(info, val)
+          self.db.char.realmCharactersOption = val
+        end,
+        get = function(info)
+          return self.db.char.realmCharactersOption
+        end,
+      },
+      characters_linebreak = {
+        order = 1.5,
+        type = "description",
+        name = "",
+      },
+      preset_track = {
+        order = 2,
         type = "select",
         width = 1.5,
         name = L["option_tab_characters_preset"],
@@ -1094,7 +1117,7 @@ function MyAccountant:SetupAddonOptions()
         end,
       },
       characters = {
-        order = 2,
+        order = 3,
         type = "group",
         inline = true,
         name = L["option_tab_characters"],

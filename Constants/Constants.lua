@@ -345,4 +345,5 @@ private.default_settings = {
   totalGoldMade = 0,
   characterPresetTrack = "CURRENT_REALM",
   customCharacterTracking = {},
+  realmCharactersOption = "ALL",
 }

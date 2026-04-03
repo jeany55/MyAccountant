@@ -523,9 +523,21 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local data = {}
   local goldTotal = 0
   local numberOfCharacters = 0
+  local realmBalanceOption = self.db.char.realmCharactersOption
 
-  for _, characterData in pairs(self.db.global) do
-    if characterData and characterData.gold and characterData.realm == GetRealmName() then
+  local characterSet = self.db.global
+  if realmBalanceOption == "SELECTED" then
+    characterSet = MyAccountant:GetListOfTrackableCharacters()
+  end
+
+  for _, characterData in pairs(characterSet) do
+    local basicCondition = type(characterData) == "table" and characterData.gold and characterData.realm == GetRealmName()
+    local secondaryCondition = true
+    if basicCondition and realmBalanceOption == "CURRENT_FACTION" then
+      secondaryCondition = characterData.faction == UnitFactionGroup("player")
+    end
+
+    if basicCondition and secondaryCondition then
       goldTotal = goldTotal + characterData.gold
       table.insert(data, {
         name = characterData.name,

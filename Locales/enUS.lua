@@ -21,9 +21,17 @@ L["option_tab_characters_preset_alliance"] = "All Alliance characters"
 L["option_tab_characters_preset_horde"] = "All Horde characters"
 L["option_tab_characters_preset_custom"] = "Custom"
 L["option_tab_characters_delete_character"] = "Delete"
-L["option_tab_characters_delete_character_desc"] = "Delete this character from the database entirely. Unreversible!"
+L["option_tab_characters_delete_character_desc"] = "Delete this character from the database entirely. Irreversible!"
 L["option_tab_characters_delete_confirm"] =
   "Are you sure you want to delete this character's data? |cffff0000This is irreversible!|r"
+L["migrate_start"] = "Migrating data from legacy MyAccountant version..."
+L["migrate_complete"] = "Migration complete."
+L["option_realm_characters_option"] = "Which characters to show for realm balance"
+L["option_realm_characters_option_desc"] =
+  "Select which characters to include when showing realm balance. This only affects realm balance summary and does not affect which characters are tracked by the addon in general."
+L["option_realm_characters_all"] = "All characters on realm"
+L["option_realm_characters_selected"] = "Only tracked characters on realm"
+L["option_realm_characters_current_faction"] = "All characters of current faction on realm"
 
 -----------------------------------------
 --- VERSION 1.11
