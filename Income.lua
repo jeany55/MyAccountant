@@ -15,14 +15,20 @@ end
 
 --- Resets all data for all characters
 function MyAccountant:ResetAllData()
-  self.db.factionrealm = {}
+  for guid, data in pairs(self.db.global) do
+    if type(data) == "table" and data.db then
+      data.db = {}
+      data.gold = 0
+    end
+  end
   MyAccountant:checkDatabaseDayConfigured()
 end
 
 --- Resets data for current character
 function MyAccountant:ResetCharacterData()
   local playerName = UnitName("player")
-  self.db.factionrealm[playerName] = {}
+  local ref = MyAccountant:GetCharacterDatabaseReference()
+  ref.db = {}
   MyAccountant:checkDatabaseDayConfigured()
 end
 
@@ -34,20 +40,18 @@ function MyAccountant:checkDatabaseDayConfigured(dateOverride)
 
   -- Check to see all necessary info is in DB
   -- Create if needed.
-  if not self.db.factionrealm[playerName] then
-    self.db.factionrealm[playerName] = {}
+  local ref = MyAccountant:GetCharacterDatabaseReference().db
+
+  if not ref[date.year] then
+    ref[date.year] = {}
   end
 
-  if not self.db.factionrealm[playerName][date.year] then
-    self.db.factionrealm[playerName][date.year] = {}
+  if not ref[date.year][date.month] then
+    ref[date.year][date.month] = {}
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month] then
-    self.db.factionrealm[playerName][date.year][date.month] = {}
-  end
-
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day] = {}
+  if not ref[date.year][date.month][date.day] then
+    ref[date.year][date.month][date.day] = {}
   end
 end
 
@@ -98,27 +102,29 @@ function MyAccountant:AddIncome(category, amount, dateOverride)
     self.db.char.sessionDb[category].zones[zone] = { income = 0, outcome = 0 }
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+  local ref = MyAccountant:GetCharacterDatabaseReference().db
+
+  if not ref[date.year][date.month][date.day][category] then
+    ref[date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones = {}
+  if not ref[date.year][date.month][date.day][category].zones then
+    ref[date.year][date.month][date.day][category].zones = {}
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] = { income = 0, outcome = 0 }
+  if not ref[date.year][date.month][date.day][category].zones[zone] then
+    ref[date.year][date.month][date.day][category].zones[zone] = { income = 0, outcome = 0 }
   end
 
-  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].income
+  total = ref[date.year][date.month][date.day][category].income
   total = total + amount
 
-  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].income
+  local totalCategory = ref[date.year][date.month][date.day][category].zones[zone].income
   totalCategory = totalCategory + amount
 
   -- Save to DB
-  self.db.factionrealm[playerName][date.year][date.month][date.day][category].income = total
-  self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].income = totalCategory
+  ref[date.year][date.month][date.day][category].income = total
+  ref[date.year][date.month][date.day][category].zones[zone].income = totalCategory
 
   -- Save to current session info
   self.db.char.sessionDb[category].income = self.db.char.sessionDb[category].income + amount
@@ -139,6 +145,7 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
   local playerName = UnitName("player")
   local zone = GetZoneText()
   local total
+  local ref = MyAccountant:GetCharacterDatabaseReference().db
 
   if not self.db.char.sessionDb[category] then
     self.db.char.sessionDb[category] = { income = 0, outcome = 0, zones = {} }
@@ -147,27 +154,27 @@ function MyAccountant:AddOutcome(category, amount, dateOverride)
     self.db.char.sessionDb[category].zones[zone] = { income = 0, outcome = 0 }
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
+  if not ref[date.year][date.month][date.day][category] then
+    ref[date.year][date.month][date.day][category] = { income = 0, outcome = 0 }
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones = {}
+  if not ref[date.year][date.month][date.day][category].zones then
+    ref[date.year][date.month][date.day][category].zones = {}
   end
 
-  if not self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] then
-    self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone] = { income = 0, outcome = 0 }
+  if not ref[date.year][date.month][date.day][category].zones[zone] then
+    ref[date.year][date.month][date.day][category].zones[zone] = { income = 0, outcome = 0 }
   end
 
-  total = self.db.factionrealm[playerName][date.year][date.month][date.day][category].outcome
+  total = ref[date.year][date.month][date.day][category].outcome
   total = total + amount
 
-  local totalCategory = self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].outcome
+  local totalCategory = ref[date.year][date.month][date.day][category].zones[zone].outcome
   totalCategory = totalCategory + amount
 
   -- Save to DB
-  self.db.factionrealm[playerName][date.year][date.month][date.day][category].outcome = total
-  self.db.factionrealm[playerName][date.year][date.month][date.day][category].zones[zone].outcome = totalCategory
+  ref[date.year][date.month][date.day][category].outcome = total
+  ref[date.year][date.month][date.day][category].zones[zone].outcome = totalCategory
 
   -- Save to current session info
   self.db.char.sessionDb[category].outcome = self.db.char.sessionDb[category].outcome + amount
@@ -210,17 +217,17 @@ local function sumDay(dayData, category, type)
   end
 end
 
-function MyAccountant:FetchDataRow(playerName, year, month, day)
-  if
-    not self.db.factionrealm[playerName]
-    or not self.db.factionrealm[playerName][year]
-    or not self.db.factionrealm[playerName][year][month]
-    or not self.db.factionrealm[playerName][year][month][day]
-  then
+function MyAccountant:FetchDataRow(playerName, playerGuid, realm, year, month, day)
+  local charRef = MyAccountant:GetCharacterDatabaseReference(playerGuid, playerName, realm)
+  if not charRef then
+    return {}
+  end
+  local ref = charRef.db
+  if not ref or not ref[year] or not ref[year][month] or not ref[year][month][day] then
     return {}
   end
 
-  return private.utils.copy(self.db.factionrealm[playerName][year][month][day])
+  return private.utils.copy(ref[year][month][day])
 end
 
 local function formatDataRow(dataRow, overallDataRef)
@@ -252,19 +259,21 @@ end
 ---Gets historical data
 ---@param tab Tab
 ---@param dateOverride any
----@param characterOverride any
+---@param characterRefOverride any
 ---@param dataRefOverride any
 ---@return table
-function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, dataRefOverride)
-  if characterOverride == "ALL_CHARACTERS" then
+function MyAccountant:GetHistoricalData(tab, dateOverride, characterRefOverride, dataRefOverride)
+  if characterRefOverride == "ALL_CHARACTERS" then
     local allCharacterData = {}
-    for k, _ in pairs(self.db.factionrealm) do
-      MyAccountant:GetHistoricalData(tab, dateOverride, k, allCharacterData)
+
+    for _, character in ipairs(MyAccountant:GetListOfTrackableCharacters()) do
+      MyAccountant:GetHistoricalData(tab, dateOverride, character, allCharacterData)
     end
+
     return allCharacterData
   end
 
-  local playerName = characterOverride and characterOverride or UnitName("player")
+  local player = characterRefOverride and characterRefOverride or MyAccountant:GetCharacterDatabaseReference()
   local data = dataRefOverride and dataRefOverride or {}
 
   local specificDays = tab:getSpecificDays()
@@ -289,7 +298,8 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
     local unixTime = endDate
     while unixTime >= startDate do
       local currentDay = date("*t", unixTime)
-      local currentData = MyAccountant:FetchDataRow(playerName, currentDay.year, currentDay.month, currentDay.day)
+      local currentData =
+        MyAccountant:FetchDataRow(player.name, player.guid, player.realm, currentDay.year, currentDay.month, currentDay.day)
       formatDataRow(currentData, data)
 
       -- Back up one day
@@ -298,7 +308,14 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
   else
     for _, specificDay in ipairs(specificDays) do
       local specificDayInfo = date("*t", specificDay)
-      local specificData = MyAccountant:FetchDataRow(playerName, specificDayInfo.year, specificDayInfo.month, specificDayInfo.day)
+      local specificData = MyAccountant:FetchDataRow(
+        player.name,
+        player.guid,
+        player.realm,
+        specificDayInfo.year,
+        specificDayInfo.month,
+        specificDayInfo.day
+      )
       formatDataRow(specificData, data)
     end
   end
@@ -306,44 +323,44 @@ function MyAccountant:GetHistoricalData(tab, dateOverride, characterOverride, da
   return data
 end
 
-function MyAccountant:GetAllTime(characterOverride, refDataOverride)
+function MyAccountant:GetAllTime(playerOverride, refDataOverride)
   local data = refDataOverride and refDataOverride or {}
-  local playerName = characterOverride and characterOverride or UnitName("player")
 
-  if characterOverride == "ALL_CHARACTERS" then
+  if playerOverride == "ALL_CHARACTERS" then
     local totalledData = {}
-    for k, _ in pairs(self.db.factionrealm) do
-      MyAccountant:GetAllTime(k, totalledData)
+    for _, character in ipairs(MyAccountant:GetListOfTrackableCharacters()) do
+      MyAccountant:GetAllTime(character, totalledData)
     end
     return totalledData
   end
 
-  for keyName, yearData in pairs(private.utils.copy(self.db.factionrealm[playerName])) do
-    if keyName ~= "config" then
-      for _, monthData in pairs(yearData) do
-        for _, dayData in pairs(monthData) do
-          for category, categoryData in pairs(dayData) do
-            if not data[category] then
-              data[category] = { income = 0, outcome = 0 }
-            end
-            if not data[category].zones then
-              data[category].zones = categoryData.zones and categoryData.zones or {}
-            else
-              if categoryData.zones then
-                for key, value in pairs(categoryData.zones) do
-                  if not data[category].zones[key] then
-                    data[category].zones[key] = value
-                  else
-                    data[category].zones[key].income = data[category].zones[key].income + value.income
-                    data[category].zones[key].outcome = data[category].zones[key].outcome + value.outcome
-                  end
+  local playerData = playerOverride or MyAccountant:GetCharacterDatabaseReference()
+  local ref = playerData.db
+
+  for keyName, yearData in pairs(private.utils.copy(ref)) do
+    for _, monthData in pairs(yearData) do
+      for _, dayData in pairs(monthData) do
+        for category, categoryData in pairs(dayData) do
+          if not data[category] then
+            data[category] = { income = 0, outcome = 0 }
+          end
+          if not data[category].zones then
+            data[category].zones = categoryData.zones and categoryData.zones or {}
+          else
+            if categoryData.zones then
+              for key, value in pairs(categoryData.zones) do
+                if not data[category].zones[key] then
+                  data[category].zones[key] = value
+                else
+                  data[category].zones[key].income = data[category].zones[key].income + value.income
+                  data[category].zones[key].outcome = data[category].zones[key].outcome + value.outcome
                 end
               end
             end
-
-            data[category].income = data[category].income + categoryData.income
-            data[category].outcome = data[category].outcome + categoryData.outcome
           end
+
+          data[category].income = data[category].income + categoryData.income
+          data[category].outcome = data[category].outcome + categoryData.outcome
         end
       end
     end
@@ -391,20 +408,20 @@ end
 --- Returns income outcome table for given tab and desired character/date if wanted
 --- @param tab Tab
 --- @param dateOverride table? Date timestamp object override, if not provided the current date is used
---- @param characterOverride string? Character name override, if not provided the current character is used
+--- @param characterGuidOverride string? Character guid override, if not provided the current character is used
 --- @param viewType ViewType View type, SOURCE or ZONE
-function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterOverride, viewType)
+function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterRefOverride, viewType)
   local table = {}
   local date = dateOverride and dateOverride or date("*t")
-  local playerName = characterOverride and characterOverride or UnitName("player")
+  local player = characterRefOverride and characterRefOverride or MyAccountant:GetCharacterDatabaseReference()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   if tab:getType() == "SESSION" then
     table = private.utils.copy(self.db.char.sessionDb or {})
   elseif tab:getType() == "ALL_TIME" then
-    table = MyAccountant:GetAllTime(playerName)
+    table = MyAccountant:GetAllTime(player)
   else
-    table = MyAccountant:GetHistoricalData(tab, date, playerName)
+    table = MyAccountant:GetHistoricalData(tab, date, player)
   end
 
   local talliedTable = { OTHER = table.OTHER }
@@ -486,15 +503,13 @@ function MyAccountant:ResetZoneData()
     end
   end
 
-  for player, playerData in pairs(self.db.factionrealm) do
-    for yearKey, yearData in pairs(playerData) do
-      if yearKey ~= "config" then
-        for monthKey, monthData in pairs(yearData) do
-          for dayKey, dayData in pairs(monthData) do
-            for category, categoryData in pairs(dayData) do
-              if categoryData.zones then
-                self.db.factionrealm[player][yearKey][monthKey][dayKey][category].zones = {}
-              end
+  for _, playerData in ipairs(MyAccountant:GetListOfTrackableCharacters()) do
+    for yearKey, yearData in pairs(playerData.db) do
+      for monthKey, monthData in pairs(yearData) do
+        for dayKey, dayData in pairs(monthData) do
+          for category, categoryData in pairs(dayData) do
+            if categoryData.zones then
+              playerData.db[yearKey][monthKey][dayKey][category].zones = {}
             end
           end
         end
@@ -508,15 +523,27 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local data = {}
   local goldTotal = 0
   local numberOfCharacters = 0
+  local realmBalanceOption = self.db.char.realmCharactersOption
 
-  for characterName, characterData in pairs(self.db.factionrealm) do
-    if characterData and characterData.config and characterData.config.gold then
-      goldTotal = goldTotal + characterData.config.gold
+  local characterSet = self.db.global
+  if realmBalanceOption == "SELECTED" then
+    characterSet = MyAccountant:GetListOfTrackableCharacters()
+  end
+
+  for _, characterData in pairs(characterSet) do
+    local basicCondition = type(characterData) == "table" and characterData.gold and characterData.realm == GetRealmName()
+    local secondaryCondition = true
+    if basicCondition and realmBalanceOption == "CURRENT_FACTION" then
+      secondaryCondition = characterData.faction == UnitFactionGroup("player")
+    end
+
+    if basicCondition and secondaryCondition then
+      goldTotal = goldTotal + characterData.gold
       table.insert(data, {
-        name = characterName,
-        gold = characterData.config.gold,
-        classColor = characterData.config.classColor,
-        faction = characterData.config.faction,
+        name = characterData.name,
+        gold = characterData.gold,
+        classColor = characterData.classColor,
+        faction = characterData.faction,
       })
       numberOfCharacters = numberOfCharacters + 1
     end
@@ -534,4 +561,50 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   table.insert(data, 1, { name = L["income_panel_hover_realm_total"], gold = goldTotal })
 
   return data
+end
+
+function MyAccountant:GetListOfTrackableCharacters()
+  local preset = self.db.char.characterPresetTrack
+  local customTracking = self.db.char.customCharacterTracking
+  local returnTable = {}
+
+  for characterGUID, data in pairs(self.db.global) do
+    if type(data) == "table" and data.name then
+      if private.utils.isCharacterTracked(characterGUID, data, preset, customTracking) then
+        table.insert(returnTable, {
+          guid = characterGUID,
+          name = data.name,
+          realm = data.realm,
+          db = data.db,
+          classColor = data.classColor,
+          faction = data.faction,
+          class = data.class,
+          gold = data.gold,
+        })
+      end
+    end
+  end
+
+  return returnTable
+end
+
+function MyAccountant:GetCharacterDatabaseReference(characterGUID, characterName, realm)
+  characterGUID = characterGUID or UnitGUID("player")
+  characterName = characterName or UnitName("player")
+  realm = realm or GetRealmName()
+  local legacyKey = characterName .. "-" .. realm
+  if self.db.global[legacyKey] and self.db.global[legacyKey].migrated == true and characterGUID ~= legacyKey then
+    -- Re-key legacy entry from name-realm to proper GUID
+    local legacyData = self.db.global[legacyKey]
+    legacyData.guid = characterGUID
+    self.db.global[characterGUID] = legacyData
+    self.db.global[legacyKey] = nil
+    return self.db.global[characterGUID]
+  end
+  if not self.db.global[characterGUID] then
+    self.db.global[characterGUID] = {
+      db = {},
+    }
+  end
+  return self.db.global[characterGUID]
 end

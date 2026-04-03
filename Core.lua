@@ -47,18 +47,34 @@ function MyAccountant:OnInitialize()
   -- Save faction and class color to db for character dropdown/realm totals
   local _, className = UnitClass("player")
   local _, _, _, colorCode = GetClassColor(className)
-  if not self.db.factionrealm[UnitName("player")] then
-    self.db.factionrealm[UnitName("player")] = {}
+  local realmName = GetRealmName()
+  local characterGuid = UnitGUID("player")
+  if not self.db.global.migratedRealms then
+    self.db.global.migratedRealms = {}
   end
+  local migrationKey = UnitFactionGroup("player") .. "-" .. realmName
+  if self.db.factionrealm[UnitName("player")] and not self.db.global.migratedRealms[migrationKey] then
+    -- User has data from an old version of MyAccountant
+    MyAccountant:Print(L["migrate_start"])
+    MyAccountant:MigrateLegacyData()
+    self.db.global.migratedRealms[migrationKey] = true
+    MyAccountant:Print(L["migrate_complete"])
+  end
+
+  -- Update character data
+  local dbRef = MyAccountant:GetCharacterDatabaseReference()
+  dbRef.guid = UnitGUID("player")
+  dbRef.faction = UnitFactionGroup("player")
+  dbRef.class = className
+  dbRef.classColor = colorCode
+  dbRef.realm = realmName
+  dbRef.name = UnitName("player")
+  dbRef.gold = GetMoney()
+
   if self.db.realm.warBandGold == nil then
     self.db.realm.warBandGold = 0
     self.db.realm.seenWarband = false
   end
-  self.db.factionrealm[UnitName("player")].config = {
-    classColor = colorCode,
-    faction = UnitFactionGroup("player"),
-    gold = GetMoney(),
-  }
 
   MyAccountant:checkDatabaseDayConfigured()
   MyAccountant:SetupAddonOptions()
@@ -164,7 +180,7 @@ function MyAccountant:HandleSlashCommand(input)
   local command = string.lower(splitInput[1] or "")
 
   if command == "options" then
-    Settings.OpenToCategory(private.optionsCategory)
+    private.openOptions()
   elseif command == "open" or command == "o" or command == "show" then
     MyAccountant:ShowPanel()
   elseif command == "gph" then
@@ -314,7 +330,7 @@ function MyAccountant:HandleMinimapClick(button)
   end
 
   if config == "OPEN_OPTIONS" then
-    Settings.OpenToCategory(private.optionsCategory)
+    private.openOptions()
   elseif config == "OPEN_INCOME_PANEL" then
     MyAccountant:ShowPanel()
   elseif config == "RESET_GOLD_PER_HOUR" then

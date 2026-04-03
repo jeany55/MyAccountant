@@ -5,7 +5,7 @@ local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 local characterDropdown
 local viewingType
 
-local selectedCharacter = UnitName("player")
+local selectedCharacter
 
 -- Which tab is current selected?
 --- @type Tab
@@ -143,7 +143,28 @@ function MyAccountant:GetSortedTable(tab, viewType)
 
     for _, value in ipairs(data) do
       if index > 1 then
-        table.insert(incomeTable, { titleColor = value.classColor, title = value.name, outcome = value.gold, income = 0 })
+        local classColor = value.classColor
+        local factionIcon
+        if value.faction == "Horde" then
+          factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+        else
+          factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+        end
+
+        if classColor then
+          table.insert(incomeTable, {
+            titleColor = value.classColor,
+            title = "|T" .. factionIcon .. ":0|t " .. value.name,
+            outcome = value.gold,
+            income = 0,
+          })
+        else
+          table.insert(incomeTable, {
+            title = value.name,
+            outcome = value.gold,
+            income = 0,
+          })
+        end
       end
       index = index + 1
     end
@@ -200,6 +221,7 @@ end
 
 function MyAccountant:InitializeUI()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+  selectedCharacter = MyAccountant:GetCharacterDatabaseReference()
 
   -- Setup Title
   IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -232,30 +254,25 @@ function MyAccountant:InitializeUI()
 
   -- Setup character dropdown
   LibDD:UIDropDownMenu_Initialize(characterDropdown, function()
-    local icon
-    if UnitFactionGroup("player") == "Horde" then
-      icon = "Interface\\PVPFrame\\PVP-Currency-Horde"
-    else
-      icon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
-    end
-
-    for k, v in pairs(self.db.factionrealm) do
-      if k ~= "income" then
-        local row = LibDD:UIDropDownMenu_CreateInfo()
-        row.icon = icon
-        row.padding = 0
-        row.text = k
-        row.value = k
-        if v.config then
-          row.colorCode = "|c" .. v.config.classColor
-        end
-        row.func = function()
-          LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, k)
-          selectedCharacter = k
-          MyAccountant:updateFrame()
-        end
-        LibDD:UIDropDownMenu_AddButton(row)
+    for _, playerData in ipairs(MyAccountant:GetListOfTrackableCharacters()) do
+      local row = LibDD:UIDropDownMenu_CreateInfo()
+      local icon
+      if "Horde" == playerData.faction then
+        icon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+      else
+        icon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
       end
+      row.icon = icon
+      row.padding = 0
+      row.text = playerData.name
+      row.value = playerData.guid
+      row.colorCode = "|c" .. playerData.classColor
+      row.func = function()
+        LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, playerData.guid)
+        selectedCharacter = playerData
+        MyAccountant:updateFrame()
+      end
+      LibDD:UIDropDownMenu_AddButton(row)
     end
 
     LibDD:UIDropDownMenu_AddSeparator()
@@ -270,8 +287,8 @@ function MyAccountant:InitializeUI()
       MyAccountant:updateFrame()
     end
     LibDD:UIDropDownMenu_AddButton(all)
-
-    LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, selectedCharacter)
+    local dropdownValue = selectedCharacter == "ALL_CHARACTERS" and "ALL_CHARACTERS" or selectedCharacter.guid
+    LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, dropdownValue)
   end)
 
   -- Set width on income label
@@ -480,9 +497,10 @@ function MyAccountant:showIncomeFrameTemporaryTab(tempTab)
   if self.db.char.calendarDataSource == "REALM" then
     selectedCharacter = "ALL_CHARACTERS"
   else
-    selectedCharacter = UnitName("player")
+    selectedCharacter = MyAccountant:GetCharacterDatabaseReference()
   end
-  LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, selectedCharacter)
+  local dropdownValue = selectedCharacter == "ALL_CHARACTERS" and "ALL_CHARACTERS" or selectedCharacter.guid
+  LibDD:UIDropDownMenu_SetSelectedValue(characterDropdown, dropdownValue)
   MyAccountant:updateFrame()
 end
 
@@ -746,15 +764,14 @@ end
 function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
   realmBalanceInfo = realmBalanceInfo and realmBalanceInfo or MyAccountant:GetRealmBalanceTotalDataTable()
 
-  local factionIcon
-  if UnitFactionGroup("player") == "Horde" then
-    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
-  else
-    factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
-  end
-
   for _, data in ipairs(realmBalanceInfo) do
     local classColor = data.classColor
+    local factionIcon
+    if data.faction == "Horde" then
+      factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+    else
+      factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+    end
 
     if classColor then
       local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"

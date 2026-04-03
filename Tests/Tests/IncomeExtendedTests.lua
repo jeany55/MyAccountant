@@ -138,13 +138,14 @@ function Tests.TestCheckDatabaseDayConfigured()
   local testDate = date("*t", NOV_14_2023)
   MyAccountant:checkDatabaseDayConfigured(testDate)
 
-  local playerName = UnitName("player")
+  local playerGuid = UnitGUID("player")
+  local ref = MyAccountant:GetCharacterDatabaseReference()
 
   -- Verify database structure is created
-  AssertEqual("table", type(MyAccountant.db.factionrealm[playerName]))
-  AssertEqual("table", type(MyAccountant.db.factionrealm[playerName][testDate.year]))
-  AssertEqual("table", type(MyAccountant.db.factionrealm[playerName][testDate.year][testDate.month]))
-  AssertEqual("table", type(MyAccountant.db.factionrealm[playerName][testDate.year][testDate.month][testDate.day]))
+  AssertEqual("table", type(ref.db))
+  AssertEqual("table", type(ref.db[testDate.year]))
+  AssertEqual("table", type(ref.db[testDate.year][testDate.month]))
+  AssertEqual("table", type(ref.db[testDate.year][testDate.month][testDate.day]))
 end
 
 function Tests.TestResetAllData()
@@ -154,8 +155,8 @@ function Tests.TestResetAllData()
   -- Add some data
   MyAccountant:AddIncome("LOOT", 100)
 
-  local playerName = UnitName("player")
-  AssertEqual("table", type(MyAccountant.db.factionrealm[playerName]))
+  local ref = MyAccountant:GetCharacterDatabaseReference()
+  AssertEqual("table", type(ref.db))
 
   -- Session data exists
   AssertEqual(100, MyAccountant:GetSessionIncome())
@@ -176,14 +177,15 @@ function Tests.TestResetCharacterData()
   -- Add some data
   MyAccountant:AddIncome("LOOT", 100)
 
-  local playerName = UnitName("player")
-  AssertEqual("table", type(MyAccountant.db.factionrealm[playerName]))
+  local ref = MyAccountant:GetCharacterDatabaseReference()
+  AssertEqual("table", type(ref.db))
 
   -- Reset character data
   MyAccountant:ResetCharacterData()
 
   -- Character data should be reset
-  AssertEqual("table", type(MyAccountant.db.factionrealm[playerName]))
+  ref = MyAccountant:GetCharacterDatabaseReference()
+  AssertEqual("table", type(ref.db))
 end
 
 ----------------------------------------------------------
@@ -226,7 +228,9 @@ function Tests.TestFetchDataRow_NoData()
   MyAccountant:ResetAllData()
 
   local playerName = UnitName("player")
-  local data = MyAccountant:FetchDataRow(playerName, 2025, 1, 1)
+  local playerGuid = UnitGUID("player")
+  local realm = GetRealmName()
+  local data = MyAccountant:FetchDataRow(playerName, playerGuid, realm, 2025, 1, 1)
 
   -- Should return empty table if no data
   AssertEqual("table", type(data))
@@ -239,7 +243,9 @@ function Tests.TestFetchDataRow_WithData()
   MyAccountant:AddIncome("LOOT", 100, testDate)
 
   local playerName = UnitName("player")
-  local data = MyAccountant:FetchDataRow(playerName, testDate.year, testDate.month, testDate.day)
+  local playerGuid = UnitGUID("player")
+  local realm = GetRealmName()
+  local data = MyAccountant:FetchDataRow(playerName, playerGuid, realm, testDate.year, testDate.month, testDate.day)
 
   -- Should return table with data
   AssertEqual("table", type(data))
