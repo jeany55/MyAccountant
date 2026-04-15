@@ -42,7 +42,7 @@ Tab:setDateSummaryText(date("%x"))]],
 
   -- Calculate label
   local startOfWeek = DateUtils.getStartOfWeek()
-  local lastDayOfWeek = DateUtils.addWeek(startOfWeek)
+  local lastDayOfWeek = DateUtils.addDays(startOfWeek, 6)
 
   Tab:setDateSummaryText(date("%x", startOfWeek) .. " - " .. date("%x", lastDayOfWeek))]],
   }),
