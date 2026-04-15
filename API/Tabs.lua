@@ -40,7 +40,10 @@ local DateUtils = {
 
     timestamp = timestamp or time()
     local currentDate = date("*t", timestamp)
-    return timestamp - ((currentDate.wday - 1 - startOfWeekOffset) * dayInSeconds)
+    local weekdayIndex = currentDate.wday - 1
+    local daysSinceWeekStart = (weekdayIndex - startOfWeekOffset) % 7
+
+    return timestamp - (daysSinceWeekStart * dayInSeconds)
   end,
 
   --- Returns the start of the month for a timestamp
