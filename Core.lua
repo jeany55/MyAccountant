@@ -23,6 +23,7 @@ private.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MyAccountant", "Version")
 --- @field ApiUtils ApiUtils API utility functions used by luaExpressions in tabs
 --- @field reportTab Tab? The current report tab being generated if any
 --- @field optionsCategory number The blizz options category id for the addon's options, used for navigating to the options from slash commands and minimap tooltip
+--- @field openOptions fun(): nil Opens the addon's options panel in the Blizzard settings UI
 private = private or {}
 
 --- @enum ViewType

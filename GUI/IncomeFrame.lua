@@ -470,7 +470,7 @@ end
 
 local function bottomButtonClickHandler(action)
   if action == "OPTIONS" then
-    Settings.OpenToCategory(private.optionsCategory)
+    private.openOptions()
   elseif action == "CLEAR_SESSION" then
     StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
   elseif action == "RESET_GPH" then

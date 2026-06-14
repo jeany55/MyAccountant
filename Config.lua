@@ -30,6 +30,11 @@ local function forceConfigRerender()
   registry:NotifyChange(private.ADDON_NAME)
 end
 
+--- Opens the addon's options panel in the Blizzard settings UI
+function private.openOptions()
+  Settings.OpenToCategory(private.optionsCategory)
+end
+
 -- Initializes Ace3 Addon options table
 function MyAccountant:SetupAddonOptions()
   --- @type AceLocale-3.0
