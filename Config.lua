@@ -97,6 +97,14 @@ function MyAccountant:SetupAddonOptions()
       self.db.char.sessionDb = {}
     end
 
+    -- Migrate old minimap balance style to new dict style
+    if not self.db.char.minimapTooltipData then
+      self.db.char.minimapTooltipData = {
+        [self.db.char.minimapDataV2] = true, -- old value
+      }
+      MyAccountant:PrintDebugMessage("Migrated legacy minimap tooltip data to new array style")
+    end
+
     -- Check for new tabs in the default library the user hasn't seen
     -- for _, defaultTab in ipairs(private.tabLibrary) do
     --   if not private.utils.arrayHas(self.db.char.knownTabs, function(tabName) return tabName == defaultTab:getName() end) then
@@ -110,7 +118,8 @@ function MyAccountant:SetupAddonOptions()
   if not self.db.char.seenVersionMessage1p8 then
     self.db.char.seenVersionMessage1p8 = true
     if self.db.char.lastVersion then
-      print("|cffff2ebd" .. private.ADDON_NAME .. "|r: " .. string.format(L["version_welcome_message"], private.ADDON_VERSION))
+      print("|cffff2ebd" ..
+      private.ADDON_NAME .. "|r: " .. string.format(L["version_welcome_message"], private.ADDON_VERSION))
     else
       print("|cffff2ebd" .. private.ADDON_NAME .. "|r: " .. L["version_first_install_message"])
     end
@@ -196,9 +205,9 @@ function MyAccountant:SetupAddonOptions()
               local trimmedVal = string.trim(val)
 
               if
-                private.utils.arrayHas(self.db.char.tabs, function(item)
-                  return string.lower(item:getName()) == string.lower(trimmedVal)
-                end)
+                  private.utils.arrayHas(self.db.char.tabs, function(item)
+                    return string.lower(item:getName()) == string.lower(trimmedVal)
+                  end)
               then
                 return L["option_tab_create_fail"]
               end
@@ -332,13 +341,13 @@ function MyAccountant:SetupAddonOptions()
               else
                 MyAccountant:PrintDebugMessage(
                   "Lua snippet evaluation successful - returned start "
-                    .. result:getStartDate()
-                    .. " and end "
-                    .. result:getEndDate()
-                    .. " -- label: "
-                    .. result:getLabel()
-                    .. "dateSummaryText: "
-                    .. result:getDateSummaryText()
+                  .. result:getStartDate()
+                  .. " and end "
+                  .. result:getEndDate()
+                  .. " -- label: "
+                  .. result:getLabel()
+                  .. "dateSummaryText: "
+                  .. result:getDateSummaryText()
                 )
                 return true
               end
@@ -499,13 +508,13 @@ function MyAccountant:SetupAddonOptions()
               local trimmedVal = string.trim(val)
 
               if
-                private.utils.arrayHas(
-                  self.db.char.tabs, ---
-                  --- @param item Tab
-                  function(item)
-                    return string.lower(item:getName()) == string.lower(trimmedVal)
-                  end
-                )
+                  private.utils.arrayHas(
+                    self.db.char.tabs, ---
+                    --- @param item Tab
+                    function(item)
+                      return string.lower(item:getName()) == string.lower(trimmedVal)
+                    end
+                  )
               then
                 return L["option_tab_create_fail"]
               end
@@ -648,13 +657,13 @@ function MyAccountant:SetupAddonOptions()
               else
                 MyAccountant:PrintDebugMessage(
                   "Lua snippet evaluation successful - returned start "
-                    .. result:getStartDate()
-                    .. " and end "
-                    .. result:getEndDate()
-                    .. " -- label: "
-                    .. result:getLabel()
-                    .. "dateSummaryText: "
-                    .. result:getDateSummaryText()
+                  .. result:getStartDate()
+                  .. " and end "
+                  .. result:getEndDate()
+                  .. " -- label: "
+                  .. result:getLabel()
+                  .. "dateSummaryText: "
+                  .. result:getDateSummaryText()
                 )
                 return true
               end
@@ -1024,16 +1033,16 @@ function MyAccountant:SetupAddonOptions()
           disabled = disabled,
           width = 2.8,
           name = "|T"
-            .. icon
-            .. ":18:18|t ("
-            .. data.realm
-            .. ") - "
-            .. "|A:"
-            .. classtexture
-            .. ":14:14|a  |c"
-            .. data.classColor
-            .. data.name
-            .. "|r",
+              .. icon
+              .. ":18:18|t ("
+              .. data.realm
+              .. ") - "
+              .. "|A:"
+              .. classtexture
+              .. ":14:14|a  |c"
+              .. data.classColor
+              .. data.name
+              .. "|r",
           desc = "",
           get = function()
             return getCheckedState(characterGuid)
@@ -1157,10 +1166,11 @@ function MyAccountant:SetupAddonOptions()
             end,
           },
           data_type = {
-            order = 2,
+            order = 7,
             name = L["option_minimap_data"],
             desc = L["option_minimap_data_desc"],
-            type = "select",
+            type = "multiselect",
+            width = "full",
             values = function()
               local options = {}
               for _, tab in ipairs(self.db.char.tabs) do
@@ -1172,16 +1182,16 @@ function MyAccountant:SetupAddonOptions()
               end
               return options
             end,
-            set = function(_, val)
-              self.db.char.minimapDataV2 = val
+            set = function(_, key, val)
+              self.db.char.minimapTooltipData[key] = val
             end,
-            get = function(_)
-              return self.db.char.minimapDataV2
+            get = function(_, key)
+              return self.db.char.minimapTooltipData[key] == true
             end,
           },
           linebreak = { order = 1.1, type = "description", name = "" },
           show_gold_per_hour = {
-            order = 4,
+            order = 2,
             name = L["option_gold_per_hour"],
             desc = L["option_gold_per_hour_desc"],
             width = "full",
@@ -1746,11 +1756,13 @@ function MyAccountant:SetupAddonOptions()
 
   -- General
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-General", generalOptions)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-General", generalOptions.name, private.ADDON_NAME)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-General", generalOptions.name,
+    private.ADDON_NAME)
 
   -- Characters
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Characters", charactersOptions)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Characters", charactersOptions.name, private.ADDON_NAME)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Characters", charactersOptions.name,
+    private.ADDON_NAME)
 
   -- Minimap Icon Options
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-MinimapIcon", minimapIconOptions)
@@ -1762,7 +1774,8 @@ function MyAccountant:SetupAddonOptions()
 
   -- Income Sources
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Sources", incomeSources)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Sources", incomeSources.name, private.ADDON_NAME)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Sources", incomeSources.name,
+    private.ADDON_NAME)
 
   -- Income panel
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-IncomePanel", incomePanelOptions)
@@ -1774,11 +1787,13 @@ function MyAccountant:SetupAddonOptions()
 
   -- Info frame
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-InfoPanel", infoFrameConfig)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-InfoPanel", infoFrameConfig.name, private.ADDON_NAME)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-InfoPanel", infoFrameConfig.name,
+    private.ADDON_NAME)
 
   -- Addon Data
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Data", clearDataOptions)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Data", clearDataOptions.name, private.ADDON_NAME)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Data", clearDataOptions.name,
+    private.ADDON_NAME)
 
   if self.db.char.showMinimap == true then
     showMinimap()
