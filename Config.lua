@@ -5,6 +5,9 @@ local _, private = ...
 --- @type AceConfig.OptionsTable
 local incomePanelOptions
 
+--- @type AceConfig.OptionsTable
+local viewsOptions
+
 local infoFrameConfig
 local infoFrameOptionsTabMap = {}
 local charactersOptions
@@ -78,6 +81,7 @@ function MyAccountant:SetupAddonOptions()
           tabName = tab._tabName,
           tabType = tab._tabType,
           ldbEnabled = tab._ldbEnabled,
+          ldbEnabledData = tab._ldbEnabledData,
           infoFrameEnabled = tab._infoFrameEnabled,
           minimapSummaryEnabled = tab._minimapSummaryEnabled,
           luaExpression = tab._luaExpression,
@@ -86,6 +90,7 @@ function MyAccountant:SetupAddonOptions()
           customOptionValues = tab._customOptionValues,
           individualDays = tab._individualDays,
           visible = tab._visible,
+          initLdbAutomatically = true,
         })
       )
     end
@@ -119,7 +124,7 @@ function MyAccountant:SetupAddonOptions()
     self.db.char.seenVersionMessage1p8 = true
     if self.db.char.lastVersion then
       print("|cffff2ebd" ..
-      private.ADDON_NAME .. "|r: " .. string.format(L["version_welcome_message"], private.ADDON_VERSION))
+        private.ADDON_NAME .. "|r: " .. string.format(L["version_welcome_message"], private.ADDON_VERSION))
     else
       print("|cffff2ebd" .. private.ADDON_NAME .. "|r: " .. L["version_first_install_message"])
     end
@@ -141,7 +146,7 @@ function MyAccountant:SetupAddonOptions()
     local lineBreak = false
 
     local tabConfig = {
-      tabDesc = { type = "description", name = L["option_tab_text"], order = 0 },
+      tabDesc = { type = "description", name = L["option_view_text"], order = 0 },
       tabGeneral = {
         type = "group",
         inline = true,
@@ -149,7 +154,6 @@ function MyAccountant:SetupAddonOptions()
         args = {
           advancedMode = {
             type = "toggle",
-            width = "full",
             order = 1,
             name = L["option_tab_advanced"],
             desc = L["option_tab_advanced_desc"],
@@ -160,19 +164,9 @@ function MyAccountant:SetupAddonOptions()
               self.db.char.tabAdvancedMode = val
             end,
           },
-        },
-        order = 1,
-      },
-      developerMode = {
-        type = "group",
-        inline = true,
-        name = L["options_developer_options"],
-        order = 2,
-        args = {
           showTabExport = {
             type = "toggle",
-            width = "full",
-            order = 1,
+            order = 2,
             disabled = function()
               return not self.db.char.tabAdvancedMode
             end,
@@ -186,9 +180,10 @@ function MyAccountant:SetupAddonOptions()
             end,
           },
         },
+        order = 1,
       },
       create = {
-        name = "|T" .. private.constants.PLUS .. ":0|t  |cff67ff7d" .. L["option_new_tab"] .. "|r",
+        name = "|T" .. private.constants.PLUS .. ":0|t  |cff67ff7d" .. L["option_new_view"] .. "|r",
         order = 0,
         type = "group",
         hidden = function()
@@ -197,8 +192,8 @@ function MyAccountant:SetupAddonOptions()
         args = {
           add_new_tab = {
             type = "input",
-            name = L["option_tab_name"],
-            desc = L["option_tab_name_desc"],
+            name = L["option_view_name"],
+            desc = L["option_view_name_desc"],
             order = 1,
             width = 1.5,
             validate = function(_, val)
@@ -457,9 +452,43 @@ function MyAccountant:SetupAddonOptions()
         optionOrder = optionOrder + 1
       end
 
+      local function setLdbCheckboxes()
+        local ldbOptions = {}
+        local ldbFields = tab:getLdbFields()
+
+        ldbOptions["desc"] = {
+          type = "description",
+          order = 0,
+          name = L["option_view_ldb_desc"],
+        }
+
+        local index = 1
+        for tabName, _ in pairs(ldbFields) do
+          ldbOptions[tabName] = {
+            type = "toggle",
+            name = function()
+              return tabName
+            end,
+            desc = L["option_ldb_disable_info"],
+            order = index,
+            width = "full",
+            get = function()
+              return tab:getLdbFields()[tabName]
+            end,
+            set = function(_, val)
+              tab:setLdbFieldEnabled(tabName, val)
+            end,
+          }
+          index = index + 1
+        end
+
+        tabConfig[tab:getId()].args.ldb_frame.args = ldbOptions
+      end
+
       tabConfig[tab:getId()] = {
         name = function()
-          return tab:getVisible() and tab:getName() or "|cff777777" .. tab:getName() .. "|r"
+          return tab:getIsActive() and
+              tab:getName() or "|cff777777" .. tab:getName() .. "|r"
         end,
         order = tabOrder,
         type = "group",
@@ -478,27 +507,27 @@ function MyAccountant:SetupAddonOptions()
             func = deleteTab(),
           },
           break1 = { type = "description", order = 0.05, name = "" },
-          moveLeft = {
-            type = "execute",
-            name = L["option_tab_move_left"],
-            desc = L["option_tab_move_left_desc"],
-            order = 0.1,
-            disabled = tabOrder == 1,
-            func = moveTabLeft(),
-          },
-          moveRight = {
-            type = "execute",
-            name = L["option_tab_move_right"],
-            desc = L["option_tab_move_right_desc"],
-            order = 0.2,
-            disabled = tabOrder == tabAmount,
-            func = moveTabRight(),
-          },
+          -- moveLeft = {
+          --   type = "execute",
+          --   name = L["option_tab_move_left"],
+          --   desc = L["option_tab_move_left_desc"],
+          --   order = 0.1,
+          --   disabled = tabOrder == 1,
+          --   func = moveTabLeft(),
+          -- },
+          -- moveRight = {
+          --   type = "execute",
+          --   name = L["option_tab_move_right"],
+          --   desc = L["option_tab_move_right_desc"],
+          --   order = 0.2,
+          --   disabled = tabOrder == tabAmount,
+          --   func = moveTabRight(),
+          -- },
           break2 = { type = "description", order = 1.3, name = "" },
           add = {
             type = "input",
-            name = L["option_tab_name"],
-            desc = L["option_tab_name_desc"],
+            name = L["option_view_name"],
+            desc = L["option_view_name_desc"],
             order = 1,
             width = 1.5,
             get = function()
@@ -523,16 +552,20 @@ function MyAccountant:SetupAddonOptions()
             end,
             set = function(_, val)
               tab:setName(val)
+              tab:resetLdb()
+              setLdbCheckboxes()
+
               makeTabConfig()
+              forceConfigRerender()
               MyAccountant:SetupTabs()
             end,
           },
-          visible = {
+          tab_enabled = {
             type = "toggle",
             width = "full",
             order = 1.1,
-            name = L["option_tab_visible"],
-            desc = L["option_tab_visible_desc"],
+            name = L["option_view_tab_enabled"],
+            desc = L["option_view_tab_enabled_desc"],
             get = function()
               return tab:getVisible()
             end,
@@ -541,26 +574,40 @@ function MyAccountant:SetupAddonOptions()
               MyAccountant:SetupTabs()
             end,
           },
-          lineBreak = {
-            type = "toggle",
-            width = "full",
-            order = 1.12,
-            name = L["option_tab_linebreak"],
-            desc = L["option_tab_linebreak_desc"],
-            get = function()
-              return tab:getLineBreak()
-            end,
-            set = function(_, val)
-              tab:setLineBreak(val)
-              MyAccountant:SetupTabs()
-            end,
-          },
+          -- visible = {
+          --   type = "toggle",
+          --   width = "full",
+          --   order = 1.1,
+          --   name = L["option_tab_visible"],
+          --   desc = L["option_tab_visible_desc"],
+          --   get = function()
+          --     return tab:getVisible()
+          --   end,
+          --   set = function(_, val)
+          --     tab:setVisible(val)
+          --     MyAccountant:SetupTabs()
+          --   end,
+          -- },
+          -- lineBreak = {
+          --   type = "toggle",
+          --   width = "full",
+          --   order = 1.12,
+          --   name = L["option_tab_linebreak"],
+          --   desc = L["option_tab_linebreak_desc"],
+          --   get = function()
+          --     return tab:getLineBreak()
+          --   end,
+          --   set = function(_, val)
+          --     tab:setLineBreak(val)
+          --     MyAccountant:SetupTabs()
+          --   end,
+          -- },
           minimapShow = {
             type = "toggle",
             width = "full",
             order = 1.15,
-            name = L["option_tab_minimap"],
-            desc = L["option_tab_minimap_desc"],
+            name = L["option_view_minimap_enabled"],
+            desc = L["option_view_minimap_enabled_desc"],
             get = function()
               return tab:getMinimapSummaryEnabled()
             end,
@@ -573,8 +620,8 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             order = 1.17,
-            name = L["option_tab_info_frame"],
-            desc = L["option_tab_info_frame_desc"],
+            name = L["option_view_information_frame_enabled"],
+            desc = L["option_view_information_frame_enabled_desc"],
             get = function()
               return tab:getInfoFrameEnabled()
             end,
@@ -583,20 +630,28 @@ function MyAccountant:SetupAddonOptions()
               makeTabConfig()
             end,
           },
-          ldb = {
-            type = "toggle",
-            width = "full",
-            order = 1.2,
-            name = L["option_tab_ldb"],
-            desc = L["option_tab_ldb_desc"],
-            get = function()
-              return tab:getLdbEnabled()
-            end,
-            set = function(_, val)
-              tab:setLdbEnabled(val)
-              tab:updateSummaryDataIfNeeded()
-            end,
+          ldb_frame = {
+            type = "group",
+            inline = true,
+            order = 1.99,
+            name = L["option_view_ldb"],
+            desc = L["option_view_ldb_desc"],
+            args = nil, -- set later
           },
+          -- ldb = {
+          --   type = "toggle",
+          --   width = "full",
+          --   order = 1.2,
+          --   name = L["option_view_ldb"],
+          --   desc = L["option_view_ldb_desc"],
+          --   get = function()
+          --     return tab:getLdbEnabled()
+          --   end,
+          --   set = function(_, val)
+          --     tab:setLdbEnabled(val)
+          --     tab:updateSummaryDataIfNeeded()
+          --   end,
+          -- },
           additionalTabOptions = {
             type = "group",
             inline = true,
@@ -717,10 +772,11 @@ function MyAccountant:SetupAddonOptions()
           },
         },
       }
+      setLdbCheckboxes()
       tabOrder = tabOrder + 1
     end
 
-    incomePanelOptions.args.options_tabs = { type = "group", name = L["option_tabs"], order = 25, args = tabConfig }
+    viewsOptions = { type = "group", name = L["option_views"], args = tabConfig }
 
     infoFrameConfig.args.data_to_show.values = infoFrameOptions
   end
@@ -1421,10 +1477,10 @@ function MyAccountant:SetupAddonOptions()
     type = "group",
     name = L["option_income_panel"],
     args = {
-      options_general = {
+      income_panel = {
         type = "group",
-        name = L["option_general"],
-        order = 24,
+        inline = true,
+        name = L["option_income_panel"],
         args = {
           hide_combat = {
             order = 3,
@@ -1757,6 +1813,11 @@ function MyAccountant:SetupAddonOptions()
   -- General
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-General", generalOptions)
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-General", generalOptions.name,
+    private.ADDON_NAME)
+
+  -- Views
+  LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Views", viewsOptions)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Views", viewsOptions.name,
     private.ADDON_NAME)
 
   -- Characters

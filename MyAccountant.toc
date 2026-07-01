@@ -6,6 +6,7 @@
 ## IconTexture: Interface\Addons\MyAccountant\Images\addonIcon
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1299016
+## X-Category: Information
 ## SavedVariables: MyAccountantDB
 ## SavedVariablesPerCharacter:
 

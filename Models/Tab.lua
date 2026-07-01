@@ -13,6 +13,7 @@ local initializedLdb = {}
 --- @field label string Visible name of the data
 --- @field ldbDataObject LibDataBroker.DataObject? LibDataBroker data object
 --- @field value string Current gold value of the data
+--- @field enabled boolean Whether or not this data instance is enabled for LDB
 --- @field tooltip function? Tooltip function for the ldb data object if desired
 
 -- Tab API Object
@@ -20,7 +21,8 @@ local initializedLdb = {}
 --- @field _customOptionFields table<string, ExtraTabOptionField>
 --- @field _tabName string
 --- @field _luaExpression string
---- @field _ldbEnabled boolean
+--- @field _ldbEnabled boolean -- Legacy field, use specific ldb data instances instead
+--- @field _ldbEnabledData table<string, boolean>?
 --- @field _infoFrameEnabled boolean
 --- @field private _tabLabel string
 --- @field private _dateSummaryLabel string
@@ -33,6 +35,7 @@ local initializedLdb = {}
 --- @field private _endDate integer
 --- @field _id string
 --- @field private _dataInstances table<string, TabDataInstance>
+--- @field private _initLdbAutomatically boolean
 local Tab = {}
 Tab.__index = Tab
 
@@ -44,7 +47,8 @@ Tab.__index = Tab
 --- @class TabConstructOptions
 --- @field tabType TabType?
 --- @field tabName string
---- @field ldbEnabled boolean?
+--- @field ldbEnabled boolean? -- Legacy field, use specific ldb data instances instead
+--- @field ldbEnabledData table<string, boolean>?
 --- @field infoFrameEnabled boolean?
 --- @field minimapSummaryEnabled boolean?
 --- @field luaExpression string?
@@ -54,10 +58,12 @@ Tab.__index = Tab
 --- @field visible boolean
 --- @field customOptionFields table<string, ExtraTabOptionField>?
 --- @field customOptionValues table<string, any>?
+--- @field initLdbAutomatically boolean
 local TabConstructOptionsDefault = {
   tabType = TabType.DATE,
   tabName = "",
   ldbEnabled = false,
+  ldbEnabledData = {},
   infoFrameEnabled = false,
   minimapSummaryEnabled = false,
   lineBreak = false,
@@ -65,6 +71,7 @@ local TabConstructOptionsDefault = {
   id = nil,
   customOptionFields = {},
   customOptionValues = {},
+  initLdbAutomatically = false,
 }
 
 local registerLdbData = function(name, tooltip)
@@ -77,6 +84,7 @@ local registerLdbData = function(name, tooltip)
     icon = "Interface\\Addons\\MyAccountant\\Images\\addonIcon",
     label = name,
     OnTooltipShow = tooltip,
+    tocname = "MyAccountant",
   }
 
   return ldb:NewDataObject(name, dataConfig)
@@ -154,25 +162,40 @@ function Tab:construct(options)
   tab._id = options.id or private.utils.generateUuid()
   --- @type boolean If the tab is visible or not
   tab._visible = options.visible
+  --- @type table<string, boolean>? LDB enabled data
+  tab._ldbEnabledData = options.ldbEnabledData or {}
+  --- @type boolean If the tab should automatically initialize LDB data instances on constructor
+  tab._initLdbAutomatically = options.initLdbAutomatically == true or TabConstructOptionsDefault.initLdbAutomatically
 
   if tab._tabType == TabType.SESSION then
     local sessionIncome = format(L["ldb_name_income"], tab._tabLabel)
     local sessionProfit = format(L["ldb_name_profit"], tab._tabLabel)
     local sessionOutcome = format(L["ldb_name_outcome"], tab._tabLabel)
 
+    tab._ldbEnabledData = {
+      [sessionIncome] = tab._ldbEnabledData[sessionIncome] or tab._ldbEnabled,
+      [sessionOutcome] = tab._ldbEnabledData[sessionOutcome] or tab._ldbEnabled,
+      [sessionProfit] = tab._ldbEnabledData[sessionProfit] or tab._ldbEnabled,
+    }
+
     tab._dataInstances = {
-      [sessionIncome] = { label = sessionIncome, ldbDataObject = nil, value = "" },
-      [sessionOutcome] = { label = sessionOutcome, ldbDataObject = nil, value = "" },
-      [sessionProfit] = { label = sessionProfit, ldbDataObject = nil, value = "" },
+      [sessionIncome] = { label = sessionIncome, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[sessionIncome] == true or tab._ldbEnabled },
+      [sessionOutcome] = { label = sessionOutcome, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[sessionOutcome] == true or tab._ldbEnabled },
+      [sessionProfit] = { label = sessionProfit, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[sessionProfit] == true or tab._ldbEnabled },
     }
   elseif tab._tabType == TabType.BALANCE then
+    tab._ldbEnabledData = {
+      [tab._tabLabel] = tab._ldbEnabledData[tab._tabLabel] or tab._ldbEnabled,
+    }
+
     tab._dataInstances = {
       [tab._tabLabel] = {
         label = tab._tabLabel,
         ldbDataObject = nil,
+        enabled = tab._ldbEnabledData[tab._tabLabel] == true or tab._ldbEnabled,
         value = "",
-        tooltip = function()
-          MyAccountant:MakeRealmTotalTooltip(nil)
+        tooltip = function(tooltip)
+          MyAccountant:MakeRealmTotalTooltip(nil, tooltip)
         end,
       },
     }
@@ -183,23 +206,90 @@ function Tab:construct(options)
     local incomeRealm = format(L["ldb_name_income_realm"], tab._tabLabel)
     local outcomeRealm = format(L["ldb_name_outcome_realm"], tab._tabLabel)
     local profitRealm = format(L["ldb_name_profit_realm"], tab._tabLabel)
+
+    tab._ldbEnabledData = {
+      [incomeCharacter] = tab._ldbEnabledData[incomeCharacter] or tab._ldbEnabled,
+      [outcomeCharacter] = tab._ldbEnabledData[outcomeCharacter] or tab._ldbEnabled,
+      [profitCharacter] = tab._ldbEnabledData[profitCharacter] or tab._ldbEnabled,
+      [incomeRealm] = tab._ldbEnabledData[incomeRealm] or tab._ldbEnabled,
+      [outcomeRealm] = tab._ldbEnabledData[outcomeRealm] or tab._ldbEnabled,
+      [profitRealm] = tab._ldbEnabledData[profitRealm] or tab._ldbEnabled,
+    }
+
     tab._dataInstances = {
-      [incomeCharacter] = { label = incomeCharacter, ldbDataObject = nil, value = "" },
-      [outcomeCharacter] = { label = outcomeCharacter, ldbDataObject = nil, value = "" },
-      [profitCharacter] = { label = profitCharacter, ldbDataObject = nil, value = "" },
-      [incomeRealm] = { label = incomeRealm, ldbDataObject = nil, value = "" },
-      [outcomeRealm] = { label = outcomeRealm, ldbDataObject = nil, value = "" },
-      [profitRealm] = { label = profitRealm, ldbDataObject = nil, value = "" },
+      [incomeCharacter] = { label = incomeCharacter, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[incomeCharacter] == true or tab._ldbEnabled },
+      [outcomeCharacter] = { label = outcomeCharacter, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[outcomeCharacter] == true or tab._ldbEnabled },
+      [profitCharacter] = { label = profitCharacter, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[profitCharacter] == true or tab._ldbEnabled },
+      [incomeRealm] = { label = incomeRealm, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[incomeRealm] == true or tab._ldbEnabled },
+      [outcomeRealm] = { label = outcomeRealm, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[outcomeRealm] == true or tab._ldbEnabled },
+      [profitRealm] = { label = profitRealm, ldbDataObject = nil, value = "", enabled = tab._ldbEnabledData[profitRealm] == true or tab._ldbEnabled },
     }
   end
 
-  tab:setLdbEnabled(tab._ldbEnabled)
+  if tab._initLdbAutomatically then
+    for _, v in pairs(tab._dataInstances) do
+      if v.enabled and not initializedLdb[v.label] then
+        initializedLdb[v.label] = registerLdbData(v.label, v.tooltip)
+      end
+    end
+  end
 
   if tab._luaExpression and tab._luaExpression ~= "" then
     tab:setLuaExpression(tab._luaExpression)
   end
 
+  tab:setLdbEnabled(false) -- Set legacy migrator to false to indicate that the tab has been migrated to the new system
+
   return tab
+end
+
+function Tab:resetLdb()
+  if self._tabType == TabType.SESSION then
+    local sessionIncome = format(L["ldb_name_income"], self._tabLabel)
+    local sessionProfit = format(L["ldb_name_profit"], self._tabLabel)
+    local sessionOutcome = format(L["ldb_name_outcome"], self._tabLabel)
+
+    self._ldbEnabledData = {
+      [sessionIncome] = false,
+      [sessionOutcome] = false,
+      [sessionProfit] = false,
+    }
+    self._dataInstances = {
+      [sessionIncome] = { label = sessionIncome, ldbDataObject = nil, value = "", enabled = false },
+      [sessionOutcome] = { label = sessionOutcome, ldbDataObject = nil, value = "", enabled = false },
+      [sessionProfit] = { label = sessionProfit, ldbDataObject = nil, value = "", enabled = false },
+    }
+  elseif self._tabType == TabType.BALANCE then
+    self._ldbEnabledData = {
+      [self._tabLabel] = false,
+    }
+    self._dataInstances = {
+      [self._tabLabel] = { label = self._tabLabel, ldbDataObject = nil, value = "", enabled = false },
+    }
+  else
+    local incomeCharacter = format(L["ldb_name_income_character"], self._tabLabel)
+    local outcomeCharacter = format(L["ldb_name_outcome_character"], self._tabLabel)
+    local profitCharacter = format(L["ldb_name_profit_character"], self._tabLabel)
+    local incomeRealm = format(L["ldb_name_income_realm"], self._tabLabel)
+    local outcomeRealm = format(L["ldb_name_outcome_realm"], self._tabLabel)
+    local profitRealm = format(L["ldb_name_profit_realm"], self._tabLabel)
+    self._ldbEnabledData = {
+      [incomeCharacter] = false,
+      [outcomeCharacter] = false,
+      [profitCharacter] = false,
+      [incomeRealm] = false,
+      [outcomeRealm] = false,
+      [profitRealm] = false,
+    }
+    self._dataInstances = {
+      [incomeCharacter] = { label = incomeCharacter, ldbDataObject = nil, value = "", enabled = false },
+      [outcomeCharacter] = { label = outcomeCharacter, ldbDataObject = nil, value = "", enabled = false },
+      [profitCharacter] = { label = profitCharacter, ldbDataObject = nil, value = "", enabled = false },
+      [incomeRealm] = { label = incomeRealm, ldbDataObject = nil, value = "", enabled = false },
+      [outcomeRealm] = { label = outcomeRealm, ldbDataObject = nil, value = "", enabled = false },
+      [profitRealm] = { label = profitRealm, ldbDataObject = nil, value = "", enabled = false },
+    }
+  end
 end
 
 --- Returns all data instances for this tab
@@ -241,8 +331,8 @@ end
 --- @param unixTime number Unix timestamp representing the date
 function Tab:addToSpecificDays(unixTime)
   if not private.utils.arrayHas(self._individualDays, function(day)
-    return day == unixTime
-  end) then
+        return day == unixTime
+      end) then
     table.insert(self._individualDays, unixTime)
   end
 end
@@ -274,6 +364,25 @@ end
 --- @return string tabName
 function Tab:getName()
   return self._tabName
+end
+
+--- Gets the LDB enabled statuses of the tab
+--- @return table<string, boolean> ldbEnabledData
+function Tab:getLdbFields()
+  return self._ldbEnabledData
+end
+
+function Tab:setLdbFieldEnabled(fieldName, enabled)
+  if self._dataInstances[fieldName] == nil then
+    return
+  end
+
+  self._ldbEnabledData[fieldName] = enabled
+  self._dataInstances[fieldName].enabled = enabled
+  if enabled and not initializedLdb[fieldName] then
+    initializedLdb[fieldName] = registerLdbData(fieldName, self._dataInstances[fieldName].tooltip)
+  end
+  self:updateSummaryDataIfNeeded()
 end
 
 --- Sets the tab name, resets tab label to match
@@ -361,19 +470,24 @@ end
 function Tab:setLdbEnabled(enabled)
   self._ldbEnabled = enabled
 
-  if enabled then
-    for key, v in pairs(self._dataInstances) do
-      if not initializedLdb[key] then
-        local ldbObject = registerLdbData(v.label, v.tooltip)
-        initializedLdb[key] = ldbObject
-      end
-    end
-  end
+  -- if enabled then
+  --   for key, v in pairs(self._dataInstances) do
+  --     if not initializedLdb[key] then
+  --       local ldbObject = registerLdbData(v.label, v.tooltip)
+  --       initializedLdb[key] = ldbObject
+  --     end
+  --   end
+  -- end
 end
 
 --- Returns whether LibDataBroker data is enabled for this tab
 function Tab:getLdbEnabled()
-  return self._ldbEnabled
+  for k, v in pairs(self._dataInstances) do
+    if v.enabled then
+      return true
+    end
+  end
+  return false
 end
 
 --- Returns the set start time of the tab
@@ -410,6 +524,12 @@ function Tab:runLoadedFunction()
   end
 end
 
+--- Checks to see if this tab is active (minimap, ldb, info frame, or a tab)
+--- @return boolean isActive 
+function Tab:getIsActive()
+  return self:getVisible() or self:getLdbEnabled() or self:getMinimapSummaryEnabled() or self:getInfoFrameEnabled()
+end
+
 --- If this tab's ldb is enabled, minimap icon summary is enabled, or info frame is enabled, then update the summary data. Otherwise do nothing.
 function Tab:updateSummaryDataIfNeeded()
   --- @class MyAccountant
@@ -444,9 +564,13 @@ function Tab:updateSummaryDataIfNeeded()
     MyAccountant:InformInfoFrameOfDataChange(sessionOutcomeInstance.label, sessionOutcomeInstance.value)
     MyAccountant:InformInfoFrameOfDataChange(sessionProfitInstance.label, sessionProfitInstance.value)
 
-    if self._ldbEnabled then
+    if sessionIncomeInstance.enabled then
       initializedLdb[sessionIncomeInstance.label].text = GetMoneyString(sessionIncome, true)
+    end
+    if sessionOutcomeInstance.enabled then
       initializedLdb[sessionOutcomeInstance.label].text = GetMoneyString(sessionOutcome, true)
+    end
+    if sessionProfitInstance.enabled then
       initializedLdb[sessionProfitInstance.label].text = sessionNetString
     end
   elseif type == TabType.BALANCE then
@@ -456,7 +580,7 @@ function Tab:updateSummaryDataIfNeeded()
     balanceInstance.value = GetMoneyString(factionBalance[1].gold, true)
     MyAccountant:InformInfoFrameOfDataChange(balanceInstance.label, balanceInstance.value)
 
-    if self._ldbEnabled then
+    if balanceInstance.enabled then
       initializedLdb[balanceInstance.label].text = GetMoneyString(factionBalance[1].gold, true)
     end
   else
@@ -478,7 +602,8 @@ function Tab:updateSummaryDataIfNeeded()
 
     local incomeCharacterValue = GetMoneyString(characterSummary.income, true)
     local outcomeCharacterValue = GetMoneyString(characterSummary.outcome, true)
-    local profitCharacterValue = "|cff" .. characterSummaryNetColor .. GetMoneyString(abs(characterSummaryNet), true) .. "|r"
+    local profitCharacterValue = "|cff" ..
+        characterSummaryNetColor .. GetMoneyString(abs(characterSummaryNet), true) .. "|r"
     local realmIncomeValue = GetMoneyString(realmSummary.income, true)
     local realmOutcomeValue = GetMoneyString(realmSummary.outcome, true)
     local realmProfitValue = "|cff" .. realmSummaryNetColor .. GetMoneyString(abs(realmSummaryNet), true) .. "|r"
@@ -497,12 +622,22 @@ function Tab:updateSummaryDataIfNeeded()
     MyAccountant:InformInfoFrameOfDataChange(realmOutcomeInstance.label, realmOutcomeInstance.value)
     MyAccountant:InformInfoFrameOfDataChange(realmProfitInstance.label, realmProfitInstance.value)
 
-    if self._ldbEnabled then
+    if incomeCharacterInstance.enabled then
       initializedLdb[incomeCharacterInstance.label].text = incomeCharacterValue
+    end
+    if outcomeCharacterInstance.enabled then
       initializedLdb[outcomeCharacterInstance.label].text = outcomeCharacterValue
+    end
+    if profitCharacterInstance.enabled then
       initializedLdb[profitCharacterInstance.label].text = profitCharacterValue
+    end
+    if realmIncomeInstance.enabled then
       initializedLdb[realmIncomeInstance.label].text = realmIncomeValue
+    end
+    if realmOutcomeInstance.enabled then
       initializedLdb[realmOutcomeInstance.label].text = realmOutcomeValue
+    end
+    if realmProfitInstance.enabled then
       initializedLdb[realmProfitInstance.label].text = realmProfitValue
     end
   end
@@ -518,7 +653,7 @@ end
 --- @return string tabLabel
 function Tab:getLabel()
   return (self._labelColor and self._labelColor ~= "") and ("|cff" .. self._labelColor .. self._tabLabel .. "|r")
-    or self._tabLabel
+      or self._tabLabel
 end
 
 --- Returns the date summary text label

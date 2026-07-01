@@ -9,6 +9,14 @@ if not L then
 end
 
 -- Localization definitions
+-- 1.13
+L["option_views"] = "Views"
+L["option_new_view"] = "New view"
+L["option_view_text"] =
+  "View configuration allows you to create and configure views (ie. data sets). Select a desired view on the left to configure or use advanced mode to create a new view."
+L["option_view_name"] = "View label"
+L["option_view_name_desc"] = "Name of the view - visible on LDB, minimap tooltip, information frame, and on the tabs on the income panel"
+
 -- 1.3
 
 L["about_author"] = "Автор: %s"

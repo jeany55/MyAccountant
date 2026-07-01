@@ -761,8 +761,11 @@ local function addHoverTooltip(owner, type, itemList, maxLines, colorIncome)
   end
 end
 
-function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
+--- @param realmBalanceInfo table? Realm balance data (fetched if nil)
+--- @param tooltip table? Tooltip frame to populate (defaults to GameTooltip). LDB displays pass their own frame here.
+function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo, tooltip)
   realmBalanceInfo = realmBalanceInfo and realmBalanceInfo or MyAccountant:GetRealmBalanceTotalDataTable()
+  tooltip = tooltip or GameTooltip
 
   for _, data in ipairs(realmBalanceInfo) do
     local classColor = data.classColor
@@ -776,9 +779,9 @@ function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo)
     if classColor then
       local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"
 
-      GameTooltip:AddDoubleLine(characterName, "|cffffffff" .. GetMoneyString(data.gold, true) .. "|r")
+      tooltip:AddDoubleLine(characterName, "|cffffffff" .. GetMoneyString(data.gold, true) .. "|r")
     else
-      GameTooltip:AddDoubleLine(data.name, GetMoneyString(data.gold, true))
+      tooltip:AddDoubleLine(data.name, GetMoneyString(data.gold, true))
     end
   end
 end
