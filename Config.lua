@@ -139,11 +139,6 @@ function MyAccountant:SetupAddonOptions()
     local inputName = ""
     local inputType = "DATE"
     local luaExpression = ""
-    local visible = false
-    local minimapShow = false
-    local infoFrameShow = false
-    local ldb = false
-    local lineBreak = false
 
     local tabConfig = {
       tabDesc = { type = "description", name = L["option_view_text"], order = 0 },
@@ -190,6 +185,11 @@ function MyAccountant:SetupAddonOptions()
           return not self.db.char.tabAdvancedMode
         end,
         args = {
+          info = {
+            order = 0.1,
+            type = "description",
+            name = L["option_new_view_info"],
+          },
           add_new_tab = {
             type = "input",
             name = L["option_view_name"],
@@ -204,7 +204,7 @@ function MyAccountant:SetupAddonOptions()
                     return string.lower(item:getName()) == string.lower(trimmedVal)
                   end)
               then
-                return L["option_tab_create_fail"]
+                return L["option_view_create_fail"]
               end
 
               return true
@@ -216,43 +216,16 @@ function MyAccountant:SetupAddonOptions()
               inputName = string.trim(val)
             end,
           },
-          visible = {
-            type = "toggle",
-            width = "full",
-            order = 1.1,
-            name = L["option_tab_visible"],
-            desc = L["option_tab_visible_desc"],
-            get = function()
-              return visible
-            end,
-            set = function(_, val)
-              visible = val
-            end,
-            disabled = function()
-              return inputName == ""
-            end,
-          },
           lineBreak = {
-            type = "toggle",
-            width = "full",
+            type = "description",
             order = 2,
-            name = L["option_tab_linebreak"],
-            desc = L["option_tab_linebreak_desc"],
-            get = function()
-              return lineBreak
-            end,
-            set = function(_, val)
-              lineBreak = val
-            end,
-            disabled = function()
-              return inputName == ""
-            end,
+            name = "",
           },
           type = {
             type = "select",
             order = 2.5,
-            name = L["option_tab_type"],
-            desc = L["option_tab_type_desc"],
+            name = L["option_view_type"],
+            desc = L["option_view_type_desc"],
             values = {
               DATE = L["option_tab_type_date"],
               BALANCE = L["option_tab_type_balance"],
@@ -266,54 +239,6 @@ function MyAccountant:SetupAddonOptions()
             end,
             set = function(_, val)
               inputType = val
-            end,
-          },
-          minimapShow = {
-            type = "toggle",
-            width = "full",
-            order = 2.55,
-            name = L["option_tab_minimap"],
-            desc = L["option_tab_minimap_desc"],
-            get = function()
-              return minimapShow
-            end,
-            set = function(_, val)
-              minimapShow = val
-            end,
-            disabled = function()
-              return inputName == ""
-            end,
-          },
-          infoFrameShow = {
-            type = "toggle",
-            width = "full",
-            order = 2.57,
-            name = L["option_tab_info_frame"],
-            desc = L["option_tab_info_frame_desc"],
-            get = function()
-              return infoFrameShow
-            end,
-            set = function(_, val)
-              infoFrameShow = val
-            end,
-            disabled = function()
-              return inputName == ""
-            end,
-          },
-          ldb = {
-            type = "toggle",
-            width = "full",
-            order = 2.6,
-            name = L["option_tab_ldb"],
-            desc = L["option_tab_ldb_desc"],
-            get = function()
-              return ldb
-            end,
-            set = function(_, val)
-              ldb = val
-            end,
-            disabled = function()
-              return inputName == ""
             end,
           },
           luaExpression = {
@@ -356,7 +281,7 @@ function MyAccountant:SetupAddonOptions()
           },
           createTab = {
             type = "execute",
-            name = L["option_tab_create"],
+            name = L["option_view_create"],
             disabled = function()
               return inputName == ""
             end,
@@ -368,10 +293,10 @@ function MyAccountant:SetupAddonOptions()
                   tabType = inputType,
                   tabName = inputName,
                   luaExpression = luaExpression,
-                  visible = visible,
-                  minimapSummaryEnabled = minimapShow,
-                  infoFrameEnabled = infoFrameShow,
-                  ldbEnabled = ldb,
+                  visible = false,
+                  minimapSummaryEnabled = false,
+                  infoFrameEnabled = false,
+                  ldbEnabled = false,
                   customOptionFields = {},
                   initLdbAutomatically = false
                 })
@@ -414,8 +339,9 @@ function MyAccountant:SetupAddonOptions()
         local index = tabOrder
 
         return function()
+          local currentIndex = incomePanelTabInstances[index].index
           local swapIndex = incomePanelTabInstances[index - 1].index
-          private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, swapIndex)
+          private.utils.swapItemInArray(MyAccountant.db.char.tabs, currentIndex, swapIndex)
           makeTabConfig()
           forceConfigRerender()
           MyAccountant:SetupTabs()
@@ -426,8 +352,9 @@ function MyAccountant:SetupAddonOptions()
         local index = tabOrder
 
         return function()
+          local currentIndex = incomePanelTabInstances[index].index
           local swapIndex = incomePanelTabInstances[index + 1].index
-          private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, swapIndex)
+          private.utils.swapItemInArray(MyAccountant.db.char.tabs, currentIndex, swapIndex)
           makeTabConfig()
           forceConfigRerender()
           MyAccountant:SetupTabs()
@@ -485,7 +412,6 @@ function MyAccountant:SetupAddonOptions()
     makeIncomePanelFrameTabConfig()
 
     local tabOrder = 1
-    local tabAmount = #MyAccountant.db.char.tabs
 
     local deleteTab = function()
       local index = tabOrder
@@ -606,7 +532,7 @@ function MyAccountant:SetupAddonOptions()
                     end
                   )
               then
-                return L["option_tab_create_fail"]
+                return L["option_view_create_fail"]
               end
 
               return true
@@ -752,6 +678,7 @@ function MyAccountant:SetupAddonOptions()
               tab._customOptionFields = {}
               tab:setLuaExpression(val)
               makeTabConfig()
+              makeIncomePanelFrameTabConfig()
               forceConfigRerender()
               MyAccountant:SetupTabs()
             end,
@@ -798,7 +725,7 @@ function MyAccountant:SetupAddonOptions()
       tabOrder = tabOrder + 1
     end
 
-    viewsOptions = { type = "group", name = L["option_views"], args = tabConfig }
+    viewsOptions.args = tabConfig
 
     infoFrameConfig.args.data_to_show.values = infoFrameOptions
   end
@@ -877,7 +804,7 @@ function MyAccountant:SetupAddonOptions()
             type = "description",
             width = "full",
             order = 17,
-            name = " |T" .. private.constants.BULLET_POINT .. ":15:15|t " .. "Quetz",
+            name = " |T" .. private.constants.HEART .. ":15:15|t " .. "Quetz" .. "  |T" .. private.constants.HEART .. ":15:15|t",
           },
         },
       },
@@ -1725,6 +1652,7 @@ function MyAccountant:SetupAddonOptions()
     },
   }
 
+  viewsOptions = { type = "group", name = L["option_views"], args = {} }
   makeTabConfig()
 
   --- @type AceConfig.OptionsTable

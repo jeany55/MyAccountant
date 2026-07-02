@@ -30,6 +30,12 @@ L["option_delete_view_desc"] = "Delete this view from the income panel, minimap 
 L["option_delete_view_confirm"] = "Are you sure you want to delete this view? |cffff0000This is irreversible!|r"
 L["option_tab_advanced_desc"] =
   "Advanced mode allows you to create new tabs, delete existing ones, and allows for advanced configuration. New tabs require some lua knowledge - you may look at existing tabs for examples."
+L["option_new_view_info"] = "After creation, select the new view on the left to configure it."
+L["option_view_type"] = "View type"
+L["option_view_type_desc"] =
+  "What kind of data this view will show (session, realm balance, or date). Date allows specific configuration."
+L["option_view_create"] = "Create view"
+L["option_view_create_fail"] = "A view with that name already exists!"
 
 -----------------------------------------
 --- VERSION 1.12
