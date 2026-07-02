@@ -372,6 +372,10 @@ function Tab:getLdbFields()
   return self._ldbEnabledData
 end
 
+--- Sets the LDB enabled status for a single data instance (field) of this tab.
+--- Registers the field to LDB the first time it is enabled. No-op if the field does not exist.
+--- @param fieldName string The name of the data instance to update
+--- @param enabled boolean Whether the field should be enabled
 function Tab:setLdbFieldEnabled(fieldName, enabled)
   if self._dataInstances[fieldName] == nil then
     return

@@ -132,8 +132,15 @@ function Tests.TestTab_SetGetLdbEnabled()
 
   AssertEqual(false, tab:getLdbEnabled())
 
-  tab:setLdbEnabled(true)
-  AssertEqual(true, tab:getLdbEnabled())
+  -- LDB is now enabled per-field; getLdbEnabled() reflects whether any field is enabled.
+  -- Constructing with ldbEnabled = true enables every data instance for the tab.
+  local tab2 = Tab:construct({
+    tabName = "Test2",
+    visible = true,
+    ldbEnabled = true,
+  })
+
+  AssertEqual(true, tab2:getLdbEnabled())
 end
 
 function Tests.TestTab_GetInfoFrameEnabled()
