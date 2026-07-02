@@ -373,6 +373,7 @@ function MyAccountant:SetupAddonOptions()
                   infoFrameEnabled = infoFrameShow,
                   ldbEnabled = ldb,
                   customOptionFields = {},
+                  initLdbAutomatically = false
                 })
               )
 
@@ -387,28 +388,6 @@ function MyAccountant:SetupAddonOptions()
 
     local tabOrder = 1
     local tabAmount = #MyAccountant.db.char.tabs
-
-    local moveTabLeft = function()
-      local index = tabOrder
-
-      return function()
-        private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index - 1)
-        makeTabConfig()
-        forceConfigRerender()
-        MyAccountant:SetupTabs()
-      end
-    end
-
-    local moveTabRight = function()
-      local index = tabOrder
-
-      return function()
-        private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index + 1)
-        makeTabConfig()
-        forceConfigRerender()
-        MyAccountant:SetupTabs()
-      end
-    end
 
     local deleteTab = function()
       local index = tabOrder
@@ -495,34 +474,18 @@ function MyAccountant:SetupAddonOptions()
         args = {
           delete = {
             type = "execute",
-            name = L["option_tab_delete"],
+            name = L["option_delete_view"],
             order = 0,
             hidden = function()
               return not self.db.char.tabAdvancedMode
             end,
-            desc = L["option_tab_delete_desc"],
+            desc = L["option_delete_view_desc"],
             confirm = function()
-              return L["option_tab_delete_confirm"]
+              return L["option_delete_view_confirm"]
             end,
             func = deleteTab(),
           },
           break1 = { type = "description", order = 0.05, name = "" },
-          -- moveLeft = {
-          --   type = "execute",
-          --   name = L["option_tab_move_left"],
-          --   desc = L["option_tab_move_left_desc"],
-          --   order = 0.1,
-          --   disabled = tabOrder == 1,
-          --   func = moveTabLeft(),
-          -- },
-          -- moveRight = {
-          --   type = "execute",
-          --   name = L["option_tab_move_right"],
-          --   desc = L["option_tab_move_right_desc"],
-          --   order = 0.2,
-          --   disabled = tabOrder == tabAmount,
-          --   func = moveTabRight(),
-          -- },
           break2 = { type = "description", order = 1.3, name = "" },
           add = {
             type = "input",
@@ -574,34 +537,6 @@ function MyAccountant:SetupAddonOptions()
               MyAccountant:SetupTabs()
             end,
           },
-          -- visible = {
-          --   type = "toggle",
-          --   width = "full",
-          --   order = 1.1,
-          --   name = L["option_tab_visible"],
-          --   desc = L["option_tab_visible_desc"],
-          --   get = function()
-          --     return tab:getVisible()
-          --   end,
-          --   set = function(_, val)
-          --     tab:setVisible(val)
-          --     MyAccountant:SetupTabs()
-          --   end,
-          -- },
-          -- lineBreak = {
-          --   type = "toggle",
-          --   width = "full",
-          --   order = 1.12,
-          --   name = L["option_tab_linebreak"],
-          --   desc = L["option_tab_linebreak_desc"],
-          --   get = function()
-          --     return tab:getLineBreak()
-          --   end,
-          --   set = function(_, val)
-          --     tab:setLineBreak(val)
-          --     MyAccountant:SetupTabs()
-          --   end,
-          -- },
           minimapShow = {
             type = "toggle",
             width = "full",
@@ -638,20 +573,6 @@ function MyAccountant:SetupAddonOptions()
             desc = L["option_view_ldb_desc"],
             args = nil, -- set later
           },
-          -- ldb = {
-          --   type = "toggle",
-          --   width = "full",
-          --   order = 1.2,
-          --   name = L["option_view_ldb"],
-          --   desc = L["option_view_ldb_desc"],
-          --   get = function()
-          --     return tab:getLdbEnabled()
-          --   end,
-          --   set = function(_, val)
-          --     tab:setLdbEnabled(val)
-          --     tab:updateSummaryDataIfNeeded()
-          --   end,
-          -- },
           additionalTabOptions = {
             type = "group",
             inline = true,
@@ -1479,8 +1400,7 @@ function MyAccountant:SetupAddonOptions()
     args = {
       income_panel = {
         type = "group",
-        inline = true,
-        name = L["option_income_panel"],
+        name = L["option_general"],
         args = {
           hide_combat = {
             order = 3,
@@ -1695,10 +1615,107 @@ function MyAccountant:SetupAddonOptions()
           },
         },
       },
+      tabConfig = {
+        type = "group",
+        -- inline = true,
+        name = L["option_tabs"],
+        args = {},
+      }
     },
   }
 
   makeTabConfig()
+
+  local function makeInfoFrameTabConfig()
+    local incomePanelTabs = {
+      info = {
+        order = 0.1,
+        type = "description",
+        name = L["option_tabs_info"],
+      }
+    }
+
+    local tabOrder = 1
+    local tabAmount = 0
+
+    local moveTabLeft = function()
+      local index = tabOrder
+
+      return function()
+        private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index - 1)
+        makeTabConfig()
+        makeInfoFrameTabConfig()
+        forceConfigRerender()
+        MyAccountant:SetupTabs()
+      end
+    end
+
+    local moveTabRight = function()
+      local index = tabOrder
+
+      return function()
+        private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index + 1)
+        makeTabConfig()
+        makeInfoFrameTabConfig()
+        forceConfigRerender()
+        MyAccountant:SetupTabs()
+      end
+    end
+
+
+    for _, tab in ipairs(self.db.char.tabs) do
+      if tab:getVisible() then
+        tabAmount = tabAmount + 1
+      end
+    end
+
+    for _, tab in ipairs(self.db.char.tabs) do
+      if tab:getVisible() then
+        incomePanelTabs[tab:getId()] = {
+          type = "group",
+          name = tab:getLabel(),
+          order = tabOrder,
+          args = {
+            moveLeft = {
+              type = "execute",
+              name = L["option_tab_move_left"],
+              desc = L["option_tab_move_left_desc"],
+              order = 0.1,
+              disabled = tabOrder == 1,
+              func = moveTabLeft(),
+            },
+            moveRight = {
+              type = "execute",
+              name = L["option_tab_move_right"],
+              desc = L["option_tab_move_right_desc"],
+              order = 0.2,
+              disabled = tabOrder == tabAmount,
+              func = moveTabRight(),
+            },
+            lineBreak = {
+              type = "toggle",
+              width = "full",
+              order = 1.12,
+              name = L["option_tab_linebreak"],
+              desc = L["option_tab_linebreak_desc"],
+              get = function()
+                return tab:getLineBreak()
+              end,
+              set = function(_, val)
+                tab:setLineBreak(val)
+                MyAccountant:SetupTabs()
+              end,
+            },
+          }
+        }
+        tabOrder = tabOrder + 1
+      end
+    end
+
+    incomePanelOptions.args.tabConfig.args = incomePanelTabs
+  end
+
+  makeInfoFrameTabConfig()
 
   --- @type AceConfig.OptionsTable
   local clearDataOptions = {
@@ -1755,6 +1772,7 @@ function MyAccountant:SetupAddonOptions()
                 lineBreak = tab._lineBreak,
                 id = tab._id,
                 visible = tab._visible,
+                initLdbAutomatically = false
               })
             )
           end

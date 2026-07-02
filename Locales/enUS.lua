@@ -24,6 +24,10 @@ L["option_view_ldb"] = "LDB"
 L["option_view_ldb_desc"] = "Select the data you would like to register with |cffffff00LibDataBroker|r:"
 L["option_ldb_disable_info"] = "Disabling or renaming a LDB option may require a reload of the UI to remove old data from other addons that use LDB (like Titan Panel or Bazooka)."
 L["unknown"] = "Unknown"
+L["option_tabs_info"] = "Register a view as a tab in View settings for it to appear in this section. Select a tab to change the order or insert a linebreak."
+L["option_delete_view"] = "Delete view"
+L["option_delete_view_desc"] = "Delete this view from the income panel, minimap tooltip, information frame, and LDB. |cffff0000This is irreversible!|r"
+L["option_delete_view_confirm"] = "Are you sure you want to delete this view? |cffff0000This is irreversible!|r"
 
 -----------------------------------------
 --- VERSION 1.12
