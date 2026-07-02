@@ -386,6 +386,104 @@ function MyAccountant:SetupAddonOptions()
       },
     }
 
+    local function makeIncomePanelFrameTabConfig()
+      local incomePanelTabs = {
+        info = {
+          order = 0.1,
+          type = "description",
+          name = L["option_tabs_info"],
+        }
+      }
+
+      -- Holds index of actual tabs shown on the income panel
+      local tabOrder = 1
+      -- Holds the index of the actual tab in the self.db.char.tabs array
+      -- To move a tab left or right we need to actually swap it with the closest visible tab, not just the next tab in the array.
+      local incomePanelTabInstances = {}
+      local index = 1
+      for _, tab in ipairs(self.db.char.tabs) do
+        if tab:getVisible() then
+          table.insert(incomePanelTabInstances, {
+            index = index,
+          })
+        end
+        index = index + 1
+      end
+
+      local moveTabLeft = function()
+        local index = tabOrder
+
+        return function()
+          local swapIndex = incomePanelTabInstances[index - 1].index
+          private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, swapIndex)
+          makeTabConfig()
+          forceConfigRerender()
+          MyAccountant:SetupTabs()
+        end
+      end
+
+      local moveTabRight = function()
+        local index = tabOrder
+
+        return function()
+          local swapIndex = incomePanelTabInstances[index + 1].index
+          private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, swapIndex)
+          makeTabConfig()
+          forceConfigRerender()
+          MyAccountant:SetupTabs()
+        end
+      end
+
+      index = 1
+      for _, tab in ipairs(self.db.char.tabs) do
+        if tab:getVisible() then
+          incomePanelTabs[tab:getId()] = {
+            type = "group",
+            name = tab:getLabel(),
+            order = tabOrder,
+            args = {
+              moveLeft = {
+                type = "execute",
+                name = L["option_tab_move_left"],
+                desc = L["option_tab_move_left_desc"],
+                order = 0.1,
+                disabled = tabOrder == 1,
+                func = moveTabLeft(),
+              },
+              moveRight = {
+                type = "execute",
+                name = L["option_tab_move_right"],
+                desc = L["option_tab_move_right_desc"],
+                order = 0.2,
+                disabled = tabOrder == #incomePanelTabInstances,
+                func = moveTabRight(),
+              },
+              lineBreak = {
+                type = "toggle",
+                width = "full",
+                order = 1.12,
+                name = L["option_tab_linebreak"],
+                desc = L["option_tab_linebreak_desc"],
+                get = function()
+                  return tab:getLineBreak()
+                end,
+                set = function(_, val)
+                  tab:setLineBreak(val)
+                  MyAccountant:SetupTabs()
+                end,
+              },
+            }
+          }
+          tabOrder = tabOrder + 1
+        end
+        index = index + 1
+      end
+
+      incomePanelOptions.args.tabConfig.args = incomePanelTabs
+    end
+
+    makeIncomePanelFrameTabConfig()
+
     local tabOrder = 1
     local tabAmount = #MyAccountant.db.char.tabs
 
@@ -517,7 +615,7 @@ function MyAccountant:SetupAddonOptions()
               tab:setName(val)
               tab:resetLdb()
               setLdbCheckboxes()
-
+              makeIncomePanelFrameTabConfig()
               makeTabConfig()
               forceConfigRerender()
               MyAccountant:SetupTabs()
@@ -534,7 +632,10 @@ function MyAccountant:SetupAddonOptions()
             end,
             set = function(_, val)
               tab:setVisible(val)
+              makeIncomePanelFrameTabConfig()
+              makeTabConfig()
               MyAccountant:SetupTabs()
+              forceConfigRerender()
             end,
           },
           minimapShow = {
@@ -1625,97 +1726,6 @@ function MyAccountant:SetupAddonOptions()
   }
 
   makeTabConfig()
-
-  local function makeInfoFrameTabConfig()
-    local incomePanelTabs = {
-      info = {
-        order = 0.1,
-        type = "description",
-        name = L["option_tabs_info"],
-      }
-    }
-
-    local tabOrder = 1
-    local tabAmount = 0
-
-    local moveTabLeft = function()
-      local index = tabOrder
-
-      return function()
-        private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index - 1)
-        makeTabConfig()
-        makeInfoFrameTabConfig()
-        forceConfigRerender()
-        MyAccountant:SetupTabs()
-      end
-    end
-
-    local moveTabRight = function()
-      local index = tabOrder
-
-      return function()
-        private.utils.swapItemInArray(MyAccountant.db.char.tabs, index, index + 1)
-        makeTabConfig()
-        makeInfoFrameTabConfig()
-        forceConfigRerender()
-        MyAccountant:SetupTabs()
-      end
-    end
-
-
-    for _, tab in ipairs(self.db.char.tabs) do
-      if tab:getVisible() then
-        tabAmount = tabAmount + 1
-      end
-    end
-
-    for _, tab in ipairs(self.db.char.tabs) do
-      if tab:getVisible() then
-        incomePanelTabs[tab:getId()] = {
-          type = "group",
-          name = tab:getLabel(),
-          order = tabOrder,
-          args = {
-            moveLeft = {
-              type = "execute",
-              name = L["option_tab_move_left"],
-              desc = L["option_tab_move_left_desc"],
-              order = 0.1,
-              disabled = tabOrder == 1,
-              func = moveTabLeft(),
-            },
-            moveRight = {
-              type = "execute",
-              name = L["option_tab_move_right"],
-              desc = L["option_tab_move_right_desc"],
-              order = 0.2,
-              disabled = tabOrder == tabAmount,
-              func = moveTabRight(),
-            },
-            lineBreak = {
-              type = "toggle",
-              width = "full",
-              order = 1.12,
-              name = L["option_tab_linebreak"],
-              desc = L["option_tab_linebreak_desc"],
-              get = function()
-                return tab:getLineBreak()
-              end,
-              set = function(_, val)
-                tab:setLineBreak(val)
-                MyAccountant:SetupTabs()
-              end,
-            },
-          }
-        }
-        tabOrder = tabOrder + 1
-      end
-    end
-
-    incomePanelOptions.args.tabConfig.args = incomePanelTabs
-  end
-
-  makeInfoFrameTabConfig()
 
   --- @type AceConfig.OptionsTable
   local clearDataOptions = {

@@ -28,6 +28,8 @@ L["option_tabs_info"] = "Register a view as a tab in View settings for it to app
 L["option_delete_view"] = "Delete view"
 L["option_delete_view_desc"] = "Delete this view from the income panel, minimap tooltip, information frame, and LDB. |cffff0000This is irreversible!|r"
 L["option_delete_view_confirm"] = "Are you sure you want to delete this view? |cffff0000This is irreversible!|r"
+L["option_tab_advanced_desc"] =
+  "Advanced mode allows you to create new tabs, delete existing ones, and allows for advanced configuration. New tabs require some lua knowledge - you may look at existing tabs for examples."
 
 -----------------------------------------
 --- VERSION 1.12
