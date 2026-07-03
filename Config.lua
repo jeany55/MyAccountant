@@ -127,14 +127,6 @@ function MyAccountant:SetupAddonOptions()
       self.db.char.sessionDb = {}
     end
 
-    -- Migrate old minimap balance style to new dict style
-    if not self.db.char.minimapTooltipData then
-      self.db.char.minimapTooltipData = {
-        [self.db.char.minimapDataV2] = true, -- old value
-      }
-      MyAccountant:PrintDebugMessage("Migrated legacy minimap tooltip data to new array style")
-    end
-
     -- Check for new tabs in the default library the user hasn't seen
     -- for _, defaultTab in ipairs(private.tabLibrary) do
     --   if not private.utils.arrayHas(self.db.char.knownTabs, function(tabName) return tabName == defaultTab:getName() end) then
@@ -143,6 +135,14 @@ function MyAccountant:SetupAddonOptions()
     --     table.insert(self.db.char.knownTabs, defaultTab:getName())
     --   end
     -- end
+  end
+
+  -- Initialize minimap tooltip data (fresh install) / migrate old minimap balance
+  -- style to new dict style (existing install). Runs for both paths.
+  if not self.db.char.minimapTooltipData then
+    self.db.char.minimapTooltipData = {
+      [self.db.char.minimapDataV2] = true, -- old value
+    }
   end
 
   if not self.db.char.seenVersionMessage1p8 then
