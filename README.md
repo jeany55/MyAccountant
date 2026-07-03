@@ -20,11 +20,13 @@ Heavily inspired by AccountantClassic, see a detailed breakdown by source or zon
 
 ### **See your gold per hour**
 
-Track your gold per hour on the configurable minimap icon
+Track your gold per hour on the configurable minimap icon.
 
 ![](Docs/goldPerHourMinimap.png)
 
 ![](Docs/minimapIconSettings.png)
+
+The minimap tooltip can show summary data from as many of your views as you like and allow you to pick exactly what appears on hover in the minimap tooltip settings.
 
 ### **See your income**
 
@@ -58,17 +60,20 @@ Visualize your data easily. Left click on a day to see it in the income panel or
 
 Also available through the `/mya report` commands.
 
-### **Configure your tabs**
+### **Configure your views**
 
-Set which tabs you want to see and in which order.
+MyAccountant is built around **views** - data sets like your current session, realm balance, or any date range you define. Each view can be surfaced in several places independently: as a tab on the income panel, an entry in the minimap tooltip, an entry on the information frame, or as LibDataBroker data. Manage all of this from the **Views** options page.
+
+![](Docs/viewsSettings.png)
+
+After enabling views as tabs you can configure their order and where they linebreak in the Tabs subsection in Income panel options.
 
 ![](Docs/incomePanelConfig.png)
 
-Set where you want your tabs to linebreak.
 
 ![](Docs/incomeFrameTabRows.png)
 
-Advanced mode allows you to add your own tabs and configure them with lua snippets, specifying the exact date range you want to see.
+Advanced mode allows you to create your own views and configure them with lua snippets, specifying the exact date range you want to see.
 
 ![](Docs/incomePanelConfigAdvanced.png)
 
@@ -116,7 +121,7 @@ You can also configure the information panel to show realm balance.
 
 ### **LibDataBroker support**
 
-MyAccountant registers data from tabs with **LDB (Lib Data Broker)**. You can specify which tabs send LDB data in tab configuration.
+MyAccountant registers data from your views with **LDB (Lib Data Broker)**. For each view you can pick exactly which values are exposed, using individual checkboxes in the Views options page.
 
 This lets you see MyAccountant information in any addon that supports showing LDB data like Titan Panel or Bazooka.
 
@@ -156,7 +161,7 @@ Decide which income sources you want to track by disabling ones you aren't inter
 ### Manual
 
 1. Download the [latest release](https://github.com/jeany55/MyAccountant/releases/latest) from the releases page.
-2. Extract the zip file into your `Interface/Addons` folder (eg. `World of Warcraft/_retail/Interface/Addons/`)
+2. Extract the zip file into your `Interface/Addons` folder (eg. `World of Warcraft/_retail_/Interface/Addons/`)
 
 ## Supported languages
 
@@ -180,7 +185,7 @@ Or, if you're feeling brave you can make the change yourself and submit a pull r
 
 ### Find a bug?
 
-Please [open a issue](https://github.com/jeany55/MyAccountant/issues/new) on the issues page!
+Please [open an issue](https://github.com/jeany55/MyAccountant/issues/new) on the issues page!
 
 ## Special thanks
 

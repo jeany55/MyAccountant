@@ -150,13 +150,13 @@ end
 local function printHelpMessage()
   print(
     "|T"
-      .. private.constants.ADDON_ICON
-      .. ":0|t |cffff9300"
-      .. private.ADDON_NAME
-      .. "|r|cffffffff"
-      .. " v"
-      .. private.ADDON_VERSION
-      .. "|r"
+    .. private.constants.ADDON_ICON
+    .. ":0|t |cffff9300"
+    .. private.ADDON_NAME
+    .. "|r|cffffffff"
+    .. " v"
+    .. private.ADDON_VERSION
+    .. "|r"
   )
   print(L["help_separator"])
 
@@ -245,19 +245,6 @@ end
 --- Renders minimap tooltip
 --- @param tooltip GameTooltip The tooltip to render into
 function MyAccountant:MakeMinimapTooltip(tooltip)
-  local selectedMinimapDisplay = self.db.char.minimapDataV2
-  --- @type TabDataInstance?
-  local foundInstance = nil
-  for _, tab in ipairs(self.db.char.tabs) do
-    if not foundInstance then
-      for _, instance in ipairs(tab:getDataInstances()) do
-        if instance.label == selectedMinimapDisplay then
-          foundInstance = instance
-        end
-      end
-    end
-  end
-
   local moneyString = ""
   if self.db.char.minimapTotalBalance == "REALM" then
     local goldData = MyAccountant:GetRealmBalanceTotalDataTable()
@@ -267,10 +254,6 @@ function MyAccountant:MakeMinimapTooltip(tooltip)
   end
 
   tooltip:AddLine(private.ADDON_NAME .. " - " .. moneyString, 1, 1, 1)
-
-  if foundInstance then
-    tooltip:AddLine(foundInstance.label .. ": " .. foundInstance.value, 1, 1, 1)
-  end
 
   if self.db.char.goldPerHour then
     local totalIncome = MyAccountant:GetSessionIncome()
@@ -282,6 +265,16 @@ function MyAccountant:MakeMinimapTooltip(tooltip)
     end
 
     tooltip:AddLine(L["minimap_gph"] .. " |cffffffff" .. MyAccountant:GetHeaderMoneyString(goldPerHour) .. "|r")
+  end
+
+  local selectedMinimapTabs = self.db.char.minimapTooltipData
+  --- @type TabDataInstance?
+  for _, tab in ipairs(self.db.char.tabs) do
+    for _, instance in ipairs(tab:getDataInstances()) do
+      if selectedMinimapTabs[instance.label] then
+        tooltip:AddLine(instance.label .. ": " .. instance.value, 1, 1, 1)
+      end
+    end
   end
 
   local detailString

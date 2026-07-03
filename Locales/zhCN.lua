@@ -7,6 +7,74 @@ if not L then
 end
 
 -- ========================================
+--- VERSION 1.13
+----------------------------------------
+L["option_views"] = "Views"
+L["option_new_view"] = "New view"
+L["option_view_text"] =
+  "View configuration allows you to create and configure views (ie. data sets). Select a desired view on the left to configure or use advanced mode to create a new view."
+L["option_view_name"] = "View label"
+L["option_view_name_desc"] = "Name of the view - visible on LDB, minimap tooltip, information frame, and on the tabs on the income panel"
+L["option_view_tab_enabled"] = "Register as a tab on the |cffffff00income panel|r."
+L["option_view_tab_enabled_desc"] = "If true, this view will be available as a tab on the income panel. See the tabs section in Income Panel options for more configuration."
+L["option_view_minimap_enabled"] = "Register as a |cffffff00minimap tooltip|r option."
+L["option_view_minimap_enabled_desc"] = "If true, this view will be available as an option in the minimap tooltip settings section."
+L["option_view_information_frame_enabled"] = "Register as an |cffffff00information frame|r option."
+L["option_view_information_frame_enabled_desc"] = "If true, this view will be available as an option in the information frame settings section."
+L["option_view_ldb"] = "LDB"
+L["option_view_ldb_desc"] = "Select the data you would like to register with |cffffff00LibDataBroker|r:"
+L["option_ldb_disable_info"] = "Disabling or renaming a LDB option may require a reload of the UI to remove old data from other addons that use LDB (like Titan Panel or Bazooka)."
+L["unknown"] = "Unknown"
+L["option_tabs_info"] = "Register a view as a tab in View settings for it to appear in this section. Select a tab to change the order or insert a linebreak."
+L["option_delete_view"] = "Delete view"
+L["option_delete_view_desc"] = "Delete this view from the income panel, minimap tooltip, information frame, and LDB. |cffff0000This is irreversible!|r"
+L["option_delete_view_confirm"] = "Are you sure you want to delete this view? |cffff0000This is irreversible!|r"
+L["option_new_view_info"] = "After creation, select the new view on the left to configure it."
+L["option_view_type"] = "View type"
+L["option_view_type_desc"] =
+  "What kind of data this view will show (session, realm balance, or date). Date allows specific configuration."
+L["option_view_create"] = "Create view"
+L["option_view_create_fail"] = "A view with that name already exists!"
+L["option_tab_characters"] = "Characters"
+L["option_tab_characters_desc"] =
+  "Which characters to track. Use the dropdown to select presets or select 'Custom' to select specific characters to track"
+L["option_tab_characters_preset"] = "Which characters to track"
+L["option_tab_characters_preset_desc"] =
+  "Select a preset for which characters to track. Selecting 'Custom' will allow you to select specific characters to track."
+L["option_tab_characters_preset_all"] = "All characters"
+L["option_tab_characters_preset_current_realm"] = "Current realm (both factions)"
+L["option_tab_characters_preset_current_realm_faction"] = "Current realm (current faction)"
+L["option_tab_characters_preset_alliance"] = "All Alliance characters"
+L["option_tab_characters_preset_horde"] = "All Horde characters"
+L["option_tab_characters_preset_custom"] = "Custom"
+L["option_tab_characters_delete_character"] = "Delete"
+L["option_tab_characters_delete_character_desc"] = "Delete this character from the database entirely. Irreversible!"
+L["option_tab_characters_delete_confirm"] =
+  "Are you sure you want to delete this character's data? |cffff0000This is irreversible!|r"
+L["migrate_start"] = "Migrating data from legacy MyAccountant version..."
+L["migrate_complete"] = "Migration complete."
+L["option_realm_characters_option"] = "Which characters to show for realm balance"
+L["option_realm_characters_option_desc"] =
+  "Select which characters to include when showing realm balance. This only affects realm balance summary and does not affect which characters are tracked by the addon in general."
+L["option_realm_characters_all"] = "All characters on realm"
+L["option_realm_characters_selected"] = "Only tracked characters on realm"
+L["option_realm_characters_current_faction"] = "All characters of current faction on realm"
+L["option_session_storage"] = "Store session until"
+L["option_session_storage_desc"] =
+  "When to clear session data. By default (Logout/Reload), session data is cleared when you log out or reload your UI. If you set this to 'Until User Resets', session data will never be cleared and will be kept indefinitely until you manually clear it in the options, use the console command, clear it via the minimap button, or the button in the income panel."
+L["option_session_storage_logout"] = "Logout/Reload"
+L["option_session_storage_indefinite"] = "Until User Resets"
+L["option_starting_day_of_week_offset"] = "Week start"
+L["option_starting_day_of_week_offset_desc"] = "Which day is considered the start of the week (for tabs, LDB, and info frame)"
+L["option_starting_day_of_week_monday"] = "Monday"
+L["option_starting_day_of_week_tuesday"] = "Tuesday"
+L["option_starting_day_of_week_wednesday"] = "Wednesday"
+L["option_starting_day_of_week_thursday"] = "Thursday"
+L["option_starting_day_of_week_friday"] = "Friday"
+L["option_starting_day_of_week_saturday"] = "Saturday"
+L["option_starting_day_of_week_sunday"] = "Sunday"
+
+-- ========================================
 --- VERSION 1.9
 ----------------------------------------
 L["option_calendar_summary"] = "在日历上显示数据"

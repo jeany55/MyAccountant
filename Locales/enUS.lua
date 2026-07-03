@@ -6,6 +6,38 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 -----------------------------------------
+--- VERSION 1.13
+-----------------------------------------
+L["option_views"] = "Views"
+L["option_new_view"] = "New view"
+L["option_view_text"] =
+  "View configuration allows you to create and configure views (ie. data sets). Select a desired view on the left to configure or use advanced mode to create a new view."
+L["option_view_name"] = "View label"
+L["option_view_name_desc"] = "Name of the view - visible on LDB, minimap tooltip, information frame, and on the tabs on the income panel. |cffff0000Changing this will reset this view's LDB configuration!|r"
+L["option_view_tab_enabled"] = "Register as a tab on the |cffffff00income panel|r."
+L["option_view_tab_enabled_desc"] = "If true, this view will be available as a tab on the income panel. See the tabs section in Income Panel options for more configuration."
+L["option_view_minimap_enabled"] = "Register as a |cffffff00minimap tooltip|r option."
+L["option_view_minimap_enabled_desc"] = "If true, this view will be available as an option in the minimap tooltip settings section."
+L["option_view_information_frame_enabled"] = "Register as an |cffffff00information frame|r option."
+L["option_view_information_frame_enabled_desc"] = "If true, this view will be available as an option in the information frame settings section."
+L["option_view_ldb"] = "LDB"
+L["option_view_ldb_desc"] = "Select the data you would like to register with |cffffff00LibDataBroker|r:"
+L["option_ldb_disable_info"] = "Disabling or renaming a LDB option may require a reload of the UI to remove old data from other addons that use LDB (like Titan Panel or Bazooka)."
+L["unknown"] = "Unknown"
+L["option_tabs_info"] = "Register a view as a tab in View settings for it to appear in this section. Select a tab to change the order or insert a linebreak."
+L["option_delete_view"] = "Delete view"
+L["option_delete_view_desc"] = "Delete this view from the income panel, minimap tooltip, information frame, and LDB. |cffff0000This is irreversible!|r"
+L["option_delete_view_confirm"] = "Are you sure you want to delete this view? |cffff0000This is irreversible!|r"
+L["option_tab_advanced_desc"] =
+  "Advanced mode allows you to create new tabs, delete existing ones, and allows for advanced configuration. New tabs require some lua knowledge - you may look at existing tabs for examples."
+L["option_new_view_info"] = "After creation, select the new view on the left to configure it."
+L["option_view_type"] = "View type"
+L["option_view_type_desc"] =
+  "What kind of data this view will show (session, realm balance, or date). Date allows specific configuration."
+L["option_view_create"] = "Create view"
+L["option_view_create_fail"] = "A view with that name already exists!"
+
+-----------------------------------------
 --- VERSION 1.12
 -----------------------------------------
 L["option_tab_characters"] = "Characters"

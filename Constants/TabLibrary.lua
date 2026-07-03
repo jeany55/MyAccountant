@@ -34,7 +34,7 @@ Tab:setDateSummaryText(date("%x"))]],
     tabName = L["this_week"],
     tabType = "DATE",
     visible = true,
-    ldbEnabled = true,
+    ldbEnabled = false,
     minimapSummaryEnabled = true,
     infoFrameEnabled = true,
     luaExpression = [[Tab:setStartDate(DateUtils.getStartOfWeek())
