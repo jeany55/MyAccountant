@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.13.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.13.0)
+
+### New Features
+* **Views**: Tabs have been reworked into **views** — data sets like your current session, realm balance, or any date range you define. Each view can be surfaced independently as a tab on the income panel, an entry in the minimap tooltip, an entry on the information frame, or as LibDataBroker data. Manage everything from the new **Views** options page.
+* **Multi-select minimap tooltip**: The minimap tooltip can now show summary data from as many of your views as you like — pick exactly what appears on hover in the minimap tooltip settings.
+* **Per-value LibDataBroker config**: For each view you can now pick exactly which values are exposed to LDB using individual checkboxes, rather than a single per-tab toggle.
+
+### Other
+* Tab reordering and line-break configuration have moved to the Tabs subsection in Income Panel options.
+* Gold per hour has been moved above the minimap tooltip selections.
+
 ## [v1.12.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.12.0)
 
 ### New Features
