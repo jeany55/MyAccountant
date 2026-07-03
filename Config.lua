@@ -53,7 +53,32 @@ function MyAccountant:SetupAddonOptions()
   end
 
   if not self.db.char.tabs then
-    self.db.char.tabs = private.tabLibrary
+    -- Fresh install: instantiate the default tab library so LDB data instances are
+    -- registered (initLdbAutomatically), matching the deserialization path below.
+    -- Without this, enabled instances have no initializedLdb entry and
+    -- updateSummaryDataIfNeeded errors on login.
+    local defaultTabs = {}
+    for _, tab in ipairs(private.tabLibrary) do
+      table.insert(
+        defaultTabs,
+        private.Tab:construct({
+          tabName = tab._tabName,
+          tabType = tab._tabType,
+          ldbEnabled = tab._ldbEnabled,
+          ldbEnabledData = tab._ldbEnabledData,
+          infoFrameEnabled = tab._infoFrameEnabled,
+          minimapSummaryEnabled = tab._minimapSummaryEnabled,
+          luaExpression = tab._luaExpression,
+          lineBreak = tab._lineBreak,
+          id = tab._id,
+          customOptionValues = tab._customOptionValues,
+          individualDays = tab._individualDays,
+          visible = tab._visible,
+          initLdbAutomatically = true,
+        })
+      )
+    end
+    self.db.char.tabs = defaultTabs
     self.db.char.knownTabsv2 = private.utils.transformArray(
       private.tabLibrary, --
       --- @param tab Tab
