@@ -9,6 +9,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 --- @field title string Human readable label of the source
 --- @field versions GameTypes[] List of supported WoW versions for the source
 --- @field required boolean? Whether the source is required and cannot be disabled in settings
+--- @field neutral boolean? Whether the source moves gold between the player's own storage rather
+--- than in or out of the account. Neutral sources are excluded from profit/loss totals when the
+--- user has the corresponding option enabled - see MyAccountant:IsNeutralSource
 
 --- @enum GameTypes Versions of WoW MyAccountant knows about
 GameTypes = {
@@ -60,6 +63,7 @@ private.constants = {
 --- |'BARBER'
 --- |'TRANSMOGRIFY'
 --- |'GARRISONS'
+--- |'WARBAND'
 --- |'OTHER'
 
 -- All gold source definitions
@@ -184,6 +188,7 @@ local sources = {
   BARBER = { title = L["BARBER"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL } },
   TRANSMOGRIFY = { title = L["TRANSMOGRIFY"], versions = { GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL } },
   GARRISONS = { title = L["GARRISONS"], versions = { GameTypes.RETAIL } },
+  WARBAND = { title = L["WARBAND"], versions = { GameTypes.RETAIL }, neutral = true },
   OTHER = {
     title = L["OTHER"],
     versions = {
@@ -247,6 +252,7 @@ local DEFAULT_SOURCES_RETAIL = {
   "QUESTS",
   "TRANSMOGRIFY",
   "GARRISONS",
+  "WARBAND",
   "OTHER",
 }
 
@@ -336,6 +342,7 @@ private.default_settings = {
   showTabExport = false,
   incomeFrameWidth = 532,
   showWarbandInRealmBalance = true,
+  treatWarbandTransfersAsNeutral = true,
   showCalendarSummary = true,
   calendarDataSource = "REALM",
   startingDayOfWeekOffset = 0,
