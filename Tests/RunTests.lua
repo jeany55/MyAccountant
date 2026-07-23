@@ -484,7 +484,9 @@ GetLootRollItemLink = Fn
 GetLootMethod = Const("personalloot")
 GetExpansionLevel = Const(EXPANSION)
 GetMaxPlayerLevel = Const(MAX_LEVEL)
-GetMoney = Fn
+-- Returns a number, as the real API does. Tests that drive money changes replace this
+-- with their own stub; returning nil here makes the money handler error on arithmetic.
+GetMoney = Const(0)
 GetMoneyString = function(amount, withColor)
   return tostring(amount)
 end
@@ -645,8 +647,16 @@ C_Container = {
   GetContainerNumSlots = Const(0),
   GetContainerItemLink = Val("|Hitem:1::::::::"),
 }
+-- Warband bank. DepositMoney/WithdrawMoney are no-ops the addon hooks with
+-- hooksecurefunc; tests drive them directly to simulate a transfer.
+C_Bank = {
+  FetchDepositedMoney = Const(0),
+  DepositMoney = Fn,
+  WithdrawMoney = Fn,
+}
 
 Enum = {
+  BankType = { Character = 0, Account = 2 },
   ClubType = { BattleNet = 0, Character = 1, Guild = 2, Other = 3 },
   ItemQuality = {
     Poor = 0,
@@ -737,6 +747,7 @@ import("Tests.Tests.IncomeAdvancedTests")
 import("Tests.Tests.TabsApiAdvancedTests")
 import("Tests.Tests.TabModelAdvancedTests")
 import("Tests.Tests.MigrationTests")
+import("Tests.Tests.NeutralSourceTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)

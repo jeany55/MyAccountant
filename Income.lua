@@ -5,6 +5,28 @@ local _, private = ...
 --- @class MyAccountant
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
+--- Whether a source should be left out of income/outcome/profit totals.
+--- Neutral sources move gold between the player's own storage (e.g. the Warband bank)
+--- rather than in or out of the account, so counting them as a gain or a loss is wrong.
+--- The data is always recorded either way - this only controls whether it is summed.
+--- @param source Source Source to check
+--- @return boolean neutral True if the source should be excluded from totals
+function MyAccountant:IsNeutralSource(source)
+  local definition = private.sources[source]
+
+  if not definition or not definition.neutral then
+    return false
+  end
+
+  -- The Warband bank doesn't exist outside Retail, so nothing should be marked neutral
+  -- there even though the setting itself carries a default on every version.
+  if not private.utils.supportsWoWVersions(definition.versions) then
+    return false
+  end
+
+  return self.db.char.treatWarbandTransfersAsNeutral == true
+end
+
 --- Resets all function data
 function MyAccountant:ResetSession()
   self.db.char.sessionDb = {}
@@ -89,7 +111,10 @@ function MyAccountant:AddIncome(category, amount, dateOverride)
   if not self.db.char.totalGoldMade then
     self.db.char.totalGoldMade = 0
   end
-  self.db.char.totalGoldMade = self.db.char.totalGoldMade + amount
+  -- Pulling gold back out of your own storage isn't earnings, so don't let it skew gold/hour
+  if not MyAccountant:IsNeutralSource(category) then
+    self.db.char.totalGoldMade = self.db.char.totalGoldMade + amount
+  end
   local date = dateOverride and dateOverride or date("*t")
   local playerName = UnitName("player")
   local zone = GetZoneText()
@@ -189,13 +214,16 @@ local function sumDay(dayData, category, type)
   if category == nil then
     local total = 0
 
-    for _, v in pairs(dayData) do
-      if type == "income" then
-        total = total + v.income
-      elseif type == "outcome" then
-        total = total + v.outcome
-      else
-        total = total + (v.income - v.outcome)
+    for k, v in pairs(dayData) do
+      -- Neutral sources are still returned when asked for by name, but never rolled into totals
+      if not MyAccountant:IsNeutralSource(k) then
+        if type == "income" then
+          total = total + v.income
+        elseif type == "outcome" then
+          total = total + v.outcome
+        else
+          total = total + (v.income - v.outcome)
+        end
       end
     end
 
@@ -373,8 +401,10 @@ function MyAccountant:SummarizeData(data)
   local summary = { income = 0, outcome = 0 }
 
   for k, v in pairs(data) do
-    summary.income = summary.income + v.income
-    summary.outcome = summary.outcome + v.outcome
+    if not MyAccountant:IsNeutralSource(k) then
+      summary.income = summary.income + v.income
+      summary.outcome = summary.outcome + v.outcome
+    end
   end
 
   return summary
@@ -430,9 +460,13 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterRefOverr
     talliedTable.OTHER = { income = 0, outcome = 0 }
   end
 
-  -- Find any data from an inactive source and tally it in Other
+  -- Find any data from an inactive source and tally it in Other.
+  -- Neutral sources are never folded in - doing so would hide them inside a source that
+  -- does count towards totals, reintroducing the very gain/loss we are trying to exclude.
   for k, v in pairs(table) do
-    if not MyAccountant:IsSourceActive(k) then
+    if MyAccountant:IsNeutralSource(k) then
+      talliedTable[k] = v
+    elseif not MyAccountant:IsSourceActive(k) then
       talliedTable.OTHER.income = talliedTable.OTHER.income + v.income
       talliedTable.OTHER.outcome = talliedTable.OTHER.outcome + v.outcome
       if not talliedTable.OTHER.zones then
@@ -466,6 +500,10 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterRefOverr
       end
 
       reorderedTable[v].title = private.sources[v].title
+      -- Flag rows whose amounts are deliberately missing from the totals above
+      if MyAccountant:IsNeutralSource(v) then
+        reorderedTable[v].title = reorderedTable[v].title .. L["neutral_source_marker"]
+      end
     end
   else
     -- Invert table to get by zone
@@ -549,8 +587,8 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
     end
   end
 
-  local warbandGold = self.db.realm.warBandGold or 0
-  if self.db.char.showWarbandInRealmBalance and self.db.realm.seenWarband then
+  local warbandGold = self.db.global.warBandGold or 0
+  if self.db.char.showWarbandInRealmBalance and self.db.global.seenWarband then
     goldTotal = goldTotal + warbandGold
     table.insert(data, { name = "|T939375:0|t " .. L["warband"], gold = warbandGold })
   end

@@ -72,9 +72,12 @@ function MyAccountant:OnInitialize()
   dbRef.name = UnitName("player")
   dbRef.gold = GetMoney()
 
-  if self.db.realm.warBandGold == nil then
-    self.db.realm.warBandGold = 0
-    self.db.realm.seenWarband = false
+  -- The Warband bank is account wide, so its balance belongs in global rather than realm
+  -- scope. Carry any previously stored realm value over so the balance doesn't reset to
+  -- zero for existing users on first login after updating.
+  if self.db.global.warBandGold == nil then
+    self.db.global.warBandGold = self.db.realm.warBandGold or 0
+    self.db.global.seenWarband = self.db.realm.seenWarband or false
   end
 
   MyAccountant:checkDatabaseDayConfigured()

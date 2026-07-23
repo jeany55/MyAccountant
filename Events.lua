@@ -8,6 +8,46 @@ local activeSource = nil
 local currentMoney = GetMoney()
 local repairCost = 0
 
+-- Warband bank transfers are announced by hooking C_Bank, which runs before PLAYER_MONEY.
+-- The amount is stashed here so the money change that follows can be recognised as a
+-- transfer rather than a gain or a loss. It expires because the hooks fire even when the
+-- server rejects the action - a stale value must never swallow an unrelated transaction.
+local PENDING_TRANSFER_TIMEOUT = 2
+local pendingTransfer = nil
+
+local function clearPendingTransfer()
+  pendingTransfer = nil
+end
+
+local function setPendingTransfer(bankType, amount)
+  if bankType ~= Enum.BankType.Account or not amount or amount <= 0 then
+    return
+  end
+  pendingTransfer = { amount = amount, expires = GetTime() + PENDING_TRANSFER_TIMEOUT }
+end
+
+--- Consumes the pending transfer if it matches the given money change.
+--- @param moneyChange integer Signed money delta
+--- @return boolean isTransfer True if this change was a Warband bank transfer
+local function consumePendingTransfer(moneyChange)
+  if not pendingTransfer then
+    return false
+  end
+
+  if GetTime() > pendingTransfer.expires then
+    pendingTransfer = nil
+    return false
+  end
+
+  -- Require an exact match so a coincidental transaction can't be mistaken for the transfer
+  if abs(moneyChange) ~= pendingTransfer.amount then
+    return false
+  end
+
+  pendingTransfer = nil
+  return true
+end
+
 -- Tracking if mail is from the AH is difficult - not a great event to track it.
 -- Best we can do is check to see if any of the mail is from AH.
 local isMailFromAuctionHouse = function()
@@ -122,9 +162,19 @@ local events = {
   { EVENT = "GARRISON_SHIPYARD_NPC_CLOSED", SOURCE = "GARRISONS", RESET = true },
   { EVENT = "GARRISON_UPDATE", SOURCE = "GARRISONS" },
   -- Bank (Warband)
+  -- Deliberately no SOURCE: gold spent at the bank (bag slots, bank tabs) is a real
+  -- expense and belongs in OTHER. Only a money change matched to a C_Bank transfer is
+  -- reclassified as WARBAND. RESET clears any source left over from an earlier event,
+  -- since LOOT and TAXI_FARES intentionally do not reset themselves.
+  { EVENT = "BANKFRAME_CLOSED", RESET = true, EXEC = clearPendingTransfer },
   {
     EVENT = "BANKFRAME_OPENED",
+    RESET = true,
     EXEC = function()
+      -- Transfers only happen with the bank open, so a pending one left over from an
+      -- earlier visit (a rejected call, or one whose money change never arrived) is
+      -- stale by definition and must not claim a transaction in this session.
+      clearPendingTransfer()
       MyAccountant:UpdateWarbandBalance()
     end,
   },
@@ -177,6 +227,13 @@ function MyAccountant:HandlePlayerMoneyChange()
     repairCost = 0
   end
 
+  -- A matched C_Bank transfer wins over whatever else was going on. This is what separates
+  -- moving gold into shared storage from spending it at the bank on a tab or bag slot.
+  if consumePendingTransfer(moneyChange) then
+    source = "WARBAND"
+    MyAccountant:UpdateWarbandBalance()
+  end
+
   if moneyChange > 0 then
     MyAccountant:AddIncome(source, moneyChange)
     MyAccountant:PrintDebugMessage("Added income of |cff00ff00%s|r to %s", GetMoneyString(moneyChange, true), source)
@@ -195,12 +252,12 @@ end
 
 --- Updates the Warband balance from the bank (Retail only)
 function MyAccountant:UpdateWarbandBalance()
-  if private.wowVersion == GameTypes.RETAIL then
+  if private.wowVersion == GameTypes.RETAIL and C_Bank and C_Bank.FetchDepositedMoney then
     local warbandBalance = C_Bank.FetchDepositedMoney(Enum.BankType.Account)
 
     if warbandBalance then
-      self.db.realm.warBandGold = warbandBalance
-      self.db.realm.seenWarband = true
+      self.db.global.warBandGold = warbandBalance
+      self.db.global.seenWarband = true
       MyAccountant:PrintDebugMessage("Updated known Warband balance to %s", GetMoneyString(warbandBalance, true))
     end
   end
@@ -260,4 +317,19 @@ function MyAccountant:RegisterAllEvents()
   end
 
   MyAccountant:PrintDebugMessage("Registered %d events", amount)
+end
+
+-- Hook the Warband bank transfer APIs so deposits and withdrawals can be told apart from
+-- gold genuinely spent at the bank. These run before the resulting PLAYER_MONEY, so there
+-- is no ordering hazard. Done at load rather than in RegisterAllEvents because
+-- hooksecurefunc cannot be undone - hooking twice would stack duplicate handlers.
+-- Guarded because C_Bank only exists on Retail.
+if C_Bank and C_Bank.DepositMoney and C_Bank.WithdrawMoney then
+  hooksecurefunc(C_Bank, "DepositMoney", function(bankType, amount)
+    setPendingTransfer(bankType, amount)
+  end)
+
+  hooksecurefunc(C_Bank, "WithdrawMoney", function(bankType, amount)
+    setPendingTransfer(bankType, amount)
+  end)
 end

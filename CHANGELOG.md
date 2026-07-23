@@ -1,5 +1,20 @@
 # Changelog
 
+## [v1.14.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.14.0)
+
+### New Features
+* **Warband bank transfers are no longer counted as profit or loss** _(Retail only)_: Moving gold to or from the Warband bank is now tracked under its own **Warband Bank** source. Because the gold is still on your account — just in shared storage — these transfers are listed on the income panel but left out of your incoming, outgoing and profit totals by default. Depositing gold no longer drags down your weekly or monthly profit, and withdrawing it no longer shows up as income or inflates gold per hour.
+* **Can be turned off**: If you would rather have transfers count towards your totals, untick *Treat Warband bank transfers as neutral* in the **General** options tab.
+* Sources excluded from your totals are marked with a yellow asterisk on the income panel and in the Sources options list, with a note explaining what it means.
+
+### Bugfixes
+* Gold spent at the bank on bank tabs or bag slots could be filed under whatever you did last — often **Loot** or **Taxi Fares** — because opening the bank never cleared the previously active source. It is now correctly recorded as an expense. Bank purchases are told apart from transfers, so buying a tab still counts as a real loss.
+* The Warband balance was stored per realm even though the Warband bank is account-wide, so the realm balance tooltip could show a stale or empty figure after switching realms. It is now stored account-wide, and any previously stored value is carried over.
+
+### Other
+* The **Warband Bank** source is added to your tracked sources automatically on first login. If you untick it, it stays unticked.
+* Existing data is not reclassified. Transfers recorded before this update remain under whichever source they were originally filed as, so your historical totals do not shift.
+
 ## [v1.13.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.13.0)
 
 ### New Features

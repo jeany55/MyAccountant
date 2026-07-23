@@ -6,6 +6,17 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 
 -- Localization definitions
 -----------------------------------------
+--- VERSION 1.14
+-----------------------------------------
+L["WARBAND"] = "Warband Bank"
+L["option_treat_warband_neutral"] = "Treat Warband bank transfers as neutral"
+L["option_treat_warband_neutral_desc"] =
+  "If enabled, moving gold to or from the Warband bank is still listed under its own source, but is left out of your incoming, outgoing and profit totals. The gold has not left your account, so it is not counted as a gain or a loss."
+L["neutral_source_marker"] = "|cffffff00*|r"
+L["option_income_sources_neutral_note"] =
+  "|cffffff00*|r Moves gold between your own storage. Still listed here and on the income panel, but not counted towards your incoming, outgoing, or profit totals. You can turn this off in the |cffffff00%s|r tab."
+
+-----------------------------------------
 --- VERSION 1.13
 -----------------------------------------
 L["option_views"] = "Views"

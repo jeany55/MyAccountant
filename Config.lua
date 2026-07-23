@@ -52,6 +52,17 @@ function MyAccountant:SetupAddonOptions()
     end
   end
 
+  -- Existing characters have a saved sources list that predates WARBAND, so the new
+  -- default source would never reach them. Add it once, then remember that we did - a
+  -- user who deliberately unticks it should not have it forced back on every login.
+  if private.wowVersion == GameTypes.RETAIL and not self.db.char.addedWarbandSource then
+    if not MyAccountant:IsSourceActive("WARBAND") then
+      table.insert(self.db.char.sources, "WARBAND")
+      MyAccountant:PrintDebugMessage("Added WARBAND to tracked sources")
+    end
+    self.db.char.addedWarbandSource = true
+  end
+
   if not self.db.char.tabs then
     -- Fresh install: instantiate the default tab library so LDB data instances are
     -- registered (initLdbAutomatically), matching the deserialization path below.
@@ -953,6 +964,28 @@ function MyAccountant:SetupAddonOptions()
               return self.db.char.showWarbandInRealmBalance
             end,
           },
+          treat_warband_neutral = {
+            order = 3.6,
+            name = L["option_treat_warband_neutral"],
+            desc = L["option_treat_warband_neutral_desc"],
+            type = "toggle",
+            width = "full",
+            disabled = function()
+              return private.wowVersion ~= GameTypes.RETAIL
+            end,
+            set = function(info, val)
+              self.db.char.treatWarbandTransfersAsNeutral = val
+              MyAccountant:updateFrameIfOpen()
+              MyAccountant:UpdateAllTabSummaryData()
+            end,
+            get = function(info)
+              if private.wowVersion ~= GameTypes.RETAIL then
+                return false
+              end
+
+              return self.db.char.treatWarbandTransfersAsNeutral
+            end,
+          },
           slash_behav = {
             order = 4,
             name = L["option_slash_behav"],
@@ -1309,13 +1342,13 @@ function MyAccountant:SetupAddonOptions()
     local versions = v.versions
     local disabled = false
     local tooltip = L["option_income_desc"]
-    local name = v.title
+    local baseName = v.title
 
     if not private.utils.supportsWoWVersions(versions) then
       -- This source isn't supported in current version. Mark just for clarity.
       disabled = true
     elseif v.required then
-      name = name .. " " .. L["option_income_required"]
+      baseName = baseName .. " " .. L["option_income_required"]
       disabled = true
       tooltip = ""
     end
@@ -1323,7 +1356,14 @@ function MyAccountant:SetupAddonOptions()
     sources_options[k] = {
       type = "toggle",
       order = 2,
-      name = name,
+      -- A function so the neutral marker appears and disappears with the setting,
+      -- matching how the income panel labels the same source.
+      name = function()
+        if MyAccountant:IsNeutralSource(k) then
+          return baseName .. L["neutral_source_marker"]
+        end
+        return baseName
+      end,
       desc = tooltip,
       disabled = disabled,
       get = function(_)
@@ -1335,6 +1375,17 @@ function MyAccountant:SetupAddonOptions()
     }
   end
 
+  --- Whether any source is currently being treated as neutral, used to decide if the
+  --- note explaining the marker is worth showing.
+  local function hasNeutralSource()
+    for sourceName in pairs(private.sources) do
+      if MyAccountant:IsNeutralSource(sourceName) then
+        return true
+      end
+    end
+    return false
+  end
+
   local incomeSources = {
     type = "group",
     inline = true,
@@ -1344,10 +1395,19 @@ function MyAccountant:SetupAddonOptions()
       label2 = { type = "description", order = 1, name = L["option_income_sources_additional_2"] },
       sources = {
         type = "group",
+        order = 2,
         inline = true,
         name = L["option_income_sources"],
         desc = L["option_income_sources_desc"],
         args = sources_options,
+      },
+      label3 = {
+        type = "description",
+        order = 3,
+        name = format(L["option_income_sources_neutral_note"], L["option_general"]),
+        hidden = function()
+          return not hasNeutralSource()
+        end,
       },
     },
   }
