@@ -44,6 +44,7 @@ private.constants = {
     ENGLISH = "Interface\\Addons\\MyAccountant\\Images\\Flags\\en.tga",
     RUSSIAN = "Interface\\Addons\\MyAccountant\\Images\\Flags\\ru.tga",
     SIMPLIFIED_CHINESE = "Interface\\Addons\\MyAccountant\\Images\\Flags\\cn.tga",
+    GERMAN = "Interface\\Addons\\MyAccountant\\Images\\Flags\\de.tga",
   },
 }
 
