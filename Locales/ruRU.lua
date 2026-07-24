@@ -10,13 +10,13 @@ end
 
 -- Localization definitions
 -- 1.14
-L["WARBAND"] = "Warband Bank"
-L["option_treat_warband_neutral"] = "Treat Warband bank transfers as neutral"
+L["WARBAND"] = "Банк отряда"
+L["option_treat_warband_neutral"] = "Считать переводы банка отряда нейтральными"
 L["option_treat_warband_neutral_desc"] =
-  "If enabled, moving gold to or from the Warband bank is still listed under its own source, but is left out of your incoming, outgoing and profit totals. The gold has not left your account, so it is not counted as a gain or a loss."
+  "Если включено, перемещение золота в банк отряда или из него по-прежнему отображается под собственным источником, но исключается из итогов полученного, отправленного и чистой прибыли. Золото не покинуло вашу учетную запись, поэтому оно не засчитывается как доход или убыток."
 L["neutral_source_marker"] = "|cffffff00*|r"
 L["option_income_sources_neutral_note"] =
-  "|cffffff00*|r Moves gold between your own storage. Still listed here and on the income panel, but not counted towards your incoming, outgoing, or profit totals. You can turn this off in the |cffffff00%s|r tab."
+  "|cffffff00*|r Перемещение золота между вашими собственными хранилищами. По-прежнему отображается здесь и на панели доходов, но не учитывается в итогах полученного, отправленного или прибыли. Вы можете отключить это на вкладке |cffffff00%s|r."
 
 -- 1.13
 L["option_views"] = "Виды"
