@@ -831,7 +831,7 @@ function MyAccountant:SetupAddonOptions()
           de = {
             order = 4,
             type = "description",
-            name = " |T" .. private.constants.HEART .. ":14:21|t   " .. L["german"],
+            name = " |T" .. private.constants.FLAGS.GERMAN .. ":14:21|t   " .. L["german"],
           },
         },
       },

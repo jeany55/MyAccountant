@@ -9,6 +9,7 @@ end
 -- ========================================
 --- VERSION 1.14
 ----------------------------------------
+L["german"] = "German (by LaDzi)"
 L["WARBAND"] = "Warband Bank"
 L["option_treat_warband_neutral"] = "Treat Warband bank transfers as neutral"
 L["option_treat_warband_neutral_desc"] =
