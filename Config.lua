@@ -828,6 +828,11 @@ function MyAccountant:SetupAddonOptions()
             type = "description",
             name = " |T" .. private.constants.FLAGS.SIMPLIFIED_CHINESE .. ":14:21|t   " .. L["simplified_chinese"],
           },
+          de = {
+            order = 4,
+            type = "description",
+            name = " |T" .. private.constants.HEART .. ":14:21|t   " .. L["german"],
+          },
         },
       },
       thanks = {

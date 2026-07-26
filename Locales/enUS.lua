@@ -274,6 +274,7 @@ L["about_github_desc"] = "Find an bug? Have a suggestion? Create an issue!"
 L["about_languages"] = "Supported languages"
 L["english"] = "English"
 L["russian"] = "Russian (by ZamestoTv)"
+L["german"] = "German (by LaDzi)"
 L["simplified_chinese"] = "Simplified Chinese (by cclolz)"
 
 L["about_special_thanks_to"] = "Special thanks to"
