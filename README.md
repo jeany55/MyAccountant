@@ -168,7 +168,7 @@ Decide which income sources you want to track by disabling ones you aren't inter
 - <B>English</B>
 - <B>Russian</B>&nbsp;(by ZamestoTV)
 - <B>Simplified Chinese</B>&nbsp;(by cclolz)
-- <B>German<B>&nbsp;(by LaDzi)
+- <B>German</B>&nbsp;(by LaDzi)
 
 ## How to contribute
 
