@@ -10,7 +10,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("MyAccountant", "enUS", true, true)
 --- VERSION 1.15
 -----------------------------------------
 L["error_unsupported_wow_version"] = "Unsupported WoW version detected"
-
+L["option_profiles"] = "Profiles"
 
 -----------------------------------------
 --- VERSION 1.14

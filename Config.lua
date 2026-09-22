@@ -1852,6 +1852,8 @@ function MyAccountant:SetupAddonOptions()
     },
   }
 
+  local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+
   -- Main entry
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME, launchOptionsConfig)
   _, private.optionsCategory = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME, private.ADDON_NAME)
@@ -1897,10 +1899,17 @@ function MyAccountant:SetupAddonOptions()
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-InfoPanel", infoFrameConfig.name,
     private.ADDON_NAME)
 
+  -- Profiles
+  LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Profiles", profiles)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Profiles", profiles.name,
+    private.ADDON_NAME)
+
   -- Addon Data
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Data", clearDataOptions)
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Data", clearDataOptions.name,
     private.ADDON_NAME)
+
+
 
   if self.db.char.showMinimap == true then
     showMinimap()
