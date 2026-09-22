@@ -38,122 +38,105 @@ function private.openOptions()
   Settings.OpenToCategory(private.optionsCategory)
 end
 
--- Initializes Ace3 Addon options table
-function MyAccountant:SetupAddonOptions()
-  --- @type AceLocale-3.0
+--- Rebuilds Tab objects from saved (or default library) tab data. Saved variables only
+--- keep the raw fields, so tabs need to be reconstructed on every load and profile change.
+--- @param tabs table[] Tab-shaped tables with the private `_` fields
+--- @return Tab[]
+local function instantiateTabs(tabs)
+  local instantiatedTabs = {}
+  for _, tab in ipairs(tabs) do
+    table.insert(
+      instantiatedTabs,
+      private.Tab:construct({
+        tabName = tab._tabName,
+        tabType = tab._tabType,
+        ldbEnabled = tab._ldbEnabled,
+        ldbEnabledData = tab._ldbEnabledData,
+        infoFrameEnabled = tab._infoFrameEnabled,
+        minimapSummaryEnabled = tab._minimapSummaryEnabled,
+        luaExpression = tab._luaExpression,
+        lineBreak = tab._lineBreak,
+        id = tab._id,
+        customOptionValues = tab._customOptionValues,
+        individualDays = tab._individualDays,
+        visible = tab._visible,
+        initLdbAutomatically = true,
+      })
+    )
+  end
+  return instantiatedTabs
+end
+
+--- Fills in anything missing from the active profile and deserializes its tabs. Runs on
+--- login and again whenever the profile is switched, copied or reset, since any of those
+--- can leave db.profile empty or holding raw (non-Tab) data.
+function MyAccountant:InitializeProfile()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
-  local count = 0
-  -- Set any options to default if they are missing
-  for k, v in pairs(private.default_settings) do
-    if self.db.char[k] == nil then
-      self.db.char[k] = v
-      count = count + 1
+  -- Defaults are copied rather than registered with AceDB. AceDB strips values equal to
+  -- their default on logout and merges table defaults key by key, which corrupts array
+  -- settings like `sources` when the user removes an entry.
+  for k, v in pairs(private.default_settings.profile) do
+    if self.db.profile[k] == nil then
+      self.db.profile[k] = private.utils.copy(v)
     end
   end
 
   -- Existing characters have a saved sources list that predates WARBAND, so the new
   -- default source would never reach them. Add it once, then remember that we did - a
   -- user who deliberately unticks it should not have it forced back on every login.
-  if private.wowVersion == GameTypes.RETAIL and not self.db.char.addedWarbandSource then
+  if private.wowVersion == GameTypes.RETAIL and not self.db.profile.addedWarbandSource then
     if not MyAccountant:IsSourceActive("WARBAND") then
-      table.insert(self.db.char.sources, "WARBAND")
+      table.insert(self.db.profile.sources, "WARBAND")
       MyAccountant:PrintDebugMessage("Added WARBAND to tracked sources")
     end
-    self.db.char.addedWarbandSource = true
+    self.db.profile.addedWarbandSource = true
   end
 
-  if not self.db.char.tabs then
-    -- Fresh install: instantiate the default tab library so LDB data instances are
-    -- registered (initLdbAutomatically), matching the deserialization path below.
-    -- Without this, enabled instances have no initializedLdb entry and
-    -- updateSummaryDataIfNeeded errors on login.
-    local defaultTabs = {}
-    for _, tab in ipairs(private.tabLibrary) do
-      table.insert(
-        defaultTabs,
-        private.Tab:construct({
-          tabName = tab._tabName,
-          tabType = tab._tabType,
-          ldbEnabled = tab._ldbEnabled,
-          ldbEnabledData = tab._ldbEnabledData,
-          infoFrameEnabled = tab._infoFrameEnabled,
-          minimapSummaryEnabled = tab._minimapSummaryEnabled,
-          luaExpression = tab._luaExpression,
-          lineBreak = tab._lineBreak,
-          id = tab._id,
-          customOptionValues = tab._customOptionValues,
-          individualDays = tab._individualDays,
-          visible = tab._visible,
-          initLdbAutomatically = true,
-        })
-      )
-    end
-    self.db.char.tabs = defaultTabs
-    self.db.char.knownTabsv2 = private.utils.transformArray(
+  -- Fresh profile: instantiate the default tab library so LDB data instances are
+  -- registered (initLdbAutomatically), matching the deserialization path for saved tabs.
+  -- Without this, enabled instances have no initializedLdb entry and
+  -- updateSummaryDataIfNeeded errors on login.
+  self.db.profile.tabs = instantiateTabs(self.db.profile.tabs or private.tabLibrary)
+
+  if not self.db.profile.knownTabsv2 then
+    self.db.profile.knownTabsv2 = private.utils.transformArray(
       private.tabLibrary, --
       --- @param tab Tab
       function(tab)
         return tab:getId()
       end
     )
-  else
-    if not self.db.char.knownTabsv2 then
-      self.db.char.knownTabsv2 = private.utils.transformArray(
-        private.tabLibrary, --
-        --- @param tab Tab
-        function(tab)
-          return tab:getId()
-        end
-      )
-    end
-
-    -- Need to deserialize saved data back into Tab objects
-    local instantiatedTabs = {}
-    for _, tab in ipairs(self.db.char.tabs) do
-      table.insert(
-        instantiatedTabs,
-        private.Tab:construct({
-          tabName = tab._tabName,
-          tabType = tab._tabType,
-          ldbEnabled = tab._ldbEnabled,
-          ldbEnabledData = tab._ldbEnabledData,
-          infoFrameEnabled = tab._infoFrameEnabled,
-          minimapSummaryEnabled = tab._minimapSummaryEnabled,
-          luaExpression = tab._luaExpression,
-          lineBreak = tab._lineBreak,
-          id = tab._id,
-          customOptionValues = tab._customOptionValues,
-          individualDays = tab._individualDays,
-          visible = tab._visible,
-          initLdbAutomatically = true,
-        })
-      )
-    end
-    self.db.char.tabs = instantiatedTabs
-
-    if self.db.char.sessionStorageType == "SESSION" then
-      self.db.char.addonStartTime = time()
-      self.db.char.totalGoldMade = 0
-      self.db.char.sessionDb = {}
-    end
-
-    -- Check for new tabs in the default library the user hasn't seen
-    -- for _, defaultTab in ipairs(private.tabLibrary) do
-    --   if not private.utils.arrayHas(self.db.char.knownTabs, function(tabName) return tabName == defaultTab:getName() end) then
-    --     MyAccountant:PrintDebugMessage("Found new unknown default tab '" .. defaultTab:getName() .. "', adding to user tabs")
-    --     table.insert(self.db.char.tabs, defaultTab)
-    --     table.insert(self.db.char.knownTabs, defaultTab:getName())
-    --   end
-    -- end
   end
 
-  -- Initialize minimap tooltip data (fresh install) / migrate old minimap balance
-  -- style to new dict style (existing install). Runs for both paths.
-  if not self.db.char.minimapTooltipData then
-    self.db.char.minimapTooltipData = {
-      [self.db.char.minimapDataV2] = true, -- old value
+  if not self.db.profile.minimapIconOptions then
+    self.db.profile.minimapIconOptions = {}
+  end
+
+  if not self.db.profile.minimapTooltipData then
+    self.db.profile.minimapTooltipData = {
+      [format(L["ldb_name_profit"], L["session"])] = true,
     }
+  end
+end
+
+-- Initializes Ace3 Addon options table
+function MyAccountant:SetupAddonOptions()
+  --- @type AceLocale-3.0
+  local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+
+  for k, v in pairs(private.default_settings.char) do
+    if self.db.char[k] == nil then
+      self.db.char[k] = private.utils.copy(v)
+    end
+  end
+
+  MyAccountant:InitializeProfile()
+
+  if self.db.profile.sessionStorageType == "SESSION" then
+    self.db.char.addonStartTime = time()
+    self.db.char.totalGoldMade = 0
+    self.db.char.sessionDb = {}
   end
 
   if not self.db.char.seenVersionMessage1p8 then
@@ -189,25 +172,25 @@ function MyAccountant:SetupAddonOptions()
             name = L["option_tab_advanced"],
             desc = L["option_tab_advanced_desc"],
             get = function()
-              return self.db.char.tabAdvancedMode
+              return self.db.profile.tabAdvancedMode
             end,
             set = function(_, val)
-              self.db.char.tabAdvancedMode = val
+              self.db.profile.tabAdvancedMode = val
             end,
           },
           showTabExport = {
             type = "toggle",
             order = 2,
             disabled = function()
-              return not self.db.char.tabAdvancedMode
+              return not self.db.profile.tabAdvancedMode
             end,
             name = L["option_tab_developer_export"],
             desc = L["option_tab_developer_export_desc"],
             get = function()
-              return self.db.char.showTabExport
+              return self.db.profile.showTabExport
             end,
             set = function(_, val)
-              self.db.char.showTabExport = val
+              self.db.profile.showTabExport = val
             end,
           },
         },
@@ -218,7 +201,7 @@ function MyAccountant:SetupAddonOptions()
         order = 0,
         type = "group",
         hidden = function()
-          return not self.db.char.tabAdvancedMode
+          return not self.db.profile.tabAdvancedMode
         end,
         args = {
           info = {
@@ -236,7 +219,7 @@ function MyAccountant:SetupAddonOptions()
               local trimmedVal = string.trim(val)
 
               if
-                  private.utils.arrayHas(self.db.char.tabs, function(item)
+                  private.utils.arrayHas(self.db.profile.tabs, function(item)
                     return string.lower(item:getName()) == string.lower(trimmedVal)
                   end)
               then
@@ -324,7 +307,7 @@ function MyAccountant:SetupAddonOptions()
             order = 5,
             func = function()
               table.insert(
-                self.db.char.tabs,
+                self.db.profile.tabs,
                 private.Tab:construct({
                   tabType = inputType,
                   tabName = inputName,
@@ -358,11 +341,11 @@ function MyAccountant:SetupAddonOptions()
 
       -- Holds index of actual tabs shown on the income panel
       local tabOrder = 1
-      -- Holds the index of the actual tab in the self.db.char.tabs array
+      -- Holds the index of the actual tab in the self.db.profile.tabs array
       -- To move a tab left or right we need to actually swap it with the closest visible tab, not just the next tab in the array.
       local incomePanelTabInstances = {}
       local index = 1
-      for _, tab in ipairs(self.db.char.tabs) do
+      for _, tab in ipairs(self.db.profile.tabs) do
         if tab:getVisible() then
           table.insert(incomePanelTabInstances, {
             index = index,
@@ -377,7 +360,7 @@ function MyAccountant:SetupAddonOptions()
         return function()
           local currentIndex = incomePanelTabInstances[index].index
           local swapIndex = incomePanelTabInstances[index - 1].index
-          private.utils.swapItemInArray(MyAccountant.db.char.tabs, currentIndex, swapIndex)
+          private.utils.swapItemInArray(MyAccountant.db.profile.tabs, currentIndex, swapIndex)
           makeTabConfig()
           forceConfigRerender()
           MyAccountant:SetupTabs()
@@ -390,7 +373,7 @@ function MyAccountant:SetupAddonOptions()
         return function()
           local currentIndex = incomePanelTabInstances[index].index
           local swapIndex = incomePanelTabInstances[index + 1].index
-          private.utils.swapItemInArray(MyAccountant.db.char.tabs, currentIndex, swapIndex)
+          private.utils.swapItemInArray(MyAccountant.db.profile.tabs, currentIndex, swapIndex)
           makeTabConfig()
           forceConfigRerender()
           MyAccountant:SetupTabs()
@@ -398,7 +381,7 @@ function MyAccountant:SetupAddonOptions()
       end
 
       index = 1
-      for _, tab in ipairs(self.db.char.tabs) do
+      for _, tab in ipairs(self.db.profile.tabs) do
         if tab:getVisible() then
           incomePanelTabs[tab:getId()] = {
             type = "group",
@@ -453,7 +436,7 @@ function MyAccountant:SetupAddonOptions()
       local index = tabOrder
 
       return function()
-        table.remove(self.db.char.tabs, index)
+        table.remove(self.db.profile.tabs, index)
         makeTabConfig()
         forceConfigRerender()
         MyAccountant:SetupTabs()
@@ -463,7 +446,7 @@ function MyAccountant:SetupAddonOptions()
     local infoFrameOptions = {}
     infoFrameOptionsTabMap = {}
 
-    for _, tab in ipairs(self.db.char.tabs) do
+    for _, tab in ipairs(self.db.profile.tabs) do
       -- Make available info frame options from tab data
       if tab:getInfoFrameEnabled() then
         for _, dataInstance in ipairs(tab:getDataInstances()) do
@@ -537,7 +520,7 @@ function MyAccountant:SetupAddonOptions()
             name = L["option_delete_view"],
             order = 0,
             hidden = function()
-              return not self.db.char.tabAdvancedMode
+              return not self.db.profile.tabAdvancedMode
             end,
             desc = L["option_delete_view_desc"],
             confirm = function()
@@ -561,7 +544,7 @@ function MyAccountant:SetupAddonOptions()
 
               if
                   private.utils.arrayHas(
-                    self.db.char.tabs, ---
+                    self.db.profile.tabs, ---
                     --- @param item Tab
                     function(item)
                       return string.lower(item:getName()) == string.lower(trimmedVal)
@@ -651,7 +634,7 @@ function MyAccountant:SetupAddonOptions()
             order = 2,
             name = L["option_tab_advanced"],
             hidden = function()
-              return not self.db.char.tabAdvancedMode
+              return not self.db.profile.tabAdvancedMode
             end,
           },
           type = {
@@ -660,7 +643,7 @@ function MyAccountant:SetupAddonOptions()
             name = L["option_tab_type"],
             desc = L["option_tab_type_desc"],
             hidden = function()
-              return not self.db.char.tabAdvancedMode
+              return not self.db.profile.tabAdvancedMode
             end,
             values = {
               DATE = L["option_tab_type_date"],
@@ -678,7 +661,7 @@ function MyAccountant:SetupAddonOptions()
             name = L["option_tab_date_expression"],
             desc = L["option_tab_date_expression_desc"],
             hidden = function()
-              return not self.db.char.tabAdvancedMode
+              return not self.db.profile.tabAdvancedMode
             end,
             order = 3,
             multiline = 9,
@@ -724,7 +707,7 @@ function MyAccountant:SetupAddonOptions()
             name = L["option_tab_developer_export"],
             desc = L["option_tab_developer_export_desc"],
             hidden = function()
-              return (not self.db.char.tabAdvancedMode) or not self.db.char.showTabExport
+              return (not self.db.profile.tabAdvancedMode) or not self.db.profile.showTabExport
             end,
             type = "input",
             multiline = 9,
@@ -870,7 +853,7 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.showMinimap = val
+              self.db.profile.showMinimap = val
               if val == true then
                 showMinimap()
               else
@@ -878,7 +861,7 @@ function MyAccountant:SetupAddonOptions()
               end
             end,
             get = function(info)
-              return self.db.char.showMinimap
+              return self.db.profile.showMinimap
             end,
           },
           starting_day_of_week_offset = {
@@ -896,10 +879,10 @@ function MyAccountant:SetupAddonOptions()
               [6] = L["option_starting_day_of_week_saturday"],
             },
             set = function(info, val)
-              self.db.char.startingDayOfWeekOffset = val
+              self.db.profile.startingDayOfWeekOffset = val
             end,
             get = function(info)
-              return self.db.char.startingDayOfWeekOffset
+              return self.db.profile.startingDayOfWeekOffset
             end,
           },
           general_linebreak = {
@@ -917,10 +900,10 @@ function MyAccountant:SetupAddonOptions()
               INDEFINITE = L["option_session_storage_indefinite"],
             },
             set = function(info, val)
-              self.db.char.sessionStorageType = val
+              self.db.profile.sessionStorageType = val
             end,
             get = function(info)
-              return self.db.char.sessionStorageType
+              return self.db.profile.sessionStorageType
             end,
           },
           hide_zero = {
@@ -930,10 +913,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.hideZero = val
+              self.db.profile.hideZero = val
             end,
             get = function(info)
-              return self.db.char.hideZero
+              return self.db.profile.hideZero
             end,
           },
           show_income_colors = {
@@ -943,10 +926,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.colorGoldInIncomePanel = val
+              self.db.profile.colorGoldInIncomePanel = val
             end,
             get = function(info)
-              return self.db.char.colorGoldInIncomePanel
+              return self.db.profile.colorGoldInIncomePanel
             end,
           },
           show_warband_in_realm_balance = {
@@ -959,14 +942,14 @@ function MyAccountant:SetupAddonOptions()
               return private.wowVersion ~= GameTypes.RETAIL
             end,
             set = function(info, val)
-              self.db.char.showWarbandInRealmBalance = val
+              self.db.profile.showWarbandInRealmBalance = val
             end,
             get = function(info)
               if private.wowVersion ~= GameTypes.RETAIL then
                 return false
               end
 
-              return self.db.char.showWarbandInRealmBalance
+              return self.db.profile.showWarbandInRealmBalance
             end,
           },
           treat_warband_neutral = {
@@ -979,7 +962,7 @@ function MyAccountant:SetupAddonOptions()
               return private.wowVersion ~= GameTypes.RETAIL
             end,
             set = function(info, val)
-              self.db.char.treatWarbandTransfersAsNeutral = val
+              self.db.profile.treatWarbandTransfersAsNeutral = val
               MyAccountant:updateFrameIfOpen()
               MyAccountant:UpdateAllTabSummaryData()
             end,
@@ -988,7 +971,7 @@ function MyAccountant:SetupAddonOptions()
                 return false
               end
 
-              return self.db.char.treatWarbandTransfersAsNeutral
+              return self.db.profile.treatWarbandTransfersAsNeutral
             end,
           },
           slash_behav = {
@@ -998,10 +981,10 @@ function MyAccountant:SetupAddonOptions()
             type = "select",
             values = { SHOW_OPTIONS = L["option_slash_behav_chat"], OPEN_WINDOW = L["option_slash_behav_open"] },
             set = function(info, val)
-              self.db.char.slashBehaviour = val
+              self.db.profile.slashBehaviour = val
             end,
             get = function(info)
-              return self.db.char.slashBehaviour
+              return self.db.profile.slashBehaviour
             end,
           },
         },
@@ -1022,10 +1005,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.showCalendarSummary = val
+              self.db.profile.showCalendarSummary = val
             end,
             get = function(info)
-              return self.db.char.showCalendarSummary
+              return self.db.profile.showCalendarSummary
             end,
           },
           calendar_data = {
@@ -1034,13 +1017,13 @@ function MyAccountant:SetupAddonOptions()
             desc = L["option_calendar_source_desc"],
             type = "select",
             set = function(info, val)
-              self.db.char.calendarDataSource = val
+              self.db.profile.calendarDataSource = val
             end,
             disabled = function()
-              return private.wowVersion == GameTypes.CLASSIC_ERA or not self.db.char.showCalendarSummary
+              return private.wowVersion == GameTypes.CLASSIC_ERA or not self.db.profile.showCalendarSummary
             end,
             get = function(info)
-              return self.db.char.calendarDataSource
+              return self.db.profile.calendarDataSource
             end,
             values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] },
           },
@@ -1059,10 +1042,10 @@ function MyAccountant:SetupAddonOptions()
             width = "full",
             type = "toggle",
             set = function(info, val)
-              self.db.char.showDebugMessages = val
+              self.db.profile.showDebugMessages = val
             end,
             get = function(info)
-              return self.db.char.showDebugMessages
+              return self.db.profile.showDebugMessages
             end,
           },
         },
@@ -1074,15 +1057,15 @@ function MyAccountant:SetupAddonOptions()
     return private.utils.isCharacterTracked(
       characterGuid,
       self.db.global[characterGuid],
-      self.db.char.characterPresetTrack,
-      self.db.char.customCharacterTracking
+      self.db.profile.characterPresetTrack,
+      self.db.profile.customCharacterTracking
     )
   end
 
   local function makeCharactersRows()
     local character_rows = {}
     local order = 1
-    local disabled = self.db.char.characterPresetTrack ~= "CUSTOM"
+    local disabled = self.db.profile.characterPresetTrack ~= "CUSTOM"
 
     for characterGuid, data in pairs(self.db.global) do
       if type(data) == "table" and data.name then
@@ -1116,7 +1099,7 @@ function MyAccountant:SetupAddonOptions()
             return getCheckedState(characterGuid)
           end,
           set = function(_, val)
-            self.db.char.customCharacterTracking[characterGuid] = val
+            self.db.profile.customCharacterTracking[characterGuid] = val
           end,
         }
         character_rows[data.name .. "_delete"] = {
@@ -1130,7 +1113,7 @@ function MyAccountant:SetupAddonOptions()
           confirmText = L["option_tab_characters_delete_confirm"],
           func = function()
             self.db.global[characterGuid] = nil
-            self.db.char.customCharacterTracking[characterGuid] = nil
+            self.db.profile.customCharacterTracking[characterGuid] = nil
             makeCharactersRows()
             forceConfigRerender()
           end,
@@ -1164,10 +1147,10 @@ function MyAccountant:SetupAddonOptions()
           CURRENT_FACTION = L["option_realm_characters_current_faction"],
         },
         set = function(info, val)
-          self.db.char.realmCharactersOption = val
+          self.db.profile.realmCharactersOption = val
         end,
         get = function(info)
-          return self.db.char.realmCharactersOption
+          return self.db.profile.realmCharactersOption
         end,
       },
       characters_linebreak = {
@@ -1190,12 +1173,12 @@ function MyAccountant:SetupAddonOptions()
           CUSTOM = L["option_tab_characters_preset_custom"],
         },
         set = function(info, val)
-          self.db.char.characterPresetTrack = val
+          self.db.profile.characterPresetTrack = val
           makeCharactersRows()
           forceConfigRerender()
         end,
         get = function(info)
-          return self.db.char.characterPresetTrack
+          return self.db.profile.characterPresetTrack
         end,
       },
       characters = {
@@ -1227,10 +1210,10 @@ function MyAccountant:SetupAddonOptions()
             type = "select",
             values = { CHARACTER = L["option_minimap_balance_style_character"], REALM = L["option_minimap_balance_style_realm"] },
             set = function(info, val)
-              self.db.char.minimapTotalBalance = val
+              self.db.profile.minimapTotalBalance = val
             end,
             get = function(info)
-              return self.db.char.minimapTotalBalance
+              return self.db.profile.minimapTotalBalance
             end,
           },
           data_type = {
@@ -1241,7 +1224,7 @@ function MyAccountant:SetupAddonOptions()
             width = "full",
             values = function()
               local options = {}
-              for _, tab in ipairs(self.db.char.tabs) do
+              for _, tab in ipairs(self.db.profile.tabs) do
                 if tab:getMinimapSummaryEnabled() then
                   for _, dataInstance in ipairs(tab:getDataInstances()) do
                     options[dataInstance.label] = dataInstance.label
@@ -1251,10 +1234,10 @@ function MyAccountant:SetupAddonOptions()
               return options
             end,
             set = function(_, key, val)
-              self.db.char.minimapTooltipData[key] = val
+              self.db.profile.minimapTooltipData[key] = val
             end,
             get = function(_, key)
-              return self.db.char.minimapTooltipData[key] == true
+              return self.db.profile.minimapTooltipData[key] == true
             end,
           },
           linebreak = { order = 1.1, type = "description", name = "" },
@@ -1265,10 +1248,10 @@ function MyAccountant:SetupAddonOptions()
             width = "full",
             type = "toggle",
             set = function(info, val)
-              self.db.char.goldPerHour = val
+              self.db.profile.goldPerHour = val
             end,
             get = function(info)
-              return self.db.char.goldPerHour
+              return self.db.profile.goldPerHour
             end,
           },
           left_click = {
@@ -1285,10 +1268,10 @@ function MyAccountant:SetupAddonOptions()
               RESET_SESSION = L["option_minimap_click_reset_session"],
             },
             set = function(info, val)
-              self.db.char.leftClickMinimap = val
+              self.db.profile.leftClickMinimap = val
             end,
             get = function(info)
-              return self.db.char.leftClickMinimap
+              return self.db.profile.leftClickMinimap
             end,
           },
           right_click = {
@@ -1305,10 +1288,10 @@ function MyAccountant:SetupAddonOptions()
               RESET_SESSION = L["option_minimap_click_reset_session"],
             },
             set = function(info, val)
-              self.db.char.rightClickMinimap = val
+              self.db.profile.rightClickMinimap = val
             end,
             get = function(info)
-              return self.db.char.rightClickMinimap
+              return self.db.profile.rightClickMinimap
             end,
           },
         },
@@ -1321,20 +1304,20 @@ function MyAccountant:SetupAddonOptions()
   local function handleSetSourceCheck(checked, item)
     -- If setting, just append onto the array
     if checked == true then
-      table.insert(self.db.char.sources, item)
+      table.insert(self.db.profile.sources, item)
     else
       local newSources = {}
-      for _, v in ipairs(self.db.char.sources) do
+      for _, v in ipairs(self.db.profile.sources) do
         if v ~= item then
           table.insert(newSources, v)
         end
       end
-      self.db.char.sources = newSources
+      self.db.profile.sources = newSources
     end
   end
 
   local function handleGetSourceCheck(item)
-    for _, v in ipairs(self.db.char.sources) do
+    for _, v in ipairs(self.db.profile.sources) do
       if v == item then
         return true
       end
@@ -1430,10 +1413,10 @@ function MyAccountant:SetupAddonOptions()
         name = L["option_info_frame_show"],
         desc = L["option_info_frame_show_desc"],
         get = function(info)
-          return self.db.char.showInfoFrameV2
+          return self.db.profile.showInfoFrameV2
         end,
         set = function(info, val)
-          self.db.char.showInfoFrameV2 = val
+          self.db.profile.showInfoFrameV2 = val
           MyAccountant:UpdateInformationFrameStatus()
         end,
       },
@@ -1442,15 +1425,15 @@ function MyAccountant:SetupAddonOptions()
         width = "full",
         type = "toggle",
         disabled = function()
-          return self.db.char.showInfoFrameV2 == false
+          return self.db.profile.showInfoFrameV2 == false
         end,
         name = L["option_info_frame_drag_shift"],
         desc = L["option_info_frame_drag_shift_desc"],
         get = function(info)
-          return self.db.char.requireShiftToMove
+          return self.db.profile.requireShiftToMove
         end,
         set = function(info, val)
-          self.db.char.requireShiftToMove = val
+          self.db.profile.requireShiftToMove = val
         end,
       },
       lock_frame = {
@@ -1458,15 +1441,15 @@ function MyAccountant:SetupAddonOptions()
         width = "full",
         type = "toggle",
         disabled = function()
-          return self.db.char.showInfoFrameV2 == false
+          return self.db.profile.showInfoFrameV2 == false
         end,
         name = L["option_info_frame_lock"],
         desc = L["option_info_frame_lock_desc"],
         get = function(info)
-          return self.db.char.lockInfoFrame
+          return self.db.profile.lockInfoFrame
         end,
         set = function(info, val)
-          self.db.char.lockInfoFrame = val
+          self.db.profile.lockInfoFrame = val
           MyAccountant:UpdateInformationFrameStatus()
         end,
       },
@@ -1475,15 +1458,15 @@ function MyAccountant:SetupAddonOptions()
         width = "full",
         type = "toggle",
         disabled = function()
-          return self.db.char.showInfoFrameV2 == false
+          return self.db.profile.showInfoFrameV2 == false
         end,
         name = L["option_info_frame_right_align"],
         desc = L["option_info_frame_right_align_desc"],
         get = function(info)
-          return self.db.char.rightAlignInfoValues
+          return self.db.profile.rightAlignInfoValues
         end,
         set = function(info, val)
-          self.db.char.rightAlignInfoValues = val
+          self.db.profile.rightAlignInfoValues = val
           MyAccountant:UpdateInformationFrameStatus()
         end,
       },
@@ -1491,17 +1474,17 @@ function MyAccountant:SetupAddonOptions()
         order = 4,
         type = "multiselect",
         disabled = function()
-          return self.db.char.showInfoFrameV2 == false
+          return self.db.profile.showInfoFrameV2 == false
         end,
         values = {},
         width = "full",
         name = L["option_info_frame_items"],
         desc = L["option_info_frame_items"],
         get = function(_, key)
-          return self.db.char.infoFrameDataToShowV2[key]
+          return self.db.profile.infoFrameDataToShowV2[key]
         end,
         set = function(_, key, val)
-          self.db.char.infoFrameDataToShowV2[key] = val
+          self.db.profile.infoFrameDataToShowV2[key] = val
           --- @type Tab
           local tab = infoFrameOptionsTabMap[key]
           tab:updateSummaryDataIfNeeded()
@@ -1527,10 +1510,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.closeWhenEnteringCombat = val
+              self.db.profile.closeWhenEnteringCombat = val
             end,
             get = function(info)
-              return self.db.char.closeWhenEnteringCombat
+              return self.db.profile.closeWhenEnteringCombat
             end,
           },
           show_bottom = {
@@ -1540,10 +1523,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.showIncomePanelBottom = val
+              self.db.profile.showIncomePanelBottom = val
             end,
             get = function(info)
-              return self.db.char.showIncomePanelBottom
+              return self.db.profile.showIncomePanelBottom
             end,
           },
           show_views_button = {
@@ -1553,10 +1536,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.showViewsButton = val
+              self.db.profile.showViewsButton = val
             end,
             get = function(info)
-              return self.db.char.showViewsButton
+              return self.db.profile.showViewsButton
             end,
           },
           show_default_view = {
@@ -1567,10 +1550,10 @@ function MyAccountant:SetupAddonOptions()
             type = "select",
             values = { SOURCE = L["option_income_panel_default_show_source"], ZONE = L["option_income_panel_default_show_zone"] },
             set = function(info, val)
-              self.db.char.defaultView = val
+              self.db.profile.defaultView = val
             end,
             get = function(info)
-              return self.db.char.defaultView
+              return self.db.profile.defaultView
             end,
           },
           button_action_1 = {
@@ -1578,7 +1561,7 @@ function MyAccountant:SetupAddonOptions()
             desc = L["option_income_panel_button_1_desc"],
             order = 2,
             disabled = function()
-              return self.db.char.showIncomePanelBottom == false
+              return self.db.profile.showIncomePanelBottom == false
             end,
             type = "select",
             values = {
@@ -1588,10 +1571,10 @@ function MyAccountant:SetupAddonOptions()
               RESET_GPH = L["income_panel_action_gph"],
             },
             set = function(info, val)
-              self.db.char.incomePanelButton1 = val
+              self.db.profile.incomePanelButton1 = val
             end,
             get = function(info)
-              return self.db.char.incomePanelButton1
+              return self.db.profile.incomePanelButton1
             end,
           },
           button_action_2 = {
@@ -1599,7 +1582,7 @@ function MyAccountant:SetupAddonOptions()
             desc = L["option_income_panel_button_2_desc"],
             order = 2,
             disabled = function()
-              return self.db.char.showIncomePanelBottom == false
+              return self.db.profile.showIncomePanelBottom == false
             end,
             type = "select",
             values = {
@@ -1609,10 +1592,10 @@ function MyAccountant:SetupAddonOptions()
               RESET_GPH = L["income_panel_action_gph"],
             },
             set = function(info, val)
-              self.db.char.incomePanelButton2 = val
+              self.db.profile.incomePanelButton2 = val
             end,
             get = function(info)
-              return self.db.char.incomePanelButton2
+              return self.db.profile.incomePanelButton2
             end,
           },
           button_action_3 = {
@@ -1620,7 +1603,7 @@ function MyAccountant:SetupAddonOptions()
             desc = L["option_income_panel_button_3_desc"],
             order = 2,
             disabled = function()
-              return self.db.char.showIncomePanelBottom == false
+              return self.db.profile.showIncomePanelBottom == false
             end,
             type = "select",
             values = {
@@ -1630,10 +1613,10 @@ function MyAccountant:SetupAddonOptions()
               RESET_GPH = L["income_panel_action_gph"],
             },
             set = function(info, val)
-              self.db.char.incomePanelButton3 = val
+              self.db.profile.incomePanelButton3 = val
             end,
             get = function(info)
-              return self.db.char.incomePanelButton3
+              return self.db.profile.incomePanelButton3
             end,
           },
           show_grid = {
@@ -1643,10 +1626,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.showLines = val
+              self.db.profile.showLines = val
             end,
             get = function(info)
-              return self.db.char.showLines
+              return self.db.profile.showLines
             end,
           },
           show_empty_rows = {
@@ -1656,10 +1639,10 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             set = function(info, val)
-              self.db.char.hideInactiveSources = val
+              self.db.profile.hideInactiveSources = val
             end,
             get = function(info)
-              return self.db.char.hideInactiveSources
+              return self.db.profile.hideInactiveSources
             end,
           },
           show_realm_total_hover = {
@@ -1669,13 +1652,13 @@ function MyAccountant:SetupAddonOptions()
             type = "toggle",
             width = "full",
             disabled = function()
-              return self.db.char.showIncomePanelBottom == false
+              return self.db.profile.showIncomePanelBottom == false
             end,
             set = function(info, val)
-              self.db.char.showRealmGoldTotals = val
+              self.db.profile.showRealmGoldTotals = val
             end,
             get = function(info)
-              return self.db.char.showRealmGoldTotals
+              return self.db.profile.showRealmGoldTotals
             end,
           },
           income_frame_width = {
@@ -1688,10 +1671,10 @@ function MyAccountant:SetupAddonOptions()
             max = 800,
             step = 1,
             set = function(info, val)
-              self.db.char.incomeFrameWidth = val
+              self.db.profile.incomeFrameWidth = val
             end,
             get = function(info)
-              return self.db.char.incomeFrameWidth
+              return self.db.profile.incomeFrameWidth
             end,
           },
           max_zones = {
@@ -1704,10 +1687,10 @@ function MyAccountant:SetupAddonOptions()
             max = 10,
             step = 1,
             set = function(info, val)
-              self.db.char.maxZonesIncomePanel = val
+              self.db.profile.maxZonesIncomePanel = val
             end,
             get = function(info)
-              return self.db.char.maxZonesIncomePanel
+              return self.db.profile.maxZonesIncomePanel
             end,
           },
           default_sort = {
@@ -1725,10 +1708,10 @@ function MyAccountant:SetupAddonOptions()
               NET = L["option_income_panel_default_sort_net"],
             },
             set = function(info, val)
-              self.db.char.defaultIncomePanelSort = val
+              self.db.profile.defaultIncomePanelSort = val
             end,
             get = function(info)
-              return self.db.char.defaultIncomePanelSort
+              return self.db.profile.defaultIncomePanelSort
             end,
           },
         },
@@ -1804,7 +1787,7 @@ function MyAccountant:SetupAddonOptions()
               })
             )
           end
-          self.db.char.tabs = instantiatedTabs
+          self.db.profile.tabs = instantiatedTabs
 
           makeTabConfig()
           forceConfigRerender()
@@ -1852,6 +1835,8 @@ function MyAccountant:SetupAddonOptions()
     },
   }
 
+  local profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+
   -- Main entry
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME, launchOptionsConfig)
   _, private.optionsCategory = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME, private.ADDON_NAME)
@@ -1897,12 +1882,19 @@ function MyAccountant:SetupAddonOptions()
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-InfoPanel", infoFrameConfig.name,
     private.ADDON_NAME)
 
+  -- Profiles
+  LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Profiles", profiles)
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Profiles", profiles.name,
+    private.ADDON_NAME)
+
   -- Addon Data
   LibStub("AceConfig-3.0"):RegisterOptionsTable(private.ADDON_NAME .. "-Data", clearDataOptions)
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Data", clearDataOptions.name,
     private.ADDON_NAME)
 
-  if self.db.char.showMinimap == true then
+
+
+  if self.db.profile.showMinimap == true then
     showMinimap()
   end
 end

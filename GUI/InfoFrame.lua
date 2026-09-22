@@ -146,15 +146,15 @@ function MyAccountant:InitializeInfoFrame()
     insets = { left = 4, right = 4, top = 4, bottom = 4 },
   })
   infoFrame:SetBackdropColor(0, 0, 0, 0.9)
-  infoFrame:SetMovable(not self.db.char.lockInfoFrame)
+  infoFrame:SetMovable(not self.db.profile.lockInfoFrame)
 
   local allowMovement = function()
     local shiftKeyCondition = true
-    if self.db.char.requireShiftToMove then
+    if self.db.profile.requireShiftToMove then
       shiftKeyCondition = IsShiftKeyDown()
     end
 
-    return (not self.db.char.lockInfoFrame) and shiftKeyCondition
+    return (not self.db.profile.lockInfoFrame) and shiftKeyCondition
   end
 
   infoFrame:EnableMouse(true)
@@ -168,17 +168,17 @@ function MyAccountant:InitializeInfoFrame()
     self:StopMovingOrSizing()
   end)
 
-  if self.db.char.showInfoFrameV2 then
+  if self.db.profile.showInfoFrameV2 then
     infoFrame:Show()
   else
     infoFrame:Hide()
   end
 
-  for _, tab in pairs(self.db.char.tabs) do
+  for _, tab in pairs(self.db.profile.tabs) do
     --- @type Tab
     tab = tab
     for _, instance in ipairs(tab:getDataInstances()) do
-      if self.db.char.infoFrameDataToShowV2[instance.label] then
+      if self.db.profile.infoFrameDataToShowV2[instance.label] then
         local rowInstance = infoRows[instance.label]
         if not rowInstance then
           local labelFontString = infoFrame:CreateFontString(nil, "OVERLAY", "GameTooltipTextSmall")
@@ -235,14 +235,14 @@ end
 
 --- Updates the show/hidden and lock status of the information frame
 function MyAccountant:UpdateInformationFrameStatus()
-  infoFrame:SetMovable(not self.db.char.lockInfoFrame)
-  if self.db.char.showInfoFrameV2 then
+  infoFrame:SetMovable(not self.db.profile.lockInfoFrame)
+  if self.db.profile.showInfoFrameV2 then
     infoFrame:Show()
   else
     infoFrame:Hide()
   end
   for _, row in pairs(infoRows) do
-    if self.db.char.rightAlignInfoValues then
+    if self.db.profile.rightAlignInfoValues then
       row.value:SetJustifyH("RIGHT")
     else
       row.value:SetJustifyH("LEFT")
