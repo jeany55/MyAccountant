@@ -12,7 +12,7 @@ local AssertEqual, Replace = WoWUnit.AreEqual, WoWUnit.Replace
 local _, private = ...
 
 local function setSources()
-  MyAccountant.db.char.sources = {
+  MyAccountant.db.profile.sources = {
     "TRAINING_COSTS",
     "TAXI_FARES",
     "LOOT",

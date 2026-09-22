@@ -17,7 +17,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("MyAccountant")
 
 --- Tracked sources including WARBAND, matching the Retail defaults
 local function setSources()
-  MyAccountant.db.char.sources = {
+  MyAccountant.db.profile.sources = {
     "LOOT",
     "QUESTS",
     "REPAIR",
@@ -30,7 +30,7 @@ end
 --- Puts the addon in the state the feature assumes: WARBAND tracked and neutral enabled
 local function setup()
   setSources()
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = true
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = true
   MyAccountant:ResetAllData()
   MyAccountant:ResetSession()
 end
@@ -44,18 +44,18 @@ end
 ----------------------------------------------------------
 
 function Tests.TestIsNeutralSource_WarbandIsNeutral()
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = true
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = true
   AssertTrue(MyAccountant:IsNeutralSource("WARBAND"))
 end
 
 function Tests.TestIsNeutralSource_RespectsOption()
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = false
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = false
   AssertFalse(MyAccountant:IsNeutralSource("WARBAND"))
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = true
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = true
 end
 
 function Tests.TestIsNeutralSource_OrdinarySourceIsNot()
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = true
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = true
   AssertFalse(MyAccountant:IsNeutralSource("LOOT"))
   AssertFalse(MyAccountant:IsNeutralSource("OTHER"))
 end
@@ -65,7 +65,7 @@ function Tests.TestIsNeutralSource_UnknownSourceIsNot()
 end
 
 function Tests.TestIsNeutralSource_NotNeutralOutsideRetail()
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = true
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = true
   local realVersion = private.wowVersion
 
   -- The setting carries a default on every version, but there is no Warband bank
@@ -98,7 +98,7 @@ end
 
 function Tests.TestNeutralIncludedWhenOptionDisabled()
   setup()
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = false
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = false
 
   MyAccountant:AddIncome("LOOT", 100)
   MyAccountant:AddOutcome("WARBAND", 50)
@@ -106,7 +106,7 @@ function Tests.TestNeutralIncludedWhenOptionDisabled()
   AssertEqual(100, MyAccountant:GetSessionIncome())
   AssertEqual(50, MyAccountant:GetSessionOutcome())
 
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = true
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = true
 end
 
 function Tests.TestDepositWithdrawRoundTripIsNetZero()
@@ -150,7 +150,7 @@ end
 
 function Tests.TestSummarizeDataIncludesNeutralWhenDisabled()
   setup()
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = false
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = false
 
   local data = {
     LOOT = { income = 300, outcome = 0 },
@@ -162,7 +162,7 @@ function Tests.TestSummarizeDataIncludesNeutralWhenDisabled()
   AssertEqual(300, summary.income)
   AssertEqual(250, summary.outcome)
 
-  MyAccountant.db.char.treatWarbandTransfersAsNeutral = true
+  MyAccountant.db.profile.treatWarbandTransfersAsNeutral = true
 end
 
 ----------------------------------------------------------
@@ -188,7 +188,7 @@ function Tests.TestNeutralNotFoldedIntoOtherWhenInactive()
   setup()
   -- User has unticked the Warband source. It must not be merged into OTHER, which
   -- does count towards totals - that would reintroduce the loss we are excluding.
-  MyAccountant.db.char.sources = { "LOOT", "OTHER" }
+  MyAccountant.db.profile.sources = { "LOOT", "OTHER" }
 
   MyAccountant:AddOutcome("WARBAND", 750)
   MyAccountant:AddIncome("LOOT", 100)
@@ -222,7 +222,7 @@ end
 --- The handler tracks the previous balance in a file local, so the balance is first
 --- settled at `from` and the resulting noise discarded before the change under test.
 --- Called directly rather than via PLAYER_MONEY because the event also drives tab
---- summaries, and db.char.tabs is never populated in this harness (OnInitialize, which
+--- summaries, and db.profile.tabs is never populated in this harness (OnInitialize, which
 --- would create them, does not run here).
 --- @param from integer Money before the change
 --- @param to integer Money after the change

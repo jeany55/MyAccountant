@@ -139,7 +139,7 @@ private.utils = Utils
 
 -- Function to get a header money string. Takes into account if the user doesn't want to see zeros - if so return empty string
 function MyAccountant:GetHeaderMoneyString(money)
-  if self.db.char.hideZero and money == 0 then
+  if self.db.profile.hideZero and money == 0 then
     return ""
   else
     return GetMoneyString(money, true)

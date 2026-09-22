@@ -19,6 +19,9 @@ end
 -----------------------------------------
 L["error_unsupported_wow_version"] = "Unsupported WoW version detected"
 L["option_profiles"] = "Profiles"
+L["profile_reload_confirm"] = "MyAccountant's profile changed. Some settings, like views and the information frame, need a UI reload to fully apply. Reload now?"
+L["profile_reload_confirm_yes"] = "Reload"
+L["profile_reload_confirm_no"] = "Later"
 
 -----------------------------------------
 --- VERSION 1.14
