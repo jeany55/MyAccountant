@@ -21,7 +21,15 @@ GameTypes = {
   CATA = "CATA",
   MISTS_CLASSIC = "MISTS_CLASSIC",
   RETAIL = "RETAIL",
+  FOREVER = "FOREVER",
 }
+
+local tocGameVersion = C_AddOns.GetAddOnMetadata(private.ADDON_NAME, "X-GameType")
+local wowVersion = GameTypes[tocGameVersion]
+
+if not tocGameVersion or not wowVersion then
+  error(L["error_unsupported_wow_version"])
+end
 
 private.GameTypes = GameTypes
 
@@ -73,7 +81,7 @@ private.constants = {
 local sources = {
   TRAINING_COSTS = {
     title = L["TRAINING_COSTS"],
-    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL },
+    versions = { GameTypes.CLASSIC_ERA, GameTypes.BCC, GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL, GameTypes.FOREVER },
   },
   TAXI_FARES = {
     title = L["TAXI_FARES"],
@@ -84,6 +92,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   LOOT = {
@@ -95,6 +104,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   GUILD = {
@@ -106,6 +116,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   TRADE = {
@@ -117,6 +128,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   MERCHANTS = {
@@ -128,6 +140,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   MAIL = {
@@ -139,6 +152,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   REPAIR = {
@@ -150,6 +164,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   AUCTIONS = {
@@ -161,6 +176,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   QUESTS = {
@@ -172,6 +188,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   TALENTS = {
@@ -183,11 +200,12 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
   },
   LFG = { title = L["LFG"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL } },
-  BARBER = { title = L["BARBER"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL } },
-  TRANSMOGRIFY = { title = L["TRANSMOGRIFY"], versions = { GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL } },
+  BARBER = { title = L["BARBER"], versions = { GameTypes.MISTS_CLASSIC, GameTypes.WOTLK, GameTypes.CATA, GameTypes.RETAIL, GameTypes.FOREVER } },
+  TRANSMOGRIFY = { title = L["TRANSMOGRIFY"], versions = { GameTypes.CATA, GameTypes.MISTS_CLASSIC, GameTypes.RETAIL, GameTypes.FOREVER } },
   GARRISONS = { title = L["GARRISONS"], versions = { GameTypes.RETAIL } },
   WARBAND = { title = L["WARBAND"], versions = { GameTypes.RETAIL }, neutral = true },
   OTHER = {
@@ -199,6 +217,7 @@ local sources = {
       GameTypes.CATA,
       GameTypes.MISTS_CLASSIC,
       GameTypes.RETAIL,
+      GameTypes.FOREVER,
     },
     required = true,
   },
@@ -272,39 +291,51 @@ local DEFAULT_SOURCES_CLASSIC_ERA = {
   "OTHER",
 }
 
--- Determine WoW version to set default and available sources
-local buildVersion = select(4, GetBuildInfo())
-local defaultSources
-local wowVersion
+local DEFAULT_SOURCES_FOREVER = {
+  "TRAINING_COSTS",
+  "TAXI_FARES",
+  "LOOT",
+  "GUILD",
+  "TRADE",
+  "MERCHANTS",
+  "MAIL",
+  "REPAIR",
+  "AUCTIONS",
+  "QUESTS",
+  "OTHER",
+  "TRANSMOGRIFY",
+  "BARBER"
+}
 
-if buildVersion < 20000 then
-  defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
-  wowVersion = GameTypes.CLASSIC_ERA
-elseif buildVersion < 30000 then
-  defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
-  wowVersion = GameTypes.BCC
-elseif buildVersion < 40000 then
-  defaultSources = DEFAULT_SOURCES_WOTLK
-  wowVersion = GameTypes.WOTLK
-elseif buildVersion < 50000 then
-  defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
-  wowVersion = GameTypes.CATA
-elseif buildVersion < 60000 then
-  defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
-  wowVersion = GameTypes.MISTS_CLASSIC
-elseif buildVersion > 90000 then
-  defaultSources = DEFAULT_SOURCES_RETAIL
-  wowVersion = GameTypes.RETAIL
-end
+local defaultSources
 
 --- Padding behaves differently on the different tab components across Wow versions
-local paddingInBetweenTabs = 3
-if wowVersion ~= GameTypes.RETAIL then
+local paddingInBetweenTabs
+
+if wowVersion == GameTypes.CLASSIC_ERA then
+  defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
   paddingInBetweenTabs = -18
+elseif wowVersion == GameTypes.BCC then
+  defaultSources = DEFAULT_SOURCES_CLASSIC_ERA
+  paddingInBetweenTabs = -18
+elseif wowVersion == GameTypes.WOTLK then
+  defaultSources = DEFAULT_SOURCES_WOTLK
+  paddingInBetweenTabs = -18
+elseif wowVersion == GameTypes.CATA then
+  defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
+  paddingInBetweenTabs = -18
+elseif wowVersion == GameTypes.MISTS_CLASSIC then
+  defaultSources = DEFAULT_SOURCES_MISTS_CLASSIC
+  paddingInBetweenTabs = -18
+elseif wowVersion == GameTypes.RETAIL then
+  defaultSources = DEFAULT_SOURCES_RETAIL
+  paddingInBetweenTabs = 3
+elseif wowVersion == GameTypes.FOREVER then
+  defaultSources = DEFAULT_SOURCES_FOREVER
+  paddingInBetweenTabs = 3
 end
 
 private.constants.TAB_PADDING = paddingInBetweenTabs
-
 private.wowVersion = wowVersion
 
 private.default_settings = {

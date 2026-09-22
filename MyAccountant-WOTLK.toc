@@ -7,6 +7,7 @@
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1299016
 ## X-Category: Information
+## X-GameType: WOTLK
 ## SavedVariables: MyAccountantDB
 ## SavedVariablesPerCharacter:
 

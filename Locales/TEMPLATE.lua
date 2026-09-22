@@ -14,6 +14,10 @@ if not L then
 end
 
 -- Localization definitions
+-----------------------------------------
+--- VERSION 1.15
+-----------------------------------------
+L["error_unsupported_wow_version"] = "Unsupported WoW version detected"
 
 -----------------------------------------
 --- VERSION 1.14
