@@ -16,7 +16,7 @@ local NOV_14_2023 = 1700000000 -- 2023-11-14 22:13:20
 local NOV_15_2023 = 1700086400 -- 2023-11-15 22:13:20
 
 local function setSources()
-  MyAccountant.db.char.sources = {
+  MyAccountant.db.profile.sources = {
     "TRAINING_COSTS",
     "TAXI_FARES",
     "LOOT",

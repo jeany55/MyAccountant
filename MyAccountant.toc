@@ -1,12 +1,13 @@
-## Interface: 120007
+## Interface: 120100
 ## Title: MyAccountant
 ## Notes: Track where your gold is going or coming from!
 ## Author: Jeany
-## Version: 1.14.1
+## Version: 1.14.5
 ## IconTexture: Interface\Addons\MyAccountant\Images\addonIcon
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1299016
 ## X-Category: Information
+## X-GameType: RETAIL
 ## SavedVariables: MyAccountantDB
 ## SavedVariablesPerCharacter:
 
@@ -26,5 +27,4 @@ GUI\IncomeFrame.xml
 GUI\InfoFrame.lua
 GUI\Calendar.lua
 Income.lua
-
 Events.lua

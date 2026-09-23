@@ -24,7 +24,7 @@ function MyAccountant:IsNeutralSource(source)
     return false
   end
 
-  return self.db.char.treatWarbandTransfersAsNeutral == true
+  return self.db.profile.treatWarbandTransfersAsNeutral == true
 end
 
 --- Resets all function data
@@ -427,7 +427,7 @@ function MyAccountant:GetSessionOutcome(category)
 end
 
 function MyAccountant:IsSourceActive(source)
-  for _, v in ipairs(self.db.char.sources) do
+  for _, v in ipairs(self.db.profile.sources) do
     if v == source then
       return true
     end
@@ -492,7 +492,7 @@ function MyAccountant:GetIncomeOutcomeTable(tab, dateOverride, characterRefOverr
 
   if viewType == "SOURCE" then
     -- Recreate table to keep original order intact
-    for _, v in ipairs(self.db.char.sources) do
+    for _, v in ipairs(self.db.profile.sources) do
       if not talliedTable[v] then
         reorderedTable[v] = { income = 0, outcome = 0, zones = {} }
       else
@@ -561,7 +561,7 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local data = {}
   local goldTotal = 0
   local numberOfCharacters = 0
-  local realmBalanceOption = self.db.char.realmCharactersOption
+  local realmBalanceOption = self.db.profile.realmCharactersOption
 
   local characterSet = self.db.global
   if realmBalanceOption == "SELECTED" then
@@ -588,7 +588,7 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   end
 
   local warbandGold = self.db.global.warBandGold or 0
-  if self.db.char.showWarbandInRealmBalance and self.db.global.seenWarband then
+  if self.db.profile.showWarbandInRealmBalance and self.db.global.seenWarband then
     goldTotal = goldTotal + warbandGold
     table.insert(data, { name = "|T939375:0|t " .. L["warband"], gold = warbandGold })
   end
@@ -602,8 +602,8 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
 end
 
 function MyAccountant:GetListOfTrackableCharacters()
-  local preset = self.db.char.characterPresetTrack
-  local customTracking = self.db.char.customCharacterTracking
+  local preset = self.db.profile.characterPresetTrack
+  local customTracking = self.db.profile.customCharacterTracking
   local returnTable = {}
 
   for characterGUID, data in pairs(self.db.global) do

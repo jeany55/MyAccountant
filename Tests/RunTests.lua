@@ -473,6 +473,7 @@ GetLocale = Const(LOCALE)
 GetRealmName = Const(REALM)
 GetAutoCompleteRealms = Const(REALM_CONNECTED)
 GetCurrentRegion = Const(REGION)
+GetCurrentRegionName = Const("EU")
 GetBuildInfo = Consts(unpack(BUILD))
 GetTime = function(...)
   return math.floor(os.clock(...))
@@ -606,7 +607,12 @@ C_AddOns = {
   IsAddOnLoaded = function(n)
     return n == "WoWUnit" or n == Name
   end,
-  GetAddOnMetadata = Val(VERSION) --[[@as fun(name: string, field: string?): string]],
+  GetAddOnMetadata = function(_, field)
+    if field == "X-GameType" then
+      return "RETAIL"
+    end
+    return VERSION
+  end,
 }
 C_ChallengeMode = Obj
 C_Club = {

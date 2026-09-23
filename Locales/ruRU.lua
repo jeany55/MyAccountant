@@ -10,6 +10,7 @@ end
 
 -- Localization definitions
 -- 1.14
+L["german"] = "Немецкий (от LaDzi)"
 L["WARBAND"] = "Банк отряда"
 L["option_treat_warband_neutral"] = "Считать переводы банка отряда нейтральными"
 L["option_treat_warband_neutral_desc"] =

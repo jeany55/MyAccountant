@@ -947,3 +947,127 @@ function Tests.Edge_MigratedFalse_NotReKeyed()
   -- A new entry was created at the GUID key
   AssertEqual(true, MyAccountant.db.global[guid] ~= nil)
 end
+
+------------------------------------------------------------
+-- Phase 3 – MigrateSettingsToProfile (db.char -> db.profile)
+------------------------------------------------------------
+
+--- Runs fn against a scratch char/profile state, restoring the real one afterwards so other
+--- test groups sharing MyAccountant.db are unaffected.
+local function withSettingsState(charState, profileState, fn)
+  local db = MyAccountant.db
+  local savedChar = private.utils.copy(db.char)
+  local savedProfile = private.utils.copy(db.profile)
+  local function replace(target, source)
+    for k in pairs(target) do
+      target[k] = nil
+    end
+    for k, v in pairs(source) do
+      target[k] = v
+    end
+  end
+
+  replace(db.char, charState)
+  replace(db.profile, profileState)
+  local ok, err = pcall(fn, db)
+  replace(db.char, savedChar)
+  replace(db.profile, savedProfile)
+  if not ok then
+    error(err, 0)
+  end
+end
+
+function Tests.ProfileMigration_MovesSettingsAndKeepsCharacterData()
+  withSettingsState({
+    showMinimap = false,
+    sources = { "LOOT" },
+    closeWhenEnteringCombat = true,
+    tabs = { { _tabName = "Custom" } },
+    minimapIconOptions = { minimapPos = 42 },
+    addedWarbandSource = true,
+    sessionDb = { LOOT = { income = 5 } },
+    totalGoldMade = 99,
+    lastVersion = "1.14.5",
+  }, {}, function(db)
+    MyAccountant:MigrateSettingsToProfile()
+
+    AssertEqual(false, db.profile.showMinimap)
+    AssertEqual("LOOT", db.profile.sources[1])
+    AssertEqual(true, db.profile.closeWhenEnteringCombat)
+    AssertEqual("Custom", db.profile.tabs[1]._tabName)
+    AssertEqual(42, db.profile.minimapIconOptions.minimapPos)
+    AssertEqual(true, db.profile.addedWarbandSource)
+    AssertEqual(nil, db.char.showMinimap)
+    AssertEqual(nil, db.char.tabs)
+
+    -- Per-character state stays put
+    AssertEqual(5, db.char.sessionDb.LOOT.income)
+    AssertEqual(99, db.char.totalGoldMade)
+    AssertEqual("1.14.5", db.char.lastVersion)
+    AssertEqual(nil, db.profile.sessionDb)
+    AssertEqual(true, db.char.migratedToProfile)
+  end)
+end
+
+function Tests.ProfileMigration_RunsOnlyOnce()
+  withSettingsState({ migratedToProfile = true, showMinimap = false }, { showMinimap = true }, function(db)
+    MyAccountant:MigrateSettingsToProfile()
+
+    AssertEqual(true, db.profile.showMinimap)
+    AssertEqual(false, db.char.showMinimap)
+  end)
+end
+
+function Tests.ProfileMigration_ConvertsLegacyMinimapData()
+  withSettingsState({ minimapDataV2 = "Legacy - Profit" }, {}, function(db)
+    MyAccountant:MigrateSettingsToProfile()
+
+    AssertEqual(true, db.profile.minimapTooltipData["Legacy - Profit"])
+    AssertEqual(nil, db.char.minimapDataV2)
+  end)
+end
+
+function Tests.ProfileMigration_PrefersExistingMinimapTooltipData()
+  withSettingsState({ minimapDataV2 = "Old", minimapTooltipData = { New = true } }, {}, function(db)
+    MyAccountant:MigrateSettingsToProfile()
+
+    AssertEqual(true, db.profile.minimapTooltipData.New)
+    AssertEqual(nil, db.profile.minimapTooltipData.Old)
+  end)
+end
+
+function Tests.ProfileMigration_DropsDeadSettings()
+  withSettingsState({ tooltipStyle = "X", registerLDBData = true, tabLinebreak = true, knownTabs = {} }, {},
+    function(db)
+      MyAccountant:MigrateSettingsToProfile()
+
+      AssertEqual(nil, db.char.tooltipStyle)
+      AssertEqual(nil, db.char.registerLDBData)
+      AssertEqual(nil, db.char.tabLinebreak)
+      AssertEqual(nil, db.char.knownTabs)
+      AssertEqual(nil, db.profile.tooltipStyle)
+    end)
+end
+
+function Tests.InitializeProfile_FillsEmptyProfileWithCopiedDefaults()
+  withSettingsState({}, {}, function(db)
+    MyAccountant:InitializeProfile()
+
+    AssertEqual(true, db.profile.showMinimap)
+    AssertEqual(#private.tabLibrary, #db.profile.tabs)
+    AssertEqual(true, db.profile.minimapIconOptions ~= nil)
+    AssertEqual(true, next(db.profile.minimapTooltipData) ~= nil)
+    -- Tables must be copies, or every profile would share (and mutate) the defaults
+    AssertEqual(false, db.profile.sources == private.default_settings.profile.sources)
+    AssertEqual(false, db.profile.customCharacterTracking == private.default_settings.profile.customCharacterTracking)
+  end)
+end
+
+function Tests.InitializeProfile_KeepsExistingValues()
+  withSettingsState({}, { showMinimap = false, sources = { "LOOT" }, addedWarbandSource = true }, function(db)
+    MyAccountant:InitializeProfile()
+
+    AssertEqual(false, db.profile.showMinimap)
+    AssertEqual(1, #db.profile.sources)
+  end)
+end

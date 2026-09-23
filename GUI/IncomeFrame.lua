@@ -60,7 +60,7 @@ function MyAccountant:SetupTabs()
     tabFrame:Hide()
   end
 
-  for _, tab in ipairs(self.db.char.tabs) do
+  for _, tab in ipairs(self.db.profile.tabs) do
     --- @type Tab
     tab = tab
 
@@ -93,7 +93,7 @@ function MyAccountant:SetupTabs()
   local lineBreak = false
   local row = 1
   local tabIndex = 1
-  for _, tab in ipairs(self.db.char.tabs) do
+  for _, tab in ipairs(self.db.profile.tabs) do
     --- @type Tab
     local tab = tab
     local currentTabIndex = tabIndex
@@ -134,7 +134,7 @@ end
 --- @param tab Tab Tab instance
 --- @param viewType ViewType View type (by source or by zone)
 function MyAccountant:GetSortedTable(tab, viewType)
-  local sortType = UserSetSort and UserSetSort or self.db.char.defaultIncomePanelSort
+  local sortType = UserSetSort and UserSetSort or self.db.profile.defaultIncomePanelSort
   local incomeTable = {}
 
   if tab:getType() == "BALANCE" then
@@ -203,7 +203,7 @@ function MyAccountant:GetSortedTable(tab, viewType)
     end
     incomeTable[k].zones = zoneList
 
-    if not self.db.char.hideInactiveSources then
+    if not self.db.profile.hideInactiveSources then
       table.insert(preppedSortList, incomeTable[k])
     elseif incomeTable[k].outcome > 0 or incomeTable[k].income > 0 then
       table.insert(preppedSortList, incomeTable[k])
@@ -250,7 +250,7 @@ function MyAccountant:InitializeUI()
   playerCharacter.Portrait:SetAllPoints()
   SetPortraitTexture(playerCharacter.Portrait, "player")
 
-  IncomeFrame:SetWidth(self.db.char.incomeFrameWidth)
+  IncomeFrame:SetWidth(self.db.profile.incomeFrameWidth)
 
   -- Setup character dropdown
   LibDD:UIDropDownMenu_Initialize(characterDropdown, function()
@@ -402,7 +402,7 @@ function MyAccountant:InitializeUI()
     MyAccountant:updateFrame()
   end)
 
-  ViewType = self.db.char.defaultView
+  ViewType = self.db.profile.defaultView
 
   -- Localization
   totalIncomeText:SetText(L["header_total_income"])
@@ -411,7 +411,7 @@ function MyAccountant:InitializeUI()
 
   -- Find first active tab
   local tabIndex = 1
-  for _, tab in ipairs(self.db.char.tabs) do
+  for _, tab in ipairs(self.db.profile.tabs) do
     if tab:getVisible() then
       ActiveTab = tab
       ActiveTabIndex = tabIndex
@@ -494,7 +494,7 @@ function MyAccountant:showIncomeFrameTemporaryTab(tempTab)
   end
   ActiveTab = tempTab
   ActiveTabIndex = 0
-  if self.db.char.calendarDataSource == "REALM" then
+  if self.db.profile.calendarDataSource == "REALM" then
     selectedCharacter = "ALL_CHARACTERS"
   else
     selectedCharacter = MyAccountant:GetCharacterDatabaseReference()
@@ -521,7 +521,7 @@ function MyAccountant:updateFrame()
 
   viewingType:SetText(selectedTab:getDateSummaryText() or "")
 
-  local frameX = self.db.char.incomeFrameWidth
+  local frameX = self.db.profile.incomeFrameWidth
   local frameY = 347
 
   if ViewType == "SOURCE" then
@@ -532,14 +532,14 @@ function MyAccountant:updateFrame()
     sourceHeaderText:SetText(L["income_panel_zone"])
   end
 
-  if self.db.char.showViewsButton and selectedTab:getType() ~= "BALANCE" then
+  if self.db.profile.showViewsButton and selectedTab:getType() ~= "BALANCE" then
     swapViewButton:Show()
   else
     swapViewButton:Hide()
   end
 
   -- Set height
-  if self.db.char.showIncomePanelBottom then
+  if self.db.profile.showIncomePanelBottom then
     bottomInfoPanel:Show()
     frameY = frameY + 23
 
@@ -564,9 +564,9 @@ function MyAccountant:updateFrame()
       end
     end
 
-    setToButtonVar(self.db.char.incomePanelButton1)
-    setToButtonVar(self.db.char.incomePanelButton2)
-    setToButtonVar(self.db.char.incomePanelButton3)
+    setToButtonVar(self.db.profile.incomePanelButton1)
+    setToButtonVar(self.db.profile.incomePanelButton2)
+    setToButtonVar(self.db.profile.incomePanelButton3)
 
     if button1 == nil then
       -- All buttons are hidden
@@ -677,7 +677,7 @@ function MyAccountant:updateFrame()
 
   -- Hide/show grid lines depending on user preference
   for _, v in ipairs(RenderedLines) do
-    if self.db.char.showLines then
+    if self.db.profile.showLines then
       v:Show()
     else
       v:Hide()
@@ -792,8 +792,8 @@ function MyAccountant:DrawRows()
   -- If no scrollbar is shown, starting index comes back as zero
   local scrollIndex = FauxScrollFrame_GetOffset(scrollFrame)
   local incomeTable = MyAccountant:GetSortedTable(ActiveTab, ViewType)
-  local maxHoverLines = self.db.char.maxZonesIncomePanel
-  local colorIncome = self.db.char.colorGoldInIncomePanel
+  local maxHoverLines = self.db.profile.maxZonesIncomePanel
+  local colorIncome = self.db.profile.colorGoldInIncomePanel
 
   local showScrollbar = #incomeTable > 12
   if showScrollbar then
@@ -822,7 +822,7 @@ function MyAccountant:DrawRows()
   FauxScrollFrame_Update(scrollFrame, #incomeTable, 12, 20)
 
   local realmBalanceInfo = MyAccountant:GetRealmBalanceTotalDataTable()
-  local showRealmBalanceTooltip = self.db.char.showRealmGoldTotals and (#realmBalanceInfo > 2)
+  local showRealmBalanceTooltip = self.db.profile.showRealmGoldTotals and (#realmBalanceInfo > 2)
 
   local factionIcon
   if UnitFactionGroup("player") == "Horde" then
@@ -881,7 +881,7 @@ function MyAccountant:DrawRows()
         outcomeText = GetMoneyString(outcome, true)
       end
 
-      if self.db.char.colorGoldInIncomePanel then
+      if self.db.profile.colorGoldInIncomePanel then
         _G[incoming]:SetTextColor(0, 1, 0, 1)
         _G[outgoing]:SetTextColor(1, 0, 0, 1)
       else
@@ -949,7 +949,7 @@ function MyAccountant:ShowPanel()
   else
     MyAccountant:PrintDebugMessage("Showing income panel")
     private.panelOpen = true
-    UserSetSort = self.db.char.defaultIncomePanelSort
+    UserSetSort = self.db.profile.defaultIncomePanelSort
     MyAccountant:SetupTabs()
     MyAccountant:updateFrame()
     IncomeFrame:Show()

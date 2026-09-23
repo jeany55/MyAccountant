@@ -1,4 +1,4 @@
-## Interface: 50504
+## Interface: 16001
 ## Title: MyAccountant
 ## Notes: Track where your gold is going or coming from!
 ## Author: Jeany
@@ -7,7 +7,7 @@
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1299016
 ## X-Category: Information
-## X-GameType: MISTS_CLASSIC
+## X-GameType: FOREVER
 ## SavedVariables: MyAccountantDB
 ## SavedVariablesPerCharacter:
 
@@ -21,7 +21,7 @@ API\Tabs.lua
 Constants\TabLibrary.lua
 Constants\Constants.lua
 Config.lua
-GUI\Templates-Classic.xml
+GUI\Templates.xml
 GUI\IncomeFrame.lua
 GUI\IncomeFrame.xml
 GUI\InfoFrame.lua

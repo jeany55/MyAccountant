@@ -15,7 +15,7 @@ function MyAccountant:UpdateCalendar()
   local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 
   -- If disabled go through all 42 day buttons and hide any info if we're showing it
-  if not self.db.char.showCalendarSummary then
+  if not self.db.profile.showCalendarSummary then
     for dateIndex = 1, 42 do
       local dayFrame = _G["CalendarDayButton" .. dateIndex]
 
@@ -52,7 +52,7 @@ function MyAccountant:UpdateCalendar()
     local tempTab = private.Tab:constructDateDaySimple(unixTimeRepresentation)
     tempTab:addToSpecificDays(unixTimeRepresentation)
 
-    local characterData = self.db.char.calendarDataSource == "REALM" and "ALL_CHARACTERS" or nil
+    local characterData = self.db.profile.calendarDataSource == "REALM" and "ALL_CHARACTERS" or nil
 
     local incomeData = MyAccountant:GetIncomeOutcomeTable(tempTab, nil, characterData, viewType)
     local dataSummary = MyAccountant:SummarizeData(incomeData)

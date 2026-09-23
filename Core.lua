@@ -15,7 +15,8 @@ private.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MyAccountant", "Version")
 --- @field constants table<string, any> Various constant values used throughout the addon
 --- @field sources table<Source, SourceDefinition> Definitions for all data sources
 --- @field wowVersion GameTypes Current WoW version
---- @field default_settings table<string, any> Default settings for the addon
+--- @field default_settings { profile: table<string, any>, char: table<string, any> } Default settings for the addon
+--- @field profile_settings_without_defaults string[] Profile keys initialized in code rather than from default_settings
 --- @field panelOpened boolean Whether the income panel is currently opened
 --- @field Tab Tab Tab data model, abstracts tab properties and behavior
 --- @field TabType TabType Enum for tab types
@@ -62,6 +63,11 @@ function MyAccountant:OnInitialize()
     MyAccountant:Print(L["migrate_complete"])
   end
 
+  MyAccountant:MigrateSettingsToProfile()
+  self.db.RegisterCallback(self, "OnProfileChanged", "RefreshProfile")
+  self.db.RegisterCallback(self, "OnProfileCopied", "RefreshProfile")
+  self.db.RegisterCallback(self, "OnProfileReset", "RefreshProfile")
+
   -- Update character data
   local dbRef = MyAccountant:GetCharacterDatabaseReference()
   dbRef.guid = UnitGUID("player")
@@ -100,6 +106,18 @@ function MyAccountant:OnInitialize()
     hideOnEscape = true,
     preferredIndex = 3,
   }
+  StaticPopupDialogs["MYACCOUNTANT_PROFILE_RELOAD"] = {
+    text = L["profile_reload_confirm"],
+    button1 = L["profile_reload_confirm_yes"],
+    button2 = L["profile_reload_confirm_no"],
+    OnAccept = function()
+      ReloadUI()
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+  }
   StaticPopupDialogs["MYACCOUNTANT_RESET_SESSION"] = {
     text = L["option_clear_session_data_confirm"],
     button1 = L["reset_gph_confirm_yes"],
@@ -114,12 +132,80 @@ function MyAccountant:OnInitialize()
   }
 end
 
+--- Settings used to live in db.char, which AceDBOptions can't share or copy. Moves them into
+--- the character's profile once. AceDB gives every character its own profile by default, so
+--- each character keeps exactly the settings it had.
+function MyAccountant:MigrateSettingsToProfile()
+  if self.db.char.migratedToProfile then
+    return
+  end
+
+  local moved = 0
+  local function move(key)
+    if self.db.char[key] ~= nil then
+      self.db.profile[key] = self.db.char[key]
+      self.db.char[key] = nil
+      moved = moved + 1
+    end
+  end
+
+  for key in pairs(private.default_settings.profile) do
+    move(key)
+  end
+  for _, key in ipairs(private.profile_settings_without_defaults) do
+    move(key)
+  end
+
+  -- Installs from before the minimap tooltip became a set of tabs only have the single
+  -- legacy selection.
+  if self.db.profile.minimapTooltipData == nil and self.db.char.minimapDataV2 ~= nil then
+    self.db.profile.minimapTooltipData = { [self.db.char.minimapDataV2] = true }
+  end
+
+  -- Settings that no longer exist
+  for _, key in ipairs({ "minimapDataV2", "tooltipStyle", "registerLDBData", "tabLinebreak", "knownTabs" }) do
+    self.db.char[key] = nil
+  end
+
+  self.db.char.migratedToProfile = true
+  if moved > 0 then
+    MyAccountant:PrintDebugMessage("Moved " .. moved .. " settings to profile " .. self.db:GetCurrentProfile())
+  end
+end
+
+--- AceDB callback for a profile being switched, copied or reset. Applies what can be applied
+--- live, then offers a reload since tab data instances and info frame rows are only built at
+--- login.
+function MyAccountant:RefreshProfile()
+  MyAccountant:InitializeProfile()
+
+  local libIcon = LibStub("LibDBIcon-1.0", true)
+  if libIcon:IsRegistered(private.ADDON_NAME) then
+    libIcon:Refresh(private.ADDON_NAME, self.db.profile.minimapIconOptions)
+  end
+  if self.db.profile.showMinimap then
+    if not libIcon:IsRegistered(private.ADDON_NAME) then
+      MyAccountant:RegisterMinimapIcon()
+    end
+    libIcon:Show(private.ADDON_NAME)
+  else
+    libIcon:Hide(private.ADDON_NAME)
+  end
+
+  MyAccountant:SetupTabs()
+  MyAccountant:UpdateInformationFrameStatus()
+  MyAccountant:UpdateAllTabSummaryData()
+  MyAccountant:updateFrameIfOpen()
+
+  StaticPopup_Show("MYACCOUNTANT_PROFILE_RELOAD")
+end
+
 function MyAccountant:RegisterMinimapIcon()
   local libIcon = LibStub("LibDBIcon-1.0", true)
 
   -- Setup minimap options if not yet
-  if not self.db.char.minimapIconOptions then
-    self.db.char.minimapIconOptions = {}
+  if not self.db.profile.minimapIconOptions then
+    self.db.profile.minimapIconOptions = {}
   end
 
   local miniButton = LibStub("LibDataBroker-1.1"):NewDataObject(private.ADDON_NAME, {
@@ -139,7 +225,7 @@ function MyAccountant:RegisterMinimapIcon()
     end,
   })
 
-  libIcon:Register(private.ADDON_NAME, miniButton, self.db.char.minimapIconOptions)
+  libIcon:Register(private.ADDON_NAME, miniButton, self.db.profile.minimapIconOptions)
 end
 
 function MyAccountant:OnEnable()
@@ -192,10 +278,10 @@ function MyAccountant:HandleSlashCommand(input)
   elseif command == "reset_session" or command == "reset" then
     StaticPopup_Show("MYACCOUNTANT_RESET_SESSION")
   elseif command == "info" then
-    self.db.char.showInfoFrameV2 = not self.db.char.showInfoFrameV2
+    self.db.profile.showInfoFrameV2 = not self.db.profile.showInfoFrameV2
     MyAccountant:UpdateInformationFrameStatus()
   elseif command == "lock" then
-    self.db.char.lockInfoFrame = not self.db.char.lockInfoFrame
+    self.db.profile.lockInfoFrame = not self.db.profile.lockInfoFrame
     MyAccountant:UpdateInformationFrameStatus()
   elseif command == "report" then
     local subCommand = string.lower(splitInput[2] or "")
@@ -235,9 +321,9 @@ function MyAccountant:HandleSlashCommand(input)
       printHelpMessage()
     end
   elseif command == "" then
-    if self.db.char.slashBehaviour == "OPEN_WINDOW" then
+    if self.db.profile.slashBehaviour == "OPEN_WINDOW" then
       MyAccountant:ShowPanel()
-    elseif self.db.char.slashBehaviour == "SHOW_OPTIONS" then
+    elseif self.db.profile.slashBehaviour == "SHOW_OPTIONS" then
       printHelpMessage()
     end
   else
@@ -249,7 +335,7 @@ end
 --- @param tooltip GameTooltip The tooltip to render into
 function MyAccountant:MakeMinimapTooltip(tooltip)
   local moneyString = ""
-  if self.db.char.minimapTotalBalance == "REALM" then
+  if self.db.profile.minimapTotalBalance == "REALM" then
     local goldData = MyAccountant:GetRealmBalanceTotalDataTable()
     moneyString = GetMoneyString(goldData[1].gold, true)
   else
@@ -258,7 +344,7 @@ function MyAccountant:MakeMinimapTooltip(tooltip)
 
   tooltip:AddLine(private.ADDON_NAME .. " - " .. moneyString, 1, 1, 1)
 
-  if self.db.char.goldPerHour then
+  if self.db.profile.goldPerHour then
     local totalIncome = MyAccountant:GetSessionIncome()
     local goldPerHour
     if totalIncome == 0 then
@@ -270,9 +356,9 @@ function MyAccountant:MakeMinimapTooltip(tooltip)
     tooltip:AddLine(L["minimap_gph"] .. " |cffffffff" .. MyAccountant:GetHeaderMoneyString(goldPerHour) .. "|r")
   end
 
-  local selectedMinimapTabs = self.db.char.minimapTooltipData
+  local selectedMinimapTabs = self.db.profile.minimapTooltipData
   --- @type TabDataInstance?
-  for _, tab in ipairs(self.db.char.tabs) do
+  for _, tab in ipairs(self.db.profile.tabs) do
     for _, instance in ipairs(tab:getDataInstances()) do
       if selectedMinimapTabs[instance.label] then
         tooltip:AddLine(instance.label .. ": " .. instance.value, 1, 1, 1)
@@ -281,7 +367,7 @@ function MyAccountant:MakeMinimapTooltip(tooltip)
   end
 
   local detailString
-  local opt = self.db.char.leftClickMinimap
+  local opt = self.db.profile.leftClickMinimap
 
   if opt == "OPEN_INCOME_PANEL" then
     detailString = L["option_minimap_income_panel"]
@@ -298,7 +384,7 @@ function MyAccountant:MakeMinimapTooltip(tooltip)
     tooltip:AddLine("|cff898989" .. string.format(L["minimap_left_click"] .. "|r", detailString))
   end
 
-  opt = self.db.char.rightClickMinimap
+  opt = self.db.profile.rightClickMinimap
   if opt == "OPEN_INCOME_PANEL" then
     detailString = L["option_minimap_income_panel"]
   elseif opt == "OPEN_OPTIONS" then
@@ -319,9 +405,9 @@ end
 function MyAccountant:HandleMinimapClick(button)
   local config
   if button == "LeftButton" then
-    config = self.db.char.leftClickMinimap
+    config = self.db.profile.leftClickMinimap
   elseif button == "RightButton" then
-    config = self.db.char.rightClickMinimap
+    config = self.db.profile.rightClickMinimap
   else
     return
   end
@@ -338,14 +424,14 @@ function MyAccountant:HandleMinimapClick(button)
 end
 
 function MyAccountant:PrintDebugMessage(message, ...)
-  if self.db.char.showDebugMessages == true then
+  if self.db.profile.showDebugMessages == true then
     MyAccountant:Printf("|cffff0000[Debug]|r " .. message, ...)
   end
 end
 
 --- Updates the summary data for all tabs that need it (ldb, minimap, info frame enabled tabs)
 function MyAccountant:UpdateAllTabSummaryData()
-  for _, tab in ipairs(self.db.char.tabs) do
+  for _, tab in ipairs(self.db.profile.tabs) do
     tab:updateSummaryDataIfNeeded()
   end
 end

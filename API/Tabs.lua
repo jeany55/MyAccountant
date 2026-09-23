@@ -35,7 +35,7 @@ local DateUtils = {
   getStartOfWeek = function(timestamp)
     local startOfWeekOffset = 0
     if MyAccountant ~= nil and MyAccountant.db ~= nil then
-      startOfWeekOffset = MyAccountant.db.char.startingDayOfWeekOffset or 0
+      startOfWeekOffset = MyAccountant.db.profile.startingDayOfWeekOffset or 0
     end
 
     timestamp = timestamp or time()

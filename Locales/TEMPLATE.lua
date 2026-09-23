@@ -15,8 +15,18 @@ end
 
 -- Localization definitions
 -----------------------------------------
+--- VERSION 1.15
+-----------------------------------------
+L["error_unsupported_wow_version"] = "Unsupported WoW version detected"
+L["option_profiles"] = "Profiles"
+L["profile_reload_confirm"] = "MyAccountant's profile changed. Some settings, like views and the information frame, need a UI reload to fully apply. Reload now?"
+L["profile_reload_confirm_yes"] = "Reload"
+L["profile_reload_confirm_no"] = "Later"
+
+-----------------------------------------
 --- VERSION 1.14
 -----------------------------------------
+L["german"] = "German (by LaDzi)"
 L["WARBAND"] = "Warband Bank"
 L["option_treat_warband_neutral"] = "Treat Warband bank transfers as neutral"
 L["option_treat_warband_neutral_desc"] =

@@ -287,7 +287,7 @@ function MyAccountant:HandleGameEvent(event, ...)
   end
 
   if eventInfo.EXEC then
-    eventInfo.EXEC(self.db.char, ...)
+    eventInfo.EXEC(self.db.profile, ...)
   end
   if eventInfo.RESET == true then
     activeSource = nil
