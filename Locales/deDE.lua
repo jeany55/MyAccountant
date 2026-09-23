@@ -11,6 +11,16 @@ if not L then
 end
 
 -- Localization definitions
+
+-----------------------------------------
+--- VERSION 1.15
+-----------------------------------------
+L["error_unsupported_wow_version"] = "Nicht unterstützte WoW-Version erkannt"
+L["option_profiles"] = "Profile"
+L["profile_reload_confirm"] = "Profil von MyAccountant wurde geändert. Einige Einstellungen, wie Ansichten und das Informationsfenster, erfordern ein Neuladen der Benutzeroberfläche, damit sie vollständig übernommen werden. Jetzt neu laden?"
+L["profile_reload_confirm_yes"] = "Neu laden"
+L["profile_reload_confirm_no"] = "Später"
+
 -----------------------------------------
 --- VERSION 1.14
 -----------------------------------------
