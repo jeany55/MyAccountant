@@ -9,6 +9,12 @@ if not L then
 end
 
 -- Localization definitions
+-- 1.15
+L["error_unsupported_wow_version"] = "Обнаружена неподдерживаемая версия WoW"
+L["option_profiles"] = "Профили"
+L["profile_reload_confirm"] = "Профиль MyAccountant изменен. Для полного применения некоторых настроек (например, видов отображения и информационного фрейма) требуется перезагрузка интерфейса. Перезагрузить сейчас?"
+L["profile_reload_confirm_yes"] = "Перезагрузить"
+L["profile_reload_confirm_no"] = "Позже"
 -- 1.14
 L["german"] = "Немецкий (от LaDzi)"
 L["WARBAND"] = "Банк отряда"
