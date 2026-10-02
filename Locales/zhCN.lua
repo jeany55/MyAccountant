@@ -71,6 +71,7 @@ L["option_realm_characters_option_desc"] =
 L["option_realm_characters_all"] = "All characters on realm"
 L["option_realm_characters_selected"] = "Only tracked characters on realm"
 L["option_realm_characters_current_faction"] = "All characters of current faction on realm"
+L["option_realm_characters_account"] = "账号下所有角色（所有服务器）"
 L["option_session_storage"] = "Store session until"
 L["option_session_storage_desc"] =
   "When to clear session data. By default (Logout/Reload), session data is cleared when you log out or reload your UI. If you set this to 'Until User Resets', session data will never be cleared and will be kept indefinitely until you manually clear it in the options, use the console command, clear it via the minimap button, or the button in the income panel."
@@ -262,6 +263,7 @@ L["about_languages"] = "支持的语言"
 L["english"] = "英语"
 L["russian"] = "俄语（由 ZamestoTv 翻译）"
 L["simplified_chinese"] = "简体中文（由 cclolz 翻译）"
+L["spanish_mx"] = "墨西哥西班牙语（由 DarkChiken 翻译）"
 
 L["about_special_thanks_to"] = "特别感谢"
 
@@ -301,6 +303,8 @@ L["option_ldb_desc"] =
   "如果为真，MyAccountant 的'会话收入'、'会话利润'、'今日收入'、'今日利润'数据将在与 LDB 兼容的插件（如 Bazooka 或 Titan Panel）中提供。更改此项将需要重新加载 UI 才能生效。"
 L["ldb_loading"] = "加载中"
 L["income_panel_hover_realm_total"] = "服务器余额"
+L["income_panel_hover_account_total"] = "账号余额"
+L["income_panel_other_characters"] = "其他角色"
 L["option_show_realm_total_tooltip"] = "显示阵营图标（悬停查看服务器余额）"
 L["option_show_realm_total_tooltip_desc"] =
   "如果为真，悬停在收入面板底部的阵营图标上将显示你在服务器上的总金币。仅在插件了解多个角色时显示，登录它们以更新。"

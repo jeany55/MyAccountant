@@ -733,6 +733,44 @@ function Tests.EndToEnd_OnlyCurrentRealmInBalance()
   AssertEqual(400, total.gold)
 end
 
+function Tests.EndToEnd_AccountWideBalance_IncludesOtherRealms()
+  resetMigrationState()
+  local realm = GetRealmName()
+  local previousOption = MyAccountant.db.profile.realmCharactersOption
+  local previousWarband = MyAccountant.db.profile.showWarbandInRealmBalance
+  MyAccountant.db.profile.realmCharactersOption = "ACCOUNT"
+  MyAccountant.db.profile.showWarbandInRealmBalance = false
+
+  MyAccountant.db.global["Player-LOC0-LOCAL001"] = {
+    guid = "Player-LOC0-LOCAL001",
+    name = "LocalChar",
+    realm = realm,
+    faction = "Horde",
+    classColor = "c6ffffff",
+    gold = 400,
+    db = {},
+  }
+  MyAccountant.db.global["Player-OTH0-OTHER001"] = {
+    guid = "Player-OTH0-OTHER001",
+    name = "RemoteChar",
+    realm = "Stormrage",
+    faction = "Alliance",
+    classColor = "c6ffffff",
+    gold = 9000,
+    db = {},
+  }
+
+  local balanceData = MyAccountant:GetRealmBalanceTotalDataTable()
+
+  MyAccountant.db.profile.realmCharactersOption = previousOption
+  MyAccountant.db.profile.showWarbandInRealmBalance = previousWarband
+
+  -- Total covers both realms, and only the off-realm character gets a realm suffix
+  AssertEqual(9400, balanceData[1].gold)
+  AssertEqual("RemoteChar-Stormrage", balanceData[2].name)
+  AssertEqual("LocalChar", balanceData[3].name)
+end
+
 ------------------------------------------------------------
 -- Migration tracking (migratedRealms)
 ------------------------------------------------------------

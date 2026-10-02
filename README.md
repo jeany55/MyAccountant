@@ -101,9 +101,11 @@ MyAccountant can display a small information frame containing income data. Confi
 
 MyAccountant tracks your gold balance across your Warband and all your characters on your realm and offers several ways to show that information. You can turn off unwanted display methods in Addon options.
 
+By default the balance covers your current realm. To see every character on your account instead (across all realms and both factions) set **Which characters to show for realm balance** to **All characters on account (all realms)** in the Characters options tab. Characters from other realms are shown with their realm name.
+
 #### Faction icon
 
-Hover over the faction icon to see your realm's total balance.
+Hover over the faction icon to see your total balance.
 
 ![](Docs/incomeFrameRealmBalance.png)
 
@@ -115,7 +117,7 @@ Use the balance tab on the income panel. You can disable this in tab configurati
 
 #### Information panel
 
-You can also configure the information panel to show realm balance.
+You can also configure the information panel to show your balance.
 
 ![](Docs/infoFrameRealmBalance.png)
 

@@ -93,6 +93,7 @@ L["option_realm_characters_option_desc"] =
 L["option_realm_characters_all"] = "Todos los personajes en el reino"
 L["option_realm_characters_selected"] = "Solo personajes rastreados en el reino"
 L["option_realm_characters_current_faction"] = "Todos los personajes de la facción actual en el reino"
+L["option_realm_characters_account"] = "Todos los personajes de la cuenta (todos los reinos)"
 
 --- VERSION 1.11
 -----------------------------------------
@@ -290,6 +291,7 @@ L["about_languages"] = "Idiomas compatibles"
 L["english"] = "Inglés"
 L["russian"] = "Ruso (por ZamestoTv)"
 L["simplified_chinese"] = "Chino simplificado (por cclolz)"
+L["spanish_mx"] = "Español mexicano (por DarkChiken)"
 
 L["about_special_thanks_to"] = "Agradecimientos especiales a"
 
@@ -337,6 +339,8 @@ L["option_minimap_balance_style_realm"] = "Reino"
 --- VERSION 1.5
 -----------------------------------------
 L["income_panel_hover_realm_total"] = "Saldo del reino"
+L["income_panel_hover_account_total"] = "Saldo de la cuenta"
+L["income_panel_other_characters"] = "Otros personajes"
 
 L["option_show_realm_total_tooltip"] = "Mostrar icono de facción (pasa el cursor para ver saldo del reino)"
 L["option_show_realm_total_tooltip_desc"] =

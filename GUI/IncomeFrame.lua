@@ -651,7 +651,7 @@ function MyAccountant:updateFrame()
     totalOutcomeText:Hide()
     totalIncome:Hide()
     totalOutcome:Hide()
-    totalProfitText:SetText(L["income_panel_hover_realm_total"])
+    totalProfitText:SetText(summary[1].name)
     incomeHeaderText:SetText("")
     outcomeHeaderText:SetText(L["balance"])
   else
@@ -767,22 +767,36 @@ function MyAccountant:MakeRealmTotalTooltip(realmBalanceInfo, tooltip)
   realmBalanceInfo = realmBalanceInfo and realmBalanceInfo or MyAccountant:GetRealmBalanceTotalDataTable()
   tooltip = tooltip or GameTooltip
 
-  for _, data in ipairs(realmBalanceInfo) do
-    local classColor = data.classColor
-    local factionIcon
-    if data.faction == "Horde" then
-      factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
-    else
-      factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
-    end
+  -- First row is the total. Anything past the row limit is summed into a single line so
+  -- an account with a lot of characters doesn't run the tooltip off the screen.
+  local maxRows = 26
+  local restSum = 0
 
-    if classColor then
-      local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"
-
-      tooltip:AddDoubleLine(characterName, "|cffffffff" .. GetMoneyString(data.gold, true) .. "|r")
+  for index, data in ipairs(realmBalanceInfo) do
+    if index > maxRows then
+      restSum = restSum + data.gold
     else
-      tooltip:AddDoubleLine(data.name, GetMoneyString(data.gold, true))
+      local classColor = data.classColor
+      local factionIcon
+      if data.faction == "Horde" then
+        factionIcon = "Interface\\PVPFrame\\PVP-Currency-Horde"
+      else
+        factionIcon = "Interface\\PVPFrame\\PVP-Currency-Alliance"
+      end
+
+      if classColor then
+        local characterName = "|T" .. factionIcon .. ":0|t |c" .. classColor .. data.name .. "|r"
+
+        tooltip:AddDoubleLine(characterName, "|cffffffff" .. GetMoneyString(data.gold, true) .. "|r")
+      else
+        tooltip:AddDoubleLine(data.name, GetMoneyString(data.gold, true))
+      end
     end
+  end
+
+  if #realmBalanceInfo > maxRows then
+    local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
+    tooltip:AddDoubleLine(L["income_panel_other_characters"], "|cffffffff" .. GetMoneyString(restSum, true) .. "|r")
   end
 end
 

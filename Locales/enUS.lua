@@ -85,6 +85,7 @@ L["option_realm_characters_option_desc"] =
 L["option_realm_characters_all"] = "All characters on realm"
 L["option_realm_characters_selected"] = "Only tracked characters on realm"
 L["option_realm_characters_current_faction"] = "All characters of current faction on realm"
+L["option_realm_characters_account"] = "All characters on account (all realms)"
 
 -----------------------------------------
 --- VERSION 1.11
@@ -286,6 +287,7 @@ L["english"] = "English"
 L["russian"] = "Russian (by ZamestoTv)"
 L["german"] = "German (by LaDzi)"
 L["simplified_chinese"] = "Simplified Chinese (by cclolz)"
+L["spanish_mx"] = "Mexican Spanish (by DarkChiken)"
 
 L["about_special_thanks_to"] = "Special thanks to"
 
@@ -333,6 +335,8 @@ L["option_minimap_balance_style_realm"] = "Realm"
 --- VERSION 1.5
 -----------------------------------------
 L["income_panel_hover_realm_total"] = "Realm balance"
+L["income_panel_hover_account_total"] = "Account balance"
+L["income_panel_other_characters"] = "Other characters"
 
 L["option_show_realm_total_tooltip"] = "Show faction icon (hover to see realm balance)"
 L["option_show_realm_total_tooltip_desc"] =

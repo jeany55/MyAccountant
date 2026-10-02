@@ -90,6 +90,7 @@ L["option_realm_characters_option_desc"] =
 L["option_realm_characters_all"] = "Alle Charaktere"
 L["option_realm_characters_selected"] = "Nur ausgewählte Charaktere"
 L["option_realm_characters_current_faction"] = "Alle Charaktere der aktuellen Fraktion"
+L["option_realm_characters_account"] = "Alle Charaktere des Accounts (alle Realms)"
 
 --- VERSION 1.11
 -----------------------------------------
@@ -288,6 +289,7 @@ L["english"] = "Englisch"
 L["russian"] = "Russisch (von ZamestoTv)"
 L["german"] = "Deutsch (von LaDzi)"
 L["simplified_chinese"] = "Vereinfachtes Chinesisch (von cclolz)"
+L["spanish_mx"] = "Mexikanisches Spanisch (von DarkChiken)"
 
 L["about_special_thanks_to"] = "Besonderen dank an"
 
@@ -335,6 +337,8 @@ L["option_minimap_balance_style_realm"] = "Realm"
 --- VERSION 1.5
 -----------------------------------------
 L["income_panel_hover_realm_total"] = "Realm Guthaben"
+L["income_panel_hover_account_total"] = "Account Guthaben"
+L["income_panel_other_characters"] = "Weitere Charaktere"
 
 L["option_show_realm_total_tooltip"] = "Zeige Fraktions Icon (Mouseover zeigt Realm Guthaben)"
 L["option_show_realm_total_tooltip_desc"] =

@@ -562,6 +562,8 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   local goldTotal = 0
   local numberOfCharacters = 0
   local realmBalanceOption = self.db.profile.realmCharactersOption
+  local accountWide = realmBalanceOption == "ACCOUNT"
+  local currentRealm = GetRealmName()
 
   local characterSet = self.db.global
   if realmBalanceOption == "SELECTED" then
@@ -569,7 +571,8 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   end
 
   for _, characterData in pairs(characterSet) do
-    local basicCondition = type(characterData) == "table" and characterData.gold and characterData.realm == GetRealmName()
+    local basicCondition = type(characterData) == "table" and characterData.gold
+      and (accountWide or characterData.realm == currentRealm)
     local secondaryCondition = true
     if basicCondition and realmBalanceOption == "CURRENT_FACTION" then
       secondaryCondition = characterData.faction == UnitFactionGroup("player")
@@ -577,8 +580,13 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
 
     if basicCondition and secondaryCondition then
       goldTotal = goldTotal + characterData.gold
+      -- Characters from other realms get a realm suffix so same-named alts can be told apart
+      local characterName = characterData.name
+      if characterData.realm and characterData.realm ~= currentRealm then
+        characterName = characterName .. "-" .. characterData.realm
+      end
       table.insert(data, {
-        name = characterData.name,
+        name = characterName,
         gold = characterData.gold,
         classColor = characterData.classColor,
         faction = characterData.faction,
@@ -596,7 +604,8 @@ function MyAccountant:GetRealmBalanceTotalDataTable()
   table.sort(data, function(a, b)
     return a.gold > b.gold
   end)
-  table.insert(data, 1, { name = L["income_panel_hover_realm_total"], gold = goldTotal })
+  local totalLabel = accountWide and L["income_panel_hover_account_total"] or L["income_panel_hover_realm_total"]
+  table.insert(data, 1, { name = totalLabel, gold = goldTotal })
 
   return data
 end

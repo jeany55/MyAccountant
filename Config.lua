@@ -816,6 +816,11 @@ function MyAccountant:SetupAddonOptions()
             type = "description",
             name = " |T" .. private.constants.FLAGS.GERMAN .. ":14:21|t   " .. L["german"],
           },
+          mx = {
+            order = 5,
+            type = "description",
+            name = " |T" .. private.constants.FLAGS.SPANISH_MX .. ":14:21|t   " .. L["spanish_mx"],
+          },
         },
       },
       thanks = {
@@ -1145,6 +1150,7 @@ function MyAccountant:SetupAddonOptions()
           ALL = L["option_realm_characters_all"],
           SELECTED = L["option_realm_characters_selected"],
           CURRENT_FACTION = L["option_realm_characters_current_faction"],
+          ACCOUNT = L["option_realm_characters_account"],
         },
         set = function(info, val)
           self.db.profile.realmCharactersOption = val
