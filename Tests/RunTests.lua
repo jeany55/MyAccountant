@@ -754,6 +754,7 @@ import("Tests.Tests.TabsApiAdvancedTests")
 import("Tests.Tests.TabModelAdvancedTests")
 import("Tests.Tests.MigrationTests")
 import("Tests.Tests.NeutralSourceTests")
+import("Tests.Tests.GameTypeTests")
 
 Addon.ScheduleRepeatingTimer = Addon.ScheduleTimer
 fire("ADDON_LOADED", Name)

@@ -73,6 +73,7 @@ jobs:
 
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-BCC.toc
+          sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Camelot.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Cata.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Classic.toc
           sed -i -e "s/$VERSION/$newVersion/g" MyAccountant-Mists.toc
