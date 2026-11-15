@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [v1.17.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.17.0)
 
 ### New Features
 * **LibDataBroker launcher without the minimap icon**: The main MyAccountant launcher is now always available to LibDataBroker displays (Titan Panel, ChocolateBar, Bazooka, etc.), even when the minimap icon is turned off. Previously hiding the minimap icon also removed the launcher from your display bar.
