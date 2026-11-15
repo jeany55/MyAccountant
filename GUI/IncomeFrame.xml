@@ -1,5 +1,5 @@
 <Ui>
-  <Frame name="IncomeFrame" parent="UIParent" inherits="PortraitFrameTemplate">
+  <Frame name="IncomeFrame" parent="UIParent" inherits="PortraitFrameTemplate" frameStrata="HIGH" toplevel="true">
     <Size x="525" y="347"/>
     <Anchors>
       <Anchor point="CENTER"/>

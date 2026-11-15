@@ -225,11 +225,12 @@ function MyAccountant:InitializeUI()
 
   -- Setup Title
   IncomeFrame.title = IncomeFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  if private.wowVersion == GameTypes.RETAIL then
-    -- Todo: Adjust for retail title bg
-    IncomeFrame.title:SetPoint("TOP", IncomeFrame, "TOP", 3, -9)
-  else
+  -- Not every client's PortraitFrameTemplate has a TitleBg (retail, Forever), and anchoring to nil
+  -- pins the title to the screen instead of the frame
+  if private.wowVersion ~= GameTypes.RETAIL and IncomeFrame.TitleBg then
     IncomeFrame.title:SetPoint("CENTER", IncomeFrame.TitleBg, "TOP", 3, -9)
+  else
+    IncomeFrame.title:SetPoint("TOP", IncomeFrame, "TOP", 3, -9)
   end
   IncomeFrame.title:SetText(private.ADDON_NAME)
 
