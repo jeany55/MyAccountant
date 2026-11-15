@@ -1898,7 +1898,8 @@ function MyAccountant:SetupAddonOptions()
   LibStub("AceConfigDialog-3.0"):AddToBlizOptions(private.ADDON_NAME .. "-Data", clearDataOptions.name,
     private.ADDON_NAME)
 
-
+  -- Always create the LDB launcher, the minimap icon is optional on top of it
+  MyAccountant:GetLauncherDataObject()
 
   if self.db.profile.showMinimap == true then
     showMinimap()

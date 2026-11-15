@@ -200,15 +200,18 @@ function MyAccountant:RefreshProfile()
   StaticPopup_Show("MYACCOUNTANT_PROFILE_RELOAD")
 end
 
-function MyAccountant:RegisterMinimapIcon()
-  local libIcon = LibStub("LibDBIcon-1.0", true)
-
-  -- Setup minimap options if not yet
-  if not self.db.profile.minimapIconOptions then
-    self.db.profile.minimapIconOptions = {}
+--- Creates the main LDB launcher data object if it doesn't exist yet. This is independent of the
+--- minimap icon so LDB displays (Titan Panel, ChocolateBar, etc.) can show the launcher even when
+--- the minimap icon is turned off.
+--- @return LibDataBroker.DataObject
+function MyAccountant:GetLauncherDataObject()
+  local ldb = LibStub("LibDataBroker-1.1")
+  local existing = ldb:GetDataObjectByName(private.ADDON_NAME)
+  if existing then
+    return existing
   end
 
-  local miniButton = LibStub("LibDataBroker-1.1"):NewDataObject(private.ADDON_NAME, {
+  return ldb:NewDataObject(private.ADDON_NAME, {
     type = "data source",
     text = private.ADDON_NAME,
     icon = private.constants.MINIMAP_ICON,
@@ -224,8 +227,17 @@ function MyAccountant:RegisterMinimapIcon()
       MyAccountant:MakeMinimapTooltip(tooltip)
     end,
   })
+end
 
-  libIcon:Register(private.ADDON_NAME, miniButton, self.db.profile.minimapIconOptions)
+function MyAccountant:RegisterMinimapIcon()
+  local libIcon = LibStub("LibDBIcon-1.0", true)
+
+  -- Setup minimap options if not yet
+  if not self.db.profile.minimapIconOptions then
+    self.db.profile.minimapIconOptions = {}
+  end
+
+  libIcon:Register(private.ADDON_NAME, MyAccountant:GetLauncherDataObject(), self.db.profile.minimapIconOptions)
 end
 
 function MyAccountant:OnEnable()

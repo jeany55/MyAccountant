@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### New Features
+* **LibDataBroker launcher without the minimap icon**: The main MyAccountant launcher is now always available to LibDataBroker displays (Titan Panel, ChocolateBar, Bazooka, etc.), even when the minimap icon is turned off. Previously hiding the minimap icon also removed the launcher from your display bar.
+
+### Bugfixes
+* The income panel could be covered by bags and other windows. It now sits above regular windows and comes to the front when clicked.
+* The income panel title floated at the top of the screen instead of sitting in the panel's title bar _(Forever only)_.
+
+### Other
+* If you had the minimap icon turned off, the MyAccountant launcher may now appear in your LibDataBroker display. Hide it there if you don't want it.
+
 ## [v1.14.0](https://github.com/jeany55/MyAccountant/releases/tag/v1.14.0)
 
 ### New Features
