@@ -12,6 +12,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale(private.ADDON_NAME)
 --- @field neutral boolean? Whether the source moves gold between the player's own storage rather
 --- than in or out of the account. Neutral sources are excluded from profit/loss totals when the
 --- user has the corresponding option enabled - see MyAccountant:IsNeutralSource
+--- @field expenseOnly boolean? Whether the source can only ever cost gold. Income seen while an
+--- expense-only source is active didn't come from it, so it is filed under OTHER instead
 
 --- @enum GameTypes Versions of WoW MyAccountant knows about
 GameTypes = {
@@ -86,6 +88,7 @@ local sources = {
   },
   TAXI_FARES = {
     title = L["TAXI_FARES"],
+    expenseOnly = true,
     versions = {
       GameTypes.CLASSIC_ERA,
       GameTypes.BCC,
