@@ -4,6 +4,10 @@ local _, private = ...
 MyAccountant = LibStub("AceAddon-3.0"):GetAddon(private.ADDON_NAME)
 
 local activeSource = nil
+-- When set, activeSource is dropped once GetTime() passes this. Used by events that close a
+-- window whose money change arrives a moment later (see LINGER on the Event class), so the
+-- source covers that late change without staying active indefinitely.
+local activeSourceExpires = nil
 
 local currentMoney = GetMoney()
 local repairCost = 0
@@ -65,6 +69,8 @@ end
 --- @field EVENT string
 --- @field SOURCE? string  Must match one of the source definitions in Constants.lua
 --- @field RESET? boolean True will reset the category
+--- @field LINGER? number Seconds the source stays active after this event before it lapses to
+--- OTHER. For closing events whose money change can arrive after the window has gone
 --- @field EXEC? fun(config: table<string, any>, ...: any) Function to execute when the event happens
 
 --- @type Event[]
@@ -131,7 +137,9 @@ local events = {
   { EVENT = "LOOT_CLOSED", SOURCE = "LOOT" }, -- Do not reset, it sometimes doesnt update fast enough
   -- Taxi Fares
   { EVENT = "TAXIMAP_OPENED", SOURCE = "TAXI_FARES" },
-  { EVENT = "TAXIMAP_CLOSED", SOURCE = "TAXI_FARES" }, -- Do not reset
+  -- The fare can be charged after the map has closed, so the source can't reset on close. It can't stay active either: anything untracked afterwards (gained or spent)
+  -- would be filed as a taxi fare. Linger just long enough for the fare to arrive.
+  { EVENT = "TAXIMAP_CLOSED", SOURCE = "TAXI_FARES", LINGER = 5 },
   -- Talents
   { EVENT = "CONFIRM_TALENT_WIPE", SOURCE = "TALENTS" },
   -- LFG
@@ -165,7 +173,7 @@ local events = {
   -- Deliberately no SOURCE: gold spent at the bank (bag slots, bank tabs) is a real
   -- expense and belongs in OTHER. Only a money change matched to a C_Bank transfer is
   -- reclassified as WARBAND. RESET clears any source left over from an earlier event,
-  -- since LOOT and TAXI_FARES intentionally do not reset themselves.
+  -- since LOOT intentionally does not reset itself and TAXI_FARES lingers after closing.
   { EVENT = "BANKFRAME_CLOSED", RESET = true, EXEC = clearPendingTransfer },
   {
     EVENT = "BANKFRAME_OPENED",
@@ -220,11 +228,21 @@ function MyAccountant:HandlePlayerMoneyChange()
   local newMoney = GetMoney()
   local moneyChange = newMoney - currentMoney
 
+  if activeSourceExpires and GetTime() > activeSourceExpires then
+    activeSource = nil
+    activeSourceExpires = nil
+  end
+
   --- @type Source
   local source = activeSource and activeSource or "OTHER"
   if activeSource == "MERCHANTS" and repairCost == abs(moneyChange) then
     source = "REPAIR"
     repairCost = 0
+  end
+
+  -- Gold gained while an expense-only source (e.g. a taxi) is active came from somewhere else
+  if moneyChange > 0 and private.sources[source] and private.sources[source].expenseOnly then
+    source = "OTHER"
   end
 
   -- A matched C_Bank transfer wins over whatever else was going on. This is what separates
@@ -284,6 +302,7 @@ function MyAccountant:HandleGameEvent(event, ...)
 
   if eventInfo.SOURCE then
     activeSource = eventInfo.SOURCE
+    activeSourceExpires = eventInfo.LINGER and (GetTime() + eventInfo.LINGER) or nil
   end
 
   if eventInfo.EXEC then
@@ -291,6 +310,7 @@ function MyAccountant:HandleGameEvent(event, ...)
   end
   if eventInfo.RESET == true then
     activeSource = nil
+    activeSourceExpires = nil
   end
 end
 
