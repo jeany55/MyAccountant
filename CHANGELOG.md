@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [v1.17.1](https://github.com/jeany55/MyAccountant/releases/tag/v1.17.1)
 
 ### Bugfixes
 * After opening a flight map, gold from untracked sources could be filed under **Taxi Fares**, sometimes showing up as taxi *income*. This lasted until something else tracked happened. Taxi Fares now only records the fare itself: the flight map stays tracked for a few seconds after it closes so the fare is still caught, and gold gained is never counted as a taxi fare.
